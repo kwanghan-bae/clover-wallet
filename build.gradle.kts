@@ -1,6 +1,7 @@
 plugins {
     id("org.springframework.boot") version Versions.Spring.boot
-    id("io.spring.dependency-management") version Versions.Spring.dependencyManagement
+    id("io.spring.dependency-management") version Versions.Spring.dependencyManagementPlugin
+    id("org.springdoc.openapi-gradle-plugin") version Versions.Spring.docOpenApiUiPlugin
     id("org.jlleitschuh.gradle.ktlint") version Versions.ktlint
     kotlin("jvm") version Versions.kotlin
     kotlin("plugin.spring") version Versions.kotlin
@@ -28,21 +29,19 @@ subprojects {
 
     dependencies {
         testImplementation(Libraries.Spring.bootStarterTest)
-        testImplementation("io.kotest:kotest-runner-junit5:${Versions.Test.kotest}")
-        testImplementation("io.kotest:kotest-assertions-core:${Versions.Test.kotest}")
-        testImplementation("io.kotest.extensions:kotest-extensions-spring:${Versions.Test.kotestSpringExtension}")
-        testImplementation("io.mockk:mockk:${Versions.Test.mockk}")
+        testImplementation(Libraries.Test.kotestRunnerJunit5)
+        testImplementation(Libraries.Test.kotestAssertitionsCore)
+        testImplementation(Libraries.Test.kotestExtensionsSpring)
+        testImplementation(Libraries.Test.mockk)
     }
 
     val bootJar = tasks.bootJar.get()
     val jar = tasks.jar.get()
 
     if (project.path.startsWith(":app:")) {
-        println("bootJar enable : ${project.path}")
         bootJar.enabled = true
         jar.enabled = false
     } else {
-        println("bootJar disable : ${project.path}")
         bootJar.enabled = false
         jar.enabled = true
     }

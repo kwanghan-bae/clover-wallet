@@ -10,7 +10,9 @@ object Versions {
 
     object Spring {
         const val boot = "3.0.3"
-        const val dependencyManagement = "1.1.0"
+        const val docOpenApiUi = "1.6.15"
+        const val docOpenApiUiPlugin = "1.6.0"
+        const val dependencyManagementPlugin = "1.1.0"
         const val cloudDependencyManagement = "2022.0.1"
     }
 }
