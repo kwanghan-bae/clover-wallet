@@ -16,6 +16,7 @@ subprojects {
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     group = "com.lotto.private-manager"
 

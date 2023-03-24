@@ -1,12 +1,12 @@
-package com.lotto.manager.domain.user
+package com.lotto.manager.domain.ticket
 
 import java.time.LocalDateTime
 
-data class User(
+data class LottoTicket(
     val id: Long = 0,
-    val ssoQualifier: String,
-    val regionBand: String,
-    val ageBand: String,
+    val userId: Long,
+    val url: String,
+    val status: LottoTicketStatus,
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now()
 )

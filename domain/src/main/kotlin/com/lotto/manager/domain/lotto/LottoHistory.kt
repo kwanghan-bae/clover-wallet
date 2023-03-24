@@ -2,7 +2,7 @@ package com.lotto.manager.domain.lotto
 
 import java.time.LocalDate
 
-data class Lotto(
+data class LottoHistory(
     val number1: Int,
     val number2: Int,
     val number3: Int,

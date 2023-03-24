@@ -1,7 +1,7 @@
 package com.lotto.manager.internal.endpoint
 
 interface TicketSpec {
-    fun addBarcode(barcode: String)
+    fun addTicket(qrCode: String, userId: Long)
     
     fun getMyTickets(userId: String)
 }

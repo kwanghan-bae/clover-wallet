@@ -15,4 +15,12 @@ object Versions {
         const val dependencyManagementPlugin = "1.1.0"
         const val cloudDependencyManagement = "2022.0.1"
     }
+    
+    object Persistence {
+        const val h2 = "2.1.214"
+    }
+    
+    object Web {
+        const val jsoup = "1.15.4"
+    }
 }

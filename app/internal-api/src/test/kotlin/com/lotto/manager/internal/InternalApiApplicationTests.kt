@@ -9,5 +9,4 @@ class InternalApiApplicationTests {
     @Test
     fun contextLoads() {
     }
-
 }

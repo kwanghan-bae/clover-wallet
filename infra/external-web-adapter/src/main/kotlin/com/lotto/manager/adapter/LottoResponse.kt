@@ -2,7 +2,7 @@ package com.lotto.manager.adapter
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.lotto.manager.domain.lotto.Lotto
+import com.lotto.manager.domain.lotto.LottoHistory
 import java.time.LocalDate
 
 data class LottoResponse(
@@ -24,7 +24,7 @@ data class LottoResponse(
 ) {
     
     
-    fun toDomain() = Lotto(
+    fun toDomain() = LottoHistory(
         number1 = drwtNo1!!,
         number2 = drwtNo2!!,
         number3 = drwtNo3!!,

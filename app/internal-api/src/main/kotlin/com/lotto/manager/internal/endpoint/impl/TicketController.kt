@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RestController
 
 @RequestMapping("/v1/ticket")
 @RestController
-class TicketController : TicketSpec{
-    override fun addBarcode(barcode: String) {
+class TicketController : TicketSpec {
+    override fun addTicket(qrCode: String, userId: Long) {
         TODO("Not yet implemented")
     }
 

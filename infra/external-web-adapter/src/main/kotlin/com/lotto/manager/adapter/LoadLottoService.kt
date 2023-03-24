@@ -1,7 +1,7 @@
 package com.lotto.manager.adapter
 
-import com.lotto.manager.domain.lotto.Lotto
-import com.lotto.manager.domain.lotto.outgoing.LoadLottoPort
+import com.lotto.manager.domain.lotto.LottoHistory
+import com.lotto.manager.domain.lotto.outgoing.LoadLottoHistoryPort
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.LocalDate
@@ -9,12 +9,12 @@ import java.time.LocalDate
 @Service
 class LoadLottoService(
     val client: LottoFeignClient
-) : LoadLottoPort {
+) : LoadLottoHistoryPort {
     companion object {
         private val FIRST_DRAW_DATE = LocalDate.of(2002, 12, 7)
     }
 
-    override fun loadByDrawDate(drawDate: LocalDate): Lotto? {
+    override fun loadByDrawDate(drawDate: LocalDate): LottoHistory? {
         val response = client.getByGameNumber(10)
         println(drawDate)
         return if (response.returnValue == LottoResponseCode.OK) {
@@ -31,5 +31,9 @@ class LoadLottoService(
             duration < 1 -> 1
             else -> (duration / 7) + 2
         }
+    }
+
+    override fun loadStashedTicket(): String {
+        TODO("Not yet implemented")
     }
 }

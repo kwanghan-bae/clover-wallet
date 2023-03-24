@@ -5,17 +5,16 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 
 @FeignClient(
-    name = "lottoFeignClient",
-    url = "https://www.dhlottery.co.kr",
+    name = "mLottoFeignClient",
+    url = "https://m.dhlottery.co.kr",
     configuration = [LottoFeignClientConfig::class]
 )
-interface LottoFeignClient {
-
-    @GetMapping("/common.do")
-    fun getByGameNumber(
-        @RequestParam(name = "drwNo") gameNumber: Int,
-        @RequestParam method: String = "getLottoNumber"
-    ): LottoResponse
+interface MLottoFeignClient {
+    @GetMapping("/qr.do")
+    fun check(
+        @RequestParam(name = "v") value: String = "1054q061011142332q041226293143q141623252628q172332343542q0508142427451553697995",
+        @RequestParam method: String = "winQr"
+    ): String
 }
 
 // https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=903

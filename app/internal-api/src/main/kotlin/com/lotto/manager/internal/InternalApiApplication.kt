@@ -9,5 +9,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients
 class InternalApiApplication
 
 fun main(args: Array<String>) {
+    // asdfasdf
+    
+    val a = ""
+    var b = 1
     runApplication<InternalApiApplication>(*args)
 }
