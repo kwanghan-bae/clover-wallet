@@ -11,4 +11,6 @@ dependencies {
     implementation(Libraries.Web.jsoup)
     implementation(project(Modules.domain))
     implementation(project(Modules.Infra.externalWebAdapter))
+    implementation(project(Modules.Infra.rdb))
+    implementation(Libraries.Kotlin.jackson)
 }

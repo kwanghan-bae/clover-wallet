@@ -1,43 +1,40 @@
 package com.lotto.manager.internal.adapter
 
-import com.lotto.manager.adapter.MLottoFeignClient
-import com.lotto.manager.domain.ticket.incoming.SaveLottoTicketCommand
+import com.lotto.manager.adapter.DocumentParser
+import com.lotto.manager.adapter.LottoTicketClient
+import com.lotto.manager.domain.game.outgoing.SaveLottoGamePort
+import com.lotto.manager.domain.ticket.LottoTicket
+import com.lotto.manager.domain.ticket.incoming.SaveScannedTicketCommand
 import com.lotto.manager.domain.ticket.incoming.SaveLottoTicketUseCase
+import com.lotto.manager.domain.ticket.outgoing.LoadLottoTicketPort
 import com.lotto.manager.domain.ticket.outgoing.SaveLottoTicketPort
-import org.jsoup.Jsoup
-import org.springframework.beans.factory.InitializingBean
 import org.springframework.stereotype.Service
-import java.io.File
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 class TicketService(
-//    val saveLottoTicketPort: SaveLottoTicketPort
-    val feignClient: MLottoFeignClient
-) : SaveLottoTicketUseCase, InitializingBean {
-    override fun save(command: SaveLottoTicketCommand) {
-        TODO("Not yet implemented")
-    }
-
-    override fun afterPropertiesSet() {
-//        val html = feignClient.check()
-        val a = ""
-        listOf("a").forEach {
-            
+    val saveLottoTicketPort: SaveLottoTicketPort,
+    val loadLottoTicketPort: LoadLottoTicketPort,
+    val saveLottoGamePort: SaveLottoGamePort,
+    val lottoTicketFeignClient: LottoTicketClient
+) : SaveLottoTicketUseCase {
+    @Transactional
+    override fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicket {
+        val preRegistered = loadLottoTicketPort.byUserIdAndUrl(command.userId, command.url)
+        return preRegistered ?: kotlin.run {
+            val document = lottoTicketFeignClient.getDocumentByUrl(command.url)
+            val ticket = saveLottoTicketPort.saveImmediately(
+                LottoTicket(
+                    userId = command.userId,
+                    url = command.url,
+                    ordinal = DocumentParser.getOrdinal(document),
+                    status = DocumentParser.getTicketStatus(document),
+                )
+            )
+            val games = DocumentParser.getGames(command.userId, ticket.id, document)
+            saveLottoGamePort.saveAll(games)
+            ticket
         }
     }
 }
-
-
-//fun main(args: Array<String>) {
-//    val html = File("/Users/joel/Documents/lotto_result.html")
-//    val document = Jsoup.parse(html, "euc-kr")
-//
-//    val winnerDivision = document.getElementsByClass("bx_notice winner")
-//
-//    println(winnerDivision.dataNodes())
-//    println("============================")
-//    println(document.getElementsByClass("key_clr1").after("span").after("span"))
-//    println("++++++++++++++++++++++++++++++")
-//    println(println(winnerDivision.isEmpty()))
-//    println(winnerDivision)
-//}

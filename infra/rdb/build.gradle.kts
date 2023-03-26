@@ -1,4 +1,4 @@
 dependencies {
-    implementation(Libraries.Spring.bootDataJpa)
+    api(Libraries.Spring.bootDataJpa)
     implementation(Libraries.Persistence.h2)
 }

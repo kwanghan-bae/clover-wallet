@@ -1,6 +1,6 @@
 package com.lotto.manager.domain.ticket.incoming
 
-data class SaveLottoTicketCommand(
+data class SaveScannedTicketCommand(
     val userId: Long,
-    val qrCode: String
+    val url: String
 )

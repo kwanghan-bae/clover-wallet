@@ -8,7 +8,7 @@ import java.time.LocalDate
 
 @Service
 class LoadLottoService(
-    val client: LottoFeignClient
+    val client: LottoHistoryFeignClient
 ) : LoadLottoHistoryPort {
     companion object {
         private val FIRST_DRAW_DATE = LocalDate.of(2002, 12, 7)

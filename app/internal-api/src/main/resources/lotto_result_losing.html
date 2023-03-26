@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<!-- saved from url=(0126)https://m.dhlottery.co.kr/qr.do?method=winQr&v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807 -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+
+<title></title>
+
+    
+        
+
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="shortcut icon" href="https://m.dhlottery.co.kr/images/common/favicon.ico" type="image/x-icon">
+<link rel="icon" href="https://m.dhlottery.co.kr/images/common/favicon.ico" type="image/x-icon">
+<script type="text/javascript" src="./lotto_result_losing_files/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="./lotto_result_losing_files/jquery-ui.js"></script>
+<script type="text/javascript" src="./lotto_result_losing_files/common.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+fn_g_init_message("");
+
+var gameUserId = "";
+
+function goGame(){
+	var userId = "";
+	
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		location.href = "/user.do?method=login";
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",    // url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		timeout:3000,
+		error: function() {                     // 에러날경우 콜백함수
+			alert('접속이 원활하지 않습니다.'); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			
+			if(userId == data.userId && data.userId != ""){
+				doGamePopUp("");
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});		
+}
+
+function goGame(lottoId,agreeType){
+	var userId = "";
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		location.href = "/user.do?method=login&returnUrl=" + encodeURIComponent('/gameInfo.do?method=lottoMainView&lottoId=' + lottoId);
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",    // url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		timeout:3000,
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			
+			if(userId == data.userId && data.userId != ""){
+				doGamePopUp(lottoId,agreeType);
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});		
+}
+
+function goGamePnInfo(lottoId,agreeType,svcInfoPnPcMsgYn){
+	var svcInfoPnPcMsgYn = svcInfoPnPcMsgYn;
+
+	if (svcInfoPnPcMsgYn == "Y") {
+		svcInfoPnMsg();
+		return;
+	}
+	
+	var userId = "";
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		location.href = "/user.do?method=login&returnUrl=" + encodeURIComponent('/gameInfo.do?method=lottoMainView&lottoId=' + lottoId);
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",  	// url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		timeout:3000,
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			
+			if(userId == data.userId && data.userId != ""){
+				doGamePopUp(lottoId,agreeType);
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});		
+}
+
+function goGameElInfo(lottoId,agreeType,svcInfoElPcMsgYn){
+	var lottoId = lottoId;
+	var svcInfoElPcMsgYn = svcInfoElPcMsgYn;
+
+	/*
+	if (svcInfoElPcMsgYn == "Y") {
+		svcInfoElMsg();
+		return;
+	}
+	*/
+
+	/*
+	if (svcInfoElPcMsgYn == "Y") {
+		svcInfoElTrMsg();
+		return;
+	}
+	*/
+	
+	if (svcInfoElPcMsgYn == "Y") {
+		if (lottoId == "LI21") {
+			svcInfoElTrMsg();
+			return;
+		} else {
+			svcInfoElMsg();
+			return;
+		}
+	}
+
+	var userId = "";
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		location.href = "/user.do?method=login&returnUrl=" + encodeURIComponent('/gameInfo.do?method=lottoMainView&lottoId=' + lottoId);
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",  	// url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		timeout:3000,
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			
+			if(userId == data.userId && data.userId != ""){
+				doGamePopUp(lottoId,agreeType);
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});		
+}
+
+function goGameEnInfo(lottoId,agreeType,endInfoElPcMsgYn){
+	var endInfoElPcMsgYn = endInfoElPcMsgYn;
+
+	if (endInfoElPcMsgYn == "Y") {
+		endInfoElMsg();
+		return;
+	}
+	
+	var userId = "";
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		location.href = "/user.do?method=login&returnUrl=" + encodeURIComponent('/gameInfo.do?method=lottoMainView&lottoId=' + lottoId);
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",  	// url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		timeout:3000,
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			
+			if(userId == data.userId && data.userId != ""){
+				doGamePopUp(lottoId,agreeType);
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});		
+}
+
+function goGameElEnInfo(lottoId,agreeType,svcInfoElPcMsgYn,endInfoElPcMsgYn){
+	var svcInfoElPcMsgYn = svcInfoElPcMsgYn;
+	var endInfoElPcMsgYn = endInfoElPcMsgYn;
+
+	if (svcInfoElPcMsgYn == "Y") {
+		svcInfoElMsg();
+		return;
+	}
+	
+	if (endInfoElPcMsgYn == "Y") {
+		endInfoElMsg();
+		return;
+	}
+	
+	var userId = "";
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		location.href = "/user.do?method=login&returnUrl=" + encodeURIComponent('/gameInfo.do?method=lottoMainView&lottoId=' + lottoId);
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",  	// url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		timeout:3000,
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			
+			if(userId == data.userId && data.userId != ""){
+				doGamePopUp(lottoId,agreeType);
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});		
+}
+
+function doGamePopUp(lotid,agreeType){
+	/*
+	* 스피드키노 LD10, 메가빙고 LD11, 더블잭마이더스 LD20, 파워볼 LD14, 트레져헌터 LI22, 트리플럭 LI21 -> gamePop
+	* 캐치미 LI23 -> catchPop
+	*/
+	var type;
+	
+	if( lotid === 'LI23' ){
+		type = 'catchPop';
+	}else{
+		type = 'gamePop';
+	}
+		
+	if($("#agreeChk").is(":checked") || agreeType == 2){
+		var new_popup = centerPop('https://el.dhlottery.co.kr/game/TotalGame.jsp?LottoId='+ lotid, 'type', 1164, 645, 'no');
+	}else{
+		alert('약관에 동의해 주셔야 이용이 가능합니다.');
+		$("#agreeChk").focus();
+	}
+	
+}
+
+//설문조사 팝업
+function popCenter(url){
+	var new_popup =	centerPop(url, '설문조사', 480, 800, 'yes');
+}
+
+//샘플게임 팝업
+function sample_pop(code, userId){
+	
+	//location.href = "/gamezone.do?method=gameZoneMainView";
+	//return;
+	if(userId == null || userId == ""){
+		alert("로그인 후 이용이 가능합니다.");
+		//location.href = "/user.do?method=login";
+		//location.href = "/user.do?method=login&returnUrl=/gamezone.do?method=gameZoneMainView";
+		location.href = "/user.do?method=login&returnUrl=" + encodeURIComponent('/gameInfo.do?method=lottoMainView&lottoId=' + code);
+		return;
+	}
+	if(!$("#sampleAgreeChk").is(":checked")){
+		alert('약관에 동의해 주셔야 이용이 가능합니다.');
+		$("#sampleAgreeChk").focus();
+		return;
+	}
+	
+	$.ajax({
+		type:"POST",                            // 메소드타입
+		url:"/gamezone.do?method=autoAgreeProc",// url
+		dataType:"json",                        // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		timeout:3000,
+		async:false,
+		contentType : "application/json; charset=EUC-KR",
+		error: function() {                     // 에러날경우 콜백함수
+			console.log("error");
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			if(data.successYn){
+				console.log(data);
+			}
+		}
+	});
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",    // url
+		//data:{"jackpot":strJackpotData},   	// 파라메터 타입
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		timeout:3000,
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			if(userId == data.userId && data.userId != ""){
+				var new_popup =	centerPop('https://el.dhlottery.co.kr/game_sample/TotalGame.jsp?LottoId=' + code, 'gamePop', 1164, 645, 'no');
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});
+}
+
+//샘플게임(랜덤) 팝업
+function sample_random_pop(userId){
+	
+	//location.href = "/gamezone.do?method=gameZoneMainView";
+	//return;
+	if(userId == null || userId == ""){
+		alert("로그인 후 이용이 가능합니다.");
+		location.href = "/user.do?method=login";
+// 		location.href = "/user.do?method=login&returnUrl=/gamezone.do?method=gameZoneMainView";
+// 		location.href = "/common.do?method=main";
+		return;
+	}
+	
+	var x = Math.floor((Math.random() * 7) + 1 );
+	
+	if(x == 1){
+		var code = "LD14";
+	}else if(x == 2){
+		var code = "LD10";
+	}else if(x == 3){
+		var code = "LD20";
+	}else if(x == 4){
+		var code = "LI23";
+	}else if(x == 5){
+		var code = "LI22";
+	}else if(x == 6){
+		var code = "LI21";
+	}else if(x == 7){
+		var code = "LD11";
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"/gamezone.do?method=autoAgreeProc",// url
+		dataType:"json",                        // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		timeout:3000,
+		async:false,
+		contentType : "application/json; charset=EUC-KR",
+		error: function() {                     // 에러날경우 콜백함수
+			console.log("error");
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			if(data.successYn){
+				console.log(data);
+			}
+		}
+	});
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",    // url
+		//data:{"jackpot":strJackpotData},   	// 파라메터 타입
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		timeout:3000,
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			if(userId == data.userId && data.userId != ""){
+				var new_popup =	centerPop('https://el.dhlottery.co.kr/game_sample/TotalGame.jsp?LottoId=' + code , 'gamePop', 1164, 645, 'no');
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});
+}
+
+
+
+function doReserve(){	
+	var userId = "";
+	
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		//location.href = "/user.do?method=login";
+		location.href = "/user.do?method=login&returnUrl=/gameInfo.do?method=game720Method";
+		return;
+	}
+	
+	$.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",    // url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		timeout:3000,
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			if(userId == data.userId && data.userId != ""){
+					window.open('https://el.dhlottery.co.kr/lotto720.do?method=reserveBuy', 'pensionPop' , 'width=930, height=672, left=0, top=0, status=no, toolbar=no, menubar=no, location=no');				
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});
+				
+}
+
+
+function jackpotViewPop(){
+	var url = "/gameInfo.do?method=jackpotView&lottoId=";	
+	commonPop("", url, 820, 700, 'yes');
+}
+
+function goLottoBuy(agreeType){
+	var userId = "";
+	
+	if(userId == '' || userId == null){
+		alert("로그인 후 사용 해주시기 바랍니다.");
+		//location.href = "/user.do?method=login";
+		location.href = "/user.do?method=login&returnUrl=/gameInfo.do?method=buyLotto";
+		return;
+	}
+	if(agreeType == 1 && !$("#agreeChk").is(":checked")){
+		alert('약관에 동의해 주셔야 이용이 가능합니다.');
+		$("#agreeChk").focus();
+		return;
+	}
+	
+	
+	 $.ajax({
+		type:"get",                             // 메소드타입
+		url:"https://el.dhlottery.co.kr/portal_login.jsp",    // url
+		dataType:"jsonp",                       // 이부분이 중요 데이타타입을 jsonP로 해줘야 크로스도메인을 이용할수 있다.
+		timeout:3000,
+		jsonp : 'callback',                     // 콜백함수 이름 명이다. 
+		error: function() {                     // 에러날경우 콜백함수
+			alert("시스템이 원활하지 않습니다.\n이용에 불편을 드려 죄송합니다."); 
+		}, 
+		success: function(data){        		// 성공했을때 콜백함수
+			if(userId == data.userId && data.userId != ""){
+				var new_popup = centerPop('https://el.dhlottery.co.kr/game/TotalGame.jsp?LottoId=LO40', 'gamePop', 1164, 645, 'no');			
+			}else{
+				alert("로그인 세션이 해제 되었습니다.\n다시 한번 로그인해 주시기 바랍니다.");
+				document.location.href = "/user.do?method=logout";
+			}
+	}});
+				
+}
+
+function loginType(pageCode){
+	var userId = "";
+	var pageCodes = pageCode.split("-");
+}
+
+//엔터만 치면 로그인
+function enter_check_top(eventValue) {
+	if (eventValue == 13) {
+		check_if_Valid_top();
+		return;
+	}
+}
+
+function depositAlert(){
+	alert("12월 2일 이후부터 사용 가능합니다.");
+}
+
+function check_if_Valid_top() {
+	var f = document.frmLogin;
+	
+	if (f.userId.value == "") {
+		alert("아이디를 입력해 주십시오");
+		f.userId.focus();
+		return;
+	}
+	if (f.password.value == "") {
+		alert("비밀번호를 입력해 주세요");
+		f.password.focus();
+		return;
+	}
+	if (f.userId.value.length >= 15) {
+		alert("아이디가 자릿수가 초과되었습니다.");
+		return;
+	}
+	if (f.password.value.length >= 101) {
+		alert("비밀번호가 자릿수가 초과되었습니다.");
+		return;
+	}
+	loginpage_top();
+}
+
+function loginpage_top(){
+	
+	var f = window.document.frmLogin;
+	var pageUrl = document.location.href;
+	var returnUrl="";
+	
+	f.method = "post";
+	//f.target = "jform";
+	if(returnUrl != ''){
+		f.action = "https://www.dhlottery.co.kr/userSsl.do?method=login&returnUrl="+encodeURIComponent(returnUrl);
+	}else{
+		f.action = "https://www.dhlottery.co.kr/userSsl.do?method=login&returnUrl="+encodeURIComponent(pageUrl);
+	}
+	f.submit();
+
+}
+
+function getCookie(uName) {
+	var flag = document.cookie.indexOf(uName + '=');
+	if (flag != -1) {
+		flag += uName.length + 1;
+		end = document.cookie.indexOf(';', flag);
+		if (end == -1)
+			end = document.cookie.length;
+		return unescape(document.cookie.substring(flag, end));
+	}
+}
+
+function gomain() {
+	location.href="/common.do?method=main";
+}
+
+$(document).ready(function() {
+	$("#phoneTopMenu").html("");
+	
+	if(getCookie("userId") != undefined) 
+	{
+		$('.top_userid').val(getCookie("userId"));
+	}
+	
+});
+
+function svcInfoPnMsg() {
+	alert("일시 판매 정지 중입니다.\n\n판매 개시일 : 2023년 1월 4일 10시");
+}
+
+function svcInfoElMsg() {
+	alert("일시 판매 정지 중입니다.\n\n판매 개시일 : 2023년 1월 4일 10시");
+}
+
+
+function svcInfoElTrMsg() {
+	alert("트리플럭 복권은 일시 판매 정지 중입니다.\n\n정지일시 : 2022년 12월 19일 20시\n\n판매 개시일 : 2023년 1월 4일 10시");
+}
+
+function endInfoElMsg() {
+	alert("판매시간이 아닙니다.\n\n판매 시간 : 06시 ~ 24시");
+}
+
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0">
+<link rel="stylesheet" type="text/css" href="./lotto_result_losing_files/style@mobile.css">
+<script type="text/javascript" src="./lotto_result_losing_files/mobile_link.js" charset="utf-8"></script>
+<script type="text/javascript" src="./lotto_result_losing_files/function.mobile.js" charset="utf-8"></script>
+
+<script type="text/javascript">
+	// catchme
+	function catchMeGame() {
+		document.location = "https://el.dhlottery.co.kr/game_mobile/catch/game.jsp";
+	}
+	
+	// doublejack
+	function doubleJackGame() {
+		document.location = "https://el.dhlottery.co.kr/game_mobile/djack/game.jsp";
+	}
+	
+	// treasurehunter
+	function treasureHunterGame() {
+		document.location = "https://el.dhlottery.co.kr/game_mobile/thunt/game.jsp";
+	}
+	
+	// speedkeno
+	function speedKenoGame() {
+		document.location = "https://el.dhlottery.co.kr/game_mobile/keno/game.jsp";
+	}
+	
+	// megabingo
+	function megaBingoGame() {
+		document.location = "https://el.dhlottery.co.kr/game_mobile/bingo/game.jsp";
+	}
+	
+	// tripleluck
+	function goTripleLuckGame(wlog,svcInfoElTrMcMsgYn) {
+		var wlog = wlog;
+		var svcInfoElTrMcMsgYn = svcInfoElTrMcMsgYn;
+		
+		if (svcInfoElTrMcMsgYn == "Y") {
+			svcInfoElTrMcMsg();
+			return;
+		} else {
+			if (wlog == "Y") {
+				document.location.href = "/lottoControl.do?method=tripleLuckGameMainView";
+			} else {
+				document.location.href = "/lottoControl.do?method=tripleLuckGameMainView";
+			}
+		}
+	}
+	
+	function svcInfoElTrMcMsg() {
+		alert("트리플럭 복권은 일시 판매 정지 중입니다.\n\n정지일시 : 2022년 12월 19일 20시\n\n판매 개시일 : 2023년 1월 4일 10시");
+	}	
+</script>
+    
+    
+
+
+ 	 
+	<!-- ----------------------------- -->
+	
+	<!-- JSP PAGE CODE 및 PAGE NAME 정의 --------->
+	<script type="text/javascript">
+	<!--
+		var pageCode = "";
+		var pageName = "";
+		
+	//-->
+	</script>
+	
+	<script language="javascript">
+	
+		function goContents(){
+			var divTop = $("article:first").position().top;
+			$(".printContents").css("top", divTop);
+			$(".printContents").css("width", "100%");
+			$(".printContents").css("height", $(document).height()-divTop);
+			$("#printContentsID").attr("src", "/img/event/banner/20160711qr_print_contents.jpg");
+			$(".printContents").show();
+		}
+		
+		function goInterview(){
+			var divTop = $("article:first").position().top;
+			$(".printInterView").css("top", divTop);
+			$(".printInterView").css("width", "100%");
+			$(".printInterView").css("height", $(document).height()-divTop);
+			$("#printInterviewID").attr("src", "/img/event/banner/20160711qr_print_interview.jpg");
+			$(".printInterView").show();
+		}
+		function closeContents(){
+			$(".printContents").hide();
+			$(".printInterView").hide();
+		}
+		function closeInterview(){
+			$(".printInterView").hide();
+		}
+		function closeNever(){
+			$(".printBanner").hide();
+			$(".printInterView").hide();
+			$(".printContents").hide();
+			var todayDate = new Date();
+			todayDate.setDate( todayDate.getDate() + 365 );
+			document.cookie = "PROMO_201760711=" + escape(todayDate) + "; path=/; expires=" + todayDate.toGMTString() + ";";
+		}
+		
+		function showBanner(){
+			$("#printBannerID").attr("src", "/img/event/banner/20160711qr_print_banner.jpg");
+			$(".printBanner").show();
+		}
+		
+		function powerEvent() {			
+			window.location = '/promo/29sp1000';
+		}
+		
+		$(document).ready(function(){
+			if (document.cookie.indexOf("PROMO_201760711=") == -1){
+				showBanner();
+			};
+		});
+	</script>
+</head>
+<body>
+<section id="wrapper">
+    <!-- header -->
+    <header id="header">
+        
+
+<a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#" class="menu_btn">메뉴열기</a>
+<h1 class="logo">
+    <a href="https://m.dhlottery.co.kr/common.do?method=main">동행복권</a>
+</h1>
+
+	
+	<a href="https://m.dhlottery.co.kr/userSsl.do?method=myPage" class="mypage">마이페이지</a>
+	
+		
+
+		
+<nav id="gnb">
+    <div class="inner">
+        <div class="btns">
+            <a href="https://m.dhlottery.co.kr/common.do?method=main" class="home">홈으로 가기</a> 
+            <strong class="logo">동행복권</strong>
+            <a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#" class="close">메뉴닫기</a>
+        </div>
+        <div class="move_game">
+            <h2>복권정보</h2>
+            <ul>                
+                <li class="lotto lt top"><a href="https://m.dhlottery.co.kr/gameInfo.do?method=gameMethod">로또6/45</a></li>
+				<li class="pension720 top"><a href="https://m.dhlottery.co.kr/lotto720.do?method=pensionMoblieMain">연금복권720+</a></li>
+				<li class="speetto top"><a href="https://m.dhlottery.co.kr/gameInfo.do?method=speettoGameMethod">스피또</a></li>
+				<li class="power top"><a href="https://m.dhlottery.co.kr/lottoControl.do?method=powerBallGameMainView">파워볼</a></li>
+				<li class="triple lt"><a href="javascript:goTripleLuckGame(&#39;N&#39;,&#39;N&#39;);">트리플럭</a></li>
+				<li class="kino"><a href="https://m.dhlottery.co.kr/lottoControl.do?method=speedKenoGameMainView">스피드키노</a></li>
+				<li class="bingo"><a href="https://m.dhlottery.co.kr/lottoControl.do?method=megaBingoGameMainView">메가빙고</a></li>
+				<li class="hunter"><a href="https://m.dhlottery.co.kr/lottoControl.do?method=hunterGameMainView">트레져헌터</a></li>
+				<li class="doublejack lt"><a href="https://m.dhlottery.co.kr/lottoControl.do?method=doubleJackGameMainView">더블잭마이더스</a></li>
+				<li class="catchme"><a href="https://m.dhlottery.co.kr/lottoControl.do?method=catchMeGameMainView">캐치미</a></li>
+            </ul>
+        </div>
+        <div class="menu" id="mainMenu">
+            <ul>
+                <li>
+                    <h2>
+                        <a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#">당첨결과</a><!-- 180829 -->
+                    </h2>
+                    <ul>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=byWin">로또6/45</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=win720">연금복권720+</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=winList">전자복권</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=statByNumber">로또6/45 당첨통계</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=index720">연금복권720+ 당첨통계</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=notReceiveInfo">로또6/45 미수령 당첨금</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/gameResult.do?method=highWin">당첨자인터뷰</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <h2>
+                        <a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#">판매점</a>
+                    </h2>
+                    <ul>
+                        <li><a href="https://m.dhlottery.co.kr/store.do?method=sellerInfo645">복권 판매점</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/store.do?method=topStore&amp;pageGubun=L645">당첨 판매점</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <h2>
+                        <a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#">이벤트</a>
+                    </h2>
+                    <ul>
+                        <li><a href="https://m.dhlottery.co.kr/event.do?method=Eventend">이벤트</a></li>
+                        <!-- <li><a href="event.do?method=chipInfo">클로버칩 적립</a></li>
+                        <li><a href="event.do?method=chipWishList">클로버칩 사용</a></li> -->
+                    </ul>
+                </li>
+                <li>
+                    <h2>
+                        <a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#">행복공감</a>
+                    </h2>
+                    <ul>
+                        <li><a href="https://m.dhlottery.co.kr/happy.do?method=healthCultureRule">건전한 복권문화</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/happy.do?method=healthCulturePrevent">복권 과몰입 예방법</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/happy.do?method=fundInfo">복권기금</a></li>
+                    </ul>
+                </li>
+                <li>
+                    <h2>
+                        <a href="https://m.dhlottery.co.kr/qr.do?method=winQr&amp;v=1060q071215263240q010307213042q020912214245q020518212840q1317183340411739420807#">마이페이지</a>
+                    </h2>
+                    <ul>
+                        <li><a href="https://m.dhlottery.co.kr/userSsl.do?method=myPage">마이페이지</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/myPage.do?method=lottoBuyListView">구매/당첨</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/myPage.do?method=enjoyEval">건전구매 프로그램</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/myPage.do?method=campainTest">셀프진단평가</a></li><!-- 180816 -->
+                        <li><a href="https://m.dhlottery.co.kr/myPage.do?method=campainProgram">셀프구매계획</a></li><!-- 180816 -->
+                        <li><a href="https://m.dhlottery.co.kr/myPage.do?method=depositListView">예치금</a></li>
+                        <li><a href="https://m.dhlottery.co.kr/myPage.do?method=modifyLogin&amp;modifyType=O">회원탈퇴</a></li>
+                        <!-- 클로버칩 제공 로직 제거 <li><a href="/myPage.do?method=chipList">혜택</a></li> -->
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="shortcut">
+            <ul>
+                <li><a href="https://m.dhlottery.co.kr/counsel.do?method=callCenter">고객센터</a></li>
+                <li><a href="https://m.dhlottery.co.kr/service.do?method=noticeList">공지사항</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+
+    </header>
+    <!-- //header -->
+    <!-- container -->
+    <section id="container" class="section_qr lotto645">
+        <header class="head_title">
+            <h2>구매복권 당첨결과</h2>
+        </header>
+         
+        <div class="contents">
+       		<div class="winner_number">
+        
+             
+       		        
+       		
+        		<h3>로또 6/45 <span class="key_clr1">제1060회</span><span class="date">2023-03-25 추첨</span></h3>
+        		<div class="bx_winner winner">
+       				<strong class="tit">당첨번호</strong>
+	       			<div class="list">
+	       				<!-- 번호별 컬러값: clr1: 1~10, clr2: 11~20, clr3: 21~30, clr4: 31~40, clr5: 41~45  -->
+	       				<div class="clr clr1"><span>3</span></div>
+	       				<div class="clr clr1"><span>10</span></div>
+	       				<div class="clr clr3"><span>24</span></div>
+	       				<div class="clr clr4"><span>33</span></div>
+	       				<div class="clr clr4"><span>38</span></div>
+	       				<div class="clr clr5"><span>45</span></div>
+	       				<div class="plus clr clr4"><span>36</span></div>
+	       			</div>
+	       		</div>
+       		
+       		
+				       
+					       	
+					       	
+					       	
+					       	
+					       	
+				       
+					       	
+					       	
+					       	
+					       	
+					       	
+				       
+					       	
+					       	
+					       	
+					       	
+					       	
+				       
+					       	
+					       	
+					       	
+					       	
+					       	
+				       
+					       	
+					       	
+					       	
+					       	
+					       	
+			
+				
+	       		<div class="bx_notice winner">
+	       			<div><span>아쉽게도,</span><strong>낙첨되었습니다.</strong></div>
+					       			
+	       		</div>       
+	       		
+				
+       		</div>
+       		<div class="list_my_number">
+       			<div class="tbl_basic">
+       				<!-- 번호별 컬러값: clr1: 1~10, clr2: 11~20, clr3: 21~30, clr4: 31~40, clr5: 41~45  -->
+        			<table>
+        				<caption>내 당첨번호 확인</caption>
+        				<colgroup>
+        					<col style="width:8%">
+        					<col style="width:16%">
+        					<col>
+        				</colgroup>
+        				<tbody>
+
+
+							<tr>        				
+		                		<th scope="row">
+		                			A
+									
+									
+									
+									
+								</th>   
+        						<td class="result">낙첨</td>
+								<td>
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">7</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">12</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">15</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">26</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">32</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">40</span>
+			            				
+			            			
+							</td>
+						</tr>
+		
+
+							<tr>        				
+		                		<th scope="row">
+		                			
+									B
+									
+									
+									
+								</th>   
+        						<td class="result">낙첨</td>
+								<td>
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">1</span>
+			            				
+			            			
+									
+			            				<span class="clr clr1">3</span>
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">7</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">21</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">30</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">42</span>
+			            				
+			            			
+							</td>
+						</tr>
+		
+
+							<tr>        				
+		                		<th scope="row">
+		                			
+									
+									C
+									
+									
+								</th>   
+        						<td class="result">낙첨</td>
+								<td>
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">2</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">9</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">12</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">21</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">42</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				<span class="clr clr5">45</span>
+			            				
+			            			
+							</td>
+						</tr>
+		
+
+							<tr>        				
+		                		<th scope="row">
+		                			
+									
+									
+									D
+									
+								</th>   
+        						<td class="result">낙첨</td>
+								<td>
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">2</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">5</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">18</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">21</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">28</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">40</span>
+			            				
+			            			
+							</td>
+						</tr>
+		
+
+							<tr>        				
+		                		<th scope="row">
+		                			
+									
+									
+									
+									E
+								</th>   
+        						<td class="result">낙첨</td>
+								<td>
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">13</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">17</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">18</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				<span class="clr clr4">33</span>
+			            				
+			            				
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">40</span>
+			            				
+			            			
+									
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            				
+			            					<span class="clr">41</span>
+			            				
+			            			
+							</td>
+						</tr>
+								
+        				</tbody>
+        			</table>
+        		</div>
+        		<p class="extra">- QR 당첨확인은 보조 확인수단이므로 반드시 실물과 대조하시기 바라며, 당첨금은 실물 복권소지자에게 지급합니다.</p>
+       		</div>
+    	
+       	
+       		
+			
+        	<div class="notice_app">
+       			<a href="javascript:linkAppdown();">
+       				<span class="app_img">동행복권 앱 아이콘</span>
+					<span class="info"><span>동행복권 앱 다운받고<span>복권정보와 다양한 알림서비스를 받아보세요.</span></span></span>
+       			</a>
+       		</div>
+        </div>
+        <div class="showImg" style="display:none">
+    		<a href="javascript:void(0)" onclick="fnOpen(&#39;C&#39;);"><img src="./lotto_result_losing_files/qr_m_banner_03.jpg" width="100%" height="100%" alt="비과세"></a>
+    	</div>
+    </section>
+    <!-- //container -->
+<script type="text/javascript">
+function linkAppdown() {
+	var isMobile = {
+        Android: function () {
+                 return navigator.userAgent.match(/Android/i) == null ? false : true;
+        },
+        IOS: function () {
+                 return navigator.userAgent.match(/iPhone|iPad|iPod/i) == null ? false : true;
+        }
+	};
+	
+	if(isMobile.Android()){
+		location.href = "http://onesto.re/0000734850";
+	} else if(isMobile.IOS()){
+		location.href = "https://itunes.apple.com/kr/app/%EB%8F%99%ED%96%89%EB%B3%B5%EA%B6%8C/id1444390490?mt=8";
+	} else {
+		alert("모바일에서만 이용이 가능합니다.");
+	}
+}
+
+function fnOpen(str){
+	if(str =="B"){
+		$('.banner_area').css('display','none');
+		$('.contents').css('display','none');
+		$('.showImg').css('display','block');
+	}else{
+		$('.banner_area').css('display','block');
+		$('.contents').css('display','block');
+		$('.showImg').css('display','none');
+	}
+}
+</script>
+    <!-- footer -->
+    <footer id="footer">
+        
+
+
+<div class="contact">
+	<div class="tel">
+		<strong><span>상담전화 </span><a href="tel:15886450">1588-6450</a></strong>
+		<p>월-금, 일요일 : 06:00 - 24:00<span>토요일 : 06:00 - 21:00</span></p>
+	</div>
+	<div class="one">
+		<strong>1대1 상담</strong>
+		<p>월-금요일 : 09:00 - 18:00<span>토,일 및 법정공휴일 휴무</span></p>
+	</div>
+</div>
+<div class="btns">
+	
+	   
+	   
+	       <a href="https://m.dhlottery.co.kr/user.do?method=loginm" class="btn_wht xsmall"><span>로그인</span></a>
+	   
+	
+	<a href="https://m.dhlottery.co.kr/counsel.do?method=callCenter" class="btn_wht xsmall"><span>고객센터</span></a>
+</div>
+<div class="clause">
+	<ul>
+		<li><strong><a href="https://m.dhlottery.co.kr/clause.do?method=footerPrivate">개인정보처리방침</a></strong></li>
+		<li><a href="https://m.dhlottery.co.kr/clause.do?method=mobileUseClause">이용약관</a></li>
+	</ul>
+</div>
+    </footer>
+    <!-- //footer -->
+</section>
+
+
+</body></html>

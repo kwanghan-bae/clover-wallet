@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam
     url = "https://www.dhlottery.co.kr",
     configuration = [LottoFeignClientConfig::class]
 )
-interface LottoFeignClient {
+interface LottoHistoryFeignClient {
 
     @GetMapping("/common.do")
     fun getByGameNumber(
