@@ -1,22 +1,22 @@
 package com.lotto.manager.internal.endpoint
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped
+import com.lotto.manager.domain.game.LottoGame
 import com.lotto.manager.domain.ticket.LottoTicket
 
 interface TicketSpec {
     fun add(input: Add.In): Add.Out
 
     fun list(input: List.In): List.Out
-    
-    fun one()
-    
-    object One {
-        data class In(
-            val userId: Long,
-            val ticketId: Long
-        )
-        
+
+    fun detail(ticketId: Long): Detail.Out
+
+    object Detail {
+
         data class Out(
-            val ticket: LottoTicket
+            @JsonUnwrapped
+            val ticket: LottoTicket,
+            val games: kotlin.collections.List<LottoGame>
         )
     }
 
@@ -32,7 +32,7 @@ interface TicketSpec {
         ) {
             companion object {
                 fun success() = Out(
-                    status = "success", 
+                    status = "success",
                     message = "good"
                 )
             }
