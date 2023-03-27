@@ -18,7 +18,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
-    group = "com.lotto.private-manager"
+    group = "com.clover.wallet"
 
     configurations {
         java.sourceCompatibility = JavaVersion.VERSION_17

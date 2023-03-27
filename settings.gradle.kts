@@ -1,8 +1,8 @@
-rootProject.name = "lotto-private-manager"
+rootProject.name = "clover-wallet"
 
 include(
-    "app:internal-api",
+    "app:api",
     "domain",
-    "infra:external-web-adapter",
-    "infra:rdb"
+    "infra:web-adapter",
+    "infra:rdb",
 )
