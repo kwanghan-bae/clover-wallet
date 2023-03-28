@@ -5,5 +5,7 @@ import jakarta.persistence.Table
 
 @Table(name = "user")
 data class UserEntity(
-    val a: String,
+    val ssoQualifier: String? = null,
+    val locale: String? = null,
+    val age: Int? = null,
 ) : BaseEntity()

@@ -4,7 +4,7 @@ data class LottoGame(
     val id: Long = 0,
     val userId: Long,
     val ticketId: Long,
-    val status: com.wallet.clover.domain.game.LottoGameStatus,
+    val status: LottoGameStatus,
     val number1: Int,
     val number2: Int,
     val number3: Int,

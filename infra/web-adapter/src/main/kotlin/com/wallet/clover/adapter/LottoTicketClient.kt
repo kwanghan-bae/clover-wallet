@@ -19,5 +19,3 @@ class LottoTicketClient {
         )
     }
 }
-// https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=903
-// https://m.dhlottery.co.kr/qr.do?method=winQr&v=1054q061011142332q041226293143q141623252628q172332343542q0508142427451553697995
