@@ -5,4 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface LottoGameRepository : JpaRepository<LottoGameEntity, Long>
+interface LottoGameRepository : JpaRepository<LottoGameEntity, Long> {
+    fun findAllByUserId(userId: Long): List<LottoGameEntity>
+
+    fun findAllByTicketId(ticketId: Long): List<LottoGameEntity>
+}

@@ -1,4 +1,5 @@
 spring:
   profiles:
     include: rdb
-      
+  jpa:
+    show-sql: true

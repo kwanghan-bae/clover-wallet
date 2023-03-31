@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     id("org.springframework.boot") version Versions.Spring.boot
     id("io.spring.dependency-management") version Versions.Spring.dependencyManagementPlugin
@@ -29,6 +31,7 @@ subprojects {
     }
 
     dependencies {
+        implementation(Libraries.Spring.bootStarterValidation)
         testImplementation(Libraries.Spring.bootStarterTest)
         testImplementation(Libraries.Test.kotestRunnerJunit5)
         testImplementation(Libraries.Test.kotestAssertitionsCore)
@@ -68,10 +71,8 @@ subprojects {
     }
 }
 
-tasks {
-    bootJar {
-        enabled = false
-    }
+tasks.withType<BootJar> {
+    enabled = false
 }
 
 tasks.withType<Test> {

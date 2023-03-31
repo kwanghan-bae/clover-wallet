@@ -3,10 +3,16 @@ package com.wallet.clover.entity.game
 import com.wallet.clover.domain.game.LottoGame
 import com.wallet.clover.domain.game.LottoGameStatus
 import com.wallet.clover.entity.BaseEntity
+import com.wallet.clover.entity.ticket.LottoTicketEntity
+import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 
-@Table(name = "lotto_game_entity")
-data class LottoGameEntity(
+@Entity
+@Table(name = "lotto_game")
+class LottoGameEntity(
     val userId: Long,
     val ticketId: Long,
     val status: LottoGameStatus,
@@ -17,20 +23,16 @@ data class LottoGameEntity(
     val number5: Int,
     val number6: Int,
 ) : BaseEntity() {
-    fun LottoGame.toEntity() = LottoGameEntity(
-        userId = userId,
-        ticketId = ticketId,
-        status = status,
-        number1 = number1,
-        number2 = number2,
-        number3 = number3,
-        number4 = number4,
-        number5 = number5,
-        number6 = number6,
-    )
 
-    fun LottoGameEntity.toDomain() = LottoGame(
-        id = id,
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(columnDefinition = "long", name = "lotto_ticket_id")
+    lateinit var lottoTicket: LottoTicketEntity
+}
+
+fun LottoGame.toEntity(): LottoGameEntity {
+    val domainId = this.id
+
+    return LottoGameEntity(
         userId = userId,
         ticketId = ticketId,
         status = status,
@@ -40,5 +42,20 @@ data class LottoGameEntity(
         number4 = number4,
         number5 = number5,
         number6 = number6,
-    )
+    ).apply {
+        id = domainId
+    }
 }
+
+fun LottoGameEntity.toDomain() = LottoGame(
+    id = id,
+    userId = userId,
+    ticketId = ticketId,
+    status = status,
+    number1 = number1,
+    number2 = number2,
+    number3 = number3,
+    number4 = number4,
+    number5 = number5,
+    number6 = number6,
+)

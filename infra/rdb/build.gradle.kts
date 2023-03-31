@@ -1,5 +1,8 @@
+plugins {
+    kotlin("plugin.jpa") version Versions.kotlin
+}
 dependencies {
-    api(Libraries.Spring.bootDataJpa)
+    api(Libraries.Spring.bootStarterDataJpa)
     implementation(project(Modules.domain))
-    implementation(Libraries.Persistence.h2)
+    runtimeOnly(Libraries.Persistence.h2)
 }

@@ -2,29 +2,30 @@ package com.wallet.clover.api.adapter
 
 import com.wallet.clover.adapter.DocumentParser
 import com.wallet.clover.adapter.LottoTicketClient
-import com.wallet.clover.domain.game.outgoing.SaveLottoGamePort
+import com.wallet.clover.domain.game.outgoing.LottoGameSavePort
+import com.wallet.clover.domain.ticket.LottoTicket
 import com.wallet.clover.domain.ticket.incoming.SaveLottoTicketUseCase
 import com.wallet.clover.domain.ticket.incoming.SaveScannedTicketCommand
-import com.wallet.clover.domain.ticket.outgoing.LoadLottoTicketPort
-import com.wallet.clover.domain.ticket.outgoing.SaveLottoTicketPort
+import com.wallet.clover.domain.ticket.outgoing.LottoTicketLoadPort
+import com.wallet.clover.domain.ticket.outgoing.LottoTicketSavePort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
 class TicketService(
-    val saveLottoTicketPort: SaveLottoTicketPort,
-    val loadLottoTicketPort: LoadLottoTicketPort,
-    val saveLottoGamePort: SaveLottoGamePort,
+    val lottoTicketSavePort: LottoTicketSavePort,
+    val lottoTicketLoadPort: LottoTicketLoadPort,
+    val lottoGameSavePort: LottoGameSavePort,
     val lottoTicketFeignClient: LottoTicketClient,
 ) : SaveLottoTicketUseCase {
     @Transactional
-    override fun saveScannedTicket(command: SaveScannedTicketCommand): com.wallet.clover.domain.ticket.LottoTicket {
-        val preRegistered = loadLottoTicketPort.byUserIdAndUrl(command.userId, command.url)
+    override fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicket {
+        val preRegistered = lottoTicketLoadPort.byUserIdAndUrl(command.userId, command.url)
         return preRegistered ?: kotlin.run {
             val document = lottoTicketFeignClient.getDocumentByUrl(command.url)
-            val ticket = saveLottoTicketPort.saveImmediately(
-                com.wallet.clover.domain.ticket.LottoTicket(
+            val ticket = lottoTicketSavePort.saveImmediately(
+                LottoTicket(
                     userId = command.userId,
                     url = command.url,
                     ordinal = DocumentParser.getOrdinal(document),
@@ -32,7 +33,7 @@ class TicketService(
                 ),
             )
             val games = DocumentParser.getGames(command.userId, ticket.id, document)
-            saveLottoGamePort.saveAll(games)
+            lottoGameSavePort.saveAll(games)
             ticket
         }
     }
