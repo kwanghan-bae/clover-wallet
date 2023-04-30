@@ -4,6 +4,8 @@ import com.wallet.clover.adapter.DocumentParser
 import com.wallet.clover.adapter.LottoTicketClient
 import com.wallet.clover.domain.game.outgoing.LottoGameSavePort
 import com.wallet.clover.domain.ticket.LottoTicket
+import com.wallet.clover.domain.ticket.incoming.GetLottoTicketListQuery
+import com.wallet.clover.domain.ticket.incoming.GetLottoTicketQuery
 import com.wallet.clover.domain.ticket.incoming.SaveLottoTicketUseCase
 import com.wallet.clover.domain.ticket.incoming.SaveScannedTicketCommand
 import com.wallet.clover.domain.ticket.outgoing.LottoTicketLoadPort
@@ -18,7 +20,7 @@ class TicketService(
     val lottoTicketLoadPort: LottoTicketLoadPort,
     val lottoGameSavePort: LottoGameSavePort,
     val lottoTicketFeignClient: LottoTicketClient,
-) : SaveLottoTicketUseCase {
+) : SaveLottoTicketUseCase, GetLottoTicketQuery, GetLottoTicketListQuery {
     @Transactional
     override fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicket {
         val preRegistered = lottoTicketLoadPort.byUserIdAndUrl(command.userId, command.url)
@@ -36,5 +38,13 @@ class TicketService(
             lottoGameSavePort.saveAll(games)
             ticket
         }
+    }
+
+    override fun byUserId(userId: Long): List<LottoTicket> {
+        return lottoTicketLoadPort.byUserId(userId)
+    }
+
+    override fun byId(ticketId: Long): LottoTicket {
+        return lottoTicketLoadPort.byId(ticketId)
     }
 }

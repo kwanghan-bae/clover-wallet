@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface LottoTicketRepository : JpaRepository<LottoTicketEntity, Long> {
     fun findByUserIdAndUrl(userId: Long, url: String): LottoTicketEntity?
+    
+    fun findByUserId(userId: Long): List<LottoTicketEntity>
 }

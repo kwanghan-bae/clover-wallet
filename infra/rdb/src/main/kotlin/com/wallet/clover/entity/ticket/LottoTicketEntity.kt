@@ -18,7 +18,7 @@ class LottoTicketEntity(
     val status: LottoTicketStatus,
 ) : BaseEntity() {
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lottoTicketEntity")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "lottoTicket")
     lateinit var games: Set<LottoGameEntity>
 }
 

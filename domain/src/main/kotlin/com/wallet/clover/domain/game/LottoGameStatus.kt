@@ -10,14 +10,14 @@ enum class LottoGameStatus {
     ;
 
     companion object {
-        fun valueOfHtmlValue(htmlValue: String): com.wallet.clover.domain.game.LottoGameStatus {
+        fun valueOfHtmlValue(htmlValue: String): LottoGameStatus {
             return when {
-                (htmlValue == "1등당첨") -> com.wallet.clover.domain.game.LottoGameStatus.WINNING_1
-                (htmlValue == "2등당첨") -> com.wallet.clover.domain.game.LottoGameStatus.WINNING_2
-                (htmlValue == "3등당첨") -> com.wallet.clover.domain.game.LottoGameStatus.WINNING_3
-                (htmlValue == "4등당첨") -> com.wallet.clover.domain.game.LottoGameStatus.WINNING_4
-                (htmlValue == "5등당첨") -> com.wallet.clover.domain.game.LottoGameStatus.WINNING_5
-                else -> com.wallet.clover.domain.game.LottoGameStatus.LOSING
+                (htmlValue == "1등당첨") -> WINNING_1
+                (htmlValue == "2등당첨") -> WINNING_2
+                (htmlValue == "3등당첨") -> WINNING_3
+                (htmlValue == "4등당첨") -> WINNING_4
+                (htmlValue == "5등당첨") -> WINNING_5
+                else -> LOSING
             }
         }
     }
