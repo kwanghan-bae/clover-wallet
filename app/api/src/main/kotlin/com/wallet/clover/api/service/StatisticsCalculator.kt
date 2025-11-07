@@ -1,8 +1,10 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.adapter.LottoHistoryMapper
 import com.wallet.clover.adapter.LottoHistoryWebClient
 import com.wallet.clover.domain.lotto.LottoHistory
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingle
@@ -12,10 +14,13 @@ import java.util.concurrent.atomic.LongAdder
 @Service
 class StatisticsCalculator(
     private val client: LottoHistoryWebClient,
+    private val mapper: LottoHistoryMapper,
 ) {
     suspend fun calculate(): Statistics {
         val games = (1..1065).asFlow()
-            .map { client.getByGameNumber(it).awaitSingle().toDomain() }
+            .map { client.getByGameNumber(it).awaitSingle() }
+            .map { mapper.toDomain(it) }
+            .filterNotNull()
             .toList()
 
         val dateCounter = mutableMapOf<Int, MutableMap<Int, LongAdder>>()

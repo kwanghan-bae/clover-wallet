@@ -1,6 +1,7 @@
 package com.lotto.manager.adapter
 
 import com.wallet.clover.adapter.LoadLottoService
+import com.wallet.clover.adapter.LottoHistoryMapper
 import com.wallet.clover.adapter.LottoHistoryWebClient
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
@@ -10,7 +11,8 @@ import java.time.LocalDate
 class LoadLottoServiceTest : ShouldSpec(
     {
         val client = mockk<LottoHistoryWebClient>()
-        val sut = LoadLottoService(client)
+        val mapper = mockk<LottoHistoryMapper>()
+        val sut = LoadLottoService(client, mapper)
 
         context("날짜로 로또 게임회차를 추정할때") {
             context("2023-03-17 일 경우") {

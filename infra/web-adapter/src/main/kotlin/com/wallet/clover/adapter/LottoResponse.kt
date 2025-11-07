@@ -5,37 +5,22 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 data class LottoResponse(
-    val totSellamnt: Long?,
     val returnValue: LottoResponseCode, // success, fail
+    val drwNo: Int?,
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     val drwNoDate: LocalDate?,
-    val firstWinamnt: Long?,
-    val drwtNo6: Int?,
-    val drwtNo4: Int?,
-    val firstPrzwnerCo: Int?,
-    val drwtNo5: Int?,
-    val bnusNo: Int?,
+    val totSellamnt: Long?,
     val firstAccumamnt: Long?,
-    val drwNo: Int?,
+    val firstWinamnt: Long?,
+    val firstPrzwnerCo: Int?,
+    val drwtNo1: Int?,
     val drwtNo2: Int?,
     val drwtNo3: Int?,
-    val drwtNo1: Int?,
-) {
-    fun toDomain() = com.wallet.clover.domain.lotto.LottoHistory(
-        number1 = drwtNo1!!,
-        number2 = drwtNo2!!,
-        number3 = drwtNo3!!,
-        number4 = drwtNo4!!,
-        number5 = drwtNo5!!,
-        number6 = drwtNo6!!,
-        bonusNumber = bnusNo!!,
-        totalRevenue = totSellamnt!!,
-        countOfFirstWinners = firstPrzwnerCo!!,
-        moneyOfFirstWinner = firstWinamnt!!,
-        gameNumber = drwNo!!,
-        drawDate = drwNoDate!!,
-    )
-}
+    val drwtNo4: Int?,
+    val drwtNo5: Int?,
+    val drwtNo6: Int?,
+    val bnusNo: Int?,
+)
 
 enum class LottoResponseCode {
     OK,
