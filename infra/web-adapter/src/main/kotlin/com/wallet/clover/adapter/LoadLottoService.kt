@@ -14,13 +14,11 @@ class LoadLottoService(
         private val FIRST_DRAW_DATE = LocalDate.of(2002, 12, 7)
     }
 
-    override suspend fun loadByDrawDate(drawDate: LocalDate): com.wallet.clover.domain.lotto.LottoHistory? {
-        val response = client.getByGameNumber(10).awaitSingleOrNull()
-        println(drawDate)
+    override suspend fun loadByGameNumber(gameNumber: Int): com.wallet.clover.domain.lotto.LottoHistory? {
+        val response = client.getByGameNumber(gameNumber).awaitSingleOrNull()
         return if (response?.returnValue == LottoResponseCode.OK) {
             response.toDomain()
         } else {
-            println(response)
             null
         }
     }
