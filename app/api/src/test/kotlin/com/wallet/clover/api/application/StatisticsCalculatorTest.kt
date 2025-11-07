@@ -1,4 +1,4 @@
-package com.wallet.clover.api.service
+package com.wallet.clover.api.application
 
 import com.wallet.clover.adapter.LottoHistoryMapper
 import com.wallet.clover.adapter.LottoHistoryWebClient
