@@ -1,6 +1,7 @@
 object Versions {
     const val kotlin = "1.8.10"
     const val ktlint = "11.3.1"
+    const val kotlinCoroutines = "1.7.1"
 
     object Test {
         const val kotest = "5.5.0"

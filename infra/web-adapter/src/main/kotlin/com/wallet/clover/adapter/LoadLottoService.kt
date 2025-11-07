@@ -1,6 +1,7 @@
 package com.wallet.clover.adapter
 
 import com.wallet.clover.domain.lotto.outgoing.LoadLottoHistoryPort
+import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.time.LocalDate
@@ -13,8 +14,8 @@ class LoadLottoService(
         private val FIRST_DRAW_DATE = LocalDate.of(2002, 12, 7)
     }
 
-    override fun loadByDrawDate(drawDate: LocalDate): com.wallet.clover.domain.lotto.LottoHistory? {
-        val response = client.getByGameNumber(10).block()
+    override suspend fun loadByDrawDate(drawDate: LocalDate): com.wallet.clover.domain.lotto.LottoHistory? {
+        val response = client.getByGameNumber(10).awaitSingleOrNull()
         println(drawDate)
         return if (response?.returnValue == LottoResponseCode.OK) {
             response.toDomain()
