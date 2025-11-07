@@ -1,6 +1,6 @@
 package com.wallet.clover.api.endpoint.impl
 
-import com.wallet.clover.adapter.LottoHistoryFeignClient
+import com.wallet.clover.adapter.LottoHistoryWebClient
 import com.wallet.clover.api.endpoint.UserSpec
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.LongAdder
 @RestController
 @RequestMapping("/v1/user")
 class UserController(
-    private val client: LottoHistoryFeignClient,
+    private val client: LottoHistoryWebClient,
 ) : UserSpec {
 
     @GetMapping
@@ -33,7 +33,7 @@ class UserController(
         }
 
         (1..1065).forEach {
-            val game = client.getByGameNumber(it).toDomain()
+            val game = client.getByGameNumber(it).block()!!.toDomain()
             listOf(
                 game.number1,
                 game.number2,

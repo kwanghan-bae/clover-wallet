@@ -5,7 +5,7 @@ object Libraries {
         const val bootStarterWeb = "org.springframework.boot:spring-boot-starter-web"
         const val bootStarterDataJpa = "org.springframework.boot:spring-boot-starter-data-jpa"
         const val bootStarterValidation = "org.springframework.boot:spring-boot-starter-validation"
-        const val openfeign = "org.springframework.cloud:spring-cloud-starter-openfeign"
+        const val bootStarterWebflux = "org.springframework.boot:spring-boot-starter-webflux"
         const val bootStarterSwagger = "org.springdoc:springdoc-openapi-ui:${Versions.Spring.docOpenApiUi}"
         val cloud by lazy { "org.springframework.cloud:spring-cloud-dependencies:${Versions.Spring.cloudDependencyManagement}" }
     }

@@ -49,7 +49,6 @@ interface TicketSpec {
             override fun isValid(value: String, context: ConstraintValidatorContext?): Boolean {
                 return value.startsWith(PREFIX)
             }
-
         }
 
         @Target(AnnotationTarget.FIELD, AnnotationTarget.VALUE_PARAMETER)

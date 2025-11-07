@@ -7,16 +7,16 @@ import java.time.LocalDate
 
 @Service
 class LoadLottoService(
-    val client: LottoHistoryFeignClient,
+    val client: LottoHistoryWebClient,
 ) : LoadLottoHistoryPort {
     companion object {
         private val FIRST_DRAW_DATE = LocalDate.of(2002, 12, 7)
     }
 
     override fun loadByDrawDate(drawDate: LocalDate): com.wallet.clover.domain.lotto.LottoHistory? {
-        val response = client.getByGameNumber(10)
+        val response = client.getByGameNumber(10).block()
         println(drawDate)
-        return if (response.returnValue == LottoResponseCode.OK) {
+        return if (response?.returnValue == LottoResponseCode.OK) {
             response.toDomain()
         } else {
             println(response)
