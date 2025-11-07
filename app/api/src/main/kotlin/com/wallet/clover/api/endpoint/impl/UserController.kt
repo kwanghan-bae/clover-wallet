@@ -1,8 +1,8 @@
 package com.wallet.clover.api.endpoint.impl
 
+import com.wallet.clover.api.application.Statistics
+import com.wallet.clover.api.application.StatisticsCalculator
 import com.wallet.clover.api.endpoint.UserSpec
-import com.wallet.clover.api.service.Statistics
-import com.wallet.clover.api.service.StatisticsCalculator
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
