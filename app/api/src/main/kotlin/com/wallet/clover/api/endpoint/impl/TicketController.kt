@@ -24,7 +24,10 @@ class TicketController(
 ) : TicketSpec {
 
     @PostMapping
-    override fun add(@RequestBody @Valid input: TicketSpec.Add.In): TicketSpec.Add.Out {
+    override fun add(
+        @RequestBody @Valid
+        input: TicketSpec.Add.In,
+    ): TicketSpec.Add.Out {
         saveLottoTicketUseCase.saveScannedTicket(
             SaveScannedTicketCommand(
                 userId = input.userId,
