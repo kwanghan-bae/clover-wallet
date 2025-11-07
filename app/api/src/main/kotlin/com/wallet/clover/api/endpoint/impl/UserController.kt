@@ -2,6 +2,7 @@ package com.wallet.clover.api.endpoint.impl
 
 import com.wallet.clover.adapter.LottoHistoryWebClient
 import com.wallet.clover.api.endpoint.UserSpec
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -14,7 +15,7 @@ class UserController(
 ) : UserSpec {
 
     @GetMapping
-    fun setUp() {
+    suspend fun setUp() {
         val dateCounter = mutableMapOf<Int, MutableMap<Int, LongAdder>>().apply {
             (1..31).forEach {
                 put(it, mutableMapOf())
@@ -33,7 +34,7 @@ class UserController(
         }
 
         (1..1065).forEach {
-            val game = client.getByGameNumber(it).block()!!.toDomain()
+            val game = client.getByGameNumber(it).awaitSingle().toDomain()
             listOf(
                 game.number1,
                 game.number2,
