@@ -1,9 +1,9 @@
 package com.wallet.clover.repository.game
 
 import com.wallet.clover.domain.game.LottoGame
-import com.wallet.clover.domain.game.outgoing.LottoGameLoadListPort
-import com.wallet.clover.domain.game.outgoing.LottoGameLoadPort
-import com.wallet.clover.domain.game.outgoing.LottoGameSavePort
+import com.wallet.clover.domain.game.LottoGameLoadListPort
+import com.wallet.clover.domain.game.LottoGameLoadPort
+import com.wallet.clover.domain.game.LottoGameSavePort
 import com.wallet.clover.entity.game.toDomain
 import com.wallet.clover.entity.game.toEntity
 import org.springframework.data.repository.findByIdOrNull

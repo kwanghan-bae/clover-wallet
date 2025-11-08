@@ -1,6 +1,4 @@
-package com.wallet.clover.domain.ticket.incoming
-
-import com.wallet.clover.domain.ticket.LottoTicket
+package com.wallet.clover.domain.ticket
 
 interface SaveLottoTicketUseCase {
     fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicket

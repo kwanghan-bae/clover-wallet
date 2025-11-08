@@ -1,4 +1,4 @@
-package com.wallet.clover.domain.game.outgoing
+package com.wallet.clover.domain.game
 
 interface LottoGameSavePort {
     fun save(domain: com.wallet.clover.domain.game.LottoGame)

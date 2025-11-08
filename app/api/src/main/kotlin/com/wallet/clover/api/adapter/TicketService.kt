@@ -2,14 +2,14 @@ package com.wallet.clover.api.adapter
 
 import com.wallet.clover.adapter.DocumentParser
 import com.wallet.clover.adapter.LottoTicketClient
-import com.wallet.clover.domain.game.outgoing.LottoGameSavePort
+import com.wallet.clover.domain.game.LottoGameSavePort
+import com.wallet.clover.domain.ticket.GetLottoTicketListQuery
+import com.wallet.clover.domain.ticket.GetLottoTicketQuery
 import com.wallet.clover.domain.ticket.LottoTicket
-import com.wallet.clover.domain.ticket.incoming.GetLottoTicketListQuery
-import com.wallet.clover.domain.ticket.incoming.GetLottoTicketQuery
-import com.wallet.clover.domain.ticket.incoming.SaveLottoTicketUseCase
-import com.wallet.clover.domain.ticket.incoming.SaveScannedTicketCommand
-import com.wallet.clover.domain.ticket.outgoing.LottoTicketLoadPort
-import com.wallet.clover.domain.ticket.outgoing.LottoTicketSavePort
+import com.wallet.clover.domain.ticket.LottoTicketLoadPort
+import com.wallet.clover.domain.ticket.LottoTicketSavePort
+import com.wallet.clover.domain.ticket.SaveLottoTicketUseCase
+import com.wallet.clover.domain.ticket.SaveScannedTicketCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

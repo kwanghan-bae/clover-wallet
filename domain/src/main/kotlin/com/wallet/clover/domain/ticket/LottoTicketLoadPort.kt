@@ -1,6 +1,4 @@
-package com.wallet.clover.domain.ticket.outgoing
-
-import com.wallet.clover.domain.ticket.LottoTicket
+package com.wallet.clover.domain.ticket
 
 interface LottoTicketLoadPort {
     fun byUserIdAndUrl(userId: Long, url: String): LottoTicket?

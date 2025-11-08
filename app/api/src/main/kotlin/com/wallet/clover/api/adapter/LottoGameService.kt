@@ -1,8 +1,8 @@
 package com.wallet.clover.api.adapter
 
 import com.wallet.clover.domain.game.LottoGame
-import com.wallet.clover.domain.game.incoming.GetLottoGameListQuery
-import com.wallet.clover.domain.game.outgoing.LottoGameLoadListPort
+import com.wallet.clover.domain.game.GetLottoGameListQuery
+import com.wallet.clover.domain.game.LottoGameLoadListPort
 import org.springframework.stereotype.Service
 
 @Service
