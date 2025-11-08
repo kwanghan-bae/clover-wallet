@@ -143,4 +143,94 @@ class LottoNumberExtractorTest {
             assertTrue(numbers.any { it in aquariusNumbers }, "물병자리 관련 숫자를 포함해야 합니다.")
         }
     }
+
+    @Nested
+    @DisplayName("개인적인 의미 부여 추출")
+    inner class PersonalSignificanceExtraction {
+        @Test
+        @DisplayName("개인 키워드가 주어지면 관련된 숫자를 포함해야 한다")
+        fun `should include numbers from personal keywords`() {
+            // given
+            val context = ExtractionContext(personalKeywords = listOf("19880715", "차량번호1234"))
+            val expectedNumbers = setOf(19, 88, 7, 15, 12, 34) // 1988 -> 19, 88 / 0715 -> 7, 15 / 1234 -> 12, 34
+
+            // when
+            val numbers = extractor.extract(ExtractionMethod.PERSONAL_SIGNIFICANCE, context)
+
+            // then
+            assertTrue(numbers.any { it in expectedNumbers }, "개인 키워드 관련 숫자가 최소 하나는 포함되어야 합니다.")
+        }
+    }
+
+    @Nested
+    @DisplayName("자연의 리듬과 패턴 추출")
+    inner class NaturePatternsExtraction {
+        @Test
+        @DisplayName("피보나치 키워드가 주어지면 피보나치 숫자를 포함해야 한다")
+        fun `should include fibonacci numbers for fibonacci keyword`() {
+            // given
+            val context = ExtractionContext(natureKeyword = "피보나치")
+            val expectedNumbers = setOf(1, 2, 3, 5, 8, 13, 21, 34)
+
+            // when
+            val numbers = extractor.extract(ExtractionMethod.NATURE_PATTERNS, context)
+
+            // then
+            assertTrue(numbers.any { it in expectedNumbers }, "피보나치 숫자가 최소 하나는 포함되어야 합니다.")
+        }
+    }
+
+    @Nested
+    @DisplayName("고대 점술 추출")
+    inner class AncientDivinationExtraction {
+        @Test
+        @DisplayName("주역 키워드가 주어지면 주역 관련 숫자를 포함해야 한다")
+        fun `should include I Ching numbers for I Ching keyword`() {
+            // given
+            val context = ExtractionContext(divinationKeyword = "주역")
+            val expectedNumbers = setOf(1, 6, 8, 11, 24, 30)
+
+            // when
+            val numbers = extractor.extract(ExtractionMethod.ANCIENT_DIVINATION, context)
+
+            // then
+            assertTrue(numbers.any { it in expectedNumbers }, "주역 관련 숫자가 최소 하나는 포함되어야 합니다.")
+        }
+    }
+
+    @Nested
+    @DisplayName("색상 및 소리 추출")
+    inner class ColorsSoundsExtraction {
+        @Test
+        @DisplayName("빨강 키워드가 주어지면 빨강 관련 숫자를 포함해야 한다")
+        fun `should include red related numbers for red keyword`() {
+            // given
+            val context = ExtractionContext(colorKeyword = "빨강")
+            val expectedNumbers = setOf(1, 10, 19, 28, 37)
+
+            // when
+            val numbers = extractor.extract(ExtractionMethod.COLORS_SOUNDS, context)
+
+            // then
+            assertTrue(numbers.any { it in expectedNumbers }, "빨강 관련 숫자가 최소 하나는 포함되어야 합니다.")
+        }
+    }
+
+    @Nested
+    @DisplayName("동물 징조 추출")
+    inner class AnimalOmensExtraction {
+        @Test
+        @DisplayName("까치 키워드가 주어지면 까치 관련 숫자를 포함해야 한다")
+        fun `should include magpie related numbers for magpie keyword`() {
+            // given
+            val context = ExtractionContext(animalKeyword = "까치")
+            val expectedNumbers = setOf(7, 17, 27)
+
+            // when
+            val numbers = extractor.extract(ExtractionMethod.ANIMAL_OMENS, context)
+
+            // then
+            assertTrue(numbers.any { it in expectedNumbers }, "까치 관련 숫자가 최소 하나는 포함되어야 합니다.")
+        }
+    }
 }

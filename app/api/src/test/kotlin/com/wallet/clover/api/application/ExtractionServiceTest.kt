@@ -31,19 +31,41 @@ class ExtractionServiceTest {
         val method = ExtractionMethod.DREAM
         val dreamKeyword = "돼지"
         val birthDate = LocalDate.of(1990, 1, 1)
+        val personalKeywords = listOf("19880715")
+        val natureKeyword = "피보나치"
+        val divinationKeyword = "주역"
+        val colorKeyword = "빨강"
+        val animalKeyword = "까치"
         val expectedNumbers = setOf(1, 2, 3, 4, 5, 6)
 
         every { lottoNumberExtractor.extract(any(), any()) } returns expectedNumbers
 
         // when
-        val result = extractionService.extractLottoNumbers(method, dreamKeyword, birthDate)
+        val result = extractionService.extractLottoNumbers(
+            method,
+            dreamKeyword,
+            birthDate,
+            personalKeywords,
+            natureKeyword,
+            divinationKeyword,
+            colorKeyword,
+            animalKeyword,
+        )
 
         // then
         assertEquals(expectedNumbers, result)
         verify(exactly = 1) {
             lottoNumberExtractor.extract(
                 method,
-                ExtractionContext(dreamKeyword, birthDate), // Changed to simple name
+                ExtractionContext(
+                    dreamKeyword = dreamKeyword,
+                    birthDate = birthDate,
+                    personalKeywords = personalKeywords,
+                    natureKeyword = natureKeyword,
+                    divinationKeyword = divinationKeyword,
+                    colorKeyword = colorKeyword,
+                    animalKeyword = animalKeyword,
+                ),
             )
         }
     }

@@ -29,6 +29,11 @@ class LottoNumberExtractor {
             ExtractionMethod.STATISTICS_HOT -> extractFromStatistics(hotNumbers)
             ExtractionMethod.STATISTICS_COLD -> extractFromStatistics(coldNumbers)
             ExtractionMethod.HOROSCOPE -> extractFromHoroscope(context?.birthDate)
+            ExtractionMethod.PERSONAL_SIGNIFICANCE -> extractFromPersonalSignificance(context?.personalKeywords)
+            ExtractionMethod.NATURE_PATTERNS -> extractFromNaturePatterns(context?.natureKeyword)
+            ExtractionMethod.ANCIENT_DIVINATION -> extractFromAncientDivination(context?.divinationKeyword)
+            ExtractionMethod.COLORS_SOUNDS -> extractFromColorsSounds(context?.colorKeyword)
+            ExtractionMethod.ANIMAL_OMENS -> extractFromAnimalOmens(context?.animalKeyword)
         }
 
         return generateNumbers(seedNumbers)
@@ -71,6 +76,76 @@ class LottoNumberExtractor {
         if (birthDate == null) return emptySet()
         val sign = getZodiacSign(birthDate)
         return horoscopeNumberMap[sign] ?: emptySet()
+    }
+
+    /**
+     * 개인적인 의미 부여 기반 번호 추출.
+     * 입력된 키워드(예: 기념일, 전화번호)에서 숫자를 추출합니다.
+     */
+    private fun extractFromPersonalSignificance(keywords: List<String>?): Set<Int> {
+        if (keywords.isNullOrEmpty()) return emptySet()
+        val numbers = mutableSetOf<Int>()
+        keywords.forEach { keyword ->
+            keyword.filter { it.isDigit() }.chunked(2).forEach {
+                it.toIntOrNull()?.let { num ->
+                    if (num in LOTTO_MIN_NUMBER..LOTTO_MAX_NUMBER) numbers.add(num)
+                }
+            }
+        }
+        return numbers
+    }
+
+    /**
+     * 자연의 리듬과 패턴 기반 번호 추출.
+     * 피보나치 수열 등 자연 패턴에서 숫자를 가져옵니다.
+     */
+    private fun extractFromNaturePatterns(keyword: String?): Set<Int> {
+        return when (keyword) {
+            "피보나치" -> fibonacciNumbers.filter { it in LOTTO_MIN_NUMBER..LOTTO_MAX_NUMBER }.toSet()
+            "봄" -> setOf(3, 4, 5) // 봄에 해당하는 월
+            "여름" -> setOf(6, 7, 8) // 여름에 해당하는 월
+            "가을" -> setOf(9, 10, 11) // 가을에 해당하는 월
+            "겨울" -> setOf(12, 1, 2) // 겨울에 해당하는 월
+            else -> emptySet()
+        }
+    }
+
+    /**
+     * 고대 점술 기반 번호 추출.
+     * 주역 괘나 룬 문자 등에서 연관된 숫자를 가져옵니다.
+     */
+    private fun extractFromAncientDivination(keyword: String?): Set<Int> {
+        return when (keyword) {
+            "주역" -> setOf(1, 6, 8, 11, 24, 30) // 예시 주역 관련 숫자
+            "룬" -> setOf(3, 9, 13, 21, 27, 40) // 예시 룬 관련 숫자
+            else -> emptySet()
+        }
+    }
+
+    /**
+     * 색상 및 소리 기반 번호 추출.
+     * 색상이나 소리 주파수와 연관된 숫자를 가져옵니다.
+     */
+    private fun extractFromColorsSounds(keyword: String?): Set<Int> {
+        return when (keyword) {
+            "빨강" -> setOf(1, 10, 19, 28, 37) // 열정, 에너지
+            "초록" -> setOf(4, 13, 22, 31, 40) // 안정, 성장
+            "금색" -> setOf(7, 16, 25, 34, 43) // 부, 행운
+            else -> emptySet()
+        }
+    }
+
+    /**
+     * 동물 징조 기반 번호 추출.
+     * 특정 동물과 연관된 숫자를 가져옵니다.
+     */
+    private fun extractFromAnimalOmens(keyword: String?): Set<Int> {
+        return when (keyword) {
+            "까치" -> setOf(7, 17, 27) // 좋은 소식
+            "검은고양이" -> setOf(13, 26, 39) // 불운을 행운으로
+            "뱀" -> setOf(4, 14, 24) // 지혜, 변신
+            else -> emptySet()
+        }
     }
 
     /**
@@ -122,6 +197,8 @@ class LottoNumberExtractor {
     private val hotNumbers = listOf(34, 1, 13, 12, 27, 45, 17, 20, 33, 39) // 예시 데이터
     private val coldNumbers = listOf(9, 22, 23, 29, 30, 3, 6, 7, 10, 11) // 예시 데이터
 
+    private val fibonacciNumbers = listOf(1, 2, 3, 5, 8, 13, 21, 34) // 피보나치 수열 예시
+
     enum class ZodiacSign {
         ARIES,
         TAURUS,
@@ -159,4 +236,9 @@ class LottoNumberExtractor {
 data class ExtractionContext(
     val dreamKeyword: String? = null,
     val birthDate: LocalDate? = null,
+    val personalKeywords: List<String>? = null, // 개인적인 의미 부여
+    val natureKeyword: String? = null, // 자연의 리듬과 패턴
+    val divinationKeyword: String? = null, // 고대 점술
+    val colorKeyword: String? = null, // 색상 및 소리
+    val animalKeyword: String? = null, // 동물 징조
 )
