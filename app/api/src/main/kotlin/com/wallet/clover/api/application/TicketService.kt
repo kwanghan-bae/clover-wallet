@@ -4,7 +4,6 @@ import com.wallet.clover.adapter.DocumentParser
 import com.wallet.clover.adapter.LottoTicketClient
 import com.wallet.clover.domain.game.LottoGame
 import com.wallet.clover.domain.ticket.LottoTicket
-import com.wallet.clover.domain.ticket.SaveLottoTicketUseCase
 import com.wallet.clover.domain.ticket.SaveScannedTicketCommand
 import com.wallet.clover.repository.game.LottoGameRdbAdaptor
 import com.wallet.clover.repository.ticket.LottoTicketRdbAdaptor
@@ -17,9 +16,9 @@ class TicketService(
     val lottoTicketRdbAdaptor: LottoTicketRdbAdaptor,
     val lottoGameRdbAdaptor: LottoGameRdbAdaptor,
     val lottoTicketFeignClient: LottoTicketClient,
-) : SaveLottoTicketUseCase {
+) {
     @Transactional
-    override fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicket {
+    fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicket {
         val preRegistered = lottoTicketRdbAdaptor.byUserIdAndUrl(command.userId, command.url)
         return preRegistered ?: kotlin.run {
             val document = lottoTicketFeignClient.getDocumentByUrl(command.url)
