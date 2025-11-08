@@ -26,8 +26,21 @@ class ExtractionService(
         method: ExtractionMethod,
         dreamKeyword: String? = null,
         birthDate: LocalDate? = null,
+        personalKeywords: List<String>? = null,
+        natureKeyword: String? = null,
+        divinationKeyword: String? = null,
+        colorKeyword: String? = null,
+        animalKeyword: String? = null,
     ): Set<Int> {
-        val context = ExtractionContext(dreamKeyword, birthDate)
+        val context = ExtractionContext(
+            dreamKeyword = dreamKeyword,
+            birthDate = birthDate,
+            personalKeywords = personalKeywords,
+            natureKeyword = natureKeyword,
+            divinationKeyword = divinationKeyword,
+            colorKeyword = colorKeyword,
+            animalKeyword = animalKeyword,
+        )
         return lottoNumberExtractor.extract(method, context)
     }
 }
