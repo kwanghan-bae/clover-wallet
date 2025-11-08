@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactor.awaitSingle
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.util.concurrent.atomic.LongAdder
 
@@ -16,12 +17,16 @@ class StatisticsCalculator(
     private val client: LottoHistoryWebClient,
     private val mapper: LottoHistoryMapper,
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     suspend fun calculate(): Statistics {
+        logger.info("Fetching and processing games...")
         val games = (1..1065).asFlow()
             .map { client.getByGameNumber(it).awaitSingle() }
             .map { mapper.toDomain(it) }
             .filterNotNull()
             .toList()
+        logger.info("Finished fetching and processing ${games.size} games.")
 
         val dateCounter = mutableMapOf<Int, MutableMap<Int, LongAdder>>()
         val monthCounter = mutableMapOf<Int, MutableMap<Int, LongAdder>>()
@@ -38,6 +43,7 @@ class StatisticsCalculator(
                     .computeIfAbsent(number) { LongAdder() }.increment()
             }
         }
+        logger.info("Finished calculating statistics.")
         return Statistics(dateCounter, monthCounter, oddEvenCounter)
     }
 
