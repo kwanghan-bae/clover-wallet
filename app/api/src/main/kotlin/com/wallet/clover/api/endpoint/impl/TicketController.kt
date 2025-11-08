@@ -1,6 +1,9 @@
 package com.wallet.clover.api.endpoint.impl
 
 import com.wallet.clover.api.application.TicketService
+import com.wallet.clover.api.endpoint.Add
+import com.wallet.clover.api.endpoint.Detail
+import com.wallet.clover.api.endpoint.List
 import com.wallet.clover.api.endpoint.TicketSpec
 import com.wallet.clover.domain.ticket.SaveScannedTicketCommand
 import jakarta.validation.Valid
@@ -20,20 +23,20 @@ class TicketController(
     @PostMapping
     override fun add(
         @RequestBody @Valid
-        input: TicketSpec.Add.In,
-    ): TicketSpec.Add.Out {
+        input: Add.In,
+    ): Add.Out {
         ticketService.saveScannedTicket(
             SaveScannedTicketCommand(
                 userId = input.userId,
                 url = input.qrCode,
             ),
         )
-        return TicketSpec.Add.Out.success()
+        return Add.Out.success()
     }
 
     @GetMapping
-    override fun list(input: TicketSpec.List.In): TicketSpec.List.Out {
-        return TicketSpec.List.Out(
+    override fun list(input: List.In): List.Out {
+        return List.Out(
             ticketService.byUserId(input.userId),
         )
     }
@@ -41,8 +44,8 @@ class TicketController(
     @GetMapping("/{ticketId}")
     override fun detail(
         @PathVariable ticketId: Long,
-    ): TicketSpec.Detail.Out {
-        return TicketSpec.Detail.Out(
+    ): Detail.Out {
+        return Detail.Out(
             ticket = ticketService.byId(ticketId),
             games = ticketService.getGamesByTicketId(ticketId),
         )
