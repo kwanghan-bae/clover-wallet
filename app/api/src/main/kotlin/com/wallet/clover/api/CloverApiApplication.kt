@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class CloverApiApplication
 
 fun main(args: Array<String>) {
-    runApplication<InternalApiApplication>(*args)
+    runApplication<CloverApiApplication>(*args)
 }
