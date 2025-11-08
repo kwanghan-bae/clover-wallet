@@ -1,5 +1,6 @@
 package com.wallet.clover.api.application
 
+import com.wallet.clover.domain.extraction.ExtractionContext
 import com.wallet.clover.domain.extraction.ExtractionMethod
 import com.wallet.clover.domain.extraction.LottoNumberExtractor
 import io.mockk.every
@@ -42,7 +43,7 @@ class ExtractionServiceTest {
         verify(exactly = 1) {
             lottoNumberExtractor.extract(
                 method,
-                com.wallet.clover.domain.extraction.ExtractionContext(dreamKeyword, birthDate),
+                ExtractionContext(dreamKeyword, birthDate), // Changed to simple name
             )
         }
     }
