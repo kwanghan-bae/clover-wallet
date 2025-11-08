@@ -1,6 +1,6 @@
 package com.wallet.clover.adapter
 
-import com.wallet.clover.domain.lotto.outgoing.LoadLottoHistoryPort
+import com.wallet.clover.domain.lotto.LoadLottoHistoryPort
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service

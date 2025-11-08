@@ -1,11 +1,11 @@
 package com.wallet.clover.api.endpoint.impl
 
 import com.wallet.clover.api.endpoint.TicketSpec
-import com.wallet.clover.domain.game.incoming.GetLottoGameListQuery
-import com.wallet.clover.domain.ticket.incoming.GetLottoTicketListQuery
-import com.wallet.clover.domain.ticket.incoming.GetLottoTicketQuery
-import com.wallet.clover.domain.ticket.incoming.SaveLottoTicketUseCase
-import com.wallet.clover.domain.ticket.incoming.SaveScannedTicketCommand
+import com.wallet.clover.domain.game.GetLottoGameListQuery
+import com.wallet.clover.domain.ticket.GetLottoTicketListQuery
+import com.wallet.clover.domain.ticket.GetLottoTicketQuery
+import com.wallet.clover.domain.ticket.SaveLottoTicketUseCase
+import com.wallet.clover.domain.ticket.SaveScannedTicketCommand
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable

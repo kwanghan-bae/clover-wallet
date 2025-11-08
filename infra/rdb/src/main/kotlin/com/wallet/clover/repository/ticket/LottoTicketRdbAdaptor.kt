@@ -1,8 +1,8 @@
 package com.wallet.clover.repository.ticket
 
 import com.wallet.clover.domain.ticket.LottoTicket
-import com.wallet.clover.domain.ticket.outgoing.LottoTicketLoadPort
-import com.wallet.clover.domain.ticket.outgoing.LottoTicketSavePort
+import com.wallet.clover.domain.ticket.LottoTicketLoadPort
+import com.wallet.clover.domain.ticket.LottoTicketSavePort
 import com.wallet.clover.entity.ticket.toDomain
 import com.wallet.clover.entity.ticket.toEntity
 import org.springframework.data.repository.findByIdOrNull
