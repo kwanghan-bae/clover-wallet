@@ -4,7 +4,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication(scanBasePackages = ["com.wallet.clover"])
-class InternalApiApplication
+class CloverApiApplication
 
 fun main(args: Array<String>) {
     runApplication<InternalApiApplication>(*args)
