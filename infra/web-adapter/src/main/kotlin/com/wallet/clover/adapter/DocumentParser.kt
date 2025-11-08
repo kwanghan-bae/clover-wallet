@@ -4,28 +4,33 @@ import com.wallet.clover.domain.game.LottoGame
 import com.wallet.clover.domain.game.LottoGameStatus
 import com.wallet.clover.domain.ticket.LottoTicketStatus
 import org.jsoup.nodes.Document
+import org.slf4j.LoggerFactory
 
 object DocumentParser {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     fun getOrdinal(document: Document): Int {
         val content = document.select("h3 > span.key_clr1").text()
+        logger.debug("Parsed ordinal content: {}", content)
         return content.filter { it.isDigit() }.toInt()
     }
 
     fun getTicketStatus(document: Document): LottoTicketStatus {
-        // sample of real html
-        // 낙첨되었습니다.
-        // 미추첨 복권입니다.
-        // 총 5,000원 당첨
         val content = document.select("div.bx_notice > div > strong").text()
+        logger.debug("Parsed ticket status content: {}", content)
         return when {
             content.contains("낙첨") -> LottoTicketStatus.LOSING
             content.contains("미추첨") -> LottoTicketStatus.STASHED
             content.contains("당첨") -> LottoTicketStatus.WINNING
-            else -> throw RuntimeException("$content 는 식별할 수 없는 문구 입니다.")
+            else -> {
+                logger.error("Unidentifiable ticket status content: {}", content)
+                throw DocumentParsingException("$content 는 식별할 수 없는 문구 입니다.")
+            }
         }
     }
 
     fun getGames(userId: Long, ticketId: Long, document: Document): List<LottoGame> {
+        logger.info("Parsing games for userId: {}, ticketId: {}", userId, ticketId)
         val gameList = getGameList(document)
             .chunked(6)
         val resultList = getGameResult(document)
@@ -42,6 +47,8 @@ object DocumentParser {
                 number5 = gameList[index][4].toInt(),
                 number6 = gameList[index][5].toInt(),
             )
+        }.also {
+            logger.info("Successfully parsed {} games.", it.size)
         }
     }
 
