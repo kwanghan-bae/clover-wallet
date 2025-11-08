@@ -1,10 +1,7 @@
 package com.wallet.clover.api.endpoint.impl
 
+import com.wallet.clover.api.application.TicketService
 import com.wallet.clover.api.endpoint.TicketSpec
-import com.wallet.clover.domain.game.GetLottoGameListQuery
-import com.wallet.clover.domain.ticket.GetLottoTicketListQuery
-import com.wallet.clover.domain.ticket.GetLottoTicketQuery
-import com.wallet.clover.domain.ticket.SaveLottoTicketUseCase
 import com.wallet.clover.domain.ticket.SaveScannedTicketCommand
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,10 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/v1/ticket")
 @RestController
 class TicketController(
-    val saveLottoTicketUseCase: SaveLottoTicketUseCase,
-    val getLottoTicketListQuery: GetLottoTicketListQuery,
-    val getLottoTicketQuery: GetLottoTicketQuery,
-    val getLottoGameListQuery: GetLottoGameListQuery,
+    private val ticketService: TicketService,
 ) : TicketSpec {
 
     @PostMapping
@@ -28,7 +22,7 @@ class TicketController(
         @RequestBody @Valid
         input: TicketSpec.Add.In,
     ): TicketSpec.Add.Out {
-        saveLottoTicketUseCase.saveScannedTicket(
+        ticketService.saveScannedTicket(
             SaveScannedTicketCommand(
                 userId = input.userId,
                 url = input.qrCode,
@@ -40,7 +34,7 @@ class TicketController(
     @GetMapping
     override fun list(input: TicketSpec.List.In): TicketSpec.List.Out {
         return TicketSpec.List.Out(
-            getLottoTicketListQuery.byUserId(input.userId),
+            ticketService.byUserId(input.userId),
         )
     }
 
@@ -49,8 +43,8 @@ class TicketController(
         @PathVariable ticketId: Long,
     ): TicketSpec.Detail.Out {
         return TicketSpec.Detail.Out(
-            ticket = getLottoTicketQuery.byId(ticketId),
-            games = getLottoGameListQuery.byTicketId(ticketId),
+            ticket = ticketService.byId(ticketId),
+            games = ticketService.getGamesByTicketId(ticketId),
         )
     }
 }

@@ -1,7 +1,9 @@
-package com.wallet.clover.api.adapter
+package com.wallet.clover.api.application
 
 import com.wallet.clover.adapter.DocumentParser
 import com.wallet.clover.adapter.LottoTicketClient
+import com.wallet.clover.domain.game.LottoGame
+import com.wallet.clover.domain.game.LottoGameLoadListPort
 import com.wallet.clover.domain.game.LottoGameSavePort
 import com.wallet.clover.domain.ticket.GetLottoTicketListQuery
 import com.wallet.clover.domain.ticket.GetLottoTicketQuery
@@ -19,6 +21,7 @@ class TicketService(
     val lottoTicketSavePort: LottoTicketSavePort,
     val lottoTicketLoadPort: LottoTicketLoadPort,
     val lottoGameSavePort: LottoGameSavePort,
+    val lottoGameLoadListPort: LottoGameLoadListPort,
     val lottoTicketFeignClient: LottoTicketClient,
 ) : SaveLottoTicketUseCase, GetLottoTicketQuery, GetLottoTicketListQuery {
     @Transactional
@@ -46,5 +49,9 @@ class TicketService(
 
     override fun byId(ticketId: Long): LottoTicket {
         return lottoTicketLoadPort.byId(ticketId)
+    }
+
+    fun getGamesByTicketId(ticketId: Long): List<LottoGame> {
+        return lottoGameLoadListPort.byTicketId(ticketId)
     }
 }
