@@ -2,10 +2,12 @@ package com.wallet.clover.domain.recommendation
 
 import com.wallet.clover.domain.recommendationsource.RecommendationRatio
 import com.wallet.clover.domain.user.User
+import org.slf4j.LoggerFactory
 import java.security.SecureRandom
-import java.time.LocalDate
 
 object NumberSelector {
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     private fun selectByText(source: String): List<Int> {
         val bucket = mutableSetOf<Int>()
         do {
@@ -31,7 +33,7 @@ object NumberSelector {
             .sortedWith { o1, o2 -> o2.value.size.compareTo(o1.value.size) }
             .take(6)
             .onEach {
-                println("${it.key} , ${it.value.size} 회 반영")
+                logger.debug("{} , {} 회 반영", it.key, it.value.size)
             }.map { it.key }
             .toList()
     }
@@ -39,16 +41,16 @@ object NumberSelector {
     fun select(ratio: RecommendationRatio, user: User): List<Int> {
         val source = mutableListOf<Int>()
         repeat(ratio.birthDayWeight) {
-            source += selectByText(user.birthDay.toString())
+            user.birthDay?.toString()?.let { source += selectByText(it) }
         }
         repeat(ratio.customTextWeight) {
-            source += selectByText(user.customText.toString())
+            user.customText?.let { source += selectByText(it) }
         }
         repeat(ratio.randomWeight) {
             source += selectRandom()
         }
         repeat(ratio.nameWeight) {
-            source += selectByText(user.name.toString())
+            user.name?.let { source += selectByText(it) }
         }
         repeat(ratio.dateWeight) {
             source += selectRandom()
@@ -66,43 +68,5 @@ object NumberSelector {
             source += selectRandom()
         }
         return merge(source)
-    }
-
-    /**
-     * 또다른 재미요소
-     * 1. 추첨일자별 많이 나오는 번호 반영
-     * 2. 월별 많이 나오는 번호 반영
-     * 3. 홀짝 회차별 많이 나오는 번호 반영
-     * 4. 번호의 총합구간 별 확률 반영
-     * 5. 지난 회차를 참조하여 연속해서 자주 나오는 번호 반영
-     */
-    @JvmStatic
-    fun main(args: Array<String>) {
-        println(merge(selectByText("hi")))
-
-        select(
-            ratio = RecommendationRatio(
-                id = 0,
-                userId = 0,
-                randomWeight = 10,
-                customTextWeight = 10,
-                birthDayWeight = 10,
-                nameWeight = 10,
-                dateWeight = 10,
-                monthWeight = 10,
-                oddAndEvenWeight = 10,
-                sumRangeWeight = 10,
-                previousGameWeight = 10,
-            ),
-            user = User(
-                id = 0,
-                ssoQualifier = null,
-                locale = null,
-                age = null,
-                customText = "true love",
-                name = "joel.ship",
-                birthDay = LocalDate.of(1989, 9, 11),
-            ),
-        )
     }
 }
