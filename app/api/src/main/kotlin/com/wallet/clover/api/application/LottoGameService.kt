@@ -1,4 +1,4 @@
-package com.wallet.clover.api.adapter
+package com.wallet.clover.api.application
 
 import com.wallet.clover.domain.game.LottoGame
 import com.wallet.clover.domain.game.GetLottoGameListQuery
