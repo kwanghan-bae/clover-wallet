@@ -4,6 +4,10 @@ dependencyManagement {
     }
 }
 
+springBoot {
+    mainClass.set("com.wallet.clover.api.CloverApiApplicationKt")
+}
+
 dependencies {
     implementation(Libraries.Spring.bootStarter)
     implementation(Libraries.Spring.bootStarterWebflux)
