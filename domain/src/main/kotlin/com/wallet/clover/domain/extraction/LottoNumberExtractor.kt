@@ -1,5 +1,6 @@
 package com.wallet.clover.domain.extraction
 
+import org.springframework.stereotype.Component
 import java.time.LocalDate
 import kotlin.random.Random
 
@@ -7,6 +8,7 @@ import kotlin.random.Random
  * 미신적 방법론에 기반하여 로또 번호를 추출하는 클래스입니다.
  * 각 추출 방법은 재미를 위한 요소이며, 실제 당첨 확률에 영향을 주지 않습니다.
  */
+@Component
 class LottoNumberExtractor {
 
     companion object {
