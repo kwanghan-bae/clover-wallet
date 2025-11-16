@@ -31,9 +31,7 @@ object DocumentParser {
 
     fun getGames(userId: Long, ticketId: Long, document: Document): List<LottoGame> {
         logger.info("Parsing games for userId: {}, ticketId: {}", userId, ticketId)
-        
         val gameRows = document.select("div.list_my_number table tbody tr")
-        
         return gameRows.map { row ->
             val resultText = row.select("td.result").text().trim()
             val numbers = row.select("td span.clr").mapNotNull { it.text().toIntOrNull() }
@@ -52,7 +50,7 @@ object DocumentParser {
                 number3 = numbers[2],
                 number4 = numbers[3],
                 number5 = numbers[4],
-                number6 = numbers[5]
+                number6 = numbers[5],
             )
         }.also {
             logger.info("Successfully parsed {} games.", it.size)
