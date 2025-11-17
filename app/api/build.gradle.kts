@@ -18,4 +18,5 @@ dependencies {
     implementation(project(Modules.Infra.webAdapter))
     api(project(Modules.Infra.rdb))
     implementation(Libraries.Kotlin.jackson)
+    implementation("com.google.firebase:firebase-admin:9.2.0")
 }
