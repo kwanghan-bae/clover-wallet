@@ -2,10 +2,12 @@ package com.wallet.clover.api.application
 
 import com.wallet.clover.api.endpoint.CreatePostRequest
 import com.wallet.clover.api.endpoint.PostResponse
+import com.wallet.clover.api.endpoint.UpdatePostRequest
 import com.wallet.clover.domain.community.Post
 import com.wallet.clover.entity.community.toDomain
 import com.wallet.clover.entity.community.toEntity
 import com.wallet.clover.repository.community.PostRepository
+import jakarta.persistence.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -34,6 +36,25 @@ class CommunityService(
     @Transactional(readOnly = true)
     fun getPosts(): List<PostResponse> {
         return postRepository.findAll().map { it.toDomain().toResponse() }
+    }
+
+    @Transactional
+    fun updatePost(postId: Long, request: UpdatePostRequest): PostResponse {
+        val postEntity = postRepository.findById(postId)
+            .orElseThrow { EntityNotFoundException("Post not found with id: $postId") }
+
+        postEntity.title = request.title
+        postEntity.content = request.content
+
+        return postRepository.save(postEntity).toDomain().toResponse()
+    }
+
+    @Transactional
+    fun deletePost(postId: Long) {
+        if (!postRepository.existsById(postId)) {
+            throw EntityNotFoundException("Post not found with id: $postId")
+        }
+        postRepository.deleteById(postId)
     }
 
     private fun Post.toResponse(): PostResponse = PostResponse(
