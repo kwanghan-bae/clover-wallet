@@ -10,6 +10,7 @@ import java.io.IOException
 @Service
 class LottoService(
     private val lottoGameRdbAdaptor: LottoGameRdbAdaptor,
+    private val notificationService: NotificationService,
 ) {
 
     private val lottoUrl = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
@@ -42,6 +43,13 @@ class LottoService(
                 }
 
                 rank?.let {
+                    // For now, hardcode a device token for testing.
+                    // In a real application, this would be fetched from a database for the given userId.
+                    val dummyDeviceToken = "YOUR_USER_DEVICE_TOKEN_HERE" // Replace with actual token
+                    val winningAmount = "1,000,000원" // Dummy amount for notification
+
+                    notificationService.sendWinningNotification(dummyDeviceToken, winningAmount)
+
                     LottoCheck.UserWinningTicket(
                         round = roundText.toInt(),
                         userNumbers = userNumbers,
