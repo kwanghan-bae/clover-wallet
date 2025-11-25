@@ -22,9 +22,10 @@ subprojects {
 
     group = "com.clover.wallet"
 
-    configurations {
-        java.sourceCompatibility = JavaVersion.VERSION_17
-        java.targetCompatibility = JavaVersion.VERSION_17
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
     }
     repositories {
         mavenCentral()
@@ -53,7 +54,7 @@ subprojects {
         compileKotlin {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "17"
+                jvmTarget = "21"
             }
             dependsOn(processResources) // kotlin 에서 ConfigurationProperties
         }
@@ -61,7 +62,7 @@ subprojects {
         compileTestKotlin {
             kotlinOptions {
                 freeCompilerArgs = listOf("-Xjsr305=strict")
-                jvmTarget = "17"
+                jvmTarget = "21"
             }
             dependsOn(processResources) // kotlin 에서 ConfigurationProperties
         }
