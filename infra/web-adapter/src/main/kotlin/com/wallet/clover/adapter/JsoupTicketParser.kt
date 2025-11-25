@@ -1,21 +1,35 @@
 package com.wallet.clover.adapter
 
-import com.wallet.clover.domain.game.LottoGame
 import com.wallet.clover.domain.game.LottoGameStatus
 import com.wallet.clover.domain.ticket.LottoTicketStatus
+import com.wallet.clover.domain.ticket.parser.ParsedGame
+import com.wallet.clover.domain.ticket.parser.ParsedTicket
+import com.wallet.clover.domain.ticket.parser.TicketParser
+import com.wallet.clover.domain.ticket.parser.TicketParsingException
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Component
 
-object DocumentParser {
+@Component
+class JsoupTicketParser : TicketParser {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun getOrdinal(document: Document): Int {
+    override fun parse(html: String): ParsedTicket {
+        val document = Jsoup.parse(html)
+        val ordinal = getOrdinal(document)
+        val status = getTicketStatus(document)
+        val games = getGames(document)
+        return ParsedTicket(ordinal, status, games)
+    }
+
+    private fun getOrdinal(document: Document): Int {
         val content = document.select("h3 > span.key_clr1").firstOrNull()?.text() ?: "0"
         logger.debug("Parsed ordinal content: {}", content)
         return content.filter { it.isDigit() }.toIntOrNull() ?: 0
     }
 
-    fun getTicketStatus(document: Document): LottoTicketStatus {
+    private fun getTicketStatus(document: Document): LottoTicketStatus {
         val content = document.select("div.bx_notice.winner strong").firstOrNull()?.text() ?: ""
         logger.debug("Parsed ticket status content: {}", content)
         return when {
@@ -24,13 +38,13 @@ object DocumentParser {
             content.contains("추첨") -> LottoTicketStatus.STASHED // "미추첨" 대신 "추첨" 키워드 사용
             else -> {
                 logger.error("Unidentifiable ticket status content: {}", content)
-                throw DocumentParsingException("'$content' 는 식별할 수 없는 문구 입니다.")
+                throw TicketParsingException("'$content' 는 식별할 수 없는 문구 입니다.")
             }
         }
     }
 
-    fun getGames(userId: Long, ticketId: Long, document: Document): List<LottoGame> {
-        logger.info("Parsing games for userId: {}, ticketId: {}", userId, ticketId)
+    private fun getGames(document: Document): List<ParsedGame> {
+        logger.info("Parsing games from document")
         val gameRows = document.select("div.list_my_number table tbody tr")
         return gameRows.map { row ->
             val resultText = row.select("td.result").text().trim()
@@ -38,12 +52,10 @@ object DocumentParser {
 
             if (numbers.size != 6) {
                 logger.error("Parsed game has incorrect number count: {}", numbers)
-                throw DocumentParsingException("게임의 번호가 6개가 아닙니다.")
+                throw TicketParsingException("게임의 번호가 6개가 아닙니다.")
             }
 
-            LottoGame(
-                ticketId = ticketId,
-                userId = userId,
+            ParsedGame(
                 status = LottoGameStatus.valueOfHtmlValue(resultText),
                 number1 = numbers[0],
                 number2 = numbers[1],
