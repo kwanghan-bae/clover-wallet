@@ -1,9 +1,8 @@
-plugins {
-    kotlin("plugin.jpa") version Versions.kotlin
-}
+apply(plugin = "org.jetbrains.kotlin.plugin.jpa")
+
 dependencies {
-    api(Libraries.Spring.bootStarterDataJpa)
-    implementation(project(Modules.domain))
-    runtimeOnly(Libraries.Persistence.h2)
-    runtimeOnly("org.postgresql:postgresql:42.7.2")
+    api("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation(project(":domain"))
+    runtimeOnly("com.h2database:h2:${rootProject.extra["h2Version"] as String}")
+    runtimeOnly("org.postgresql:postgresql:${rootProject.extra["postgresqlVersion"] as String}")
 }
