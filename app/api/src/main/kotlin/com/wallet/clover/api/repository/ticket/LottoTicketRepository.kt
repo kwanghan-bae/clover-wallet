@@ -1,0 +1,10 @@
+package com.wallet.clover.api.repository.ticket
+
+import com.wallet.clover.api.entity.ticket.LottoTicketEntity
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
+import org.springframework.stereotype.Repository
+
+@Repository
+interface LottoTicketRepository : CoroutineCrudRepository<LottoTicketEntity, Long> {
+    suspend fun findByUserId(userId: Long): List<LottoTicketEntity>
+}
