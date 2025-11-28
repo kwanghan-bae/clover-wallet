@@ -20,11 +20,20 @@ dependencies {
     implementation(
         "org.jsoup:jsoup:${rootProject.extra["jsoupVersion"] as String}",
     )
-    implementation(project(":domain"))
-    implementation(project(":infra:web-adapter"))
-    api(project(":infra:rdb"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.google.firebase:firebase-admin:9.2.0")
+    
+    // Database
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("com.h2database:h2:${rootProject.extra["h2Version"] as String}")
+    runtimeOnly("org.postgresql:postgresql:${rootProject.extra["postgresqlVersion"] as String}")
+    
+    // Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    
+    // Reactive
+    implementation("io.projectreactor:reactor-core:3.6.5")
 }
 
 tasks.register("generateDdl", JavaExec::class) {
