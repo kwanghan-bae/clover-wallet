@@ -38,3 +38,4 @@ out/
 
 # Local configuration files
 application-local.yml
+/gemini/
