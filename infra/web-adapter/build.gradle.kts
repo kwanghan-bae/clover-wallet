@@ -14,4 +14,6 @@ dependencies {
         "org.jsoup:jsoup:${rootProject.extra["jsoupVersion"] as String}",
     )
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 }

@@ -1,5 +1,6 @@
 package com.wallet.clover.entity.user
 
+import com.wallet.clover.domain.user.User
 import com.wallet.clover.entity.BaseEntity
 import jakarta.persistence.Entity
 import jakarta.persistence.Table
@@ -11,3 +12,23 @@ class UserEntity(
     val locale: String? = null,
     val age: Int? = null,
 ) : BaseEntity()
+
+fun UserEntity.toDomain() = User(
+    id = id,
+    ssoQualifier = ssoQualifier,
+    locale = locale,
+    age = age,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+)
+
+fun User.toEntity(): UserEntity {
+    val domainId = this.id
+    return UserEntity(
+        ssoQualifier = ssoQualifier,
+        locale = locale,
+        age = age,
+    ).apply {
+        id = domainId
+    }
+}
