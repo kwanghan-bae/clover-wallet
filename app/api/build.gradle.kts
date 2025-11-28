@@ -26,3 +26,18 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.google.firebase:firebase-admin:9.2.0")
 }
+
+tasks.register("generateDdl", JavaExec::class) {
+    group = "JPA"
+    description = "Generates the DDL script from the JPA entities."
+    classpath = sourceSets["main"].runtimeClasspath
+    mainClass.set("com.wallet.clover.api.CloverApiApplicationKt")
+    args(
+        "--spring.jpa.properties.jakarta.persistence.schema-generation.scripts.action=create",
+        "--spring.jpa.properties.jakarta.persistence.schema-generation.scripts.create-target=build/schema.sql",
+        "--spring.jpa.hibernate.ddl-auto=create",
+        "--spring.datasource.url=jdbc:h2:mem:db;DB_CLOSE_DELAY=-1",
+        "--spring.datasource.username=sa",
+        "--spring.datasource.password="
+    )
+}

@@ -13,3 +13,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: false
+  datasource:
+    hikari:
+      maximum-pool-size: 3
+      minimum-idle: 1
+      connection-timeout: 10000
