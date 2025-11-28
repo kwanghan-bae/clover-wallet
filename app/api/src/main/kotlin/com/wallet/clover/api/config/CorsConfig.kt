@@ -1,4 +1,4 @@
-package com.wallet.clover.config
+package com.wallet.clover.api.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

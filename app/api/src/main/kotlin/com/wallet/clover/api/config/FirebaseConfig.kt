@@ -22,7 +22,12 @@ class FirebaseConfig(
         if (FirebaseApp.getApps().isEmpty()) {
             try {
                 val options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(FileInputStream(serviceAccountKeyPath)))
+                    .setCredentials(
+                        GoogleCredentials.fromStream(
+                            FileInputStream(
+                                serviceAccountKeyPath
+                            )
+                        ))
                     .build()
 
                 FirebaseApp.initializeApp(options)

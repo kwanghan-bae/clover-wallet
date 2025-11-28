@@ -1,4 +1,4 @@
-package com.wallet.clover.entity.user
+package com.wallet.clover.api.entity.user
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table

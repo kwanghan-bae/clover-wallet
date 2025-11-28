@@ -1,4 +1,4 @@
-package com.wallet.clover.common
+package com.wallet.clover.api.common
 
 object UserDefaults {
     const val DEFAULT_AGE = 0

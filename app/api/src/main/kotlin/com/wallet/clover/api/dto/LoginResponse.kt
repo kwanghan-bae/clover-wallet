@@ -1,4 +1,4 @@
-package com.wallet.clover.dto
+package com.wallet.clover.api.dto
 
 data class LoginResponse(
     val userId: Long,

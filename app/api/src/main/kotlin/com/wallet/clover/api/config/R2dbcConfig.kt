@@ -1,4 +1,4 @@
-package com.wallet.clover.config
+package com.wallet.clover.api.config
 
 import io.r2dbc.spi.ConnectionFactory
 import org.springframework.context.annotation.Bean
