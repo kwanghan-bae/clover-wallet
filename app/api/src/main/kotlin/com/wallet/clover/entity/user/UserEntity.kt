@@ -1,14 +1,15 @@
 package com.wallet.clover.entity.user
 
-import com.wallet.clover.entity.BaseEntity
-import jakarta.persistence.Entity
-import jakarta.persistence.Table
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
+import java.time.LocalDateTime
 
-@Entity
-@Table(name = "users")
-class UserEntity(
-    val ssoQualifier: String? = null,
-    val locale: String? = null,
-    val age: Int? = null,
-) : BaseEntity()
-
+@Table("users")
+data class UserEntity(
+    @Id val id: Long? = null,
+    val ssoQualifier: String,
+    val locale: String = "ko",
+    val age: Int = 0,
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val updatedAt: LocalDateTime = LocalDateTime.now()
+)

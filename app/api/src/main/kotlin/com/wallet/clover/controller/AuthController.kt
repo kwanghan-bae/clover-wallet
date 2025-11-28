@@ -1,35 +1,32 @@
-package com.wallet.clover.adapter.`in`.web
+package com.wallet.clover.controller
 
-import com.wallet.clover.entity.user.UserEntity
-import com.wallet.clover.repository.user.UserRepository
+import com.wallet.clover.dto.LoginResponse
+import com.wallet.clover.service.AuthService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 
 
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
-    private val userRepository: UserRepository
+    private val authService: AuthService
 ) {
 
     @PostMapping("/login")
-    fun login(@AuthenticationPrincipal jwt: Jwt): Mono<UserEntity> {
+    fun login(@AuthenticationPrincipal jwt: Jwt): Mono<LoginResponse> {
         val userId = jwt.subject
-        val email = jwt.claims["email"] as? String
         
-        return Mono.fromCallable {
-            userRepository.findBySsoQualifier(userId) ?: userRepository.save(
-                UserEntity(
-                    ssoQualifier = userId,
-                    age = 0,
-                    locale = "ko"
+        return authService.login(userId)
+            .map { user ->
+                LoginResponse(
+                    userId = user.id!!,
+                    ssoQualifier = user.ssoQualifier,
+                    locale = user.locale
                 )
-            )
-        }.subscribeOn(Schedulers.boundedElastic())
+            }
     }
 }

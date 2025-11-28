@@ -2,20 +2,12 @@ spring:
   config:
     activate:
       on-profile: prod
-  jpa:
-    database: POSTGRESQL
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-  datasource:
-    driver-class-name: org.postgresql.Driver
+  r2dbc:
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
-    hikari:
-      maximum-pool-size: 3
-      minimum-idle: 1
-      connection-timeout: 10000
+    pool:
+      max-size: 3
+      initial-size: 1
 supabase:
   jwt-secret: ${SUPABASE_JWT_SECRET}

@@ -23,17 +23,16 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.google.firebase:firebase-admin:9.2.0")
     
-    // Database
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    runtimeOnly("com.h2database:h2:${rootProject.extra["h2Version"] as String}")
-    runtimeOnly("org.postgresql:postgresql:${rootProject.extra["postgresqlVersion"] as String}")
+    // Database - R2DBC for reactive
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    runtimeOnly("org.postgresql:r2dbc-postgresql")
+    runtimeOnly("io.r2dbc:r2dbc-h2")
     
     // Security
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     
-    // Reactive
-    implementation("io.projectreactor:reactor-core:3.6.5")
+    // Reactive (already included with webflux)
 }
 
 tasks.register("generateDdl", JavaExec::class) {
