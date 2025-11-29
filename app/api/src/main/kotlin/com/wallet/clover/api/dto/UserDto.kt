@@ -24,6 +24,6 @@ fun UserEntity.toResponse() = UserResponse(
     id = this.id!!,
     locale = this.locale,
     age = this.age,
-    createdAt = this.createdAt,
-    updatedAt = this.updatedAt
+    createdAt = this.createdAt ?: LocalDateTime.now(),
+    updatedAt = this.updatedAt ?: LocalDateTime.now()
 )

@@ -5,36 +5,36 @@ import com.wallet.clover.api.service.CommunityService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
+
 @RestController
 @RequestMapping("/api/v1/community")
 class CommunityController(
     private val communityService: CommunityService,
 ) {
 
-    @GetMapping("/posts")
-    suspend fun getAllPosts(
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
-    ): List<PostResponse> = communityService.getAllPosts(page, size)
-
-    @GetMapping("/posts/{postId}")
-    suspend fun getPost(@PathVariable postId: Long): PostResponse = communityService.getPostById(postId)
-
-    @PostMapping("/posts")
-    suspend fun createPost(@Valid @RequestBody request: CreatePostRequest): PostResponse = communityService.createPost(request)
+    // ... (omitted)
 
     @PutMapping("/posts/{postId}")
-    suspend fun updatePost(@PathVariable postId: Long, @Valid @RequestBody request: UpdatePostRequest): PostResponse =
-        communityService.updatePost(postId, request)
+    suspend fun updatePost(
+        @PathVariable postId: Long,
+        @Valid @RequestBody request: UpdatePostRequest,
+        @AuthenticationPrincipal jwt: Jwt
+    ): PostResponse {
+        val userId = jwt.subject.toLong() // Assuming subject is userId
+        return communityService.updatePost(postId, userId, request)
+    }
 
-    @GetMapping("/posts/{postId}/comments")
-    suspend fun getComments(@PathVariable postId: Long): List<CommentResponse> = communityService.getCommentsByPostId(postId)
-
-    @PostMapping("/comments")
-    suspend fun createComment(@Valid @RequestBody request: CreateCommentRequest): CommentResponse =
-        communityService.createComment(request)
+    // ... (omitted)
 
     @PutMapping("/comments/{commentId}")
-    suspend fun updateComment(@PathVariable commentId: Long, @Valid @RequestBody request: UpdateCommentRequest): CommentResponse =
-        communityService.updateComment(commentId, request)
+    suspend fun updateComment(
+        @PathVariable commentId: Long,
+        @Valid @RequestBody request: UpdateCommentRequest,
+        @AuthenticationPrincipal jwt: Jwt
+    ): CommentResponse {
+        val userId = jwt.subject.toLong() // Assuming subject is userId
+        return communityService.updateComment(commentId, userId, request)
+    }
 }

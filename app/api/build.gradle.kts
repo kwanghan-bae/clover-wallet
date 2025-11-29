@@ -18,6 +18,7 @@ dependencies {
     implementation(
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:${rootProject.extra["kotlinCoroutinesVersion"] as String}",
     )
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-slf4j:${rootProject.extra["kotlinCoroutinesVersion"] as String}")
     implementation(
         "org.jsoup:jsoup:${rootProject.extra["jsoupVersion"] as String}",
     )

@@ -1,6 +1,7 @@
 package com.wallet.clover.api.exception.handler
 
 import com.wallet.clover.api.exception.CommentNotFoundException
+import com.wallet.clover.api.exception.ForbiddenException
 import com.wallet.clover.api.exception.PostNotFoundException
 import com.wallet.clover.api.exception.TicketNotFoundException
 import com.wallet.clover.api.exception.UserNotFoundException
@@ -14,6 +15,11 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 class GlobalExceptionHandler {
 
     private val logger = LoggerFactory.getLogger(javaClass)
+
+    @ExceptionHandler(ForbiddenException::class)
+    fun handleForbiddenException(e: ForbiddenException): ProblemDetail {
+        return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, e.message ?: "Forbidden")
+    }
 
     @ExceptionHandler(UserNotFoundException::class)
     fun handleUserNotFoundException(e: UserNotFoundException): ProblemDetail {

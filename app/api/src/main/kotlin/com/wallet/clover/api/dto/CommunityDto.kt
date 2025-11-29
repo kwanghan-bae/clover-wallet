@@ -62,8 +62,8 @@ fun PostEntity.toResponse() = PostResponse(
     title = this.title,
     content = this.content,
     likes = this.likes,
-    createdAt = this.createdAt,
-    updatedAt = this.updatedAt
+    createdAt = this.createdAt ?: LocalDateTime.now(),
+    updatedAt = this.updatedAt ?: LocalDateTime.now()
 )
 
 fun CreatePostRequest.toEntity() = PostEntity(
@@ -79,8 +79,8 @@ fun CommentEntity.toResponse() = CommentResponse(
     userId = this.userId,
     content = this.content,
     likes = this.likes,
-    createdAt = this.createdAt,
-    updatedAt = this.updatedAt
+    createdAt = this.createdAt ?: LocalDateTime.now(),
+    updatedAt = this.updatedAt ?: LocalDateTime.now()
 )
 
 fun CreateCommentRequest.toEntity() = CommentEntity(
