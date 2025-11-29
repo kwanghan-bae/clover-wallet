@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface LottoTicketRepository : CoroutineCrudRepository<LottoTicketEntity, Long> {
     suspend fun findByUserId(userId: Long): List<LottoTicketEntity>
+    suspend fun findByUrl(url: String): LottoTicketEntity?
 }
