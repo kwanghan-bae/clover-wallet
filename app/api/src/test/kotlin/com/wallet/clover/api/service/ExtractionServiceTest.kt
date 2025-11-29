@@ -2,7 +2,7 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.domain.extraction.ExtractionContext
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
-import com.wallet.clover.api.service.LottoNumberExtractor
+import com.wallet.clover.api.dto.ExtractionRequest
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -40,17 +40,19 @@ class ExtractionServiceTest {
 
         every { lottoNumberExtractor.extract(any(), any()) } returns expectedNumbers
 
-        // when
-        val result = extractionService.extractLottoNumbers(
-            method,
-            dreamKeyword,
-            birthDate,
-            personalKeywords,
-            natureKeyword,
-            divinationKeyword,
-            colorKeyword,
-            animalKeyword,
+        val request = ExtractionRequest(
+            method = method,
+            dreamKeyword = dreamKeyword,
+            birthDate = birthDate,
+            personalKeywords = personalKeywords,
+            natureKeyword = natureKeyword,
+            divinationKeyword = divinationKeyword,
+            colorKeyword = colorKeyword,
+            animalKeyword = animalKeyword,
         )
+
+        // when
+        val result = extractionService.extractLottoNumbers(request)
 
         // then
         assertEquals(expectedNumbers, result)

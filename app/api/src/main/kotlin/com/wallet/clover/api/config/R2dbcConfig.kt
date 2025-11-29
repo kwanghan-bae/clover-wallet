@@ -17,9 +17,8 @@ class R2dbcConfig {
         val initializer = ConnectionFactoryInitializer()
         initializer.setConnectionFactory(connectionFactory)
         
-        // TODO: Add schema initialization if needed
-        // val populator = ResourceDatabasePopulator(ClassPathResource("schema.sql"))
-        // initializer.setDatabasePopulator(populator)
+        val populator = ResourceDatabasePopulator(ClassPathResource("schema.sql"))
+        initializer.setDatabasePopulator(populator)
         
         return initializer
     }

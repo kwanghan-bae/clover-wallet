@@ -1,0 +1,79 @@
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    sso_qualifier VARCHAR(255) NOT NULL UNIQUE,
+    locale VARCHAR(10) NOT NULL DEFAULT 'ko',
+    age INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_sso_qualifier ON users(sso_qualifier);
+
+CREATE TABLE IF NOT EXISTS lotto_ticket (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    url VARCHAR(1000) NOT NULL,
+    ordinal INT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_lotto_ticket_user_id ON lotto_ticket(user_id);
+CREATE INDEX IF NOT EXISTS idx_lotto_ticket_url ON lotto_ticket(url);
+
+CREATE TABLE IF NOT EXISTS lotto_game (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    number1 INT NOT NULL,
+    number2 INT NOT NULL,
+    number3 INT NOT NULL,
+    number4 INT NOT NULL,
+    number5 INT NOT NULL,
+    number6 INT NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_lotto_game_ticket_id ON lotto_game(ticket_id);
+CREATE INDEX IF NOT EXISTS idx_lotto_game_user_id ON lotto_game(user_id);
+
+CREATE TABLE IF NOT EXISTS post (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    likes INT DEFAULT 0,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_post_user_id ON post(user_id);
+CREATE INDEX IF NOT EXISTS idx_post_created_at ON post(created_at DESC);
+
+CREATE TABLE IF NOT EXISTS comment (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    post_id BIGINT NOT NULL,
+    user_id BIGINT NOT NULL,
+    content TEXT NOT NULL,
+    likes INT DEFAULT 0,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_comment_post_id ON comment(post_id);
+CREATE INDEX IF NOT EXISTS idx_comment_user_id ON comment(user_id);
+
+CREATE TABLE IF NOT EXISTS lotto_spot (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address VARCHAR(500) NOT NULL,
+    latitude DOUBLE NOT NULL,
+    longitude DOUBLE NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_lotto_spot_name ON lotto_spot(name);
