@@ -7,8 +7,8 @@ COPY gradle.properties settings.gradle.kts build.gradle.kts gradlew ./
 COPY gradle ./gradle
 COPY app/api/build.gradle.kts ./app/api/
 
-# 의존성 다운로드 (소스 코드 없이)
-RUN ./gradlew :app:api:dependencies --no-daemon
+# 의존성 다운로드 단계 생략 (로그 과다 출력 방지 및 빌드 안정성 확보)
+# RUN ./gradlew :app:api:dependencies --no-daemon
 
 # 소스 코드 복사 및 빌드
 COPY . .
