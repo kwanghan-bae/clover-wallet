@@ -21,7 +21,7 @@ data class UpdateUserRequest(
 )
 
 fun UserEntity.toResponse() = UserResponse(
-    id = this.id!!,
+    id = this.id ?: throw IllegalStateException("User ID must not be null"),
     locale = this.locale,
     age = this.age,
     createdAt = this.createdAt ?: LocalDateTime.now(),

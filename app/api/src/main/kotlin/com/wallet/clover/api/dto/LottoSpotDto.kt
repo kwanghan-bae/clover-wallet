@@ -11,7 +11,7 @@ data class LottoSpotResponse(
 )
 
 fun LottoSpotEntity.toResponse() = LottoSpotResponse(
-    id = this.id!!,
+    id = this.id ?: throw IllegalStateException("LottoSpot ID must not be null"),
     name = this.name,
     address = this.address,
     latitude = this.latitude,

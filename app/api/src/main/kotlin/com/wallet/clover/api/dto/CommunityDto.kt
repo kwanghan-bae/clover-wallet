@@ -57,7 +57,7 @@ data class UpdateCommentRequest(
 
 // Mapper functions for Post
 fun PostEntity.toResponse() = PostResponse(
-    id = this.id!!,
+    id = this.id ?: throw IllegalStateException("Post ID must not be null"),
     userId = this.userId,
     title = this.title,
     content = this.content,
@@ -74,7 +74,7 @@ fun CreatePostRequest.toEntity() = PostEntity(
 
 // Mapper functions for Comment
 fun CommentEntity.toResponse() = CommentResponse(
-    id = this.id!!,
+    id = this.id ?: throw IllegalStateException("Comment ID must not be null"),
     postId = this.postId,
     userId = this.userId,
     content = this.content,

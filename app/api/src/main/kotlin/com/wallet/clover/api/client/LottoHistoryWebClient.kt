@@ -1,6 +1,7 @@
 package com.wallet.clover.api.client
 
 import com.wallet.clover.api.client.LottoResponse
+import com.wallet.clover.api.common.retry
 import kotlinx.coroutines.withTimeout
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
@@ -14,14 +15,16 @@ open class LottoHistoryWebClient(
     private val webClient = webClientBuilder.baseUrl("https://www.dhlottery.co.kr").build()
 
     suspend fun getByGameNumber(gameNumber: Int): LottoResponse = withTimeout(5.seconds) {
-        webClient.get()
-            .uri { uriBuilder ->
-                uriBuilder.path("/common.do")
-                    .queryParam("method", "getLottoNumber")
-                    .queryParam("drwNo", gameNumber)
-                    .build()
-            }
-            .retrieve()
-            .awaitBody<LottoResponse>()
+        retry {
+            webClient.get()
+                .uri { uriBuilder ->
+                    uriBuilder.path("/common.do")
+                        .queryParam("method", "getLottoNumber")
+                        .queryParam("drwNo", gameNumber)
+                        .build()
+                }
+                .retrieve()
+                .awaitBody<LottoResponse>()
+        }
     }
 }

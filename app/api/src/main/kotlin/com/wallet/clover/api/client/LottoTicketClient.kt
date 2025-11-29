@@ -1,5 +1,6 @@
 package com.wallet.clover.api.client
 
+import com.wallet.clover.api.common.retry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Connection
@@ -17,15 +18,17 @@ class LottoTicketClient {
     }
 
     suspend fun getHtmlByUrl(url: String): String = withContext(Dispatchers.IO) {
-        logger.info("Fetching document from URL: {}", url)
-        val connection = Jsoup.connect(url)
-            .timeout(TIMEOUT_MS)
-            .method(Connection.Method.GET)
-        val html = String(
-            connection.execute().bodyAsBytes(),
-            Charset.forName("euc-kr"),
-        )
-        logger.info("Successfully fetched and parsed document from URL: {}", url)
-        html
+        retry {
+            logger.info("Fetching document from URL: {}", url)
+            val connection = Jsoup.connect(url)
+                .timeout(TIMEOUT_MS)
+                .method(Connection.Method.GET)
+            val html = String(
+                connection.execute().bodyAsBytes(),
+                Charset.forName("euc-kr"),
+            )
+            logger.info("Successfully fetched and parsed document from URL: {}", url)
+            html
+        }
     }
 }
