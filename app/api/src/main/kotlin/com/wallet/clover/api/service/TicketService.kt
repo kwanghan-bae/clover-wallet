@@ -10,6 +10,8 @@ import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import kotlinx.coroutines.flow.toList
+
 @Service
 class TicketService(
     private val ticketRepository: LottoTicketRepository,
@@ -61,7 +63,7 @@ class TicketService(
                 number6 = it.number6,
             )
         }
-        gameRepository.saveAll(games)
+        gameRepository.saveAll(games).toList() // Collect the flow to execute saves
 
         return savedTicket
     }
