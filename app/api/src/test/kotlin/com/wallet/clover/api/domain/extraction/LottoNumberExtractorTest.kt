@@ -2,7 +2,7 @@ package com.wallet.clover.api.domain.extraction
 
 import com.wallet.clover.api.domain.extraction.ExtractionContext
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
-import com.wallet.clover.api.domain.extraction.LottoNumberExtractor
+import com.wallet.clover.api.service.LottoNumberExtractor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach

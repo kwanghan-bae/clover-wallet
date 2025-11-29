@@ -1,9 +1,9 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.adapter.LottoTicketClient
-import com.wallet.clover.api.domain.ticket.parser.ParsedGame
-import com.wallet.clover.api.domain.ticket.parser.ParsedTicket
-import com.wallet.clover.api.domain.ticket.parser.TicketParser
+import com.wallet.clover.api.client.LottoTicketClient
+import com.wallet.clover.api.client.ParsedGame
+import com.wallet.clover.api.client.ParsedTicket
+import com.wallet.clover.api.client.TicketParser
 import com.wallet.clover.api.dto.SaveScannedTicketCommand
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.entity.game.LottoGameStatus

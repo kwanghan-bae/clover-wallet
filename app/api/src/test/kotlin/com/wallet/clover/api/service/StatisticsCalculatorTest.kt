@@ -1,16 +1,16 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.adapter.LottoHistoryMapper
-import com.wallet.clover.api.adapter.LottoHistoryWebClient
-import com.wallet.clover.api.adapter.LottoResponse
-import com.wallet.clover.api.adapter.LottoResponseCode
+import com.wallet.clover.api.client.LottoHistoryMapper
+import com.wallet.clover.api.client.LottoHistoryWebClient
+import com.wallet.clover.api.client.LottoResponse
+import com.wallet.clover.api.client.LottoResponseCode
 import com.wallet.clover.api.domain.lotto.LottoHistory
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.test.runTest
-import reactor.core.publisher.Mono
 import java.time.LocalDate
 
 class StatisticsCalculatorTest : ShouldSpec(
@@ -54,9 +54,9 @@ class StatisticsCalculatorTest : ShouldSpec(
                         moneyOfFirstWinner = 1000,
                     )
 
-                    every { client.getByGameNumber(any()) } answers {
+                    coEvery { client.getByGameNumber(any()) } answers {
                         val gameNumber = it.invocation.args[0] as Int
-                        Mono.just(lottoResponse.copy(drwNo = gameNumber))
+                        lottoResponse.copy(drwNo = gameNumber)
                     }
                     every { mapper.toDomain(any()) } answers {
                         val response = it.invocation.args[0] as LottoResponse
@@ -67,16 +67,16 @@ class StatisticsCalculatorTest : ShouldSpec(
                     val statistics = sut.calculate()
 
                     // then
-                    statistics.dateCounter[1]!![1]!!.toLong() shouldBe 1065
-                    statistics.monthCounter[1]!![1]!!.toLong() shouldBe 1065
+                    statistics.dateCounter[1]!![1]!! shouldBe 1065L
+                    statistics.monthCounter[1]!![1]!! shouldBe 1065L
 
                     // 1부터 1065까지의 숫자 중 홀수는 533개, 짝수는 532개
-                    val oddGames = (1..1065).count { it % 2 != 0 }
-                    val evenGames = (1..1065).count { it % 2 == 0 }
+                    val oddGames = (1..1065).count { it % 2 != 0 }.toLong()
+                    val evenGames = (1..1065).count { it % 2 == 0 }.toLong()
 
                     // 각 숫자는 모든 게임에서 한 번씩 등장하도록 모의 설정됨
-                    statistics.oddEvenCounter["odd"]!![1]!!.toLong() shouldBe oddGames
-                    statistics.oddEvenCounter["even"]!![1]!!.toLong() shouldBe evenGames
+                    statistics.oddEvenCounter["odd"]!![1]!! shouldBe oddGames
+                    statistics.oddEvenCounter["even"]!![1]!! shouldBe evenGames
                 }
             }
         }

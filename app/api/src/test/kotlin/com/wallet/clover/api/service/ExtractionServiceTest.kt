@@ -2,7 +2,7 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.domain.extraction.ExtractionContext
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
-import com.wallet.clover.api.domain.extraction.LottoNumberExtractor
+import com.wallet.clover.api.service.LottoNumberExtractor
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
