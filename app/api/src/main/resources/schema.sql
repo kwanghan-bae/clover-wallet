@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     sso_qualifier VARCHAR(255) NOT NULL UNIQUE,
     locale VARCHAR(10) NOT NULL DEFAULT 'ko',
     age INT NOT NULL DEFAULT 0,
+    fcm_token VARCHAR(500),
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );

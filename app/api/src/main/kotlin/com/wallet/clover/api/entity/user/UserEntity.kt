@@ -10,8 +10,9 @@ import java.time.LocalDateTime
 data class UserEntity(
     @Id val id: Long? = null,
     val ssoQualifier: String,
-    val locale: String = "ko",
-    val age: Int = 0,
-    @CreatedDate val createdAt: LocalDateTime? = null,
-    @LastModifiedDate val updatedAt: LocalDateTime? = null
+    val locale: String,
+    val age: Int,
+    val fcmToken: String? = null,  // FCM 푸시 알림 토큰
+    val createdAt: LocalDateTime? = null,
+    val updatedAt: LocalDateTime? = null
 )
