@@ -1,38 +1,32 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.api.client.LottoResultParser
+import com.wallet.clover.api.client.LottoTicketClient
 import com.wallet.clover.api.dto.LottoCheck
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
-import org.jsoup.Jsoup
 import org.springframework.stereotype.Service
-import java.io.IOException
 
 @Service
 class LottoService(
     private val lottoGameRepository: LottoGameRepository,
     private val notificationService: NotificationService,
+    private val lottoTicketClient: LottoTicketClient,
+    private val lottoResultParser: LottoResultParser
 ) {
 
     private val lottoUrl = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
 
     suspend fun checkWinnings(userId: Long): LottoCheck.Out {
         try {
-            val doc = Jsoup.connect(lottoUrl).get()
-
-            val roundText = doc.select("h4 > strong").first()?.text()?.replace(Regex("[^0-9]"), "")
-            val winNumbers = doc.select(".win_result .nums .win p span.ball_645")
-                .mapNotNull { it.text().toIntOrNull() }
-            val bonusNumber = doc.select(".win_result .nums .bonus p span.ball_645").first()?.text()?.toIntOrNull()
-
-            if (roundText == null || winNumbers.size != 6 || bonusNumber == null) {
-                return LottoCheck.Out(message = "당첨 번호를 파싱하는 데 실패했습니다.")
-            }
+            val html = lottoTicketClient.getHtmlByUrl(lottoUrl)
+            val result = lottoResultParser.parse(html)
 
             val userGames = lottoGameRepository.findByUserId(userId)
             val winningResult = userGames.mapNotNull { game ->
                 val userNumbers = game.getNumbers()
-                val matchCount = userNumbers.intersect(winNumbers.toSet()).size
-                val isBonusMatched = userNumbers.contains(bonusNumber)
+                val matchCount = userNumbers.intersect(result.winningNumbers.toSet()).size
+                val isBonusMatched = userNumbers.contains(result.bonusNumber)
 
                 val rank = when (matchCount) {
                     6 -> "1등"
@@ -43,29 +37,26 @@ class LottoService(
                 }
 
                 rank?.let {
-                    // For now, hardcode a device token for testing.
-                    // In a real application, this would be fetched from a database for the given userId.
-                    val dummyDeviceToken = "YOUR_USER_DEVICE_TOKEN_HERE" // Replace with actual token
-                    val winningAmount = "1,000,000원" // Dummy amount for notification
+                    // TODO: Fetch actual device token from DB
+                    val dummyDeviceToken = "YOUR_USER_DEVICE_TOKEN_HERE" 
+                    val winningAmount = "1,000,000원" // TODO: Calculate or fetch actual amount
 
                     notificationService.sendWinningNotification(dummyDeviceToken, winningAmount)
 
                     LottoCheck.UserWinningTicket(
-                        round = roundText.toInt(),
+                        round = result.round,
                         userNumbers = userNumbers,
-                        matchedNumbers = userNumbers.intersect(winNumbers.toSet()).toList(),
+                        matchedNumbers = userNumbers.intersect(result.winningNumbers.toSet()).toList(),
                         rank = it,
                     )
                 }
             }
 
             return LottoCheck.Out(
-                message = "${roundText}회차 당첨 확인 완료",
-                winningNumbers = winNumbers + bonusNumber,
+                message = "${result.round}회차 당첨 확인 완료",
+                winningNumbers = result.winningNumbers + result.bonusNumber,
                 userWinningTickets = winningResult.takeIf { it.isNotEmpty() },
             )
-        } catch (e: IOException) {
-            return LottoCheck.Out(message = "당첨 번호 정보를 가져오는 데 실패했습니다: 네트워크 오류")
         } catch (e: Exception) {
             return LottoCheck.Out(message = "당첨 번호 정보를 처리하는 중 오류가 발생했습니다: ${e.message}")
         }
