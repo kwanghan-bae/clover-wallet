@@ -16,7 +16,7 @@
 -   **핵심 정보 소스:** 프로젝트의 전체 기획, 디자인, 기술 스택 정보는 아래의 종합 문서를 최우선으로 참조합니다.
     -   `/Users/joel/Desktop/git/docs/clover-wallet/Clover_Lotto_README.md`
 -   **작업 로그 관리:** 모든 백엔드 작업 내역은 반드시 아래 파일에 기록하고, 작업을 시작하기 전 항상 최신 내용을 확인해야 합니다.
-    -   `/Users/joel/Desktop/git/docs/clover-wallet/WORK_LOG_backend.md`
+        - `docs/WORK_LOG_backend.md`
 
 ---
 
