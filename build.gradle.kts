@@ -23,6 +23,7 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
+    id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
 }
 
 repositories {
