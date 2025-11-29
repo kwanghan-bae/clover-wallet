@@ -3,6 +3,8 @@ spring:
     activate:
       on-profile: prod
   r2dbc:
+    # 중요: 배포 환경의 DB_URL은 반드시 'r2dbc:'로 시작해야 합니다. (예: r2dbc:postgresql://...)
+    # Supabase 등에서 제공하는 'jdbc:' URL을 그대로 사용하면 에러가 발생합니다.
     url: ${DB_URL}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
