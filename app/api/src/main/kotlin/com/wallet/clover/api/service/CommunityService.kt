@@ -9,6 +9,8 @@ import com.wallet.clover.api.repository.community.CommentRepository
 import com.wallet.clover.api.repository.community.PostRepository
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -20,8 +22,9 @@ class CommunityService(
     private val commentRepository: CommentRepository,
 ) {
     @Transactional(readOnly = true)
-    suspend fun getAllPosts(): List<PostResponse> {
-        return postRepository.findAll().map { it.toResponse() }.toList()
+    suspend fun getAllPosts(page: Int, size: Int): List<PostResponse> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        return postRepository.findAllBy(pageable).map { it.toResponse() }.toList()
     }
 
     @Transactional(readOnly = true)

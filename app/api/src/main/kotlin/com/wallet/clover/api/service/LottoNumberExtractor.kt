@@ -11,7 +11,9 @@ import kotlin.random.Random
  * 각 추출 방법은 재미를 위한 요소이며, 실제 당첨 확률에 영향을 주지 않습니다.
  */
 @Component
-class LottoNumberExtractor {
+class LottoNumberExtractor(
+    private val random: Random = Random.Default
+) {
 
     companion object {
         private const val LOTTO_MIN_NUMBER = 1
@@ -69,7 +71,7 @@ class LottoNumberExtractor {
      * 미리 정의된 Hot/Cold 번호 리스트에서 일부를 선택합니다.
      */
     private fun extractFromStatistics(numberList: List<Int>): Set<Int> {
-        return numberList.shuffled().take(Random.nextInt(1, 4)).toSet()
+        return numberList.shuffled(random).take(random.nextInt(1, 4)).toSet()
     }
 
     /**
@@ -162,7 +164,7 @@ class LottoNumberExtractor {
         val validSeedNumbers = seedNumbers.filter { it in LOTTO_MIN_NUMBER..LOTTO_MAX_NUMBER }.toMutableSet()
 
         while (validSeedNumbers.size < LOTTO_NUMBERS_COUNT) {
-            val randomNumber = Random.nextInt(LOTTO_MIN_NUMBER, LOTTO_MAX_NUMBER + 1)
+            val randomNumber = random.nextInt(LOTTO_MIN_NUMBER, LOTTO_MAX_NUMBER + 1)
             validSeedNumbers.add(randomNumber)
         }
 

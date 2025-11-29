@@ -12,7 +12,10 @@ class CommunityController(
 ) {
 
     @GetMapping("/posts")
-    suspend fun getAllPosts(): List<PostResponse> = communityService.getAllPosts()
+    suspend fun getAllPosts(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int
+    ): List<PostResponse> = communityService.getAllPosts(page, size)
 
     @GetMapping("/posts/{postId}")
     suspend fun getPost(@PathVariable postId: Long): PostResponse = communityService.getPostById(postId)

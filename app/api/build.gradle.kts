@@ -33,6 +33,9 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     
+    // Documentation
+    implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0")
+    
     // Reactive (already included with webflux)
 }
 

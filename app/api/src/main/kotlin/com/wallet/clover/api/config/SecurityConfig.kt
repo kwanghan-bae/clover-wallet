@@ -23,7 +23,14 @@ class SecurityConfig(
         return http
             .csrf { it.disable() }
             .authorizeExchange {
-                it.pathMatchers("/api/v1/auth/**", "/actuator/**", "/health").permitAll()
+                it.pathMatchers(
+                    "/api/v1/auth/**",
+                    "/actuator/**",
+                    "/health",
+                    "/webjars/**",
+                    "/v3/api-docs/**",
+                    "/swagger-ui.html"
+                ).permitAll()
                 it.anyExchange().authenticated()
             }
             .oauth2ResourceServer { oauth2 ->

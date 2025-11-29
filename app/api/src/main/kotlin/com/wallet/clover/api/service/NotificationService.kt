@@ -3,6 +3,8 @@ package com.wallet.clover.api.service
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.Notification
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -10,7 +12,7 @@ import org.springframework.stereotype.Service
 class NotificationService {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun sendWinningNotification(deviceToken: String, winningAmount: String) {
+    suspend fun sendWinningNotification(deviceToken: String, winningAmount: String) = withContext(Dispatchers.IO) {
         val message = Message.builder()
             .setToken(deviceToken)
             .setNotification(
