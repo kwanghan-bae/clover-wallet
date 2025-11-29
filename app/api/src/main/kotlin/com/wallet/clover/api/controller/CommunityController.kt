@@ -1,7 +1,6 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.entity.community.CommentEntity
-import com.wallet.clover.api.entity.community.PostEntity
+import com.wallet.clover.api.dto.*
 import com.wallet.clover.api.service.CommunityService
 import org.springframework.web.bind.annotation.*
 
@@ -12,17 +11,26 @@ class CommunityController(
 ) {
 
     @GetMapping("/posts")
-    suspend fun getAllPosts() = communityService.getAllPosts()
+    suspend fun getAllPosts(): List<PostResponse> = communityService.getAllPosts()
 
     @GetMapping("/posts/{postId}")
-    suspend fun getPost(@PathVariable postId: Long) = communityService.getPostById(postId)
+    suspend fun getPost(@PathVariable postId: Long): PostResponse = communityService.getPostById(postId)
 
     @PostMapping("/posts")
-    suspend fun createPost(@RequestBody post: PostEntity) = communityService.createPost(post)
+    suspend fun createPost(@RequestBody request: CreatePostRequest): PostResponse = communityService.createPost(request)
+
+    @PutMapping("/posts/{postId}")
+    suspend fun updatePost(@PathVariable postId: Long, @RequestBody request: UpdatePostRequest): PostResponse =
+        communityService.updatePost(postId, request)
 
     @GetMapping("/posts/{postId}/comments")
-    suspend fun getComments(@PathVariable postId: Long) = communityService.getCommentsByPostId(postId)
+    suspend fun getComments(@PathVariable postId: Long): List<CommentResponse> = communityService.getCommentsByPostId(postId)
 
     @PostMapping("/comments")
-    suspend fun createComment(@RequestBody comment: CommentEntity) = communityService.createComment(comment)
+    suspend fun createComment(@RequestBody request: CreateCommentRequest): CommentResponse =
+        communityService.createComment(request)
+
+    @PutMapping("/comments/{commentId}")
+    suspend fun updateComment(@PathVariable commentId: Long, @RequestBody request: UpdateCommentRequest): CommentResponse =
+        communityService.updateComment(commentId, request)
 }
