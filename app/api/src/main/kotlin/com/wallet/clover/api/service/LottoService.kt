@@ -1,8 +1,5 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.client.LottoResultParser
-import com.wallet.clover.api.client.LottoTicketClient
-import com.wallet.clover.api.config.LottoScrapingProperties
 import com.wallet.clover.api.dto.LottoCheck
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
@@ -13,16 +10,13 @@ import org.springframework.stereotype.Service
 class LottoService(
     private val lottoGameRepository: LottoGameRepository,
     private val notificationService: NotificationService,
-    private val lottoTicketClient: LottoTicketClient,
-    private val lottoResultParser: LottoResultParser,
-    private val properties: LottoScrapingProperties
+    private val winningNumberProvider: WinningNumberProvider
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     suspend fun checkWinnings(userId: Long): LottoCheck.Out {
         try {
-            val html = lottoTicketClient.getHtmlByUrl(properties.resultUrl)
-            val result = lottoResultParser.parse(html)
+            val result = winningNumberProvider.getLatestWinningNumbers()
 
             val userGames = lottoGameRepository.findByUserId(userId)
             val winningResult = userGames.mapNotNull { game ->

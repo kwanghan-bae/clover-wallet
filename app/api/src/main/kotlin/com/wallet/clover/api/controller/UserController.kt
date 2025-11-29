@@ -3,6 +3,7 @@ package com.wallet.clover.api.controller
 import com.wallet.clover.api.dto.UpdateUserRequest
 import com.wallet.clover.api.dto.UserResponse
 import com.wallet.clover.api.service.UserService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -19,7 +20,7 @@ class UserController(
     @PutMapping("/{id}")
     suspend fun updateUser(
         @PathVariable id: Long,
-        @RequestBody request: UpdateUserRequest
+        @Valid @RequestBody request: UpdateUserRequest
     ): UserResponse {
         return userService.updateUser(id, request)
     }

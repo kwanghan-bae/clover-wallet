@@ -2,6 +2,8 @@ package com.wallet.clover.api.dto
 
 import com.wallet.clover.api.entity.community.CommentEntity
 import com.wallet.clover.api.entity.community.PostEntity
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 // Post DTOs
@@ -17,11 +19,15 @@ data class PostResponse(
 
 data class CreatePostRequest(
     val userId: Long,
+    @field:NotBlank(message = "Title cannot be blank")
+    @field:Size(min = 1, max = 100, message = "Title must be between 1 and 100 characters")
     val title: String,
+    @field:NotBlank(message = "Content cannot be blank")
     val content: String
 )
 
 data class UpdatePostRequest(
+    @field:Size(min = 1, max = 100, message = "Title must be between 1 and 100 characters")
     val title: String?,
     val content: String?
 )
@@ -40,10 +46,12 @@ data class CommentResponse(
 data class CreateCommentRequest(
     val postId: Long,
     val userId: Long,
+    @field:NotBlank(message = "Content cannot be blank")
     val content: String
 )
 
 data class UpdateCommentRequest(
+    @field:NotBlank(message = "Content cannot be blank")
     val content: String?
 )
 

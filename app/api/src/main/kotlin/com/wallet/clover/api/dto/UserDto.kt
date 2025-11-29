@@ -1,6 +1,8 @@
 package com.wallet.clover.api.dto
 
 import com.wallet.clover.api.entity.user.UserEntity
+import jakarta.validation.constraints.Min
+import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 data class UserResponse(
@@ -12,7 +14,9 @@ data class UserResponse(
 )
 
 data class UpdateUserRequest(
+    @field:Size(min = 2, max = 10, message = "Locale must be between 2 and 10 characters")
     val locale: String?,
+    @field:Min(value = 0, message = "Age must be non-negative")
     val age: Int?
 )
 

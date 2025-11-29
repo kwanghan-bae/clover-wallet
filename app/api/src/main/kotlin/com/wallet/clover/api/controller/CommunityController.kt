@@ -2,6 +2,7 @@ package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.dto.*
 import com.wallet.clover.api.service.CommunityService
+import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -17,20 +18,20 @@ class CommunityController(
     suspend fun getPost(@PathVariable postId: Long): PostResponse = communityService.getPostById(postId)
 
     @PostMapping("/posts")
-    suspend fun createPost(@RequestBody request: CreatePostRequest): PostResponse = communityService.createPost(request)
+    suspend fun createPost(@Valid @RequestBody request: CreatePostRequest): PostResponse = communityService.createPost(request)
 
     @PutMapping("/posts/{postId}")
-    suspend fun updatePost(@PathVariable postId: Long, @RequestBody request: UpdatePostRequest): PostResponse =
+    suspend fun updatePost(@PathVariable postId: Long, @Valid @RequestBody request: UpdatePostRequest): PostResponse =
         communityService.updatePost(postId, request)
 
     @GetMapping("/posts/{postId}/comments")
     suspend fun getComments(@PathVariable postId: Long): List<CommentResponse> = communityService.getCommentsByPostId(postId)
 
     @PostMapping("/comments")
-    suspend fun createComment(@RequestBody request: CreateCommentRequest): CommentResponse =
+    suspend fun createComment(@Valid @RequestBody request: CreateCommentRequest): CommentResponse =
         communityService.createComment(request)
 
     @PutMapping("/comments/{commentId}")
-    suspend fun updateComment(@PathVariable commentId: Long, @RequestBody request: UpdateCommentRequest): CommentResponse =
+    suspend fun updateComment(@PathVariable commentId: Long, @Valid @RequestBody request: UpdateCommentRequest): CommentResponse =
         communityService.updateComment(commentId, request)
 }

@@ -5,6 +5,7 @@ import org.springframework.boot.runApplication
 
 @SpringBootApplication(scanBasePackages = ["com.wallet.clover"])
 @org.springframework.boot.context.properties.ConfigurationPropertiesScan
+@org.springframework.cache.annotation.EnableCaching
 class CloverApiApplication
 
 fun main(args: Array<String>) {

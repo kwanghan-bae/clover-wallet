@@ -11,6 +11,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 @Service
@@ -21,6 +22,7 @@ class StatisticsCalculator(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    @Cacheable("lotto-statistics")
     suspend fun calculate(maxGameNumber: Int): Statistics = coroutineScope {
         logger.info("Fetching and processing games up to $maxGameNumber...")
         
