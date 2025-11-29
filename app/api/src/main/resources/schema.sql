@@ -87,3 +87,69 @@ CREATE TABLE IF NOT EXISTS lotto_spot (
 );
 
 CREATE INDEX IF NOT EXISTS idx_lotto_spot_name ON lotto_spot(name);
+
+-- ==========================================
+-- 더미 데이터 (테스트용)
+-- ==========================================
+
+-- 사용자 더미 데이터
+INSERT INTO users (id, sso_qualifier, locale, age, badges, created_at, updated_at) VALUES
+(1, 'test-user-001', 'ko_KR', 30, 'FIRST_WIN,DREAM_MASTER,FREQUENT_PLAYER', NOW(), NOW()),
+(2, 'test-user-002', 'ko_KR', 25, 'LUCKY_1ST,STATS_GENIUS', NOW(), NOW()),
+(3, 'test-user-003', 'ko_KR', 35, 'SAJU_EXPERT,VETERAN', NOW(), NOW())
+ON CONFLICT (id) DO NOTHING;
+
+-- 로또 티켓 더미 데이터
+INSERT INTO lotto_ticket (id, user_id, round, file_path, status, created_at, updated_at) VALUES
+(1, 1, 1150, '/path/to/ticket1.jpg', 'WINNING', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+(2, 1, 1151, '/path/to/ticket2.jpg', 'STASHED', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'),
+(3, 2, 1150, '/path/to/ticket3.jpg', 'WINNING', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
+(4, 3, 1149, '/path/to/ticket4.jpg', 'LOSING', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days')
+ON CONFLICT (id) DO NOTHING;
+
+-- 로또 게임 더미 데이터 (다양한 추출 방식 포함)
+INSERT INTO lotto_game (id, ticket_id, user_id, status, number1, number2, number3, number4, number5, number6, extraction_method, created_at, updated_at) VALUES
+-- 당첨 게임 (마케팅용)
+(1, 1, 1, 'WINNING_3', 7, 11, 23, 34, 38, 42, 'DREAM', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+(2, 1, 1, 'WINNING_5', 3, 15, 22, 29, 31, 45, 'SAJU', NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+(3, 3, 2, 'WINNING_1', 5, 12, 18, 27, 33, 41, 'STATISTICS_HOT', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
+(4, 3, 2, 'WINNING_2', 9, 14, 20, 25, 36, 43, 'HOROSCOPE', NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
+-- 대기 게임
+(5, 2, 1, 'LOSING', 1, 10, 19, 28, 37, 44, 'NATURE_PATTERNS', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'),
+(6, 2, 1, 'LOSING', 2, 8, 16, 24, 32, 40, 'ANCIENT_DIVINATION', NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day'),
+-- 낙첨 게임
+(7, 4, 3, 'LOSING', 4, 13, 21, 30, 39, 41, 'COLORS_SOUNDS', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days'),
+(8, 4, 3, 'LOSING', 6, 11, 17, 26, 35, 44, 'ANIMAL_OMENS', NOW() - INTERVAL '7 days', NOW() - INTERVAL '7 days')
+ON CONFLICT (id) DO NOTHING;
+
+-- 커뮤니티 게시글 더미 데이터
+INSERT INTO post (id, user_id, title, content, likes, created_at, updated_at) VALUES
+(1, 1, '드디어 3등 당첨!', '꿈 해몽 방식으로 선택한 번호로 당첨됐어요! 진짜 신기합니다 ㅎㅎ', 24, NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+(2, 2, '1등 당첨 후기', '통계 분석으로 뽑은 번호로 드디어... 아직도 실감이 안 나네요', 156, NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
+(3, 3, '사주팔자 방식 추천합니다', '여러 방식 써봤는데 사주팔자가 제일 재미있어요', 12, NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days'),
+(4, 1, '이번 주 로또 구매 완료', '이번엔 별자리 운세로 도전해봅니다!', 8, NOW() - INTERVAL '1 day', NOW() - INTERVAL '1 day')
+ON CONFLICT (id) DO NOTHING;
+
+-- 댓글 더미 데이터
+INSERT INTO comment (id, post_id, user_id, content, likes, created_at, updated_at) VALUES
+(1, 1, 2, '축하드려요! 저도 곧 당첨될 것 같은 예감이...', 3, NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+(2, 1, 3, '꿈 해몽 정말 신기하네요 ㄷㄷ', 2, NOW() - INTERVAL '2 days', NOW() - INTERVAL '2 days'),
+(3, 2, 1, '와... 대박이십니다!!! 축하드려요!', 15, NOW() - INTERVAL '3 days', NOW() - INTERVAL '3 days'),
+(4, 3, 2, '저도 사주팔자 써봐야겠어요', 1, NOW() - INTERVAL '5 days', NOW() - INTERVAL '5 days')
+ON CONFLICT (id) DO NOTHING;
+
+-- 로또 명당 더미 데이터
+INSERT INTO lotto_spot (id, name, address, latitude, longitude, created_at, updated_at) VALUES
+(1, '행운복권방', '서울특별시 강남구 테헤란로 231', 37.5013, 127.0396, NOW(), NOW()),
+(2, '대박로또', '서울특별시 중구 명동길 74', 37.5636, 126.9860, NOW(), NOW()),
+(3, '황금복권', '서울특별시 송파구 올림픽로 300', 37.5145, 127.1060, NOW(), NOW()),
+(4, '당첨로또방', '서울특별시 마포구 양화로 188', 37.5547, 126.9228, NOW(), NOW())
+ON CONFLICT (id) DO NOTHING;
+
+-- ID 시퀀스 조정
+SELECT setval('users_id_seq', (SELECT COALESCE(MAX(id), 1) FROM users));
+SELECT setval('lotto_ticket_id_seq', (SELECT COALESCE(MAX(id), 1) FROM lotto_ticket));
+SELECT setval('lotto_game_id_seq', (SELECT COALESCE(MAX(id), 1) FROM lotto_game));
+SELECT setval('post_id_seq', (SELECT COALESCE(MAX(id), 1) FROM post));
+SELECT setval('comment_id_seq', (SELECT COALESCE(MAX(id), 1) FROM comment));
+SELECT setval('lotto_spot_id_seq', (SELECT COALESCE(MAX(id), 1) FROM lotto_spot));
