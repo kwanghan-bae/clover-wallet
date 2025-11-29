@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     locale VARCHAR(10) NOT NULL DEFAULT 'ko',
     age INT NOT NULL DEFAULT 0,
     fcm_token VARCHAR(500),
+    badges VARCHAR(1000),
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );

@@ -9,6 +9,7 @@ data class UserResponse(
     val id: Long,
     val locale: String,
     val age: Int,
+    val badges: List<String> = emptyList(),
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
@@ -20,10 +21,18 @@ data class UpdateUserRequest(
     val age: Int?
 )
 
+data class UserStatsResponse(
+    val totalGames: Int,
+    val totalWinnings: Long,
+    val totalSpent: Long,
+    val roi: Int
+)
+
 fun UserEntity.toResponse() = UserResponse(
     id = this.id ?: throw IllegalStateException("User ID must not be null"),
     locale = this.locale,
     age = this.age,
+    badges = this.badges?.split(",")?.filter { it.isNotBlank() } ?: emptyList(),
     createdAt = this.createdAt ?: LocalDateTime.now(),
     updatedAt = this.updatedAt ?: LocalDateTime.now()
 )

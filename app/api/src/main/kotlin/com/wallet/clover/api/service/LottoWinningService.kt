@@ -20,7 +20,8 @@ class LottoWinningService(
     private val userRepository: UserRepository,
     private val winningChecker: WinningChecker,
     private val fcmService: FcmService,
-    private val lottoTicketClient: LottoTicketClient
+    private val lottoTicketClient: LottoTicketClient,
+    private val badgeService: BadgeService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -87,6 +88,9 @@ class LottoWinningService(
                     LottoTicketStatus.LOSING
                 }
                 ticketRepository.save(ticket.copy(status = newTicketStatus))
+                
+                // 뱃지 업데이트
+                badgeService.updateUserBadges(ticket.userId)
             }
 
             logger.info("Weekly lotto winning check completed successfully")

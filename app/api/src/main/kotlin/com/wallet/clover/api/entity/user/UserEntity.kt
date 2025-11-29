@@ -12,7 +12,8 @@ data class UserEntity(
     val ssoQualifier: String,
     val locale: String,
     val age: Int,
-    val fcmToken: String? = null,  // FCM 푸시 알림 토큰
+    val fcmToken: String? = null,
+    val badges: String? = null, // Comma-separated badge codes
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null
 )
