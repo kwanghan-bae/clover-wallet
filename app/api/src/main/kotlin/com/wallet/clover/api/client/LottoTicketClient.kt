@@ -12,9 +12,14 @@ import java.nio.charset.Charset
 class LottoTicketClient {
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    companion object {
+        private const val TIMEOUT_MS = 5000
+    }
+
     suspend fun getHtmlByUrl(url: String): String = withContext(Dispatchers.IO) {
         logger.info("Fetching document from URL: {}", url)
         val connection = Jsoup.connect(url)
+            .timeout(TIMEOUT_MS)
             .method(Connection.Method.GET)
         val html = String(
             connection.execute().bodyAsBytes(),

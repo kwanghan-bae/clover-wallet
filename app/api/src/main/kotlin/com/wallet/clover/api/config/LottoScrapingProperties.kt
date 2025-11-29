@@ -11,5 +11,6 @@ data class LottoScrapingProperties(
     val gameNumbersSelector: String = "td span.clr",
     val winRoundSelector: String = "h4 > strong",
     val winNumbersSelector: String = ".win_result .nums .win p span.ball_645",
-    val bonusNumberSelector: String = ".win_result .nums .bonus p span.ball_645"
+    val bonusNumberSelector: String = ".win_result .nums .bonus p span.ball_645",
+    val resultUrl: String = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
 )

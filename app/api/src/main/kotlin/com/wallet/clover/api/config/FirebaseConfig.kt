@@ -19,6 +19,11 @@ class FirebaseConfig(
 
     @PostConstruct
     fun initializeFirebaseApp() {
+        if (serviceAccountKeyPath.isBlank()) {
+            logger.warn("Firebase service account key path is empty. Skipping Firebase initialization.")
+            return
+        }
+
         if (FirebaseApp.getApps().isEmpty()) {
             try {
                 val options = FirebaseOptions.builder()

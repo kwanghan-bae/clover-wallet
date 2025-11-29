@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 
 @Component
-class LottoHistoryMapper {
+open class LottoHistoryMapper {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun toDomain(response: LottoResponse): LottoHistory? {

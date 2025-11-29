@@ -4,9 +4,12 @@ import com.wallet.clover.api.client.LottoHistoryMapper
 import com.wallet.clover.api.client.LottoHistoryWebClient
 import com.wallet.clover.api.domain.lotto.LottoHistory
 import com.wallet.clover.api.domain.statistics.Statistics
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -14,24 +17,27 @@ import org.springframework.stereotype.Service
 class StatisticsCalculator(
     private val client: LottoHistoryWebClient,
     private val mapper: LottoHistoryMapper,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    suspend fun calculate(): Statistics = coroutineScope {
-        logger.info("Fetching and processing games...")
+    suspend fun calculate(maxGameNumber: Int): Statistics = coroutineScope {
+        logger.info("Fetching and processing games up to $maxGameNumber...")
         
-        val games = (1..1065).chunked(50).map { batch ->
-            batch.map { gameNumber ->
-                async {
-                    try {
-                        client.getByGameNumber(gameNumber)
-                    } catch (e: Exception) {
-                        logger.error("Failed to fetch game $gameNumber", e)
-                        null
+        val games = withContext(dispatcher) {
+            (1..maxGameNumber).chunked(50).map { batch ->
+                batch.map { gameNumber ->
+                    async {
+                        try {
+                            client.getByGameNumber(gameNumber)
+                        } catch (e: Exception) {
+                            logger.error("Failed to fetch game $gameNumber", e)
+                            null
+                        }
                     }
-                }
-            }.awaitAll()
-        }.flatten().mapNotNull { it?.let { response -> mapper.toDomain(response) } }
+                }.awaitAll()
+            }.flatten().mapNotNull { it?.let { response -> mapper.toDomain(response) } }
+        }
 
         logger.info("Finished fetching and processing ${games.size} games.")
 

@@ -2,9 +2,11 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.client.LottoResultParser
 import com.wallet.clover.api.client.LottoTicketClient
+import com.wallet.clover.api.config.LottoScrapingProperties
 import com.wallet.clover.api.dto.LottoCheck
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,14 +14,14 @@ class LottoService(
     private val lottoGameRepository: LottoGameRepository,
     private val notificationService: NotificationService,
     private val lottoTicketClient: LottoTicketClient,
-    private val lottoResultParser: LottoResultParser
+    private val lottoResultParser: LottoResultParser,
+    private val properties: LottoScrapingProperties
 ) {
-
-    private val lottoUrl = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     suspend fun checkWinnings(userId: Long): LottoCheck.Out {
         try {
-            val html = lottoTicketClient.getHtmlByUrl(lottoUrl)
+            val html = lottoTicketClient.getHtmlByUrl(properties.resultUrl)
             val result = lottoResultParser.parse(html)
 
             val userGames = lottoGameRepository.findByUserId(userId)
@@ -58,6 +60,7 @@ class LottoService(
                 userWinningTickets = winningResult.takeIf { it.isNotEmpty() },
             )
         } catch (e: Exception) {
+            logger.error("Error checking winnings for user $userId", e)
             return LottoCheck.Out(message = "당첨 번호 정보를 처리하는 중 오류가 발생했습니다: ${e.message}")
         }
     }

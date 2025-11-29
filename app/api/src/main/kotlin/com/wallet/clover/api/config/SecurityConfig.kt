@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.security.web.server.SecurityWebFilterChain
+import java.nio.charset.StandardCharsets
 import javax.crypto.spec.SecretKeySpec
 
 @Configuration
@@ -35,7 +36,7 @@ class SecurityConfig(
 
     @Bean
     fun jwtDecoder(): ReactiveJwtDecoder {
-        val secretKey = SecretKeySpec(jwtSecret.toByteArray(), "HmacSHA256")
+        val secretKey = SecretKeySpec(jwtSecret.toByteArray(StandardCharsets.UTF_8), "HmacSHA256")
         return NimbusReactiveJwtDecoder.withSecretKey(secretKey)
             .macAlgorithm(MacAlgorithm.HS256)
             .build()

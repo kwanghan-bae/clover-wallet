@@ -12,10 +12,11 @@ class CorsConfig {
     @Bean
     fun corsWebFilter(): CorsWebFilter {
         val corsConfig = CorsConfiguration().apply {
-            allowedOrigins = listOf("*")
+            // TODO: Replace "*" with specific allowed origins in production
+            allowedOrigins = listOf("http://localhost:3000", "https://clover-wallet.com")
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
             allowedHeaders = listOf("*")
-            allowCredentials = false
+            allowCredentials = true
         }
 
         val source = UrlBasedCorsConfigurationSource().apply {
