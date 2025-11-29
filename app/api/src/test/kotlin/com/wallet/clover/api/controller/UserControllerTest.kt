@@ -2,18 +2,17 @@ package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.dto.UpdateUserRequest
 import com.wallet.clover.api.dto.UserResponse
+import com.wallet.clover.api.exception.UserNotFoundException
 import com.wallet.clover.api.service.UserService
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.coEvery
 import io.mockk.coVerify
-import io.mockk.verify
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.WebTestClient
-import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 
 @WebFluxTest(UserController::class)
@@ -97,14 +96,14 @@ class UserControllerTest(@Autowired private val webClient: WebTestClient) {
         // Given
         val userId = 3L
         val updateRequest = UpdateUserRequest(locale = "ko", age = 31)
-        coEvery { userService.updateUser(userId, updateRequest) } throws NoSuchElementException("User with id $userId not found")
+        coEvery { userService.updateUser(userId, updateRequest) } throws UserNotFoundException("User with id $userId not found")
 
         // When & Then
         webClient.put().uri("/api/v1/users/$userId")
             .contentType(MediaType.APPLICATION_JSON)
             .bodyValue(updateRequest)
             .exchange()
-            .expectStatus().isNotFound // or isBadRequest or 500 depending on exception handling
+            .expectStatus().isNotFound
 
         coVerify(exactly = 1) { userService.updateUser(userId, updateRequest) }
     }

@@ -3,6 +3,7 @@ package com.wallet.clover.api.service
 import com.wallet.clover.api.dto.UpdateUserRequest
 import com.wallet.clover.api.dto.UserResponse
 import com.wallet.clover.api.dto.toResponse
+import com.wallet.clover.api.exception.UserNotFoundException
 import com.wallet.clover.api.repository.user.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -19,7 +20,7 @@ class UserService(
 
     @Transactional
     suspend fun updateUser(id: Long, request: UpdateUserRequest): UserResponse {
-        val existingUser = userRepository.findById(id) ?: throw NoSuchElementException("User with id $id not found")
+        val existingUser = userRepository.findById(id) ?: throw UserNotFoundException("User with id $id not found")
         val updatedUser = existingUser.copy(
             locale = request.locale ?: existingUser.locale,
             age = request.age ?: existingUser.age
