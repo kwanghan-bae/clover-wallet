@@ -1,5 +1,7 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.dto.LottoGameResponse
+import com.wallet.clover.api.dto.LottoTicketResponse
 import com.wallet.clover.api.dto.TicketDetailResponse
 import com.wallet.clover.api.service.TicketService
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,7 +17,9 @@ class TicketController(
 ) {
 
     @GetMapping
-    suspend fun getMyTickets(@RequestParam userId: Long) = ticketService.getMyTickets(userId)
+    suspend fun getMyTickets(@RequestParam userId: Long): List<LottoTicketResponse> {
+        return ticketService.getMyTickets(userId).map { LottoTicketResponse.from(it) }
+    }
 
     @GetMapping("/{ticketId}")
     suspend fun getTicketDetail(@PathVariable ticketId: Long): TicketDetailResponse {
@@ -23,6 +27,9 @@ class TicketController(
             ?: throw IllegalArgumentException("Ticket not found")
         val games = ticketService.getGamesByTicketId(ticketId)
         
-        return TicketDetailResponse(ticket, games)
+        return TicketDetailResponse(
+            LottoTicketResponse.from(ticket),
+            games.map { LottoGameResponse.from(it) }
+        )
     }
 }
