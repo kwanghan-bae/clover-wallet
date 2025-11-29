@@ -65,7 +65,7 @@ class JsoupTicketParser : TicketParser {
             }
 
             ParsedGame(
-                status = LottoGameStatus.valueOfHtmlValue(resultText),
+                status = parseGameStatus(resultText),
                 number1 = numbers[0],
                 number2 = numbers[1],
                 number3 = numbers[2],
@@ -75,6 +75,17 @@ class JsoupTicketParser : TicketParser {
             )
         }.also {
             logger.info("Successfully parsed {} games.", it.size)
+        }
+    }
+
+    private fun parseGameStatus(htmlValue: String): LottoGameStatus {
+        return when {
+            (htmlValue == "1등당첨") -> LottoGameStatus.WINNING_1
+            (htmlValue == "2등당첨") -> LottoGameStatus.WINNING_2
+            (htmlValue == "3등당첨") -> LottoGameStatus.WINNING_3
+            (htmlValue == "4등당첨") -> LottoGameStatus.WINNING_4
+            (htmlValue == "5등당첨") -> LottoGameStatus.WINNING_5
+            else -> LottoGameStatus.LOSING
         }
     }
 }
