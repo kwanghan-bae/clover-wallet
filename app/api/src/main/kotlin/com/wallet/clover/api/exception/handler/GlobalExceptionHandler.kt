@@ -4,6 +4,7 @@ import com.wallet.clover.api.exception.CommentNotFoundException
 import com.wallet.clover.api.exception.ForbiddenException
 import com.wallet.clover.api.exception.PostNotFoundException
 import com.wallet.clover.api.exception.TicketNotFoundException
+import com.wallet.clover.api.exception.TicketParsingException
 import com.wallet.clover.api.exception.UserNotFoundException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
@@ -39,6 +40,12 @@ class GlobalExceptionHandler {
     @ExceptionHandler(TicketNotFoundException::class)
     fun handleTicketNotFoundException(e: TicketNotFoundException): ProblemDetail {
         return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, e.message ?: "Ticket not found")
+    }
+
+    @ExceptionHandler(TicketParsingException::class)
+    fun handleTicketParsingException(e: TicketParsingException): ProblemDetail {
+        logger.error("Ticket parsing failed", e)
+        return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, e.message ?: "Failed to parse ticket")
     }
 
     @ExceptionHandler(Exception::class)

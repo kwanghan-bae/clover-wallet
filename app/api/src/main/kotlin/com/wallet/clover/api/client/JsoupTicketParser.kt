@@ -6,12 +6,11 @@ import com.wallet.clover.api.client.ParsedTicket
 import com.wallet.clover.api.client.TicketParser
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.entity.ticket.LottoTicketStatus
+import com.wallet.clover.api.exception.TicketParsingException
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-
-class TicketParsingException(message: String) : RuntimeException(message)
 
 @Component
 class JsoupTicketParser(

@@ -1,6 +1,7 @@
 package com.wallet.clover.api.client
 
 import com.wallet.clover.api.config.LottoScrapingProperties
+import com.wallet.clover.api.exception.TicketParsingException
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
