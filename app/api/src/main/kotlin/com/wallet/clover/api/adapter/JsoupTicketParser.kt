@@ -1,5 +1,6 @@
 package com.wallet.clover.api.adapter
 
+import com.wallet.clover.api.config.LottoScrapingProperties
 import com.wallet.clover.api.domain.ticket.parser.ParsedGame
 import com.wallet.clover.api.domain.ticket.parser.ParsedTicket
 import com.wallet.clover.api.domain.ticket.parser.TicketParser
@@ -13,16 +14,10 @@ import org.springframework.stereotype.Component
 class TicketParsingException(message: String) : RuntimeException(message)
 
 @Component
-class JsoupTicketParser : TicketParser {
+class JsoupTicketParser(
+    private val properties: LottoScrapingProperties
+) : TicketParser {
     private val logger = LoggerFactory.getLogger(javaClass)
-
-    companion object {
-        private const val ORDINAL_SELECTOR = "h3 > span.key_clr1"
-        private const val TICKET_STATUS_SELECTOR = "div.bx_notice.winner strong"
-        private const val GAME_ROWS_SELECTOR = "div.list_my_number table tbody tr"
-        private const val GAME_RESULT_SELECTOR = "td.result"
-        private const val GAME_NUMBERS_SELECTOR = "td span.clr"
-    }
 
     override fun parse(html: String): ParsedTicket {
         val document = Jsoup.parse(html)
@@ -33,13 +28,13 @@ class JsoupTicketParser : TicketParser {
     }
 
     private fun getOrdinal(document: Document): Int {
-        val content = document.select(ORDINAL_SELECTOR).firstOrNull()?.text() ?: "0"
+        val content = document.select(properties.ordinalSelector).firstOrNull()?.text() ?: "0"
         logger.debug("Parsed ordinal content: {}", content)
         return content.filter { it.isDigit() }.toIntOrNull() ?: 0
     }
 
     private fun getTicketStatus(document: Document): LottoTicketStatus {
-        val content = document.select(TICKET_STATUS_SELECTOR).firstOrNull()?.text() ?: ""
+        val content = document.select(properties.ticketStatusSelector).firstOrNull()?.text() ?: ""
         logger.debug("Parsed ticket status content: {}", content)
         return when {
             content.contains("당첨") -> LottoTicketStatus.WINNING
@@ -54,10 +49,10 @@ class JsoupTicketParser : TicketParser {
 
     private fun getGames(document: Document): List<ParsedGame> {
         logger.info("Parsing games from document")
-        val gameRows = document.select(GAME_ROWS_SELECTOR)
+        val gameRows = document.select(properties.gameRowsSelector)
         return gameRows.map { row ->
-            val resultText = row.select(GAME_RESULT_SELECTOR).text().trim()
-            val numbers = row.select(GAME_NUMBERS_SELECTOR).mapNotNull { it.text().toIntOrNull() }
+            val resultText = row.select(properties.gameResultSelector).text().trim()
+            val numbers = row.select(properties.gameNumbersSelector).mapNotNull { it.text().toIntOrNull() }
 
             if (numbers.size != 6) {
                 logger.error("Parsed game has incorrect number count: {}", numbers)
