@@ -16,6 +16,7 @@ data class LottoGameEntity(
     val number4: Int,
     val number5: Int,
     val number6: Int,
+    val extractionMethod: String? = null,  // 사용된 추출 방식 (ExtractionMethod enum 값)
     val createdAt: LocalDateTime = LocalDateTime.now(),
     val updatedAt: LocalDateTime = LocalDateTime.now()
 )

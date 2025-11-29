@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS lotto_game (
     number4 INT NOT NULL,
     number5 INT NOT NULL,
     number6 INT NOT NULL,
+    extraction_method VARCHAR(50),
     created_at TIMESTAMP,
     updated_at TIMESTAMP
 );

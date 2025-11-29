@@ -17,6 +17,13 @@ class BadgeService(
         const val BADGE_LUCKY_1ST = "LUCKY_1ST"
         const val BADGE_FREQUENT_PLAYER = "FREQUENT_PLAYER"
         const val BADGE_VETERAN = "VETERAN"
+        
+        // 추출 방식별 뱃지
+        const val BADGE_DREAM_MASTER = "DREAM_MASTER"
+        const val BADGE_SAJU_EXPERT = "SAJU_EXPERT"
+        const val BADGE_STATS_GENIUS = "STATS_GENIUS"
+        const val BADGE_HOROSCOPE_BELIEVER = "HOROSCOPE_BELIEVER"
+        const val BADGE_NATURE_LOVER = "NATURE_LOVER"
     }
 
     /**
@@ -51,6 +58,17 @@ class BadgeService(
             currentBadges.add(BADGE_VETERAN)
         }
 
+        // 추출 방식별 뱃지 (특정 방식으로 당첨 시)
+        winningGames.forEach { game ->
+            when (game.extractionMethod) {
+                "DREAM" -> if (!currentBadges.contains(BADGE_DREAM_MASTER)) currentBadges.add(BADGE_DREAM_MASTER)
+                "SAJU" -> if (!currentBadges.contains(BADGE_SAJU_EXPERT)) currentBadges.add(BADGE_SAJU_EXPERT)
+                "STATISTICS_HOT", "STATISTICS_COLD" -> if (!currentBadges.contains(BADGE_STATS_GENIUS)) currentBadges.add(BADGE_STATS_GENIUS)
+                "HOROSCOPE" -> if (!currentBadges.contains(BADGE_HOROSCOPE_BELIEVER)) currentBadges.add(BADGE_HOROSCOPE_BELIEVER)
+                "NATURE_PATTERNS" -> if (!currentBadges.contains(BADGE_NATURE_LOVER)) currentBadges.add(BADGE_NATURE_LOVER)
+            }
+        }
+
         // 뱃지 업데이트
         val updatedUser = user.copy(badges = currentBadges.joinToString(","))
         userRepository.save(updatedUser)
@@ -66,6 +84,11 @@ class BadgeService(
                 BADGE_LUCKY_1ST -> "1등 당첨"
                 BADGE_FREQUENT_PLAYER -> "열정적인 플레이어"
                 BADGE_VETERAN -> "베테랑"
+                BADGE_DREAM_MASTER -> "🌙 꿈 해몽 마스터"
+                BADGE_SAJU_EXPERT -> "📅 사주팔자 전문가"
+                BADGE_STATS_GENIUS -> "📊 통계의 신"
+                BADGE_HOROSCOPE_BELIEVER -> "⭐ 별자리 신봉자"
+                BADGE_NATURE_LOVER -> "🌿 자연의 아이"
                 else -> null
             }
         }
