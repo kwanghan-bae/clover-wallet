@@ -1,4 +1,4 @@
-package com.wallet.clover.api.entity.extraction
+package com.wallet.clover.api.domain.extraction
 
 /**
  * 로또 번호 추출 방법을 정의하는 열거형 클래스입니다.
