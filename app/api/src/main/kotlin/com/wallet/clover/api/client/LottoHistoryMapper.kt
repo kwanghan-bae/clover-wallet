@@ -1,4 +1,4 @@
-package com.wallet.clover.api.adapter
+package com.wallet.clover.api.client
 
 import com.wallet.clover.api.domain.lotto.LottoHistory
 import org.slf4j.LoggerFactory

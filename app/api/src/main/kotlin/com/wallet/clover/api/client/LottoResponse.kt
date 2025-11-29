@@ -1,4 +1,4 @@
-package com.wallet.clover.api.adapter
+package com.wallet.clover.api.client
 
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonFormat

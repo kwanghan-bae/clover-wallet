@@ -1,7 +1,7 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.adapter.LottoHistoryMapper
-import com.wallet.clover.api.adapter.LottoHistoryWebClient
+import com.wallet.clover.api.client.LottoHistoryMapper
+import com.wallet.clover.api.client.LottoHistoryWebClient
 import com.wallet.clover.api.domain.lotto.LottoHistory
 import com.wallet.clover.api.domain.statistics.Statistics
 import kotlinx.coroutines.flow.asFlow

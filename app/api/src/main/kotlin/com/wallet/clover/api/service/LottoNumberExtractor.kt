@@ -1,5 +1,7 @@
-package com.wallet.clover.api.domain.extraction
+package com.wallet.clover.api.service
 
+import com.wallet.clover.api.domain.extraction.ExtractionContext
+import com.wallet.clover.api.domain.extraction.ExtractionMethod
 import org.springframework.stereotype.Component
 import java.time.LocalDate
 import kotlin.random.Random

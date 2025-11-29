@@ -1,6 +1,6 @@
-package com.wallet.clover.api.adapter
+package com.wallet.clover.api.client
 
-import com.wallet.clover.api.adapter.LottoResponse
+import com.wallet.clover.api.client.LottoResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono

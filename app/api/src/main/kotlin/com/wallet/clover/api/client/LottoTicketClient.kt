@@ -1,4 +1,4 @@
-package com.wallet.clover.api.adapter
+package com.wallet.clover.api.client
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

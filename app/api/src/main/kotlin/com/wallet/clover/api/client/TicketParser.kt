@@ -1,4 +1,4 @@
-package com.wallet.clover.api.domain.ticket.parser
+package com.wallet.clover.api.client
 
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.entity.ticket.LottoTicketStatus
