@@ -11,8 +11,11 @@ import com.wallet.clover.api.entity.ticket.LottoTicketEntity
 import com.wallet.clover.api.entity.ticket.LottoTicketStatus
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.ticket.LottoTicketRepository
+import io.micrometer.core.instrument.Counter
+import io.micrometer.core.instrument.MeterRegistry
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.flow.flowOf
@@ -29,6 +32,7 @@ class TicketServiceTest {
     private lateinit var gameRepository: LottoGameRepository
     private lateinit var lottoTicketClient: LottoTicketClient
     private lateinit var ticketParser: TicketParser
+    private lateinit var meterRegistry: MeterRegistry
     private lateinit var ticketService: TicketService
 
     @BeforeEach
@@ -37,11 +41,18 @@ class TicketServiceTest {
         gameRepository = mockk()
         lottoTicketClient = mockk()
         ticketParser = mockk()
+        meterRegistry = mockk()
+        
+        val counter = mockk<Counter>()
+        every { counter.increment() } returns Unit
+        every { meterRegistry.counter(any(), any<String>(), any()) } returns counter
+
         ticketService = TicketService(
             ticketRepository,
             gameRepository,
             lottoTicketClient,
             ticketParser,
+            meterRegistry
         )
     }
 

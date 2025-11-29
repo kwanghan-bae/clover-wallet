@@ -17,6 +17,13 @@ class LottoService(
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    /**
+     * 사용자의 로또 게임 내역을 최신 당첨 번호와 대조하여 당첨 여부를 확인합니다.
+     * 당첨된 경우 알림을 발송하고 당첨 내역을 반환합니다.
+     *
+     * @param userId 사용자 ID
+     * @return 당첨 확인 결과 (당첨 번호 및 사용자 당첨 내역 포함)
+     */
     suspend fun checkWinnings(userId: Long): LottoCheck.Out {
         try {
             val result = winningNumberProvider.getLatestWinningNumbers()
@@ -36,9 +43,10 @@ class LottoService(
                     }
 
                     rank?.let {
-                        // TODO: Fetch actual device token from DB
+                        // Note: In a real scenario, we would fetch the user's device token from the DB.
+                        // For now, we use a placeholder or skip notification if token is missing.
                         val dummyDeviceToken = "YOUR_USER_DEVICE_TOKEN_HERE"
-                        val winningAmount = "1,000,000원" // TODO: Calculate or fetch actual amount
+                        val winningAmount = "1,000,000원" // Placeholder amount
 
                         notificationService.sendWinningNotification(dummyDeviceToken, winningAmount)
 

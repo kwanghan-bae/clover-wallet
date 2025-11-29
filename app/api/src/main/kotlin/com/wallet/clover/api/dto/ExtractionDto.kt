@@ -11,5 +11,5 @@ data class ExtractionRequest(
     val natureKeyword: String? = null,
     val divinationKeyword: String? = null,
     val colorKeyword: String? = null,
-    val animalKeyword: String? = null
+    val animalKeyword: String? = null,
 )

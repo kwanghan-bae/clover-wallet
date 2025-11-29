@@ -22,6 +22,12 @@ class SecurityConfig(
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
         return http
             .csrf { it.disable() }
+            .headers { headers ->
+                headers.frameOptions { it.mode(org.springframework.security.web.server.header.XFrameOptionsServerHttpHeadersWriter.Mode.DENY) }
+                headers.xssProtection { it.disable() }
+                headers.contentSecurityPolicy { it.policyDirectives("default-src 'self'") }
+                headers.hsts { it.includeSubdomains(true).maxAge(java.time.Duration.ofDays(365)) }
+            }
             .authorizeExchange {
                 it.pathMatchers(
                     "/api/v1/auth/**",

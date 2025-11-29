@@ -15,6 +15,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-cache")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.4")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation(
         "org.jetbrains.kotlinx:kotlinx-coroutines-reactor:${rootProject.extra["kotlinCoroutinesVersion"] as String}",

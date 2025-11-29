@@ -14,6 +14,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
+import kotlinx.coroutines.slf4j.MDCContext
+
 @Service
 class StatisticsCalculator(
     private val client: LottoHistoryWebClient,
@@ -26,10 +28,10 @@ class StatisticsCalculator(
     suspend fun calculate(maxGameNumber: Int): Statistics = coroutineScope {
         logger.info("Fetching and processing games up to $maxGameNumber...")
         
-        val games = withContext(dispatcher) {
+        val games = withContext(dispatcher + MDCContext()) {
             (1..maxGameNumber).chunked(50).map { batch ->
                 batch.map { gameNumber ->
-                    async {
+                    async(MDCContext()) {
                         try {
                             client.getByGameNumber(gameNumber)
                         } catch (e: Exception) {
