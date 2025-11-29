@@ -11,5 +11,10 @@ spring:
     pool:
       max-size: 3
       initial-size: 1
+
+cors:
+  allowed-origins:
+    - "*"  # 개발/테스트용: 모든 origin 허용. 프로덕션에서는 특정 도메인으로 제한 권장
+
 supabase:
   jwt-secret: ${SUPABASE_JWT_SECRET}
