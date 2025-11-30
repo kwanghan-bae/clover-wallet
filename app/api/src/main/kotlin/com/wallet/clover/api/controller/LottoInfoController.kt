@@ -1,6 +1,7 @@
 package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.common.CommonResponse
+import com.wallet.clover.api.repository.winning.WinningInfoRepository
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -10,10 +11,12 @@ import java.time.temporal.TemporalAdjusters
 
 @RestController
 @RequestMapping("/api/v1/lotto-info")
-class LottoInfoController {
+class LottoInfoController(
+    private val winningInfoRepository: WinningInfoRepository
+) {
 
     @GetMapping("/next-draw")
-    fun getNextDrawInfo(): CommonResponse<Map<String, Any>> {
+    suspend fun getNextDrawInfo(): CommonResponse<Map<String, Any>> {
         val now = LocalDateTime.now()
         
         // 다음 토요일 20:40 계산
@@ -33,13 +36,17 @@ class LottoInfoController {
         val hoursLeft = duration.toHours() % 24
         val minutesLeft = duration.toMinutes() % 60
         
+        // 예상 당첨금 (최근 회차 1등 당첨금 사용)
+        val lastWinning = winningInfoRepository.findFirstByOrderByRoundDesc()
+        val estimatedJackpot = lastWinning?.firstPrizeAmount ?: 30_000_000_000L
+        
         val info = mapOf(
             "currentRound" to currentRound,
             "nextDrawDate" to nextSaturday.toString(),
             "daysLeft" to daysLeft,
             "hoursLeft" to hoursLeft,
             "minutesLeft" to minutesLeft,
-            "estimatedJackpot" to 30_000_000_000L  // 예상 금액 (실제론 크롤링 필요)
+            "estimatedJackpot" to estimatedJackpot
         )
         
         return CommonResponse.success(info)

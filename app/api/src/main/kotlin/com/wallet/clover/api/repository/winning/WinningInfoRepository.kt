@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 interface WinningInfoRepository : CoroutineCrudRepository<WinningInfoEntity, Long> {
     suspend fun findByRound(round: Int): WinningInfoEntity?
     suspend fun existsByRound(round: Int): Boolean
+    suspend fun findFirstByOrderByRoundDesc(): WinningInfoEntity?
 }

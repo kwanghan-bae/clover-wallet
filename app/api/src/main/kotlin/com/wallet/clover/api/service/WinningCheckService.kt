@@ -2,6 +2,7 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.entity.game.LottoGameStatus
+import com.wallet.clover.api.entity.ticket.LottoTicketStatus
 import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.ticket.LottoTicketRepository
@@ -56,10 +57,17 @@ class WinningCheckService(
                 }
             }
             
-            // 티켓 상태 업데이트 (당첨된 게임이 하나라도 있으면 WINNING, 아니면 LOSING)
-            // 단, 아직 추첨 전인 경우는 처리하지 않음 (이 메서드는 추첨 후 호출됨)
-            // val newTicketStatus = if (hasWinningGame) "WINNING" else "LOSING"
-            // TODO: LottoTicketStatus Enum 변환 및 티켓 상태 업데이트 구현 필요
+            // 티켓 상태 업데이트
+            val newTicketStatus = if (hasWinningGame) LottoTicketStatus.WINNING else LottoTicketStatus.LOSING
+            
+            if (ticket.status != newTicketStatus) {
+                val updatedTicket = ticket.copy(
+                    status = newTicketStatus,
+                    updatedAt = java.time.LocalDateTime.now()
+                )
+                lottoTicketRepository.save(updatedTicket)
+                logger.info("Updated ticket ${ticket.id} status to $newTicketStatus")
+            }
         }
     }
     
