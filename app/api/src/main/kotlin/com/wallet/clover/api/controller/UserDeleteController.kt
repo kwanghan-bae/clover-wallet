@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/users")
-class UserControllerExtended(
+class UserDeleteController(
     private val userService: UserService
 ) {
 

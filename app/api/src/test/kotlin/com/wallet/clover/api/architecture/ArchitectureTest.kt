@@ -24,7 +24,6 @@ class ArchitectureTest {
         .whereLayer("Client").mayOnlyBeAccessedByLayers("Service")
         .whereLayer("Scheduler").mayNotBeAccessedByAnyLayer()
 
-    /*
     @ArchTest
     val dtoShouldBeInDtoPackage: ArchRule = classes()
         .that().areTopLevelClasses()
@@ -38,7 +37,7 @@ class ArchitectureTest {
     @ArchTest
     val controllerShouldNameEndingWithController: ArchRule = classes()
         .that().resideInAPackage("..controller..")
-        .and().haveSimpleNameNotContaining("$") // 내부 클래스 제외
+        .and().areTopLevelClasses()
         .should().haveSimpleNameEndingWith("Controller")
 
     @ArchTest
@@ -59,5 +58,4 @@ class ArchitectureTest {
         .orShould().haveSimpleName("UserSummary")
         .orShould().haveSimpleName("CommonResponse")
         .orShould().haveSimpleName("LottoResponse")
-    */
 }
