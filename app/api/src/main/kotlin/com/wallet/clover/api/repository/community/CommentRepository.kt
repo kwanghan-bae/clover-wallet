@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository
 interface CommentRepository : CoroutineCrudRepository<CommentEntity, Long> {
     suspend fun findByPostId(postId: Long): List<CommentEntity>
     suspend fun findByUserId(userId: Long): List<CommentEntity>
+    suspend fun deleteByUserId(userId: Long)
 }

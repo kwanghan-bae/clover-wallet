@@ -4,6 +4,10 @@ import com.wallet.clover.api.dto.UpdateUserRequest
 import com.wallet.clover.api.dto.UserResponse
 import com.wallet.clover.api.dto.toResponse
 import com.wallet.clover.api.exception.UserNotFoundException
+import com.wallet.clover.api.repository.community.CommentRepository
+import com.wallet.clover.api.repository.community.PostRepository
+import com.wallet.clover.api.repository.game.LottoGameRepository
+import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import com.wallet.clover.api.repository.user.UserRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,6 +16,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class UserService(
     private val userRepository: UserRepository,
+    private val commentRepository: CommentRepository,
+    private val postRepository: PostRepository,
+    private val lottoGameRepository: LottoGameRepository,
+    private val lottoTicketRepository: LottoTicketRepository,
 ) {
 
     suspend fun findUser(id: Long): UserResponse? {
@@ -26,5 +34,22 @@ class UserService(
             age = request.age ?: existingUser.age
         )
         return userRepository.save(updatedUser).toResponse()
+    }
+    @Transactional
+    suspend fun deleteUserAccount(id: Long) {
+        // 1. 댓글 삭제
+        commentRepository.deleteByUserId(id)
+
+        // 2. 게시글 삭제
+        postRepository.deleteByUserId(id)
+
+        // 3. 로또 게임 삭제
+        lottoGameRepository.deleteByUserId(id)
+
+        // 4. 로또 티켓 삭제
+        lottoTicketRepository.deleteByUserId(id)
+
+        // 5. 사용자 계정 삭제
+        userRepository.deleteById(id)
     }
 }

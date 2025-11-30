@@ -9,4 +9,6 @@ import kotlinx.coroutines.flow.Flow
 @Repository
 interface PostRepository : CoroutineCrudRepository<PostEntity, Long> {
     fun findAllBy(pageable: Pageable): Flow<PostEntity>
+    fun findByUserId(userId: Long): Flow<PostEntity>
+    suspend fun deleteByUserId(userId: Long)
 }

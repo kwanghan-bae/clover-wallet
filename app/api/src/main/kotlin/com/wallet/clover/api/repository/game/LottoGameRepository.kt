@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 interface LottoGameRepository : CoroutineCrudRepository<LottoGameEntity, Long> {
     suspend fun findByTicketId(ticketId: Long): List<LottoGameEntity>
     fun findByUserId(userId: Long): Flow<LottoGameEntity>
+    suspend fun deleteByUserId(userId: Long)
 }
