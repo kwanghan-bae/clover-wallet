@@ -2,16 +2,18 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.repository.winning.WinningInfoRepository
 import org.springframework.stereotype.Service
+import java.time.Clock
 import java.time.DayOfWeek
 import java.time.LocalDateTime
 import java.time.temporal.TemporalAdjusters
 
 @Service
 class LottoInfoService(
-    private val winningInfoRepository: WinningInfoRepository
+    private val winningInfoRepository: WinningInfoRepository,
+    private val clock: Clock = Clock.systemDefaultZone()
 ) {
     suspend fun getNextDrawInfo(): Map<String, Any> {
-        val now = LocalDateTime.now()
+        val now = LocalDateTime.now(clock)
         
         // 다음 토요일 20:40 계산
         val nextSaturday = now.with(TemporalAdjusters.next(DayOfWeek.SATURDAY))
