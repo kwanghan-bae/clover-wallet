@@ -6,13 +6,18 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
-// Post DTOs
+data class UserSummary(
+    val id: Long,
+    val nickname: String,
+    val badges: List<String>
+)
+
 // Post DTOs
 data class PostResponse(
     /** 게시글 ID */
     val id: Long,
-    /** 작성자 ID */
-    val userId: Long,
+    /** 작성자 정보 */
+    val user: UserSummary?,
     /** 게시글 내용 */
     val content: String,
     /** 조회수 */
@@ -40,8 +45,8 @@ data class CommentResponse(
     val id: Long,
     /** 게시글 ID */
     val postId: Long,
-    /** 작성자 ID */
-    val userId: Long,
+    /** 작성자 정보 */
+    val user: UserSummary?,
     /** 댓글 내용 */
     val content: String,
     /** 생성 일시 */
@@ -62,9 +67,9 @@ data class UpdateCommentRequest(
 )
 
 // Mapper functions for Post
-fun PostEntity.toResponse() = PostResponse(
+fun PostEntity.toResponse(user: UserSummary?) = PostResponse(
     id = this.id ?: throw IllegalStateException("Post ID must not be null"),
-    userId = this.userId,
+    user = user,
     content = this.content,
     viewCount = this.viewCount,
     likeCount = this.likeCount,
@@ -78,10 +83,10 @@ fun CreatePostRequest.toEntity(userId: Long) = PostEntity(
 )
 
 // Mapper functions for Comment
-fun CommentEntity.toResponse() = CommentResponse(
+fun CommentEntity.toResponse(user: UserSummary?) = CommentResponse(
     id = this.id ?: throw IllegalStateException("Comment ID must not be null"),
     postId = this.postId,
-    userId = this.userId,
+    user = user,
     content = this.content,
     createdAt = this.createdAt,
     updatedAt = this.updatedAt

@@ -39,6 +39,10 @@ dependencies {
     
     // Documentation
     implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.2.0")
+
+    // Rate Limiting
+    implementation("com.github.ben-manes.caffeine:caffeine")
+    implementation("com.bucket4j:bucket4j-core:8.10.1")
     
     // Reactive (already included with webflux)
 }
