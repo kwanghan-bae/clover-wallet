@@ -4,6 +4,7 @@ import com.wallet.clover.api.client.LottoResultParser
 import com.wallet.clover.api.client.LottoTicketClient
 import com.wallet.clover.api.client.ParsedLottoResult
 import com.wallet.clover.api.config.LottoScrapingProperties
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 
@@ -18,5 +19,10 @@ class WinningNumberProvider(
     suspend fun getLatestWinningNumbers(): ParsedLottoResult {
         val html = lottoTicketClient.getHtmlByUrl(properties.resultUrl)
         return lottoResultParser.parse(html)
+    }
+
+    @CacheEvict("winning-numbers", key = "'latest'")
+    fun evictLatestWinningNumbersCache() {
+        // Cache eviction happens via annotation
     }
 }

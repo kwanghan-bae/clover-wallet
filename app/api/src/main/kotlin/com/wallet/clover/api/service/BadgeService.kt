@@ -29,6 +29,8 @@ class BadgeService(
 
     /**
      * 사용자의 당첨 이력을 분석하여 뱃지를 자동으로 부여합니다.
+     * TODO: 성능 최적화 필요. 현재는 모든 게임을 메모리에 로드하여 분석함.
+     * COUNT 쿼리 등을 활용하여 DB 레벨에서 처리하도록 개선해야 함.
      */
     suspend fun updateUserBadges(userId: Long) {
         val user = userRepository.findById(userId) ?: return

@@ -192,6 +192,7 @@ class LottoNumberExtractor(
     // --- 데이터 영역 ---
     // 실제 애플리케이션에서는 DB나 외부 파일에서 관리하는 것이 좋습니다.
 
+    // TODO: DB나 외부 설정에서 동적으로 로딩하도록 개선 필요
     private val dreamNumberMap = mapOf(
         "돼지" to setOf(8, 18, 28),
         "조상" to setOf(14, 15, 25),
@@ -200,8 +201,9 @@ class LottoNumberExtractor(
         "불" to setOf(3, 8, 13),
     )
 
-    private val hotNumbers = listOf(34, 1, 13, 12, 27, 45, 17, 20, 33, 39) // 예시 데이터
-    private val coldNumbers = listOf(9, 22, 23, 29, 30, 3, 6, 7, 10, 11) // 예시 데이터
+    // TODO: 실제 통계 데이터를 기반으로 업데이트 필요
+    private val hotNumbers = listOf(34, 1, 13, 12, 27, 45, 17, 20, 33, 39)
+    private val coldNumbers = listOf(9, 22, 23, 29, 30, 3, 6, 7, 10, 11)
 
     private val fibonacciNumbers = listOf(1, 2, 3, 5, 8, 13, 21, 34) // 피보나치 수열 예시
 

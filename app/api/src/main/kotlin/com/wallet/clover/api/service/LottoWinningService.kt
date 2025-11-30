@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 
 @Service
+@Deprecated("Use WinningCheckService instead")
 class LottoWinningService(
     private val ticketRepository: LottoTicketRepository,
     private val gameRepository: LottoGameRepository,

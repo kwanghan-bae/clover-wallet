@@ -6,6 +6,8 @@ import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 
+import java.time.LocalDateTime
+
 @Repository
 interface LottoGameRepository : CoroutineCrudRepository<LottoGameEntity, Long> {
     suspend fun findByTicketId(ticketId: Long): List<LottoGameEntity>
@@ -17,4 +19,7 @@ interface LottoGameRepository : CoroutineCrudRepository<LottoGameEntity, Long> {
 
     @Query("SELECT SUM(prize_amount) FROM lotto_game WHERE user_id = :userId")
     suspend fun sumPrizeAmountByUserId(userId: Long): Long?
+
+    @Query("SELECT * FROM lotto_game WHERE created_at > :date AND status != 'LOSING' AND extraction_method IS NOT NULL ORDER BY created_at DESC LIMIT 10")
+    fun findRecentWinningGames(date: LocalDateTime): Flow<LottoGameEntity>
 }

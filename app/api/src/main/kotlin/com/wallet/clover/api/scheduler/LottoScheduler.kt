@@ -3,6 +3,7 @@ package com.wallet.clover.api.scheduler
 import com.wallet.clover.api.service.LottoWinningStoreCrawler
 import com.wallet.clover.api.service.WinningCheckService
 import com.wallet.clover.api.service.WinningInfoCrawler
+import com.wallet.clover.api.service.WinningNumberProvider
 import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
@@ -14,7 +15,8 @@ import java.time.temporal.ChronoUnit
 class LottoScheduler(
     private val winningInfoCrawler: WinningInfoCrawler,
     private val winningStoreCrawler: LottoWinningStoreCrawler,
-    private val winningCheckService: WinningCheckService
+    private val winningCheckService: WinningCheckService,
+    private val winningNumberProvider: WinningNumberProvider
 ) {
     private val logger = LoggerFactory.getLogger(LottoScheduler::class.java)
 
@@ -34,7 +36,10 @@ class LottoScheduler(
                 // 2. 당첨 판매점 크롤링
                 winningStoreCrawler.crawlWinningStores(round)
                 
-                // 3. 사용자 당첨 확인
+                // 3. 캐시 초기화 (최신 당첨 번호 반영)
+                winningNumberProvider.evictLatestWinningNumbersCache()
+                
+                // 4. 사용자 당첨 확인
                 winningCheckService.checkWinning(round)
                 
                 logger.info("Scheduled tasks completed successfully for round $round")

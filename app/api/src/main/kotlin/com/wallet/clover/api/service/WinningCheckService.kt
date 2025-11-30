@@ -7,6 +7,7 @@ import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import com.wallet.clover.api.repository.winning.WinningInfoRepository
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -32,11 +33,11 @@ class WinningCheckService(
             return
         }
 
-        // 2. 해당 회차의 티켓 조회
+        // 2. 해당 회차의 티켓 조회 (Flow로 스트리밍 처리)
         val tickets = lottoTicketRepository.findByOrdinal(round)
-        logger.info("Found ${tickets.size} tickets for round $round")
+        logger.info("Starting ticket processing for round $round")
 
-        for (ticket in tickets) {
+        tickets.collect { ticket ->
             val games = lottoGameRepository.findByTicketId(ticket.id!!)
             var ticketTotalPrize = 0L
             var hasWinningGame = false
@@ -79,8 +80,9 @@ class WinningCheckService(
                 if (hasWinningGame) {
                     val user = userRepository.findById(ticket.userId)
                     user?.fcmToken?.let { token ->
-                        // 가장 높은 등수의 게임 하나만 알림에 표시하거나, 요약해서 보냄
-                        val bestGame = winningGames.minByOrNull { it.status.ordinal } // Enum ordinal이 낮을수록 높은 등수라고 가정 (확인 필요)
+                        // 가장 높은 등수의 게임 하나만 알림에 표시 (LottoGameStatus 순서: LOSING(0) -> WINNING_1(5))
+                        // 따라서 ordinal이 가장 높은 것이 1등
+                        val bestGame = winningGames.maxByOrNull { it.status.ordinal }
                         if (bestGame != null) {
                             fcmService.sendWinningNotification(token, getRankName(bestGame.status), listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6))
                         }

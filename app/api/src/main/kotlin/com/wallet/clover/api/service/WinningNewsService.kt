@@ -16,21 +16,12 @@ class WinningNewsService(
     /**
      * 최근 당첨 뉴스를 가져옵니다 (마케팅용)
      * 추출 방식별 당첨 정보를 포함합니다.
-     * TODO: 성능 최적화 필요. 현재는 모든 데이터를 메모리에 로드하여 필터링하고 있음.
-     * DB 쿼리 레벨에서 날짜 및 상태 필터링을 수행하도록 리팩토링해야 함.
      */
     suspend fun getRecentWinningNews(): List<Map<String, Any>> {
-        // 최근 7일간의 당첨 게임 조회
+        // 최근 7일간의 당첨 게임 조회 (DB 쿼리로 최적화됨)
         val cutoffDate = LocalDateTime.now().minusDays(7)
-        val winningGames = lottoGameRepository.findAll()
+        val winningGames = lottoGameRepository.findRecentWinningGames(cutoffDate)
             .toList()
-            .filter { 
-                (it.createdAt?.isAfter(cutoffDate) == true) && 
-                it.status != LottoGameStatus.LOSING &&
-                it.extractionMethod != null
-            }
-            .sortedByDescending { it.createdAt }
-            .take(10)
 
         return winningGames.map { game ->
             mapOf(

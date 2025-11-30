@@ -3,6 +3,7 @@ package com.wallet.clover.api.service
 import com.wallet.clover.api.dto.LottoCheck
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
+import com.wallet.clover.api.repository.user.UserRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Service
 class LottoService(
     private val lottoGameRepository: LottoGameRepository,
     private val notificationService: NotificationService,
-    private val winningNumberProvider: WinningNumberProvider
+    private val winningNumberProvider: WinningNumberProvider,
+    private val userRepository: UserRepository
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
@@ -26,6 +28,7 @@ class LottoService(
      */
     suspend fun checkWinnings(userId: Long): LottoCheck.Out {
         val result = winningNumberProvider.getLatestWinningNumbers()
+        val user = userRepository.findById(userId)
 
         val winningResult = lottoGameRepository.findByUserId(userId)
             .map { game ->
@@ -42,11 +45,10 @@ class LottoService(
                 }
 
                 rank?.let {
-                    // TODO: 실제 사용자 디바이스 토큰을 DB에서 조회해야 함
-                    val dummyDeviceToken = "YOUR_USER_DEVICE_TOKEN_HERE"
-                    val winningAmount = "1,000,000원" // TODO: 실제 당첨금 계산 로직 필요
-
-                    notificationService.sendWinningNotification(dummyDeviceToken, winningAmount)
+                    user?.fcmToken?.let { token ->
+                        val winningAmount = "당첨금 확인 필요" // TODO: 실제 당첨금 조회 로직 연동 (WinningInfoRepository)
+                        notificationService.sendWinningNotification(token, winningAmount)
+                    }
 
                     LottoCheck.UserWinningTicket(
                         round = result.round,
