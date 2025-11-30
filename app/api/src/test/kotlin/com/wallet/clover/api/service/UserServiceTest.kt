@@ -1,9 +1,14 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.api.TestFixtures
 import com.wallet.clover.api.dto.UpdateUserRequest
 import com.wallet.clover.api.dto.UserResponse
 import com.wallet.clover.api.dto.toResponse
 import com.wallet.clover.api.entity.user.UserEntity
+import com.wallet.clover.api.repository.community.CommentRepository
+import com.wallet.clover.api.repository.community.PostRepository
+import com.wallet.clover.api.repository.game.LottoGameRepository
+import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import com.wallet.clover.api.repository.user.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -21,12 +26,26 @@ import java.time.LocalDateTime
 class UserServiceTest {
 
     private lateinit var userRepository: UserRepository
+    private lateinit var commentRepository: CommentRepository
+    private lateinit var postRepository: PostRepository
+    private lateinit var lottoGameRepository: LottoGameRepository
+    private lateinit var lottoTicketRepository: LottoTicketRepository
     private lateinit var userService: UserService
 
     @BeforeEach
     fun setUp() {
         userRepository = mockk()
-        userService = UserService(userRepository)
+        commentRepository = mockk(relaxed = true)
+        postRepository = mockk(relaxed = true)
+        lottoGameRepository = mockk(relaxed = true)
+        lottoTicketRepository = mockk(relaxed = true)
+        userService = UserService(
+            userRepository,
+            commentRepository,
+            postRepository,
+            lottoGameRepository,
+            lottoTicketRepository
+        )
     }
 
     @Test
@@ -34,14 +53,7 @@ class UserServiceTest {
     fun `findUser returns UserResponse for existing user`() = runTest {
         // Given
         val userId = 1L
-        val userEntity = UserEntity(
-            id = userId,
-            ssoQualifier = "sso123",
-            locale = "en",
-            age = 30,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
-        )
+        val userEntity = TestFixtures.createUser(id = userId)
         coEvery { userRepository.findById(userId) } returns userEntity
 
         // When
@@ -73,14 +85,7 @@ class UserServiceTest {
     fun `updateUser updates user info and returns updated UserResponse`() = runTest {
         // Given
         val userId = 1L
-        val originalUserEntity = UserEntity(
-            id = userId,
-            ssoQualifier = "sso123",
-            locale = "en",
-            age = 30,
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now()
-        )
+        val originalUserEntity = TestFixtures.createUser(id = userId)
         val updateRequest = UpdateUserRequest(locale = "ko", age = 31)
         val updatedUserEntity = originalUserEntity.copy(
             locale = updateRequest.locale!!,
@@ -116,5 +121,27 @@ class UserServiceTest {
         assertEquals("User with id $userId not found", exception?.message)
         coVerify(exactly = 1) { userRepository.findById(userId) }
         coVerify(exactly = 0) { userRepository.save(any<UserEntity>()) }
+    }
+
+    @Test
+    @DisplayName("사용자 계정 삭제 시 관련 데이터를 모두 삭제한다")
+    fun `deleteUserAccount deletes all related data`() = runTest {
+        // Given
+        val userId = 1L
+        coEvery { commentRepository.deleteByUserId(userId) } returns Unit
+        coEvery { postRepository.deleteByUserId(userId) } returns Unit
+        coEvery { lottoGameRepository.deleteByUserId(userId) } returns Unit
+        coEvery { lottoTicketRepository.deleteByUserId(userId) } returns Unit
+        coEvery { userRepository.deleteById(userId) } returns Unit
+
+        // When
+        userService.deleteUserAccount(userId)
+
+        // Then
+        coVerify(exactly = 1) { commentRepository.deleteByUserId(userId) }
+        coVerify(exactly = 1) { postRepository.deleteByUserId(userId) }
+        coVerify(exactly = 1) { lottoGameRepository.deleteByUserId(userId) }
+        coVerify(exactly = 1) { lottoTicketRepository.deleteByUserId(userId) }
+        coVerify(exactly = 1) { userRepository.deleteById(userId) }
     }
 }

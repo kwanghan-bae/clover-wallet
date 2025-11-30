@@ -3,9 +3,10 @@ package com.wallet.clover.api.service
 import com.wallet.clover.api.domain.extraction.ExtractionContext
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
 import com.wallet.clover.api.dto.ExtractionRequest
-import io.mockk.every
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
-import io.mockk.verify
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -26,7 +27,7 @@ class ExtractionServiceTest {
 
     @Test
     @DisplayName("extractLottoNumbers는 LottoNumberExtractor를 호출하고 결과를 반환해야 한다")
-    fun `extractLottoNumbers should call LottoNumberExtractor and return result`() {
+    fun `extractLottoNumbers should call LottoNumberExtractor and return result`() = runTest {
         // given
         val method = ExtractionMethod.DREAM
         val dreamKeyword = "돼지"
@@ -38,7 +39,7 @@ class ExtractionServiceTest {
         val animalKeyword = "까치"
         val expectedNumbers = setOf(1, 2, 3, 4, 5, 6)
 
-        every { lottoNumberExtractor.extract(any(), any()) } returns expectedNumbers
+        coEvery { lottoNumberExtractor.extract(any(), any()) } returns expectedNumbers
 
         val request = ExtractionRequest(
             method = method,
@@ -56,7 +57,7 @@ class ExtractionServiceTest {
 
         // then
         assertEquals(expectedNumbers, result)
-        verify(exactly = 1) {
+        coVerify(exactly = 1) {
             lottoNumberExtractor.extract(
                 method,
                 ExtractionContext(

@@ -2,7 +2,12 @@ package com.wallet.clover.api.domain.extraction
 
 import com.wallet.clover.api.domain.extraction.ExtractionContext
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
+import com.wallet.clover.api.domain.statistics.Statistics
 import com.wallet.clover.api.service.LottoNumberExtractor
+import com.wallet.clover.api.service.StatisticsCalculator
+import io.mockk.coEvery
+import io.mockk.mockk
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -14,16 +19,27 @@ import java.time.LocalDate
 @DisplayName("LottoNumberExtractor 테스트")
 class LottoNumberExtractorTest {
 
+    private lateinit var statisticsCalculator: StatisticsCalculator
     private lateinit var extractor: LottoNumberExtractor
 
     @BeforeEach
     fun setUp() {
-        extractor = LottoNumberExtractor()
+        statisticsCalculator = mockk(relaxed = true)
+        extractor = LottoNumberExtractor(statisticsCalculator = statisticsCalculator)
     }
 
     @Test
     @DisplayName("모든 추출 방법은 1-45 사이의 중복되지 않는 숫자 6개를 반환해야 한다")
-    fun `should return 6 unique numbers between 1 and 45`() {
+    fun `should return 6 unique numbers between 1 and 45`() = runTest {
+        // Mock statistics for HOT/COLD methods
+        val stats = Statistics(
+            dateCounter = emptyMap(),
+            monthCounter = emptyMap(),
+            oddEvenCounter = emptyMap(),
+            numberFrequency = (1..45).associateWith { it.toLong() } // 1 is least frequent, 45 is most frequent
+        )
+        coEvery { statisticsCalculator.calculate(any()) } returns stats
+
         ExtractionMethod.values().forEach { method ->
             // given
             val context = ExtractionContext(dreamKeyword = "돼지", birthDate = LocalDate.of(1990, 1, 1))
@@ -42,7 +58,7 @@ class LottoNumberExtractorTest {
     inner class DreamExtraction {
         @Test
         @DisplayName("유효한 꿈 키워드가 주어지면 관련된 숫자를 포함해야 한다")
-        fun `should include numbers related to the dream keyword`() {
+        fun `should include numbers related to the dream keyword`() = runTest {
             // given
             val context = ExtractionContext(dreamKeyword = "돼지")
             val expectedNumbers = setOf(8, 18, 28)
@@ -56,7 +72,7 @@ class LottoNumberExtractorTest {
 
         @Test
         @DisplayName("관련 없는 꿈 키워드가 주어지면 무작위 번호를 생성해야 한다")
-        fun `should return random numbers for irrelevant dream keyword`() {
+        fun `should return random numbers for irrelevant dream keyword`() = runTest {
             // given
             val context = ExtractionContext(dreamKeyword = "무의미한꿈")
 
@@ -73,7 +89,7 @@ class LottoNumberExtractorTest {
     inner class SajuExtraction {
         @Test
         @DisplayName("생년월일이 주어지면 관련된 숫자를 포함해야 한다")
-        fun `should include number related to the birth date`() {
+        fun `should include number related to the birth date`() = runTest {
             // given
             // 1+9+9+0+1+0+1+0 = 21
             val context = ExtractionContext(birthDate = LocalDate.of(1990, 10, 10))
@@ -92,20 +108,42 @@ class LottoNumberExtractorTest {
     inner class StatisticsExtraction {
         @Test
         @DisplayName("Hot 통계는 Hot 번호 목록에서 숫자를 포함해야 한다")
-        fun `should include numbers from hot list for hot statistics`() {
+        fun `should include numbers from hot list for hot statistics`() = runTest {
+            // given
+            // 45 is most frequent, 1 is least frequent
+            val frequency = (1..45).associateWith { it.toLong() }
+            val stats = Statistics(
+                dateCounter = emptyMap(),
+                monthCounter = emptyMap(),
+                oddEvenCounter = emptyMap(),
+                numberFrequency = frequency
+            )
+            coEvery { statisticsCalculator.calculate(any()) } returns stats
+
             // when
             val numbers = extractor.extract(ExtractionMethod.STATISTICS_HOT)
 
             // then
-            // 테스트의 extractor는 실제 코드의 hotNumbers를 참조할 수 없으므로, 테스트가 깨질 수 있음.
-            // 실제로는 DI를 통해 동일한 데이터를 바라보게 해야 함. 여기서는 개념 증명.
+            // Hot numbers should be high frequency numbers (e.g., 45, 44, 43...)
+            // Since extractFromStatistics picks randomly from top 10, we can't assert exact numbers easily without mocking Random.
+            // But we can verify size.
             println("Hot 통계 추출 번호: $numbers")
             assertEquals(6, numbers.size)
         }
 
         @Test
         @DisplayName("Cold 통계는 Cold 번호 목록에서 숫자를 포함해야 한다")
-        fun `should include numbers from cold list for cold statistics`() {
+        fun `should include numbers from cold list for cold statistics`() = runTest {
+            // given
+            val frequency = (1..45).associateWith { it.toLong() }
+            val stats = Statistics(
+                dateCounter = emptyMap(),
+                monthCounter = emptyMap(),
+                oddEvenCounter = emptyMap(),
+                numberFrequency = frequency
+            )
+            coEvery { statisticsCalculator.calculate(any()) } returns stats
+
             // when
             val numbers = extractor.extract(ExtractionMethod.STATISTICS_COLD)
 
@@ -120,7 +158,7 @@ class LottoNumberExtractorTest {
     inner class HoroscopeExtraction {
         @Test
         @DisplayName("염소자리(1월 1일)가 주어지면 관련된 숫자를 포함해야 한다")
-        fun `should include numbers for Capricorn`() {
+        fun `should include numbers for Capricorn`() = runTest {
             // given
             val context = ExtractionContext(birthDate = LocalDate.of(1990, 1, 1))
             val capricornNumbers = setOf(4, 8, 17, 26, 34)
@@ -134,7 +172,7 @@ class LottoNumberExtractorTest {
 
         @Test
         @DisplayName("물병자리(2월 1일)가 주어지면 관련된 숫자를 포함해야 한다")
-        fun `should include numbers for Aquarius`() {
+        fun `should include numbers for Aquarius`() = runTest {
             // given
             val context = ExtractionContext(birthDate = LocalDate.of(1990, 2, 1))
             val aquariusNumbers = setOf(7, 11, 22, 31, 40)
@@ -152,7 +190,7 @@ class LottoNumberExtractorTest {
     inner class PersonalSignificanceExtraction {
         @Test
         @DisplayName("개인 키워드가 주어지면 관련된 숫자를 포함해야 한다")
-        fun `should include numbers from personal keywords`() {
+        fun `should include numbers from personal keywords`() = runTest {
             // given
             val context = ExtractionContext(personalKeywords = listOf("19880715", "차량번호1234"))
             val expectedNumbers = setOf(19, 88, 7, 15, 12, 34) // 1988 -> 19, 88 / 0715 -> 7, 15 / 1234 -> 12, 34
@@ -170,7 +208,7 @@ class LottoNumberExtractorTest {
     inner class NaturePatternsExtraction {
         @Test
         @DisplayName("피보나치 키워드가 주어지면 피보나치 숫자를 포함해야 한다")
-        fun `should include fibonacci numbers for fibonacci keyword`() {
+        fun `should include fibonacci numbers for fibonacci keyword`() = runTest {
             // given
             val context = ExtractionContext(natureKeyword = "피보나치")
             val expectedNumbers = setOf(1, 2, 3, 5, 8, 13, 21, 34)
@@ -188,7 +226,7 @@ class LottoNumberExtractorTest {
     inner class AncientDivinationExtraction {
         @Test
         @DisplayName("주역 키워드가 주어지면 주역 관련 숫자를 포함해야 한다")
-        fun `should include I Ching numbers for I Ching keyword`() {
+        fun `should include I Ching numbers for I Ching keyword`() = runTest {
             // given
             val context = ExtractionContext(divinationKeyword = "주역")
             val expectedNumbers = setOf(1, 6, 8, 11, 24, 30)
@@ -206,7 +244,7 @@ class LottoNumberExtractorTest {
     inner class ColorsSoundsExtraction {
         @Test
         @DisplayName("빨강 키워드가 주어지면 빨강 관련 숫자를 포함해야 한다")
-        fun `should include red related numbers for red keyword`() {
+        fun `should include red related numbers for red keyword`() = runTest {
             // given
             val context = ExtractionContext(colorKeyword = "빨강")
             val expectedNumbers = setOf(1, 10, 19, 28, 37)
@@ -224,7 +262,7 @@ class LottoNumberExtractorTest {
     inner class AnimalOmensExtraction {
         @Test
         @DisplayName("까치 키워드가 주어지면 까치 관련 숫자를 포함해야 한다")
-        fun `should include magpie related numbers for magpie keyword`() {
+        fun `should include magpie related numbers for magpie keyword`() = runTest {
             // given
             val context = ExtractionContext(animalKeyword = "까치")
             val expectedNumbers = setOf(7, 17, 27)
