@@ -18,6 +18,15 @@ interface LottoGameRepository : CoroutineCrudRepository<LottoGameEntity, Long> {
     @Query("SELECT COUNT(*) FROM lotto_game WHERE user_id = :userId")
     suspend fun countByUserId(userId: Long): Long
 
+    @Query("SELECT COUNT(*) FROM lotto_game WHERE user_id = :userId AND status != 'LOSING'")
+    suspend fun countWinningGamesByUserId(userId: Long): Long
+
+    @Query("SELECT COUNT(*) > 0 FROM lotto_game WHERE user_id = :userId AND status = :status")
+    suspend fun existsByUserIdAndStatus(userId: Long, status: String): Boolean
+
+    @Query("SELECT COUNT(*) > 0 FROM lotto_game WHERE user_id = :userId AND extraction_method = :method AND status != 'LOSING'")
+    suspend fun existsByUserIdAndExtractionMethodAndWinning(userId: Long, method: String): Boolean
+
     @Query("SELECT SUM(prize_amount) FROM lotto_game WHERE user_id = :userId")
     suspend fun sumPrizeAmountByUserId(userId: Long): Long?
 

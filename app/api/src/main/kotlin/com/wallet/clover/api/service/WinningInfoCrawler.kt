@@ -35,9 +35,11 @@ class WinningInfoCrawler(
                 val url = "$winningInfoUrl$round"
                 val doc = Jsoup.connect(url).get()
 
-                // 날짜 파싱 (2023년 11월 25일 추첨)
-                val dateText = doc.select(scrapingProperties.winningInfoDateSelector).text().replace(Regex(".*?\\((.*?)\\s추첨\\).*"), "$1")
-                val drawDate = LocalDate.parse(dateText, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+                // 날짜 파싱
+                val dateStr = doc.select(scrapingProperties.winningInfoDateSelector).text()
+                // (2023년 11월 11일 추첨) -> 2023-11-11
+                val dateText = dateStr.substringAfter("(").substringBefore(" 추첨").replace("년 ", "-").replace("월 ", "-").replace("일", "")
+                val drawDate = LocalDate.parse(dateText, DateTimeFormatter.ISO_DATE)
 
                 // 당첨 번호
                 val numbers = doc.select(scrapingProperties.winningInfoNumSelector).map { it.text().toInt() }
@@ -46,24 +48,19 @@ class WinningInfoCrawler(
                 // 당첨금 (표에서 파싱)
                 val prizeTable = doc.select(scrapingProperties.winningInfoPrizeTableSelector)
                 
-                // 1등 당첨금
-                val firstPrizeStr = prizeTable[0].select("td")[3].text().replace(Regex("[^0-9]"), "")
-                val firstPrize = firstPrizeStr.toLong()
+                // 안전한 파싱을 위한 헬퍼 함수
+                fun parsePrize(row: Int): Long {
+                    if (prizeTable.size <= row) return 0L
+                    val tds = prizeTable[row].select("td")
+                    if (tds.size < 4) return 0L
+                    return tds[3].text().replace(Regex("[^0-9]"), "").toLongOrNull() ?: 0L
+                }
 
-                // 2등 당첨금
-                val secondPrizeStr = prizeTable[1].select("td")[3].text().replace(Regex("[^0-9]"), "")
-                val secondPrize = secondPrizeStr.toLong()
-
-                // 3등 당첨금
-                val thirdPrizeStr = prizeTable[2].select("td")[3].text().replace(Regex("[^0-9]"), "")
-                val thirdPrize = thirdPrizeStr.toLong()
-
-                // 4등, 5등은 고정일 수 있지만 크롤링 (보통 50,000 / 5,000)
-                val fourthPrizeStr = prizeTable[3].select("td")[3].text().replace(Regex("[^0-9]"), "")
-                val fourthPrize = fourthPrizeStr.toLong()
-
-                val fifthPrizeStr = prizeTable[4].select("td")[3].text().replace(Regex("[^0-9]"), "")
-                val fifthPrize = fifthPrizeStr.toLong()
+                val firstPrize = parsePrize(0)
+                val secondPrize = parsePrize(1)
+                val thirdPrize = parsePrize(2)
+                val fourthPrize = parsePrize(3)
+                val fifthPrize = parsePrize(4)
 
                 WinningInfoEntity(
                     round = round,

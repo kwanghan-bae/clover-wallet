@@ -29,53 +29,65 @@ class BadgeService(
 
     /**
      * 사용자의 당첨 이력을 분석하여 뱃지를 자동으로 부여합니다.
-     * TODO: 성능 최적화 필요. 현재는 모든 게임을 메모리에 로드하여 분석함.
-     * COUNT 쿼리 등을 활용하여 DB 레벨에서 처리하도록 개선해야 함.
+     * DB 카운트 쿼리를 활용하여 성능을 최적화하였습니다.
      */
     suspend fun updateUserBadges(userId: Long) {
         val user = userRepository.findById(userId) ?: return
         val currentBadges = user.badges?.split(",")?.filter { it.isNotBlank() }?.toMutableSet() ?: mutableSetOf()
+        val originalBadgeCount = currentBadges.size
 
-        // 모든 게임 조회
-        val allGames = lottoGameRepository.findByUserId(userId).toList()
+        // DB 레벨에서 조건 확인
+        val totalGames = lottoGameRepository.countByUserId(userId)
+        val winningGamesCount = lottoGameRepository.countWinningGamesByUserId(userId)
         
-        // 당첨된 게임 조회
-        val winningGames = allGames.filter { 
-            it.status != LottoGameStatus.LOSING
-        }
-
         // 뱃지 조건 확인 및 부여
-        if (winningGames.isNotEmpty() && !currentBadges.contains(BADGE_FIRST_WIN)) {
+        if (winningGamesCount > 0 && !currentBadges.contains(BADGE_FIRST_WIN)) {
             currentBadges.add(BADGE_FIRST_WIN)
         }
 
-        if (winningGames.any { it.status == LottoGameStatus.WINNING_1 } && !currentBadges.contains(BADGE_LUCKY_1ST)) {
+        if (!currentBadges.contains(BADGE_LUCKY_1ST) && lottoGameRepository.existsByUserIdAndStatus(userId, LottoGameStatus.WINNING_1.name)) {
             currentBadges.add(BADGE_LUCKY_1ST)
         }
 
-        if (allGames.size >= 10 && !currentBadges.contains(BADGE_FREQUENT_PLAYER)) {
+        if (totalGames >= 10 && !currentBadges.contains(BADGE_FREQUENT_PLAYER)) {
             currentBadges.add(BADGE_FREQUENT_PLAYER)
         }
 
-        if (allGames.size >= 50 && !currentBadges.contains(BADGE_VETERAN)) {
+        if (totalGames >= 50 && !currentBadges.contains(BADGE_VETERAN)) {
             currentBadges.add(BADGE_VETERAN)
         }
 
         // 추출 방식별 뱃지 (특정 방식으로 당첨 시)
-        winningGames.forEach { game ->
-            when (game.extractionMethod) {
-                ExtractionMethod.DREAM -> if (!currentBadges.contains(BADGE_DREAM_MASTER)) currentBadges.add(BADGE_DREAM_MASTER)
-                ExtractionMethod.SAJU -> if (!currentBadges.contains(BADGE_SAJU_EXPERT)) currentBadges.add(BADGE_SAJU_EXPERT)
-                ExtractionMethod.STATISTICS_HOT, ExtractionMethod.STATISTICS_COLD -> if (!currentBadges.contains(BADGE_STATS_GENIUS)) currentBadges.add(BADGE_STATS_GENIUS)
-                ExtractionMethod.HOROSCOPE -> if (!currentBadges.contains(BADGE_HOROSCOPE_BELIEVER)) currentBadges.add(BADGE_HOROSCOPE_BELIEVER)
-                ExtractionMethod.NATURE_PATTERNS -> if (!currentBadges.contains(BADGE_NATURE_LOVER)) currentBadges.add(BADGE_NATURE_LOVER)
-                else -> {}
+        checkAndAddExtractionBadge(userId, ExtractionMethod.DREAM, BADGE_DREAM_MASTER, currentBadges)
+        checkAndAddExtractionBadge(userId, ExtractionMethod.SAJU, BADGE_SAJU_EXPERT, currentBadges)
+        checkAndAddExtractionBadge(userId, ExtractionMethod.HOROSCOPE, BADGE_HOROSCOPE_BELIEVER, currentBadges)
+        checkAndAddExtractionBadge(userId, ExtractionMethod.NATURE_PATTERNS, BADGE_NATURE_LOVER, currentBadges)
+        
+        // 통계는 HOT/COLD 둘 다 체크
+        if (!currentBadges.contains(BADGE_STATS_GENIUS)) {
+            if (lottoGameRepository.existsByUserIdAndExtractionMethodAndWinning(userId, ExtractionMethod.STATISTICS_HOT.name) ||
+                lottoGameRepository.existsByUserIdAndExtractionMethodAndWinning(userId, ExtractionMethod.STATISTICS_COLD.name)) {
+                currentBadges.add(BADGE_STATS_GENIUS)
             }
         }
 
-        // 뱃지 업데이트
-        val updatedUser = user.copy(badges = currentBadges.joinToString(","))
-        userRepository.save(updatedUser)
+        // 뱃지 업데이트 (변경된 경우에만 저장)
+        if (currentBadges.size != originalBadgeCount) {
+            val updatedUser = user.copy(badges = currentBadges.joinToString(","))
+            userRepository.save(updatedUser)
+        }
+    }
+
+    private suspend fun checkAndAddExtractionBadge(
+        userId: Long, 
+        method: ExtractionMethod, 
+        badgeName: String, 
+        currentBadges: MutableSet<String>
+    ) {
+        if (!currentBadges.contains(badgeName) && 
+            lottoGameRepository.existsByUserIdAndExtractionMethodAndWinning(userId, method.name)) {
+            currentBadges.add(badgeName)
+        }
     }
 
     /**

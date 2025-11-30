@@ -64,10 +64,15 @@ class WinningCheckService(
         val gamesFlow = lottoGameRepository.findByTicketIdIn(ticketIds)
         val gamesMap = gamesFlow.toList().groupBy { it.ticketId }
 
+        val updatedGames = mutableListOf<LottoGameEntity>()
+        val updatedTickets = mutableListOf<com.wallet.clover.api.entity.ticket.LottoTicketEntity>()
+        val winningUserIds = mutableSetOf<Long>()
+        val winningTickets = mutableListOf<Pair<com.wallet.clover.api.entity.ticket.LottoTicketEntity, LottoGameEntity>>() // Ticket and Best Game
+
         for (ticket in tickets) {
             val games = gamesMap[ticket.id] ?: emptyList()
             var hasWinningGame = false
-            val winningGames = mutableListOf<LottoGameEntity>()
+            val ticketWinningGames = mutableListOf<LottoGameEntity>()
 
             for (game in games) {
                 val (status, prize) = game.calculateRank(winningInfo)
@@ -77,12 +82,16 @@ class WinningCheckService(
                         status = status,
                         prizeAmount = prize
                     )
-                    lottoGameRepository.save(updatedGame)
-                    logger.debug("Updated game ${game.id}: $status, $prize")
+                    updatedGames.add(updatedGame)
                     
                     if (status != LottoGameStatus.LOSING) {
-                        winningGames.add(updatedGame)
+                        ticketWinningGames.add(updatedGame)
                     }
+                } else {
+                     // 상태가 변하지 않았더라도 당첨된 게임이면 리스트에 추가 (알림용)
+                     if (game.status != LottoGameStatus.LOSING) {
+                        ticketWinningGames.add(game)
+                     }
                 }
                 
                 if (prize > 0) {
@@ -98,22 +107,46 @@ class WinningCheckService(
                     status = newTicketStatus,
                     updatedAt = java.time.LocalDateTime.now()
                 )
-                lottoTicketRepository.save(updatedTicket)
+                updatedTickets.add(updatedTicket)
                 logger.info("Updated ticket ${ticket.id} status to $newTicketStatus")
                 
-                // 당첨 시 알림 및 뱃지 처리
                 if (hasWinningGame) {
-                    val user = userRepository.findById(ticket.userId)
-                    user?.fcmToken?.let { token ->
-                        // 가장 높은 등수의 게임 하나만 알림에 표시 (LottoGameStatus 순서: LOSING(0) -> WINNING_1(5))
-                        // 따라서 ordinal이 가장 높은 것이 1등
-                        val bestGame = winningGames.maxByOrNull { it.status.ordinal }
-                        if (bestGame != null) {
-                            fcmService.sendWinningNotification(token, getRankName(bestGame.status), listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6))
-                        }
+                    winningUserIds.add(ticket.userId)
+                    // 가장 높은 등수의 게임 찾기
+                    val bestGame = ticketWinningGames.maxByOrNull { it.status.ordinal }
+                    if (bestGame != null) {
+                        winningTickets.add(updatedTicket to bestGame)
                     }
-                    badgeService.updateUserBadges(ticket.userId)
                 }
+            }
+        }
+
+        // 배치 저장
+        if (updatedGames.isNotEmpty()) {
+            lottoGameRepository.saveAll(updatedGames).collect()
+            logger.info("Batch updated ${updatedGames.size} games")
+        }
+
+        if (updatedTickets.isNotEmpty()) {
+            lottoTicketRepository.saveAll(updatedTickets).collect()
+            logger.info("Batch updated ${updatedTickets.size} tickets")
+        }
+
+        // 알림 및 뱃지 처리 (비동기 또는 배치)
+        if (winningUserIds.isNotEmpty()) {
+            val users = userRepository.findAllById(winningUserIds).toList().associateBy { it.id }
+            
+            for ((ticket, bestGame) in winningTickets) {
+                val user = users[ticket.userId]
+                user?.fcmToken?.let { token ->
+                    fcmService.sendWinningNotification(
+                        token, 
+                        getRankName(bestGame.status), 
+                        listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6)
+                    )
+                }
+                // 뱃지 업데이트는 개별 호출 (서비스 내부 로직이 복잡할 수 있음)
+                badgeService.updateUserBadges(ticket.userId)
             }
         }
     }
