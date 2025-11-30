@@ -36,6 +36,15 @@ out/
 ### VS Code ###
 .vscode/
 
-# Local configuration files
+# Local configuration
+# Secrets
+.env.local
+.env.*.local
+
+# Firebase
+firebase-keys/
+*firebase*.json
+service-account.json
 application-local.yml
+.yml
 /gemini/
