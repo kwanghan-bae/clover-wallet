@@ -2,17 +2,14 @@
 FROM gradle:8.5-jdk21 AS build
 WORKDIR /app
 
-# 의존성 캐싱을 위한 레이어 분리
+# 빌드 파일 복사 (캐싱 레이어)
 COPY gradle.properties settings.gradle.kts build.gradle.kts gradlew ./
 COPY gradle ./gradle
 COPY app/api/build.gradle.kts ./app/api/
 
-# 의존성만 먼저 다운로드 (레이어 캐싱)
-RUN ./gradlew :app:api:dependencies --no-daemon --offline || ./gradlew :app:api:dependencies --no-daemon
-
-# 소스 코드 복사 및 빌드
+# 소스 코드 복사 및 빌드 (한 번에 처리 - Render 환경 최적화)
 COPY app ./app
-RUN ./gradlew :app:api:bootJar --no-daemon --parallel
+RUN ./gradlew :app:api:bootJar --no-daemon --parallel --quiet
 
 # Run Stage
 FROM eclipse-temurin:21-jre-alpine
