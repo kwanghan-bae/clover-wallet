@@ -9,4 +9,5 @@ data class SaveScannedTicketCommand(
         message = "URL must be a valid dhlottery.co.kr URL"
     )
     val url: String,
+    val extractionMethod: String? = null,  // 사용자가 선택한 추출 방식
 )

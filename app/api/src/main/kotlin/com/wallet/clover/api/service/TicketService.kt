@@ -64,6 +64,7 @@ class TicketService(
                     number4 = it.number4,
                     number5 = it.number5,
                     number6 = it.number6,
+                    extractionMethod = command.extractionMethod,  // QR 스캔 시 선택한 추출 방식
                 )
             }
             gameRepository.saveAll(games).toList() // Collect the flow to execute saves
