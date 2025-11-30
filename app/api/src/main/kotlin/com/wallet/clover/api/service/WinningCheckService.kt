@@ -16,7 +16,10 @@ import org.springframework.transaction.annotation.Transactional
 class WinningCheckService(
     private val winningInfoRepository: WinningInfoRepository,
     private val lottoTicketRepository: LottoTicketRepository,
-    private val lottoGameRepository: LottoGameRepository
+    private val lottoGameRepository: LottoGameRepository,
+    private val fcmService: FcmService,
+    private val badgeService: BadgeService,
+    private val userRepository: com.wallet.clover.api.repository.user.UserRepository
 ) {
     private val logger = LoggerFactory.getLogger(WinningCheckService::class.java)
 
@@ -37,10 +40,10 @@ class WinningCheckService(
             val games = lottoGameRepository.findByTicketId(ticket.id!!)
             var ticketTotalPrize = 0L
             var hasWinningGame = false
+            val winningGames = mutableListOf<LottoGameEntity>()
 
             for (game in games) {
-                val (statusStr, prize) = calculatePrize(game, winningInfo)
-                val status = LottoGameStatus.valueOf(statusStr)
+                val (status, prize) = calculatePrize(game, winningInfo)
                 
                 if (game.status != status || game.prizeAmount != prize) {
                     val updatedGame = game.copy(
@@ -49,6 +52,10 @@ class WinningCheckService(
                     )
                     lottoGameRepository.save(updatedGame)
                     logger.debug("Updated game ${game.id}: $status, $prize")
+                    
+                    if (status != LottoGameStatus.LOSING) {
+                        winningGames.add(updatedGame)
+                    }
                 }
                 
                 if (prize > 0) {
@@ -67,11 +74,24 @@ class WinningCheckService(
                 )
                 lottoTicketRepository.save(updatedTicket)
                 logger.info("Updated ticket ${ticket.id} status to $newTicketStatus")
+                
+                // 당첨 시 알림 및 뱃지 처리
+                if (hasWinningGame) {
+                    val user = userRepository.findById(ticket.userId)
+                    user?.fcmToken?.let { token ->
+                        // 가장 높은 등수의 게임 하나만 알림에 표시하거나, 요약해서 보냄
+                        val bestGame = winningGames.minByOrNull { it.status.ordinal } // Enum ordinal이 낮을수록 높은 등수라고 가정 (확인 필요)
+                        if (bestGame != null) {
+                            fcmService.sendWinningNotification(token, getRankName(bestGame.status), listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6))
+                        }
+                    }
+                    badgeService.updateUserBadges(ticket.userId)
+                }
             }
         }
     }
     
-    fun calculatePrize(game: LottoGameEntity, winningInfo: WinningInfoEntity): Pair<String, Long> {
+    fun calculatePrize(game: LottoGameEntity, winningInfo: WinningInfoEntity): Pair<LottoGameStatus, Long> {
         val myNumbers = setOf(game.number1, game.number2, game.number3, game.number4, game.number5, game.number6)
         val winningNumbers = setOf(winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6)
         
@@ -79,11 +99,22 @@ class WinningCheckService(
         val bonusMatch = myNumbers.contains(winningInfo.bonusNumber)
         
         return when (matchCount) {
-            6 -> "WINNING_1" to winningInfo.firstPrizeAmount
-            5 -> if (bonusMatch) "WINNING_2" to winningInfo.secondPrizeAmount else "WINNING_3" to winningInfo.thirdPrizeAmount
-            4 -> "WINNING_4" to winningInfo.fourthPrizeAmount
-            3 -> "WINNING_5" to winningInfo.fifthPrizeAmount
-            else -> "LOSING" to 0L
+            6 -> LottoGameStatus.WINNING_1 to winningInfo.firstPrizeAmount
+            5 -> if (bonusMatch) LottoGameStatus.WINNING_2 to winningInfo.secondPrizeAmount else LottoGameStatus.WINNING_3 to winningInfo.thirdPrizeAmount
+            4 -> LottoGameStatus.WINNING_4 to winningInfo.fourthPrizeAmount
+            3 -> LottoGameStatus.WINNING_5 to winningInfo.fifthPrizeAmount
+            else -> LottoGameStatus.LOSING to 0L
+        }
+    }
+
+    private fun getRankName(status: LottoGameStatus): String {
+        return when (status) {
+            LottoGameStatus.WINNING_1 -> "1등"
+            LottoGameStatus.WINNING_2 -> "2등"
+            LottoGameStatus.WINNING_3 -> "3등"
+            LottoGameStatus.WINNING_4 -> "4등"
+            LottoGameStatus.WINNING_5 -> "5등"
+            else -> "당첨"
         }
     }
 }

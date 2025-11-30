@@ -26,7 +26,6 @@ data class PostResponse(
 )
 
 data class CreatePostRequest(
-    val userId: Long,
     @field:NotBlank(message = "Content cannot be blank")
     val content: String
 )
@@ -53,7 +52,6 @@ data class CommentResponse(
 
 data class CreateCommentRequest(
     val postId: Long,
-    val userId: Long,
     @field:NotBlank(message = "Content cannot be blank")
     val content: String
 )
@@ -70,12 +68,12 @@ fun PostEntity.toResponse() = PostResponse(
     content = this.content,
     viewCount = this.viewCount,
     likeCount = this.likeCount,
-    createdAt = this.createdAt ?: LocalDateTime.now(),
-    updatedAt = this.updatedAt ?: LocalDateTime.now()
+    createdAt = this.createdAt,
+    updatedAt = this.updatedAt
 )
 
-fun CreatePostRequest.toEntity() = PostEntity(
-    userId = this.userId,
+fun CreatePostRequest.toEntity(userId: Long) = PostEntity(
+    userId = userId,
     content = this.content
 )
 
@@ -85,12 +83,12 @@ fun CommentEntity.toResponse() = CommentResponse(
     postId = this.postId,
     userId = this.userId,
     content = this.content,
-    createdAt = this.createdAt ?: LocalDateTime.now(),
-    updatedAt = this.updatedAt ?: LocalDateTime.now()
+    createdAt = this.createdAt,
+    updatedAt = this.updatedAt
 )
 
-fun CreateCommentRequest.toEntity() = CommentEntity(
+fun CreateCommentRequest.toEntity(userId: Long) = CommentEntity(
     postId = this.postId,
-    userId = this.userId,
+    userId = userId,
     content = this.content
 )

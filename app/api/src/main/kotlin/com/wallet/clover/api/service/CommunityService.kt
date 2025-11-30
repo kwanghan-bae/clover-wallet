@@ -34,8 +34,8 @@ class CommunityService(
         return (postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")).toResponse()
     }
 
-    suspend fun createPost(request: CreatePostRequest): PostResponse {
-        val newPost = request.toEntity()
+    suspend fun createPost(userId: Long, request: CreatePostRequest): PostResponse {
+        val newPost = request.toEntity(userId)
         return postRepository.save(newPost).toResponse()
     }
 
@@ -58,10 +58,10 @@ class CommunityService(
         return commentRepository.findByPostId(postId).map { it.toResponse() }.toList()
     }
 
-    suspend fun createComment(request: CreateCommentRequest): CommentResponse {
+    suspend fun createComment(userId: Long, request: CreateCommentRequest): CommentResponse {
         // Check if post exists
         postRepository.findById(request.postId) ?: throw PostNotFoundException("Post with id ${request.postId} not found")
-        val newComment = request.toEntity()
+        val newComment = request.toEntity(userId)
         return commentRepository.save(newComment).toResponse()
     }
 

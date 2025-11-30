@@ -20,7 +20,7 @@ class LottoWinningService(
     private val userRepository: UserRepository,
     private val winningChecker: WinningChecker,
     private val fcmService: FcmService,
-    private val lottoTicketClient: LottoTicketClient,
+    private val winningNumberProvider: WinningNumberProvider,
     private val badgeService: BadgeService
 ) {
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -28,14 +28,22 @@ class LottoWinningService(
     /**
      * 매주 토요일 오후 9시에 실행
      * KST 기준: 매주 토요일 21:00
+     * TODO: 대량의 티켓 처리 시 배치 처리(Chunking) 또는 Spring Batch 도입 고려 필요
+     * 현재는 모든 STASHED 티켓을 메모리에 로드하므로 OOM 위험이 있음.
+     * 
+     * DEPRECATED: WinningCheckService로 통합됨. 추후 삭제 예정.
      */
-    @Scheduled(cron = "0 0 21 * * SAT", zone = "Asia/Seoul")
+    // @Scheduled(cron = "0 0 21 * * SAT", zone = "Asia/Seoul")
     fun checkWeeklyWinning() = runBlocking {
         logger.info("Starting weekly lotto winning check...")
         
         try {
             // 1. 최신 회차 당첨 번호 스크래핑
-            val winningNumbers = scrapeLatestWinningNumbers()
+            val winningResult = winningNumberProvider.getLatestWinningNumbers()
+            val winningNumbers = WinningChecker.WinningNumbers(
+                numbers = winningResult.winningNumbers,
+                bonusNumber = winningResult.bonusNumber
+            )
             logger.info("Scraped winning numbers: $winningNumbers")
 
             // 2. 모든 STASHED(발표전) 상태 티켓 조회
@@ -97,26 +105,6 @@ class LottoWinningService(
         } catch (e: Exception) {
             logger.error("Error during weekly winning check", e)
         }
-    }
-
-    /**
-     * 최신 회차 당첨 번호 스크래핑
-     * 나눔로또 공식 사이트에서 당첨 번호를 가져옵니다.
-     */
-    private suspend fun scrapeLatestWinningNumbers(): WinningChecker.WinningNumbers {
-        // 나눔로또 공식 당첨 번호 페이지
-        val html = lottoTicketClient.getHtmlByUrl("https://www.dhlottery.co.kr/gameResult.do?method=byWin")
-        val doc = Jsoup.parse(html)
-
-        // 당첨 번호 파싱
-        val numbers = doc.select(".nums .num.win").map { it.text().toInt() }
-        val bonusNumber = doc.select(".nums .num.bonus").first()?.text()?.toInt()
-            ?: throw IllegalStateException("보너스 번호를 찾을 수 없습니다")
-
-        return WinningChecker.WinningNumbers(
-            numbers = numbers,
-            bonusNumber = bonusNumber
-        )
     }
 
     /**

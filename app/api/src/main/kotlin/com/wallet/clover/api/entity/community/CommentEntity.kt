@@ -21,8 +21,10 @@ data class CommentEntity(
     val content: String,
     
     /** 생성 일시 */
+    @CreatedDate
     val createdAt: LocalDateTime = LocalDateTime.now(),
     
     /** 수정 일시 */
+    @LastModifiedDate
     val updatedAt: LocalDateTime = LocalDateTime.now()
 )

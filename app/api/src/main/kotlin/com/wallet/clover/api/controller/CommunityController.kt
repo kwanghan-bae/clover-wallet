@@ -28,8 +28,12 @@ class CommunityController(
     }
 
     @PostMapping("/posts")
-    suspend fun createPost(@Valid @RequestBody request: CreatePostRequest): CommonResponse<PostResponse> {
-        return CommonResponse.success(communityService.createPost(request))
+    suspend fun createPost(
+        @Valid @RequestBody request: CreatePostRequest,
+        @AuthenticationPrincipal jwt: Jwt
+    ): CommonResponse<PostResponse> {
+        val userId = jwt.subject.toLong()
+        return CommonResponse.success(communityService.createPost(userId, request))
     }
 
     @PutMapping("/posts/{postId}")
@@ -48,8 +52,12 @@ class CommunityController(
     }
 
     @PostMapping("/comments")
-    suspend fun createComment(@Valid @RequestBody request: CreateCommentRequest): CommonResponse<CommentResponse> {
-        return CommonResponse.success(communityService.createComment(request))
+    suspend fun createComment(
+        @Valid @RequestBody request: CreateCommentRequest,
+        @AuthenticationPrincipal jwt: Jwt
+    ): CommonResponse<CommentResponse> {
+        val userId = jwt.subject.toLong()
+        return CommonResponse.success(communityService.createComment(userId, request))
     }
 
     @PutMapping("/comments/{commentId}")
