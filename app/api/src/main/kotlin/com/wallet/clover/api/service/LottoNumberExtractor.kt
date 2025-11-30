@@ -12,13 +12,15 @@ import kotlin.random.Random
  */
 @Component
 class LottoNumberExtractor(
-    private val random: Random = Random.Default
+    private val random: Random = Random.Default,
+    private val statisticsCalculator: StatisticsCalculator
 ) {
 
     companion object {
         private const val LOTTO_MIN_NUMBER = 1
         private const val LOTTO_MAX_NUMBER = 45
         private const val LOTTO_NUMBERS_COUNT = 6
+        private const val STATS_GAME_COUNT = 100 // 최근 100회차 기준
     }
 
     /**
@@ -28,12 +30,12 @@ class LottoNumberExtractor(
      * @param context 추출에 필요한 추가 정보 (꿈 키워드, 생년월일 등)
      * @return 중복되지 않는 1-45 사이의 로또 번호 6개 Set
      */
-    fun extract(method: ExtractionMethod, context: ExtractionContext? = null): Set<Int> {
+    suspend fun extract(method: ExtractionMethod, context: ExtractionContext? = null): Set<Int> {
         val seedNumbers = when (method) {
             ExtractionMethod.DREAM -> extractFromDream(context?.dreamKeyword)
             ExtractionMethod.SAJU -> extractFromSaju(context?.birthDate)
-            ExtractionMethod.STATISTICS_HOT -> extractFromStatistics(hotNumbers)
-            ExtractionMethod.STATISTICS_COLD -> extractFromStatistics(coldNumbers)
+            ExtractionMethod.STATISTICS_HOT -> extractFromStatistics(getHotNumbers())
+            ExtractionMethod.STATISTICS_COLD -> extractFromStatistics(getColdNumbers())
             ExtractionMethod.HOROSCOPE -> extractFromHoroscope(context?.birthDate)
             ExtractionMethod.PERSONAL_SIGNIFICANCE -> extractFromPersonalSignificance(context?.personalKeywords)
             ExtractionMethod.NATURE_PATTERNS -> extractFromNaturePatterns(context?.natureKeyword)
@@ -43,6 +45,26 @@ class LottoNumberExtractor(
         }
 
         return generateNumbers(seedNumbers)
+    }
+
+    private suspend fun getHotNumbers(): List<Int> {
+        return try {
+            val stats = statisticsCalculator.calculate(STATS_GAME_COUNT)
+            stats.numberFrequency.entries.sortedByDescending { it.value }.take(10).map { it.key }
+        } catch (e: Exception) {
+            // Fallback
+            listOf(34, 1, 13, 12, 27, 45, 17, 20, 33, 39)
+        }
+    }
+
+    private suspend fun getColdNumbers(): List<Int> {
+        return try {
+            val stats = statisticsCalculator.calculate(STATS_GAME_COUNT)
+            stats.numberFrequency.entries.sortedBy { it.value }.take(10).map { it.key }
+        } catch (e: Exception) {
+            // Fallback
+            listOf(9, 22, 23, 29, 30, 3, 6, 7, 10, 11)
+        }
     }
 
     /**
@@ -200,10 +222,6 @@ class LottoNumberExtractor(
         "물" to setOf(1, 6, 16),
         "불" to setOf(3, 8, 13),
     )
-
-    // TODO: 실제 통계 데이터를 기반으로 업데이트 필요
-    private val hotNumbers = listOf(34, 1, 13, 12, 27, 45, 17, 20, 33, 39)
-    private val coldNumbers = listOf(9, 22, 23, 29, 30, 3, 6, 7, 10, 11)
 
     private val fibonacciNumbers = listOf(1, 2, 3, 5, 8, 13, 21, 34) // 피보나치 수열 예시
 

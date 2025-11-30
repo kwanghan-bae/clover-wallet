@@ -47,8 +47,12 @@ class CommunityController(
     }
 
     @GetMapping("/posts/{postId}/comments")
-    suspend fun getComments(@PathVariable postId: Long): CommonResponse<List<CommentResponse>> {
-        return CommonResponse.success(communityService.getCommentsByPostId(postId))
+    suspend fun getComments(
+        @PathVariable postId: Long,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): CommonResponse<List<CommentResponse>> {
+        return CommonResponse.success(communityService.getCommentsByPostId(postId, page, size))
     }
 
     @PostMapping("/comments")

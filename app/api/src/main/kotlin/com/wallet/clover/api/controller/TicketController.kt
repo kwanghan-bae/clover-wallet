@@ -18,8 +18,12 @@ class TicketController(
 ) {
 
     @GetMapping
-    suspend fun getMyTickets(@RequestParam userId: Long): List<LottoTicketResponse> {
-        return ticketService.getMyTickets(userId).map { LottoTicketResponse.from(it) }
+    suspend fun getMyTickets(
+        @RequestParam userId: Long,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): List<LottoTicketResponse> {
+        return ticketService.getMyTickets(userId, page, size).map { LottoTicketResponse.from(it) }
     }
 
     @GetMapping("/{ticketId}")

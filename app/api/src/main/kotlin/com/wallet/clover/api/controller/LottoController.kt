@@ -12,8 +12,12 @@ class LottoController(
 ) {
 
     @GetMapping("/games")
-    suspend fun getMyGames(@RequestParam userId: Long): List<LottoGameResponse> {
-        return lottoGameService.getGamesByUserId(userId).map { LottoGameResponse.from(it) }
+    suspend fun getMyGames(
+        @RequestParam userId: Long,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): List<LottoGameResponse> {
+        return lottoGameService.getGamesByUserId(userId, page, size).map { LottoGameResponse.from(it) }
     }
 
     @PostMapping("/games")

@@ -2,6 +2,7 @@ package com.wallet.clover.api.repository.game
 
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import kotlinx.coroutines.flow.Flow
+import org.springframework.data.domain.Pageable
 import org.springframework.data.r2dbc.repository.Query
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
@@ -12,7 +13,8 @@ import java.time.LocalDateTime
 interface LottoGameRepository : CoroutineCrudRepository<LottoGameEntity, Long> {
     suspend fun findByTicketId(ticketId: Long): List<LottoGameEntity>
     fun findByTicketIdIn(ticketIds: List<Long>): Flow<LottoGameEntity>
-    fun findByUserId(userId: Long): Flow<LottoGameEntity>
+    fun findByUserId(userId: Long, pageable: Pageable): Flow<LottoGameEntity>
+    fun findByUserId(userId: Long): Flow<LottoGameEntity> // Keep for backward compatibility if needed
     suspend fun deleteByUserId(userId: Long)
 
     @Query("SELECT COUNT(*) FROM lotto_game WHERE user_id = :userId")

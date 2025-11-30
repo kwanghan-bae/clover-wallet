@@ -12,6 +12,9 @@ import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
+
 @Service
 class TicketService(
     private val ticketRepository: LottoTicketRepository,
@@ -20,8 +23,9 @@ class TicketService(
     private val ticketParser: TicketParser,
     private val meterRegistry: MeterRegistry
 ) {
-    suspend fun getMyTickets(userId: Long): List<LottoTicketEntity> {
-        return ticketRepository.findByUserId(userId)
+    suspend fun getMyTickets(userId: Long, page: Int = 0, size: Int = 20): List<LottoTicketEntity> {
+        val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
+        return ticketRepository.findByUserId(userId, pageable).toList()
     }
 
     suspend fun getTicketById(ticketId: Long): LottoTicketEntity? {

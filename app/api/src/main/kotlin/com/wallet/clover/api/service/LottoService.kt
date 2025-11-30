@@ -61,8 +61,14 @@ class LottoService(
         val winningResult = if (ticketIds.isNotEmpty()) {
             lottoGameRepository.findByTicketIdIn(ticketIds)
                 .map { game ->
-                    val (status, _) = game.calculateRank(winningInfo)
+                    val (status, prize) = game.calculateRank(winningInfo)
                     
+                    // DB 상태 업데이트 (변경된 경우에만)
+                    if (game.status != status || game.prizeAmount != prize) {
+                        val updatedGame = game.copy(status = status, prizeAmount = prize)
+                        lottoGameRepository.save(updatedGame)
+                    }
+
                     val rankName = when (status) {
                         LottoGameStatus.WINNING_1 -> "1등"
                         LottoGameStatus.WINNING_2 -> "2등"

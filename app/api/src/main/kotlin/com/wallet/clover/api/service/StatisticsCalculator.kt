@@ -45,12 +45,14 @@ class StatisticsCalculator(
 
         logger.info("Finished fetching and processing ${games.size} games.")
 
+        val numberFrequency = mutableMapOf<Int, Long>()
         val dateCounter = mutableMapOf<Int, MutableMap<Int, Long>>()
         val monthCounter = mutableMapOf<Int, MutableMap<Int, Long>>()
         val oddEvenCounter = mutableMapOf<String, MutableMap<Int, Long>>()
 
         games.forEach { game ->
             game.getNumbers().forEach { number ->
+                numberFrequency.compute(number) { _, v -> (v ?: 0L) + 1L }
                 dateCounter.getOrPut(game.drawDate.dayOfMonth) { mutableMapOf() }
                     .compute(number) { _, v -> (v ?: 0L) + 1L }
                 monthCounter.getOrPut(game.drawDate.monthValue) { mutableMapOf() }
@@ -61,7 +63,7 @@ class StatisticsCalculator(
             }
         }
         logger.info("Finished calculating statistics.")
-        Statistics(dateCounter, monthCounter, oddEvenCounter)
+        Statistics(dateCounter, monthCounter, oddEvenCounter, numberFrequency)
     }
 
     private fun LottoHistory.getNumbers() = listOf(

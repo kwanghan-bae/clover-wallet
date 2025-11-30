@@ -15,8 +15,11 @@ class LottoSpotController(
 ) {
 
     @GetMapping
-    suspend fun getAllLottoSpots(): Flow<LottoSpotResponse> {
-        return lottoSpotService.getAllLottoSpots()
+    suspend fun getAllLottoSpots(
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "20") size: Int
+    ): Flow<LottoSpotResponse> {
+        return lottoSpotService.getAllLottoSpots(page, size)
     }
 
     @GetMapping("/search")

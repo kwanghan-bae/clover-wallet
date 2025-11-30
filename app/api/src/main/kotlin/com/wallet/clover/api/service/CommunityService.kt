@@ -54,8 +54,9 @@ class CommunityService(
     }
 
     @Transactional(readOnly = true)
-    suspend fun getCommentsByPostId(postId: Long): List<CommentResponse> {
-        return commentRepository.findByPostId(postId).map { it.toResponse() }.toList()
+    suspend fun getCommentsByPostId(postId: Long, page: Int = 0, size: Int = 20): List<CommentResponse> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"))
+        return commentRepository.findByPostId(postId, pageable).map { it.toResponse() }.toList()
     }
 
     suspend fun createComment(userId: Long, request: CreateCommentRequest): CommentResponse {

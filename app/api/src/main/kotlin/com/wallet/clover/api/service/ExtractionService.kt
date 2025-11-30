@@ -19,7 +19,7 @@ class ExtractionService(
      * @param request 추출 요청 정보 (방법 및 컨텍스트 데이터)
      * @return 생성된 로또 번호 6개 Set
      */
-    fun extractLottoNumbers(request: ExtractionRequest): Set<Int> {
+    suspend fun extractLottoNumbers(request: ExtractionRequest): Set<Int> {
         val context = ExtractionContext(
             dreamKeyword = request.dreamKeyword,
             birthDate = request.birthDate,

@@ -15,7 +15,7 @@ class ExtractionController(
 ) {
 
     @PostMapping
-    fun extractNumbers(@RequestBody request: ExtractionRequest): CommonResponse<Set<Int>> {
+    suspend fun extractNumbers(@RequestBody request: ExtractionRequest): CommonResponse<Set<Int>> {
         return CommonResponse.success(extractionService.extractLottoNumbers(request))
     }
 }
