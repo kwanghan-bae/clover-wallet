@@ -4,7 +4,7 @@ import com.wallet.clover.api.client.LottoTicketClient
 import com.wallet.clover.api.client.ParsedGame
 import com.wallet.clover.api.client.ParsedTicket
 import com.wallet.clover.api.client.TicketParser
-import com.wallet.clover.api.dto.SaveScannedTicketCommand
+import com.wallet.clover.api.dto.SaveScannedTicket
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.entity.ticket.LottoTicketEntity
@@ -60,7 +60,7 @@ class TicketServiceTest {
     @DisplayName("새 티켓을 스캔하여 저장한다")
     fun `save new scanned ticket`() = runTest {
         // given
-        val command = SaveScannedTicketCommand(userId = 1L, url = "http://example.com")
+        val command = SaveScannedTicket.Command(userId = 1L, url = "http://example.com")
         val html = "<html>...</html>"
         val parsedTicket = ParsedTicket(
             ordinal = 1000,
@@ -102,7 +102,7 @@ class TicketServiceTest {
     @DisplayName("이미 저장된 티켓을 스캔하면 기존 티켓을 반환한다")
     fun `scan an already saved ticket`() = runTest {
         // given
-        val command = SaveScannedTicketCommand(userId = 1L, url = "http://example.com")
+        val command = SaveScannedTicket.Command(userId = 1L, url = "http://example.com")
         val existingTicket = LottoTicketEntity(
             id = 1L,
             userId = command.userId,

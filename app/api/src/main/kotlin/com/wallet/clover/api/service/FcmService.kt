@@ -4,14 +4,27 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.Notification
+import com.wallet.clover.api.repository.user.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
-class FcmService {
+class FcmService(
+    private val userRepository: UserRepository
+) {
     private val logger = LoggerFactory.getLogger(javaClass)
+
+    @Transactional
+    suspend fun registerToken(ssoQualifier: String, token: String) {
+        val user = userRepository.findBySsoQualifier(ssoQualifier)
+        if (user != null) {
+            userRepository.save(user.copy(fcmToken = token))
+            logger.info("Registering FCM token for user ${user.id}: $token")
+        }
+    }
 
     /**
      * 특정 사용자에게 푸시 알림 전송

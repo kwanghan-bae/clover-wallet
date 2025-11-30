@@ -25,7 +25,7 @@ class CommunityService(
     private val userRepository: UserRepository
 ) {
     @Transactional(readOnly = true)
-    suspend fun getAllPosts(page: Int, size: Int): List<PostResponse> {
+    suspend fun getAllPosts(page: Int, size: Int): List<Post.Response> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         val posts = postRepository.findAllBy(pageable).toList()
         
@@ -41,7 +41,7 @@ class CommunityService(
     }
 
     @Transactional(readOnly = true)
-    suspend fun getPostById(postId: Long): PostResponse {
+    suspend fun getPostById(postId: Long): Post.Response {
         val post = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
         val userEntity = userRepository.findById(post.userId)
         val user = userEntity?.let { 
@@ -50,7 +50,7 @@ class CommunityService(
         return post.toResponse(user)
     }
 
-    suspend fun createPost(userId: Long, request: CreatePostRequest): PostResponse {
+    suspend fun createPost(userId: Long, request: CreatePost.Request): Post.Response {
         val newPost = request.toEntity(userId)
         val savedPost = postRepository.save(newPost)
         val userEntity = userRepository.findById(userId)
@@ -60,7 +60,7 @@ class CommunityService(
         return savedPost.toResponse(user)
     }
 
-    suspend fun updatePost(postId: Long, userId: Long, request: UpdatePostRequest): PostResponse {
+    suspend fun updatePost(postId: Long, userId: Long, request: UpdatePost.Request): Post.Response {
         val existingPost = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
         
         if (existingPost.userId != userId) {
@@ -80,7 +80,7 @@ class CommunityService(
     }
 
     @Transactional(readOnly = true)
-    suspend fun getCommentsByPostId(postId: Long, page: Int = 0, size: Int = 20): List<CommentResponse> {
+    suspend fun getCommentsByPostId(postId: Long, page: Int = 0, size: Int = 20): List<Comment.Response> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"))
         val comments = commentRepository.findByPostId(postId, pageable).toList()
         
@@ -95,7 +95,7 @@ class CommunityService(
         }
     }
 
-    suspend fun createComment(userId: Long, request: CreateCommentRequest): CommentResponse {
+    suspend fun createComment(userId: Long, request: CreateComment.Request): Comment.Response {
         // Check if post exists
         postRepository.findById(request.postId) ?: throw PostNotFoundException("Post with id ${request.postId} not found")
         val newComment = request.toEntity(userId)
@@ -107,7 +107,7 @@ class CommunityService(
         return savedComment.toResponse(user)
     }
 
-    suspend fun updateComment(commentId: Long, userId: Long, request: UpdateCommentRequest): CommentResponse {
+    suspend fun updateComment(commentId: Long, userId: Long, request: UpdateComment.Request): Comment.Response {
         val existingComment = commentRepository.findById(commentId) ?: throw CommentNotFoundException("Comment with id $commentId not found")
         
         if (existingComment.userId != userId) {

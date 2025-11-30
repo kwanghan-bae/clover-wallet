@@ -12,62 +12,72 @@ data class UserSummary(
     val badges: List<String>
 )
 
-// Post DTOs
-data class PostResponse(
-    /** 게시글 ID */
-    val id: Long,
-    /** 작성자 정보 */
-    val user: UserSummary?,
-    /** 게시글 내용 */
-    val content: String,
-    /** 조회수 */
-    val viewCount: Int,
-    /** 좋아요 수 */
-    val likeCount: Int,
-    /** 생성 일시 */
-    val createdAt: LocalDateTime,
-    /** 수정 일시 */
-    val updatedAt: LocalDateTime
-)
+abstract class Post {
+    data class Response(
+        /** 게시글 ID */
+        val id: Long,
+        /** 작성자 정보 */
+        val user: UserSummary?,
+        /** 게시글 내용 */
+        val content: String,
+        /** 조회수 */
+        val viewCount: Int,
+        /** 좋아요 수 */
+        val likeCount: Int,
+        /** 생성 일시 */
+        val createdAt: LocalDateTime,
+        /** 수정 일시 */
+        val updatedAt: LocalDateTime
+    )
+}
 
-data class CreatePostRequest(
-    @field:NotBlank(message = "Content cannot be blank")
-    val content: String
-)
+abstract class CreatePost {
+    data class Request(
+        @field:NotBlank(message = "Content cannot be blank")
+        val content: String
+    )
+}
 
-data class UpdatePostRequest(
-    val content: String?
-)
+abstract class UpdatePost {
+    data class Request(
+        val content: String?
+    )
+}
 
-// Comment DTOs
-data class CommentResponse(
-    /** 댓글 ID */
-    val id: Long,
-    /** 게시글 ID */
-    val postId: Long,
-    /** 작성자 정보 */
-    val user: UserSummary?,
-    /** 댓글 내용 */
-    val content: String,
-    /** 생성 일시 */
-    val createdAt: LocalDateTime,
-    /** 수정 일시 */
-    val updatedAt: LocalDateTime
-)
+abstract class Comment {
+    data class Response(
+        /** 댓글 ID */
+        val id: Long,
+        /** 게시글 ID */
+        val postId: Long,
+        /** 작성자 정보 */
+        val user: UserSummary?,
+        /** 댓글 내용 */
+        val content: String,
+        /** 생성 일시 */
+        val createdAt: LocalDateTime,
+        /** 수정 일시 */
+        val updatedAt: LocalDateTime
+    )
+}
 
-data class CreateCommentRequest(
-    val postId: Long,
-    @field:NotBlank(message = "Content cannot be blank")
-    val content: String
-)
+abstract class CreateComment {
+    data class Request(
+        val postId: Long,
+        @field:NotBlank(message = "Content cannot be blank")
+        val content: String
+    )
+}
 
-data class UpdateCommentRequest(
-    @field:NotBlank(message = "Content cannot be blank")
-    val content: String?
-)
+abstract class UpdateComment {
+    data class Request(
+        @field:NotBlank(message = "Content cannot be blank")
+        val content: String?
+    )
+}
 
 // Mapper functions for Post
-fun PostEntity.toResponse(user: UserSummary?) = PostResponse(
+fun PostEntity.toResponse(user: UserSummary?) = Post.Response(
     id = this.id ?: throw IllegalStateException("Post ID must not be null"),
     user = user,
     content = this.content,
@@ -77,13 +87,13 @@ fun PostEntity.toResponse(user: UserSummary?) = PostResponse(
     updatedAt = this.updatedAt
 )
 
-fun CreatePostRequest.toEntity(userId: Long) = PostEntity(
+fun CreatePost.Request.toEntity(userId: Long) = PostEntity(
     userId = userId,
     content = this.content
 )
 
 // Mapper functions for Comment
-fun CommentEntity.toResponse(user: UserSummary?) = CommentResponse(
+fun CommentEntity.toResponse(user: UserSummary?) = Comment.Response(
     id = this.id ?: throw IllegalStateException("Comment ID must not be null"),
     postId = this.postId,
     user = user,
@@ -92,7 +102,7 @@ fun CommentEntity.toResponse(user: UserSummary?) = CommentResponse(
     updatedAt = this.updatedAt
 )
 
-fun CreateCommentRequest.toEntity(userId: Long) = CommentEntity(
+fun CreateComment.Request.toEntity(userId: Long) = CommentEntity(
     postId = this.postId,
     userId = userId,
     content = this.content

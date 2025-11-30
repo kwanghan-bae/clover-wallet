@@ -1,6 +1,6 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.dto.UserStatsResponse
+import com.wallet.clover.api.dto.UserStats
 import com.wallet.clover.api.service.UserStatsService
 import org.springframework.web.bind.annotation.*
 
@@ -11,7 +11,7 @@ class UserStatsController(
 ) {
 
     @GetMapping("/{userId}/stats")
-    suspend fun getUserStats(@PathVariable userId: Long): UserStatsResponse {
+    suspend fun getUserStats(@PathVariable userId: Long): UserStats.Response {
         return userStatsService.getUserStats(userId)
     }
 }

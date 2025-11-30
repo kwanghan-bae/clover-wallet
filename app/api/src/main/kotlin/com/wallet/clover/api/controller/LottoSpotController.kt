@@ -1,6 +1,6 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.dto.LottoSpotResponse
+import com.wallet.clover.api.dto.LottoSpot
 import com.wallet.clover.api.service.LottoSpotService
 import kotlinx.coroutines.flow.Flow
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,12 +18,12 @@ class LottoSpotController(
     suspend fun getAllLottoSpots(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): Flow<LottoSpotResponse> {
+    ): Flow<LottoSpot.Response> {
         return lottoSpotService.getAllLottoSpots(page, size)
     }
 
     @GetMapping("/search")
-    suspend fun searchByName(@RequestParam name: String): List<LottoSpotResponse> {
+    suspend fun searchByName(@RequestParam name: String): List<LottoSpot.Response> {
         return lottoSpotService.searchByName(name)
     }
 }

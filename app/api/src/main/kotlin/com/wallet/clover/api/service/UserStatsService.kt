@@ -1,6 +1,6 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.dto.UserStatsResponse
+import com.wallet.clover.api.dto.UserStats
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import kotlinx.coroutines.flow.toList
@@ -11,7 +11,7 @@ class UserStatsService(
     private val lottoGameRepository: LottoGameRepository
 ) {
 
-    suspend fun getUserStats(userId: Long): UserStatsResponse {
+    suspend fun getUserStats(userId: Long): UserStats.Response {
         val totalGames = lottoGameRepository.countByUserId(userId)
         val totalWinnings = lottoGameRepository.sumPrizeAmountByUserId(userId) ?: 0L
         
@@ -25,7 +25,7 @@ class UserStatsService(
             0
         }
         
-        return UserStatsResponse(
+        return UserStats.Response(
             totalGames = totalGames.toInt(),
             totalWinnings = totalWinnings,
             totalSpent = totalSpent,

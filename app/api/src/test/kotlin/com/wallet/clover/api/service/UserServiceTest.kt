@@ -1,8 +1,8 @@
 package com.wallet.clover.api.service
 
 import com.wallet.clover.api.TestFixtures
-import com.wallet.clover.api.dto.UpdateUserRequest
-import com.wallet.clover.api.dto.UserResponse
+import com.wallet.clover.api.dto.UpdateUser
+import com.wallet.clover.api.dto.User
 import com.wallet.clover.api.dto.toResponse
 import com.wallet.clover.api.entity.user.UserEntity
 import com.wallet.clover.api.repository.community.CommentRepository
@@ -49,7 +49,7 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 ID로 사용자를 찾아 UserResponse로 반환한다")
+    @DisplayName("사용자 ID로 사용자를 찾아 User.Response로 반환한다")
     fun `findUser returns UserResponse for existing user`() = runTest {
         // Given
         val userId = 1L
@@ -81,12 +81,12 @@ class UserServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 정보를 업데이트하고 업데이트된 UserResponse를 반환한다")
+    @DisplayName("사용자 정보를 업데이트하고 업데이트된 User.Response를 반환한다")
     fun `updateUser updates user info and returns updated UserResponse`() = runTest {
         // Given
         val userId = 1L
         val originalUserEntity = TestFixtures.createUser(id = userId)
-        val updateRequest = UpdateUserRequest(locale = "ko", age = 31)
+        val updateRequest = UpdateUser.Request(locale = "ko", age = 31)
         val updatedUserEntity = originalUserEntity.copy(
             locale = updateRequest.locale!!,
             age = updateRequest.age!!
@@ -110,7 +110,7 @@ class UserServiceTest {
     fun `updateUser throws exception for non-existing user`() = runTest {
         // Given
         val userId = 3L
-        val updateRequest = UpdateUserRequest(locale = "ko", age = 31)
+        val updateRequest = UpdateUser.Request(locale = "ko", age = 31)
         coEvery { userRepository.findById(userId) } returns null
 
         // When

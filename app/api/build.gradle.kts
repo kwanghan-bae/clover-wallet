@@ -45,6 +45,11 @@ dependencies {
     implementation("com.bucket4j:bucket4j-core:8.10.1")
     
     // Reactive (already included with webflux)
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${rootProject.extra["kotlinCoroutinesVersion"] as String}")
+    testImplementation("com.tngtech.archunit:archunit-junit5:1.2.1")
 }
 
 tasks.register("generateDdl", JavaExec::class) {

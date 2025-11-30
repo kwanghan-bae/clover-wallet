@@ -14,7 +14,7 @@ object TestFixtures {
         ssoQualifier = ssoQualifier,
         locale = locale,
         age = age,
-        createdAt = LocalDateTime.now(),
-        updatedAt = LocalDateTime.now()
+        createdAt = LocalDateTime.now().withNano(0),
+        updatedAt = LocalDateTime.now().withNano(0)
     )
 }

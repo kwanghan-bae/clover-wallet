@@ -1,6 +1,6 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.dto.LoginResponse
+import com.wallet.clover.api.dto.Login
 import com.wallet.clover.api.service.AuthService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
@@ -15,11 +15,11 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    suspend fun login(@AuthenticationPrincipal jwt: Jwt): LoginResponse {
+    suspend fun login(@AuthenticationPrincipal jwt: Jwt): Login.Response {
         val userId = jwt.subject
         val user = authService.login(userId)
         
-        return LoginResponse(
+        return Login.Response(
             userId = user.id!!,
             ssoQualifier = user.ssoQualifier,
             locale = user.locale

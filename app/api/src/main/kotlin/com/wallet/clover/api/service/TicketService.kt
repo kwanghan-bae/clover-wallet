@@ -2,7 +2,7 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.client.LottoTicketClient
 import com.wallet.clover.api.client.TicketParser
-import com.wallet.clover.api.dto.SaveScannedTicketCommand
+import com.wallet.clover.api.dto.SaveScannedTicket
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.entity.ticket.LottoTicketEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
@@ -37,7 +37,7 @@ class TicketService(
     }
 
     @Transactional
-    suspend fun saveScannedTicket(command: SaveScannedTicketCommand): LottoTicketEntity {
+    suspend fun saveScannedTicket(command: SaveScannedTicket.Command): LottoTicketEntity {
         val existingTicket = ticketRepository.findByUrl(command.url)
         if (existingTicket != null) {
             meterRegistry.counter("lotto.ticket.scan", "result", "duplicate").increment()

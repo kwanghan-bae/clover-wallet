@@ -18,20 +18,20 @@ class CommunityController(
     suspend fun getAllPosts(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int
-    ): CommonResponse<List<PostResponse>> {
+    ): CommonResponse<List<Post.Response>> {
         return CommonResponse.success(communityService.getAllPosts(page, size))
     }
 
     @GetMapping("/posts/{postId}")
-    suspend fun getPost(@PathVariable postId: Long): CommonResponse<PostResponse> {
+    suspend fun getPost(@PathVariable postId: Long): CommonResponse<Post.Response> {
         return CommonResponse.success(communityService.getPostById(postId))
     }
 
     @PostMapping("/posts")
     suspend fun createPost(
-        @Valid @RequestBody request: CreatePostRequest,
+        @Valid @RequestBody request: CreatePost.Request,
         @AuthenticationPrincipal jwt: Jwt
-    ): CommonResponse<PostResponse> {
+    ): CommonResponse<Post.Response> {
         val userId = jwt.subject.toLong()
         return CommonResponse.success(communityService.createPost(userId, request))
     }
@@ -39,9 +39,9 @@ class CommunityController(
     @PutMapping("/posts/{postId}")
     suspend fun updatePost(
         @PathVariable postId: Long,
-        @Valid @RequestBody request: UpdatePostRequest,
+        @Valid @RequestBody request: UpdatePost.Request,
         @AuthenticationPrincipal jwt: Jwt
-    ): CommonResponse<PostResponse> {
+    ): CommonResponse<Post.Response> {
         val userId = jwt.subject.toLong()
         return CommonResponse.success(communityService.updatePost(postId, userId, request))
     }
@@ -51,15 +51,15 @@ class CommunityController(
         @PathVariable postId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): CommonResponse<List<CommentResponse>> {
+    ): CommonResponse<List<Comment.Response>> {
         return CommonResponse.success(communityService.getCommentsByPostId(postId, page, size))
     }
 
     @PostMapping("/comments")
     suspend fun createComment(
-        @Valid @RequestBody request: CreateCommentRequest,
+        @Valid @RequestBody request: CreateComment.Request,
         @AuthenticationPrincipal jwt: Jwt
-    ): CommonResponse<CommentResponse> {
+    ): CommonResponse<Comment.Response> {
         val userId = jwt.subject.toLong()
         return CommonResponse.success(communityService.createComment(userId, request))
     }
@@ -67,9 +67,9 @@ class CommunityController(
     @PutMapping("/comments/{commentId}")
     suspend fun updateComment(
         @PathVariable commentId: Long,
-        @Valid @RequestBody request: UpdateCommentRequest,
+        @Valid @RequestBody request: UpdateComment.Request,
         @AuthenticationPrincipal jwt: Jwt
-    ): CommonResponse<CommentResponse> {
+    ): CommonResponse<Comment.Response> {
         val userId = jwt.subject.toLong()
         return CommonResponse.success(communityService.updateComment(commentId, userId, request))
     }

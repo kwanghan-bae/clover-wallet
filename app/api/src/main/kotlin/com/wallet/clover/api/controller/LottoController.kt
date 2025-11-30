@@ -1,6 +1,6 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.dto.LottoGameResponse
+import com.wallet.clover.api.dto.LottoGame
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.service.LottoGameService
 import org.springframework.web.bind.annotation.*
@@ -16,12 +16,12 @@ class LottoController(
         @RequestParam userId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): List<LottoGameResponse> {
-        return lottoGameService.getGamesByUserId(userId, page, size).map { LottoGameResponse.from(it) }
+    ): List<LottoGame.Response> {
+        return lottoGameService.getGamesByUserId(userId, page, size).map { LottoGame.Response.from(it) }
     }
 
     @PostMapping("/games")
-    suspend fun saveGame(@RequestBody request: com.wallet.clover.api.dto.LottoGameRequest): LottoGameResponse {
-        return LottoGameResponse.from(lottoGameService.saveGame(request.toEntity()))
+    suspend fun saveGame(@RequestBody request: LottoGame.Request): LottoGame.Response {
+        return LottoGame.Response.from(lottoGameService.saveGame(request.toEntity()))
     }
 }

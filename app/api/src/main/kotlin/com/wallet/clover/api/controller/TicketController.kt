@@ -1,8 +1,7 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.dto.LottoGameResponse
-import com.wallet.clover.api.dto.LottoTicketResponse
-import com.wallet.clover.api.dto.TicketDetailResponse
+import com.wallet.clover.api.dto.LottoGame
+import com.wallet.clover.api.dto.LottoTicket
 import com.wallet.clover.api.exception.TicketNotFoundException
 import com.wallet.clover.api.service.TicketService
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,19 +21,19 @@ class TicketController(
         @RequestParam userId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): List<LottoTicketResponse> {
-        return ticketService.getMyTickets(userId, page, size).map { LottoTicketResponse.from(it) }
+    ): List<LottoTicket.Response> {
+        return ticketService.getMyTickets(userId, page, size).map { LottoTicket.Response.from(it) }
     }
 
     @GetMapping("/{ticketId}")
-    suspend fun getTicketDetail(@PathVariable ticketId: Long): TicketDetailResponse {
+    suspend fun getTicketDetail(@PathVariable ticketId: Long): LottoTicket.DetailResponse {
         val ticket = ticketService.getTicketById(ticketId) 
             ?: throw TicketNotFoundException("Ticket not found with id: $ticketId")
         val games = ticketService.getGamesByTicketId(ticketId)
         
-        return TicketDetailResponse(
-            LottoTicketResponse.from(ticket),
-            games.map { LottoGameResponse.from(it) }
+        return LottoTicket.DetailResponse(
+            LottoTicket.Response.from(ticket),
+            games.map { LottoGame.Response.from(it) }
         )
     }
 }

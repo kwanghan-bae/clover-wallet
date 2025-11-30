@@ -1,7 +1,7 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.dto.UpdateUserRequest
-import com.wallet.clover.api.dto.UserResponse
+import com.wallet.clover.api.dto.UpdateUser
+import com.wallet.clover.api.dto.User
 import com.wallet.clover.api.dto.toResponse
 import com.wallet.clover.api.exception.UserNotFoundException
 import com.wallet.clover.api.repository.community.CommentRepository
@@ -22,12 +22,12 @@ class UserService(
     private val lottoTicketRepository: LottoTicketRepository,
 ) {
 
-    suspend fun findUser(id: Long): UserResponse? {
+    suspend fun findUser(id: Long): User.Response? {
         return userRepository.findById(id)?.toResponse()
     }
 
     @Transactional
-    suspend fun updateUser(id: Long, request: UpdateUserRequest): UserResponse {
+    suspend fun updateUser(id: Long, request: UpdateUser.Request): User.Response {
         val existingUser = userRepository.findById(id) ?: throw UserNotFoundException("User with id $id not found")
         val updatedUser = existingUser.copy(
             locale = request.locale ?: existingUser.locale,

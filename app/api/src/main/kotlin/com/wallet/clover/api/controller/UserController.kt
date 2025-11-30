@@ -1,7 +1,7 @@
 package com.wallet.clover.api.controller
 
-import com.wallet.clover.api.dto.UpdateUserRequest
-import com.wallet.clover.api.dto.UserResponse
+import com.wallet.clover.api.dto.UpdateUser
+import com.wallet.clover.api.dto.User
 import com.wallet.clover.api.service.UserService
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.*
@@ -13,15 +13,15 @@ class UserController(
 ) {
 
     @GetMapping("/{id}")
-    suspend fun getUser(@PathVariable id: Long): UserResponse? {
+    suspend fun getUser(@PathVariable id: Long): User.Response? {
         return userService.findUser(id)
     }
 
     @PutMapping("/{id}")
     suspend fun updateUser(
         @PathVariable id: Long,
-        @Valid @RequestBody request: UpdateUserRequest
-    ): UserResponse {
+        @Valid @RequestBody request: UpdateUser.Request
+    ): User.Response {
         return userService.updateUser(id, request)
     }
 }
