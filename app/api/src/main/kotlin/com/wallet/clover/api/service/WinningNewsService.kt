@@ -22,7 +22,7 @@ class WinningNewsService(
         val winningGames = lottoGameRepository.findAll()
             .toList()
             .filter { 
-                it.createdAt.isAfter(cutoffDate) && 
+                (it.createdAt?.isAfter(cutoffDate) == true) && 
                 it.status != LottoGameStatus.LOSING &&
                 it.extractionMethod != null
             }
@@ -33,7 +33,7 @@ class WinningNewsService(
             mapOf(
                 "extractionMethod" to (game.extractionMethod ?: "RANDOM"),
                 "rank" to getRankFromStatus(game.status),
-                "createdAt" to game.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                "createdAt" to (game.createdAt ?: LocalDateTime.now()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
                 "message" to getWinningMessage(game.extractionMethod, game.status)
             )
         }

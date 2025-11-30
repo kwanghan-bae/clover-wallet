@@ -26,7 +26,7 @@ data class LottoGameResponse(
                 number4 = entity.number4,
                 number5 = entity.number5,
                 number6 = entity.number6,
-                createdAt = entity.createdAt
+                createdAt = entity.createdAt ?: LocalDateTime.now()
             )
         }
     }

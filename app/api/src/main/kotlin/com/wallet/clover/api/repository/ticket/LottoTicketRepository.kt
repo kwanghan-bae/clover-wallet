@@ -12,4 +12,5 @@ interface LottoTicketRepository : CoroutineCrudRepository<LottoTicketEntity, Lon
 
     suspend fun findByStatus(status: LottoTicketStatus): List<LottoTicketEntity>
     suspend fun deleteByUserId(userId: Long)
+    suspend fun findByOrdinal(ordinal: Int): List<LottoTicketEntity>
 }

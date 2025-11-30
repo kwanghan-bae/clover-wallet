@@ -1,5 +1,6 @@
 package com.wallet.clover.api.entity.game
 
+import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
@@ -17,6 +18,8 @@ data class LottoGameEntity(
     val number5: Int,
     val number6: Int,
     val extractionMethod: String? = null,  // 사용된 추출 방식 (ExtractionMethod enum 값)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val prizeAmount: Long = 0, // 당첨금 (0이면 낙첨 또는 미확인)
+    @CreatedDate
+    val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime = LocalDateTime.now()
 )

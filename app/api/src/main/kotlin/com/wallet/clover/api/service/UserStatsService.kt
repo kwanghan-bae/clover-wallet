@@ -14,17 +14,8 @@ class UserStatsService(
     suspend fun getUserStats(userId: Long): UserStatsResponse {
         val allGames = lottoGameRepository.findByUserId(userId).toList()
         
-        // 총 당첨금 계산 (간이 계산, 실제로는 상금 테이블 필요)
-        val totalWinnings = allGames.sumOf { game ->
-            when (game.status) {
-                LottoGameStatus.WINNING_1 -> 2_000_000_000L // 1등 20억 (예시)
-                LottoGameStatus.WINNING_2 -> 50_000_000L   // 2등 5천만원
-                LottoGameStatus.WINNING_3 -> 1_500_000L     // 3등 150만원
-                LottoGameStatus.WINNING_4 -> 50_000L        // 4등 5만원
-                LottoGameStatus.WINNING_5 -> 5_000L         // 5등 5천원
-                else -> 0L
-            }
-        }
+        // 총 당첨금 계산 (실제 당첨금 필드 사용)
+        val totalWinnings = allGames.sumOf { game -> game.prizeAmount }
         
         // 총 지출 (1게임 = 1000원)
         val totalSpent = allGames.size * 1000L
