@@ -8,11 +8,24 @@ import java.time.LocalDateTime
 
 @Table("post")
 data class PostEntity(
+    /** 게시글 ID */
     @Id val id: Long? = null,
+    
+    /** 작성자 ID */
     val userId: Long,
-    val title: String,
+    
+    /** 게시글 내용 */
     val content: String,
-    val likes: Int = 0,
-    @CreatedDate val createdAt: LocalDateTime? = null,
-    @LastModifiedDate val updatedAt: LocalDateTime? = null
+    
+    /** 조회수 */
+    val viewCount: Int = 0,
+    
+    /** 좋아요 수 */
+    val likeCount: Int = 0,
+    
+    /** 생성 일시 */
+    val createdAt: LocalDateTime = LocalDateTime.now(),
+    
+    /** 수정 일시 */
+    val updatedAt: LocalDateTime = LocalDateTime.now()
 )

@@ -7,39 +7,47 @@ import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 // Post DTOs
+// Post DTOs
 data class PostResponse(
+    /** 게시글 ID */
     val id: Long,
+    /** 작성자 ID */
     val userId: Long,
-    val title: String,
+    /** 게시글 내용 */
     val content: String,
-    val likes: Int,
+    /** 조회수 */
+    val viewCount: Int,
+    /** 좋아요 수 */
+    val likeCount: Int,
+    /** 생성 일시 */
     val createdAt: LocalDateTime,
+    /** 수정 일시 */
     val updatedAt: LocalDateTime
 )
 
 data class CreatePostRequest(
     val userId: Long,
-    @field:NotBlank(message = "Title cannot be blank")
-    @field:Size(min = 1, max = 100, message = "Title must be between 1 and 100 characters")
-    val title: String,
     @field:NotBlank(message = "Content cannot be blank")
     val content: String
 )
 
 data class UpdatePostRequest(
-    @field:Size(min = 1, max = 100, message = "Title must be between 1 and 100 characters")
-    val title: String?,
     val content: String?
 )
 
 // Comment DTOs
 data class CommentResponse(
+    /** 댓글 ID */
     val id: Long,
+    /** 게시글 ID */
     val postId: Long,
+    /** 작성자 ID */
     val userId: Long,
+    /** 댓글 내용 */
     val content: String,
-    val likes: Int,
+    /** 생성 일시 */
     val createdAt: LocalDateTime,
+    /** 수정 일시 */
     val updatedAt: LocalDateTime
 )
 
@@ -59,16 +67,15 @@ data class UpdateCommentRequest(
 fun PostEntity.toResponse() = PostResponse(
     id = this.id ?: throw IllegalStateException("Post ID must not be null"),
     userId = this.userId,
-    title = this.title,
     content = this.content,
-    likes = this.likes,
+    viewCount = this.viewCount,
+    likeCount = this.likeCount,
     createdAt = this.createdAt ?: LocalDateTime.now(),
     updatedAt = this.updatedAt ?: LocalDateTime.now()
 )
 
 fun CreatePostRequest.toEntity() = PostEntity(
     userId = this.userId,
-    title = this.title,
     content = this.content
 )
 
@@ -78,7 +85,6 @@ fun CommentEntity.toResponse() = CommentResponse(
     postId = this.postId,
     userId = this.userId,
     content = this.content,
-    likes = this.likes,
     createdAt = this.createdAt ?: LocalDateTime.now(),
     updatedAt = this.updatedAt ?: LocalDateTime.now()
 )

@@ -5,14 +5,26 @@ import com.wallet.clover.api.entity.game.LottoGameStatus
 import java.time.LocalDateTime
 
 data class LottoGameResponse(
+    /** 게임 ID */
     val id: Long,
+    
+    /** 게임 상태 (WINNING_1 등) */
     val status: LottoGameStatus,
+    
+    /** 번호 1 */
     val number1: Int,
+    /** 번호 2 */
     val number2: Int,
+    /** 번호 3 */
     val number3: Int,
+    /** 번호 4 */
     val number4: Int,
+    /** 번호 5 */
     val number5: Int,
+    /** 번호 6 */
     val number6: Int,
+    
+    /** 생성 일시 */
     val createdAt: LocalDateTime
 ) {
     companion object {

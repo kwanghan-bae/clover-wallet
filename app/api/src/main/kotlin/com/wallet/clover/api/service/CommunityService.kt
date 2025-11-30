@@ -47,7 +47,6 @@ class CommunityService(
         }
 
         val updatedPost = existingPost.copy(
-            title = request.title ?: existingPost.title,
             content = request.content ?: existingPost.content,
             updatedAt = LocalDateTime.now()
         )

@@ -3,3 +3,8 @@ spring:
     include: rdb
   jpa:
     show-sql: true
+
+external-api:
+  dhlottery:
+    winning-info-url: "https://dhlottery.co.kr/gameResult.do?method=byWin&drwNo="
+    winning-store-url: "https://www.dhlottery.co.kr/store.do?method=topStore&pageGubun=L645&drwNo="

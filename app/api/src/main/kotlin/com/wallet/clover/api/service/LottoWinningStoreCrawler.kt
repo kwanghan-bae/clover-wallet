@@ -6,13 +6,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
 class LottoWinningStoreCrawler(
-    private val repository: LottoWinningStoreRepository
+    private val repository: LottoWinningStoreRepository,
+    @Value("\${external-api.dhlottery.winning-store-url}") private val winningStoreUrl: String
 ) {
     private val logger = LoggerFactory.getLogger(LottoWinningStoreCrawler::class.java)
 
@@ -27,7 +29,7 @@ class LottoWinningStoreCrawler(
         
         try {
             val stores = withContext(Dispatchers.IO) {
-                val url = "https://www.dhlottery.co.kr/store.do?method=topStore&pageGubun=L645&drwNo=$round"
+                val url = "$winningStoreUrl$round"
                 val doc = Jsoup.connect(url).get()
                 val entities = mutableListOf<LottoWinningStoreEntity>()
 

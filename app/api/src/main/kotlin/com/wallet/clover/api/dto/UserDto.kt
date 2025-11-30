@@ -6,9 +6,13 @@ import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 data class UserResponse(
+    /** 사용자 ID */
     val id: Long,
+    /** 사용자 로케일 */
     val locale: String,
+    /** 사용자 나이 */
     val age: Int,
+    /** 획득한 뱃지 목록 */
     val badges: List<String> = emptyList(),
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime

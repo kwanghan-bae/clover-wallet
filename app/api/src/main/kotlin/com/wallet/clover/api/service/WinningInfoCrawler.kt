@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDate
@@ -13,7 +14,8 @@ import java.time.format.DateTimeFormatter
 
 @Service
 class WinningInfoCrawler(
-    private val repository: WinningInfoRepository
+    private val repository: WinningInfoRepository,
+    @Value("\${external-api.dhlottery.winning-info-url}") private val winningInfoUrl: String
 ) {
     private val logger = LoggerFactory.getLogger(WinningInfoCrawler::class.java)
 
@@ -28,7 +30,7 @@ class WinningInfoCrawler(
 
         try {
             val entity = withContext(Dispatchers.IO) {
-                val url = "https://dhlottery.co.kr/gameResult.do?method=byWin&drwNo=$round"
+                val url = "$winningInfoUrl$round"
                 val doc = Jsoup.connect(url).get()
 
                 // 날짜 파싱 (2023년 11월 25일 추첨)
