@@ -13,4 +13,5 @@ interface LottoTicketRepository : CoroutineCrudRepository<LottoTicketEntity, Lon
     suspend fun findByStatus(status: LottoTicketStatus): List<LottoTicketEntity>
     suspend fun deleteByUserId(userId: Long)
     fun findByOrdinal(ordinal: Int): kotlinx.coroutines.flow.Flow<LottoTicketEntity>
+    suspend fun findByUserIdAndOrdinal(userId: Long, ordinal: Int): List<LottoTicketEntity>
 }

@@ -70,7 +70,7 @@ class WinningCheckService(
             val winningGames = mutableListOf<LottoGameEntity>()
 
             for (game in games) {
-                val (status, prize) = calculatePrize(game, winningInfo)
+                val (status, prize) = game.calculateRank(winningInfo)
                 
                 if (game.status != status || game.prizeAmount != prize) {
                     val updatedGame = game.copy(
@@ -118,22 +118,6 @@ class WinningCheckService(
         }
     }
     
-    fun calculatePrize(game: LottoGameEntity, winningInfo: WinningInfoEntity): Pair<LottoGameStatus, Long> {
-        val myNumbers = setOf(game.number1, game.number2, game.number3, game.number4, game.number5, game.number6)
-        val winningNumbers = setOf(winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6)
-        
-        val matchCount = myNumbers.intersect(winningNumbers).size
-        val bonusMatch = myNumbers.contains(winningInfo.bonusNumber)
-        
-        return when (matchCount) {
-            6 -> LottoGameStatus.WINNING_1 to winningInfo.firstPrizeAmount
-            5 -> if (bonusMatch) LottoGameStatus.WINNING_2 to winningInfo.secondPrizeAmount else LottoGameStatus.WINNING_3 to winningInfo.thirdPrizeAmount
-            4 -> LottoGameStatus.WINNING_4 to winningInfo.fourthPrizeAmount
-            3 -> LottoGameStatus.WINNING_5 to winningInfo.fifthPrizeAmount
-            else -> LottoGameStatus.LOSING to 0L
-        }
-    }
-
     private fun getRankName(status: LottoGameStatus): String {
         return when (status) {
             LottoGameStatus.WINNING_1 -> "1등"

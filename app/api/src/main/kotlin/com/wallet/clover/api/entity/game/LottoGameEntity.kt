@@ -1,6 +1,7 @@
 package com.wallet.clover.api.entity.game
 
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
+import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
@@ -48,5 +49,21 @@ data class LottoGameEntity(
 ) {
     fun getNumbers(): List<Int> {
         return listOf(number1, number2, number3, number4, number5, number6)
+    }
+
+    fun calculateRank(winningInfo: WinningInfoEntity): Pair<LottoGameStatus, Long> {
+        val myNumbers = getNumbers().toSet()
+        val winningNumbers = setOf(winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6)
+        
+        val matchCount = myNumbers.intersect(winningNumbers).size
+        val bonusMatch = myNumbers.contains(winningInfo.bonusNumber)
+        
+        return when (matchCount) {
+            6 -> LottoGameStatus.WINNING_1 to winningInfo.firstPrizeAmount
+            5 -> if (bonusMatch) LottoGameStatus.WINNING_2 to winningInfo.secondPrizeAmount else LottoGameStatus.WINNING_3 to winningInfo.thirdPrizeAmount
+            4 -> LottoGameStatus.WINNING_4 to winningInfo.fourthPrizeAmount
+            3 -> LottoGameStatus.WINNING_5 to winningInfo.fifthPrizeAmount
+            else -> LottoGameStatus.LOSING to 0L
+        }
     }
 }

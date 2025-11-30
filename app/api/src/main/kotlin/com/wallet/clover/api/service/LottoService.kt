@@ -1,18 +1,24 @@
 package com.wallet.clover.api.service
 
 import com.wallet.clover.api.dto.LottoCheck
-import com.wallet.clover.api.entity.game.LottoGameEntity
+import com.wallet.clover.api.entity.game.LottoGameStatus
+import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
+import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import com.wallet.clover.api.repository.user.UserRepository
+import com.wallet.clover.api.repository.winning.WinningInfoRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 
 @Service
 class LottoService(
     private val lottoGameRepository: LottoGameRepository,
+    private val lottoTicketRepository: LottoTicketRepository,
+    private val winningInfoRepository: WinningInfoRepository,
     private val notificationService: NotificationService,
     private val winningNumberProvider: WinningNumberProvider,
     private val userRepository: UserRepository
@@ -29,37 +35,62 @@ class LottoService(
     suspend fun checkWinnings(userId: Long): LottoCheck.Out {
         val result = winningNumberProvider.getLatestWinningNumbers()
         val user = userRepository.findById(userId)
+        
+        // 최신 회차의 당첨 정보 조회 (상금 정보 포함)
+        val winningInfo = winningInfoRepository.findByRound(result.round) ?: WinningInfoEntity(
+            round = result.round,
+            drawDate = LocalDate.now(), // Dummy
+            number1 = result.winningNumbers[0],
+            number2 = result.winningNumbers[1],
+            number3 = result.winningNumbers[2],
+            number4 = result.winningNumbers[3],
+            number5 = result.winningNumbers[4],
+            number6 = result.winningNumbers[5],
+            bonusNumber = result.bonusNumber,
+            firstPrizeAmount = 0,
+            secondPrizeAmount = 0,
+            thirdPrizeAmount = 0,
+            fourthPrizeAmount = 0,
+            fifthPrizeAmount = 0
+        )
 
-        val winningResult = lottoGameRepository.findByUserId(userId)
-            .map { game ->
-                val userNumbers = game.getNumbers()
-                val matchCount = userNumbers.intersect(result.winningNumbers.toSet()).size
-                val isBonusMatched = userNumbers.contains(result.bonusNumber)
-
-                val rank = when (matchCount) {
-                    6 -> "1등"
-                    5 -> if (isBonusMatched) "2등" else "3등"
-                    4 -> "4등"
-                    3 -> "5등"
-                    else -> null // Not a winner
-                }
-
-                rank?.let {
-                    user?.fcmToken?.let { token ->
-                        val winningAmount = "당첨금 확인 필요" // TODO: 실제 당첨금 조회 로직 연동 (WinningInfoRepository)
-                        notificationService.sendWinningNotification(token, winningAmount)
+        // 해당 회차의 사용자 티켓 조회
+        val tickets = lottoTicketRepository.findByUserIdAndOrdinal(userId, result.round)
+        val ticketIds = tickets.mapNotNull { it.id }
+        
+        val winningResult = if (ticketIds.isNotEmpty()) {
+            lottoGameRepository.findByTicketIdIn(ticketIds)
+                .map { game ->
+                    val (status, _) = game.calculateRank(winningInfo)
+                    
+                    val rankName = when (status) {
+                        LottoGameStatus.WINNING_1 -> "1등"
+                        LottoGameStatus.WINNING_2 -> "2등"
+                        LottoGameStatus.WINNING_3 -> "3등"
+                        LottoGameStatus.WINNING_4 -> "4등"
+                        LottoGameStatus.WINNING_5 -> "5등"
+                        else -> null
                     }
 
-                    LottoCheck.UserWinningTicket(
-                        round = result.round,
-                        userNumbers = userNumbers,
-                        matchedNumbers = userNumbers.intersect(result.winningNumbers.toSet()).toList(),
-                        rank = it,
-                    )
+                    rankName?.let {
+                        user?.fcmToken?.let { token ->
+                            val winningAmount = "당첨 확인 완료 ($it)"
+                            notificationService.sendWinningNotification(token, winningAmount)
+                        }
+
+                        LottoCheck.UserWinningTicket(
+                            round = result.round,
+                            userNumbers = game.getNumbers(),
+                            matchedNumbers = game.getNumbers().intersect(result.winningNumbers.toSet()).toList(),
+                            rank = it,
+                        )
+                    }
                 }
-            }
-            .filterNotNull()
-            .toList()
+                .filterNotNull()
+                .toList()
+        } else {
+            emptyList()
+        }
 
         return LottoCheck.Out(
             message = "${result.round}회차 당첨 확인 완료",
