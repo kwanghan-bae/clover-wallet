@@ -1,7 +1,10 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.common.CommonResponse
+import com.wallet.clover.api.dto.ExtractNumbers
 import com.wallet.clover.api.dto.LottoGame
 import com.wallet.clover.api.entity.game.LottoGameEntity
+import com.wallet.clover.api.service.ExtractionService
 import com.wallet.clover.api.service.LottoGameService
 import org.springframework.web.bind.annotation.*
 
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/v1/lotto")
 class LottoController(
     private val lottoGameService: LottoGameService,
+    private val extractionService: ExtractionService
 ) {
 
     @GetMapping("/games")
@@ -23,5 +27,10 @@ class LottoController(
     @PostMapping("/games")
     suspend fun saveGame(@RequestBody request: LottoGame.Request): LottoGame.Response {
         return LottoGame.Response.from(lottoGameService.saveGame(request.toEntity()))
+    }
+
+    @PostMapping("/extraction")
+    suspend fun extractNumbers(@RequestBody request: ExtractNumbers.Request): CommonResponse<Set<Int>> {
+        return CommonResponse.success(extractionService.extractLottoNumbers(request))
     }
 }

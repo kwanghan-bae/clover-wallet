@@ -1,17 +1,18 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.common.CommonResponse
 import com.wallet.clover.api.dto.LottoSpot
+import com.wallet.clover.api.entity.lottospot.LottoWinningStoreEntity
 import com.wallet.clover.api.service.LottoSpotService
+import com.wallet.clover.api.service.LottoWinningStoreService
 import kotlinx.coroutines.flow.Flow
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/lotto-spots")
 class LottoSpotController(
     private val lottoSpotService: LottoSpotService,
+    private val lottoWinningStoreService: LottoWinningStoreService
 ) {
 
     @GetMapping
@@ -25,5 +26,17 @@ class LottoSpotController(
     @GetMapping("/search")
     suspend fun searchByName(@RequestParam name: String): List<LottoSpot.Response> {
         return lottoSpotService.searchByName(name)
+    }
+
+    @PostMapping("/crawl/{round}")
+    suspend fun crawlStores(@PathVariable round: Int): CommonResponse<String> {
+        lottoWinningStoreService.crawlWinningStores(round)
+        return CommonResponse.success("Crawling started for round $round")
+    }
+
+    @GetMapping("/winning/{round}")
+    suspend fun getWinningStores(@PathVariable round: Int): CommonResponse<List<LottoWinningStoreEntity>> {
+        val stores = lottoWinningStoreService.getWinningStores(round)
+        return CommonResponse.success(stores)
     }
 }
