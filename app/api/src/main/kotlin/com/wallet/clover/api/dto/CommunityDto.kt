@@ -7,8 +7,11 @@ import jakarta.validation.constraints.Size
 import java.time.LocalDateTime
 
 data class UserSummary(
+    /** 사용자 ID */
     val id: Long,
+    /** 닉네임 */
     val nickname: String,
+    /** 뱃지 목록 */
     val badges: List<String>
 )
 
@@ -33,6 +36,7 @@ abstract class Post {
 
 abstract class CreatePost {
     data class Request(
+        /** 게시글 내용 */
         @field:NotBlank(message = "Content cannot be blank")
         val content: String
     )
@@ -40,6 +44,7 @@ abstract class CreatePost {
 
 abstract class UpdatePost {
     data class Request(
+        /** 게시글 내용 */
         val content: String?
     )
 }
@@ -63,7 +68,9 @@ abstract class Comment {
 
 abstract class CreateComment {
     data class Request(
+        /** 게시글 ID */
         val postId: Long,
+        /** 댓글 내용 */
         @field:NotBlank(message = "Content cannot be blank")
         val content: String
     )
@@ -71,6 +78,7 @@ abstract class CreateComment {
 
 abstract class UpdateComment {
     data class Request(
+        /** 댓글 내용 */
         @field:NotBlank(message = "Content cannot be blank")
         val content: String?
     )

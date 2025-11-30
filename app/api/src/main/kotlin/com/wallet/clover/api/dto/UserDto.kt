@@ -22,8 +22,10 @@ abstract class User {
 
 abstract class UpdateUser {
     data class Request(
+        /** 로케일 */
         @field:Size(min = 2, max = 10, message = "Locale must be between 2 and 10 characters")
         val locale: String?,
+        /** 나이 */
         @field:Min(value = 0, message = "Age must be non-negative")
         val age: Int?
     )
@@ -31,17 +33,24 @@ abstract class UpdateUser {
 
 abstract class UserStats {
     data class Response(
+        /** 총 게임 수 */
         val totalGames: Int,
+        /** 총 당첨금 */
         val totalWinnings: Long,
+        /** 총 사용 금액 */
         val totalSpent: Long,
+        /** 수익률 (%) */
         val roi: Int
     )
 }
 
 abstract class Login {
     data class Response(
+        /** 사용자 ID */
         val userId: Long,
+        /** SSO 식별자 */
         val ssoQualifier: String,
+        /** 로케일 */
         val locale: String
     )
 }

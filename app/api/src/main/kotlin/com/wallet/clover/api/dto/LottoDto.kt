@@ -8,15 +8,25 @@ import java.time.LocalDateTime
 
 abstract class LottoGame {
     data class Request(
+        /** 티켓 ID */
         val ticketId: Long,
+        /** 사용자 ID */
         val userId: Long,
+        /** 게임 상태 */
         val status: LottoGameStatus,
+        /** 번호 1 */
         val number1: Int,
+        /** 번호 2 */
         val number2: Int,
+        /** 번호 3 */
         val number3: Int,
+        /** 번호 4 */
         val number4: Int,
+        /** 번호 5 */
         val number5: Int,
+        /** 번호 6 */
         val number6: Int,
+        /** 추출 방법 */
         val extractionMethod: ExtractionMethod? = null
     ) {
         fun toEntity(): LottoGameEntity {
@@ -107,15 +117,20 @@ abstract class LottoTicket {
     }
 
     data class DetailResponse(
+        /** 티켓 정보 */
         val ticket: Response,
+        /** 게임 목록 */
         val games: List<LottoGame.Response>
     )
 }
 
 abstract class SaveScannedTicket {
     data class Command(
+        /** 사용자 ID */
         val userId: Long,
+        /** 티켓 이미지 URL */
         val url: String,
+        /** 추출 방법 */
         val extractionMethod: ExtractionMethod? = null
     )
 }

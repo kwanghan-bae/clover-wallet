@@ -1,6 +1,6 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.dto.LottoCheck
+import com.wallet.clover.api.dto.CheckWinning
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
@@ -32,7 +32,7 @@ class LottoService(
      * @param userId 사용자 ID
      * @return 당첨 확인 결과 (당첨 번호 및 사용자 당첨 내역 포함)
      */
-    suspend fun checkWinnings(userId: Long): LottoCheck.Out {
+    suspend fun checkWinnings(userId: Long): CheckWinning.Response {
         val result = winningNumberProvider.getLatestWinningNumbers()
         val user = userRepository.findById(userId)
         
@@ -84,7 +84,7 @@ class LottoService(
                             notificationService.sendWinningNotification(token, winningAmount)
                         }
 
-                        LottoCheck.UserWinningTicket(
+                        CheckWinning.UserWinningTicket(
                             round = result.round,
                             userNumbers = game.getNumbers(),
                             matchedNumbers = game.getNumbers().intersect(result.winningNumbers.toSet()).toList(),
@@ -98,7 +98,7 @@ class LottoService(
             emptyList()
         }
 
-        return LottoCheck.Out(
+        return CheckWinning.Response(
             message = "${result.round}회차 당첨 확인 완료",
             winningNumbers = result.winningNumbers + result.bonusNumber,
             userWinningTickets = winningResult.takeIf { it.isNotEmpty() },
