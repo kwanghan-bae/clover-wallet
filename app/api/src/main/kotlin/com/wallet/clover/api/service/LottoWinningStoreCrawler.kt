@@ -1,5 +1,6 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.api.config.LottoScrapingProperties
 import com.wallet.clover.api.entity.lottospot.LottoWinningStoreEntity
 import com.wallet.clover.api.repository.lottospot.LottoWinningStoreRepository
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,7 @@ import java.time.LocalDateTime
 @Service
 class LottoWinningStoreCrawler(
     private val repository: LottoWinningStoreRepository,
+    private val scrapingProperties: LottoScrapingProperties,
     @Value("\${external-api.dhlottery.winning-store-url}") private val winningStoreUrl: String
 ) {
     private val logger = LoggerFactory.getLogger(LottoWinningStoreCrawler::class.java)
@@ -34,10 +36,10 @@ class LottoWinningStoreCrawler(
                 val entities = mutableListOf<LottoWinningStoreEntity>()
 
                 // 1등 배출점
-                val rank1Table = doc.select("table.tbl_data").first()
+                val rank1Table = doc.select(scrapingProperties.winningStoreTableSelector).first()
                 rank1Table?.select("tbody tr")?.forEach { tr ->
                     val tds = tr.select("td")
-                    if (tds.size >= 4 && tds[0].text().contains("조회 결과가 없습니다").not()) {
+                    if (tds.size >= 4 && tds[0].text().contains(scrapingProperties.winningStoreEmptyMessage).not()) {
                         val storeName = tds[1].text().trim()
                         val method = tds[2].text().trim()
                         val address = tds[3].text().trim()
@@ -56,12 +58,12 @@ class LottoWinningStoreCrawler(
                 }
 
                 // 2등 배출점 (보통 두 번째 테이블)
-                val tables = doc.select("table.tbl_data")
+                val tables = doc.select(scrapingProperties.winningStoreTableSelector)
                 if (tables.size >= 2) {
                     val rank2Table = tables[1]
                     rank2Table.select("tbody tr").forEach { tr ->
                         val tds = tr.select("td")
-                        if (tds.size >= 3 && tds[0].text().contains("조회 결과가 없습니다").not()) {
+                        if (tds.size >= 3 && tds[0].text().contains(scrapingProperties.winningStoreEmptyMessage).not()) {
                             val storeName = tds[1].text().trim()
                             val address = tds[2].text().trim()
                             

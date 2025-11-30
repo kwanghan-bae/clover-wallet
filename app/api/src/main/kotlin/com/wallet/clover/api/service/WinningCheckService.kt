@@ -37,9 +37,35 @@ class WinningCheckService(
         val tickets = lottoTicketRepository.findByOrdinal(round)
         logger.info("Starting ticket processing for round $round")
 
+        val batchSize = 100
+        val ticketBuffer = mutableListOf<com.wallet.clover.api.entity.ticket.LottoTicketEntity>()
+
         tickets.collect { ticket ->
-            val games = lottoGameRepository.findByTicketId(ticket.id!!)
-            var ticketTotalPrize = 0L
+            ticketBuffer.add(ticket)
+            if (ticketBuffer.size >= batchSize) {
+                processBatch(ticketBuffer, winningInfo)
+                ticketBuffer.clear()
+            }
+        }
+
+        if (ticketBuffer.isNotEmpty()) {
+            processBatch(ticketBuffer, winningInfo)
+        }
+    }
+
+    private suspend fun processBatch(
+        tickets: List<com.wallet.clover.api.entity.ticket.LottoTicketEntity>,
+        winningInfo: WinningInfoEntity
+    ) {
+        val ticketIds = tickets.mapNotNull { it.id }
+        if (ticketIds.isEmpty()) return
+
+        // 배치로 게임 조회
+        val gamesFlow = lottoGameRepository.findByTicketIdIn(ticketIds)
+        val gamesMap = gamesFlow.toList().groupBy { it.ticketId }
+
+        for (ticket in tickets) {
+            val games = gamesMap[ticket.id] ?: emptyList()
             var hasWinningGame = false
             val winningGames = mutableListOf<LottoGameEntity>()
 
@@ -60,7 +86,6 @@ class WinningCheckService(
                 }
                 
                 if (prize > 0) {
-                    ticketTotalPrize += prize
                     hasWinningGame = true
                 }
             }

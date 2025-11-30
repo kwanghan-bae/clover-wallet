@@ -1,5 +1,6 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.api.config.LottoScrapingProperties
 import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import com.wallet.clover.api.repository.winning.WinningInfoRepository
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import java.time.format.DateTimeFormatter
 @Service
 class WinningInfoCrawler(
     private val repository: WinningInfoRepository,
+    private val scrapingProperties: LottoScrapingProperties,
     @Value("\${external-api.dhlottery.winning-info-url}") private val winningInfoUrl: String
 ) {
     private val logger = LoggerFactory.getLogger(WinningInfoCrawler::class.java)
@@ -34,15 +36,15 @@ class WinningInfoCrawler(
                 val doc = Jsoup.connect(url).get()
 
                 // 날짜 파싱 (2023년 11월 25일 추첨)
-                val dateText = doc.select("p.desc").text().replace(Regex(".*?\\((.*?)\\s추첨\\).*"), "$1")
+                val dateText = doc.select(scrapingProperties.winningInfoDateSelector).text().replace(Regex(".*?\\((.*?)\\s추첨\\).*"), "$1")
                 val drawDate = LocalDate.parse(dateText, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
 
                 // 당첨 번호
-                val numbers = doc.select("div.num.win span").map { it.text().toInt() }
-                val bonusNumber = doc.select("div.num.bonus span").text().toInt()
+                val numbers = doc.select(scrapingProperties.winningInfoNumSelector).map { it.text().toInt() }
+                val bonusNumber = doc.select(scrapingProperties.winningInfoBonusSelector).text().toInt()
 
                 // 당첨금 (표에서 파싱)
-                val prizeTable = doc.select("table.tbl_data tbody tr")
+                val prizeTable = doc.select(scrapingProperties.winningInfoPrizeTableSelector)
                 
                 // 1등 당첨금
                 val firstPrizeStr = prizeTable[0].select("td")[3].text().replace(Regex("[^0-9]"), "")

@@ -15,5 +15,11 @@ data class LottoScrapingProperties(
     @field:NotBlank val winRoundSelector: String = "h4 > strong",
     @field:NotBlank val winNumbersSelector: String = ".win_result .nums .win p span.ball_645",
     @field:NotBlank val bonusNumberSelector: String = ".win_result .nums .bonus p span.ball_645",
-    @field:NotBlank val resultUrl: String = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
+    @field:NotBlank val resultUrl: String = "https://www.dhlottery.co.kr/gameResult.do?method=byWin",
+    @field:NotBlank val winningInfoDateSelector: String = "p.desc",
+    @field:NotBlank val winningInfoNumSelector: String = "div.num.win span",
+    @field:NotBlank val winningInfoBonusSelector: String = "div.num.bonus span",
+    @field:NotBlank val winningInfoPrizeTableSelector: String = "table.tbl_data tbody tr",
+    @field:NotBlank val winningStoreTableSelector: String = "table.tbl_data",
+    @field:NotBlank val winningStoreEmptyMessage: String = "조회 결과가 없습니다"
 )

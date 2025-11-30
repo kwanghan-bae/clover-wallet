@@ -4,6 +4,8 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.Message
 import com.google.firebase.messaging.Notification
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
@@ -23,22 +25,24 @@ class FcmService {
             return
         }
 
-        try {
-            val notification = Notification.builder()
-                .setTitle(title)
-                .setBody(body)
-                .build()
+        withContext(Dispatchers.IO) {
+            try {
+                val notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build()
 
-            val message = Message.builder()
-                .setToken(token)
-                .setNotification(notification)
-                .build()
+                val message = Message.builder()
+                    .setToken(token)
+                    .setNotification(notification)
+                    .build()
 
-            val response = FirebaseMessaging.getInstance().send(message)
-            logger.info("Successfully sent message to user: {}", response)
-        } catch (e: Exception) {
-            logger.error("Error sending FCM notification to token: $token", e)
-            // 에러가 발생해도 계속 진행 (non-blocking)
+                val response = FirebaseMessaging.getInstance().send(message)
+                logger.info("Successfully sent message to user: {}", response)
+            } catch (e: Exception) {
+                logger.error("Error sending FCM notification to token: $token", e)
+                // 에러가 발생해도 계속 진행 (non-blocking)
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import java.time.LocalDateTime
 @Repository
 interface LottoGameRepository : CoroutineCrudRepository<LottoGameEntity, Long> {
     suspend fun findByTicketId(ticketId: Long): List<LottoGameEntity>
+    fun findByTicketIdIn(ticketIds: List<Long>): Flow<LottoGameEntity>
     fun findByUserId(userId: Long): Flow<LottoGameEntity>
     suspend fun deleteByUserId(userId: Long)
 
