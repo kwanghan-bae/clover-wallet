@@ -1,5 +1,6 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.api.domain.extraction.ExtractionMethod
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import kotlinx.coroutines.flow.toList
@@ -50,19 +51,19 @@ class WinningNewsService(
         }
     }
 
-    private fun getWinningMessage(method: String?, status: LottoGameStatus): String {
+    private fun getWinningMessage(method: ExtractionMethod?, status: LottoGameStatus): String {
         val rank = getRankFromStatus(status)
         val methodName = when (method) {
-            "DREAM" -> "꿈 해몽"
-            "SAJU" -> "사주팔자"
-            "STATISTICS_HOT" -> "통계 HOT"
-            "STATISTICS_COLD" -> "통계 COLD"
-            "HOROSCOPE" -> "별자리 운세"
-            "PERSONAL_SIGNIFICANCE" -> "의미있는 숫자"
-            "NATURE_PATTERNS" -> "자연의 패턴"
-            "ANCIENT_DIVINATION" -> "고대 점술"
-            "COLORS_SOUNDS" -> "색상 & 소리"
-            "ANIMAL_OMENS" -> "동물 징조"
+            ExtractionMethod.DREAM -> "꿈 해몽"
+            ExtractionMethod.SAJU -> "사주팔자"
+            ExtractionMethod.STATISTICS_HOT -> "통계 HOT"
+            ExtractionMethod.STATISTICS_COLD -> "통계 COLD"
+            ExtractionMethod.HOROSCOPE -> "별자리 운세"
+            ExtractionMethod.PERSONAL_SIGNIFICANCE -> "의미있는 숫자"
+            ExtractionMethod.NATURE_PATTERNS -> "자연의 패턴"
+            ExtractionMethod.ANCIENT_DIVINATION -> "고대 점술"
+            ExtractionMethod.COLORS_SOUNDS -> "색상 & 소리"
+            ExtractionMethod.ANIMAL_OMENS -> "동물 징조"
             else -> "행운"
         }
         

@@ -31,8 +31,8 @@ class SecurityConfig(
             .authorizeExchange {
                 it.pathMatchers(
                     "/api/v1/auth/**",
-                    "/actuator/**",
-                    "/health",
+                    "/actuator/health/**",
+                    "/actuator/info/**",
                     "/webjars/**",
                     "/v3/api-docs/**",
                     "/swagger-ui.html"

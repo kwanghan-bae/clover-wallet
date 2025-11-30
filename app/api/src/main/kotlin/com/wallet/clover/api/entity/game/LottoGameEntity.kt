@@ -1,5 +1,6 @@
 package com.wallet.clover.api.entity.game
 
+import com.wallet.clover.api.domain.extraction.ExtractionMethod
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
@@ -33,7 +34,7 @@ data class LottoGameEntity(
     val number6: Int,
     
     /** 번호 추출 방식 (DREAM, SAJU 등) */
-    val extractionMethod: String? = null,  // 사용된 추출 방식 (ExtractionMethod enum 값)
+    val extractionMethod: ExtractionMethod? = null,  // 사용된 추출 방식 (ExtractionMethod enum 값)
     
     /** 당첨금 (0이면 낙첨 또는 미확인) */
     val prizeAmount: Long = 0, // 당첨금 (0이면 낙첨 또는 미확인)
@@ -44,4 +45,8 @@ data class LottoGameEntity(
     
     /** 수정 일시 */
     val updatedAt: LocalDateTime = LocalDateTime.now()
-)
+) {
+    fun getNumbers(): List<Int> {
+        return listOf(number1, number2, number3, number4, number5, number6)
+    }
+}

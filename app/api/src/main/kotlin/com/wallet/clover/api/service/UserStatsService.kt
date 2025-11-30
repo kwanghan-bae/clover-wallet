@@ -12,13 +12,11 @@ class UserStatsService(
 ) {
 
     suspend fun getUserStats(userId: Long): UserStatsResponse {
-        val allGames = lottoGameRepository.findByUserId(userId).toList()
-        
-        // 총 당첨금 계산 (실제 당첨금 필드 사용)
-        val totalWinnings = allGames.sumOf { game -> game.prizeAmount }
+        val totalGames = lottoGameRepository.countByUserId(userId)
+        val totalWinnings = lottoGameRepository.sumPrizeAmountByUserId(userId) ?: 0L
         
         // 총 지출 (1게임 = 1000원)
-        val totalSpent = allGames.size * 1000L
+        val totalSpent = totalGames * 1000L
         
         // 수익률 계산
         val roi = if (totalSpent > 0) {
@@ -28,7 +26,7 @@ class UserStatsService(
         }
         
         return UserStatsResponse(
-            totalGames = allGames.size,
+            totalGames = totalGames.toInt(),
             totalWinnings = totalWinnings,
             totalSpent = totalSpent,
             roi = roi

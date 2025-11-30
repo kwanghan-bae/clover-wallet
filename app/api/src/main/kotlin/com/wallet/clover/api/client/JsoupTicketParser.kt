@@ -18,6 +18,18 @@ class JsoupTicketParser(
 ) : TicketParser {
     private val logger = LoggerFactory.getLogger(javaClass)
 
+    companion object {
+        private const val STATUS_WINNING = "당첨"
+        private const val STATUS_LOSING = "낙첨"
+        private const val STATUS_DRAWING = "추첨"
+        
+        private const val GAME_WINNING_1 = "1등당첨"
+        private const val GAME_WINNING_2 = "2등당첨"
+        private const val GAME_WINNING_3 = "3등당첨"
+        private const val GAME_WINNING_4 = "4등당첨"
+        private const val GAME_WINNING_5 = "5등당첨"
+    }
+
     override fun parse(html: String): ParsedTicket {
         val document = Jsoup.parse(html)
         val ordinal = getOrdinal(document)
@@ -36,9 +48,9 @@ class JsoupTicketParser(
         val content = document.select(properties.ticketStatusSelector).firstOrNull()?.text() ?: ""
         logger.debug("Parsed ticket status content: {}", content)
         return when {
-            content.contains("당첨") -> LottoTicketStatus.WINNING
-            content.contains("낙첨") -> LottoTicketStatus.LOSING
-            content.contains("추첨") -> LottoTicketStatus.STASHED // "미추첨" 대신 "추첨" 키워드 사용
+            content.contains(STATUS_WINNING) -> LottoTicketStatus.WINNING
+            content.contains(STATUS_LOSING) -> LottoTicketStatus.LOSING
+            content.contains(STATUS_DRAWING) -> LottoTicketStatus.STASHED
             else -> {
                 logger.error("Unidentifiable ticket status content: {}", content)
                 throw TicketParsingException("'$content' 는 식별할 수 없는 문구 입니다.")
@@ -73,12 +85,12 @@ class JsoupTicketParser(
     }
 
     private fun parseGameStatus(htmlValue: String): LottoGameStatus {
-        return when {
-            (htmlValue == "1등당첨") -> LottoGameStatus.WINNING_1
-            (htmlValue == "2등당첨") -> LottoGameStatus.WINNING_2
-            (htmlValue == "3등당첨") -> LottoGameStatus.WINNING_3
-            (htmlValue == "4등당첨") -> LottoGameStatus.WINNING_4
-            (htmlValue == "5등당첨") -> LottoGameStatus.WINNING_5
+        return when (htmlValue) {
+            GAME_WINNING_1 -> LottoGameStatus.WINNING_1
+            GAME_WINNING_2 -> LottoGameStatus.WINNING_2
+            GAME_WINNING_3 -> LottoGameStatus.WINNING_3
+            GAME_WINNING_4 -> LottoGameStatus.WINNING_4
+            GAME_WINNING_5 -> LottoGameStatus.WINNING_5
             else -> LottoGameStatus.LOSING
         }
     }

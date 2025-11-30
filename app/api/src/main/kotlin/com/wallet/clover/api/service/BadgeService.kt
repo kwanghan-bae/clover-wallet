@@ -1,5 +1,6 @@
 package com.wallet.clover.api.service
 
+import com.wallet.clover.api.domain.extraction.ExtractionMethod
 import com.wallet.clover.api.entity.game.LottoGameStatus
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.user.UserRepository
@@ -61,11 +62,12 @@ class BadgeService(
         // 추출 방식별 뱃지 (특정 방식으로 당첨 시)
         winningGames.forEach { game ->
             when (game.extractionMethod) {
-                "DREAM" -> if (!currentBadges.contains(BADGE_DREAM_MASTER)) currentBadges.add(BADGE_DREAM_MASTER)
-                "SAJU" -> if (!currentBadges.contains(BADGE_SAJU_EXPERT)) currentBadges.add(BADGE_SAJU_EXPERT)
-                "STATISTICS_HOT", "STATISTICS_COLD" -> if (!currentBadges.contains(BADGE_STATS_GENIUS)) currentBadges.add(BADGE_STATS_GENIUS)
-                "HOROSCOPE" -> if (!currentBadges.contains(BADGE_HOROSCOPE_BELIEVER)) currentBadges.add(BADGE_HOROSCOPE_BELIEVER)
-                "NATURE_PATTERNS" -> if (!currentBadges.contains(BADGE_NATURE_LOVER)) currentBadges.add(BADGE_NATURE_LOVER)
+                ExtractionMethod.DREAM -> if (!currentBadges.contains(BADGE_DREAM_MASTER)) currentBadges.add(BADGE_DREAM_MASTER)
+                ExtractionMethod.SAJU -> if (!currentBadges.contains(BADGE_SAJU_EXPERT)) currentBadges.add(BADGE_SAJU_EXPERT)
+                ExtractionMethod.STATISTICS_HOT, ExtractionMethod.STATISTICS_COLD -> if (!currentBadges.contains(BADGE_STATS_GENIUS)) currentBadges.add(BADGE_STATS_GENIUS)
+                ExtractionMethod.HOROSCOPE -> if (!currentBadges.contains(BADGE_HOROSCOPE_BELIEVER)) currentBadges.add(BADGE_HOROSCOPE_BELIEVER)
+                ExtractionMethod.NATURE_PATTERNS -> if (!currentBadges.contains(BADGE_NATURE_LOVER)) currentBadges.add(BADGE_NATURE_LOVER)
+                else -> {}
             }
         }
 

@@ -73,6 +73,7 @@ class TicketService(
             savedTicket
         } catch (e: Exception) {
             meterRegistry.counter("lotto.ticket.scan", "result", "failure").increment()
+            // 파싱 에러 등 비즈니스 로직 에러는 그대로 던져서 GlobalExceptionHandler에서 처리하도록 함
             throw e
         }
     }
