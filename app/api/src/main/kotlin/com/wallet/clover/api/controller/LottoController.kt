@@ -25,8 +25,8 @@ class LottoController(
     }
 
     @PostMapping("/games")
-    suspend fun saveGame(@RequestBody request: LottoGame.Request): LottoGame.Response {
-        return LottoGame.Response.from(lottoGameService.saveGame(request.toEntity()))
+    suspend fun saveGame(@RequestBody request: com.wallet.clover.api.dto.SaveGeneratedGameRequest): LottoGame.Response {
+        return LottoGame.Response.from(lottoGameService.saveGeneratedGame(request))
     }
 
     @PostMapping("/extraction")
