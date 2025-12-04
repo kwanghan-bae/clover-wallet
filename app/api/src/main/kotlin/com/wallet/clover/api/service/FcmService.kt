@@ -67,4 +67,44 @@ class FcmService(
         val body = "$rank 당첨! 번호: ${numbers.sorted().joinToString(", ")}"
         sendToUser(token, title, body)
     }
+
+    /**
+     * 다수의 사용자에게 동일한 알림 브로드캐스트
+     * @param tokens FCM 디바이스 토큰 리스트
+     * @param title 알림 제목
+     * @param body 알림 본문
+     */
+    suspend fun sendBroadcastNotification(tokens: List<String>, title: String, body: String) {
+        if (FirebaseApp.getApps().isEmpty()) {
+            logger.warn("Firebase not initialized. Skipping FCM broadcast notification.")
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            var successCount = 0
+            var failureCount = 0
+
+            tokens.forEach { token ->
+                try {
+                    val notification = Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build()
+
+                    val message = Message.builder()
+                        .setToken(token)
+                        .setNotification(notification)
+                        .build()
+
+                    FirebaseMessaging.getInstance().send(message)
+                    successCount++
+                } catch (e: Exception) {
+                    logger.error("Error sending FCM to token: $token", e)
+                    failureCount++
+                }
+            }
+
+            logger.info("Broadcast notification sent: $successCount successful, $failureCount failed")
+        }
+    }
 }
