@@ -3,6 +3,7 @@ package com.wallet.clover.api.entity.ticket
 import com.fasterxml.jackson.annotation.JsonCreator
 
 enum class LottoTicketStatus(val htmlValue: String) {
+    PENDING("대기중"),
     STASHED("발표전"),
     LOSING("낙첨"),
     WINNING("당첨"),
@@ -12,7 +13,7 @@ enum class LottoTicketStatus(val htmlValue: String) {
         @JvmStatic
         @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
         fun valueOfHtmlValue(htmlValue: String): LottoTicketStatus {
-            return values().firstOrNull { it.htmlValue == htmlValue } ?: STASHED
+            return values().firstOrNull { it.htmlValue == htmlValue } ?: PENDING
         }
     }
 }

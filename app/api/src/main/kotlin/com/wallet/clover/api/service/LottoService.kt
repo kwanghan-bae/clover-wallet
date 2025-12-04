@@ -19,7 +19,7 @@ class LottoService(
     private val lottoGameRepository: LottoGameRepository,
     private val lottoTicketRepository: LottoTicketRepository,
     private val winningInfoRepository: WinningInfoRepository,
-    private val notificationService: NotificationService,
+    private val fcmService: FcmService,
     private val winningNumberProvider: WinningNumberProvider,
     private val userRepository: UserRepository
 ) {
@@ -80,8 +80,7 @@ class LottoService(
 
                     rankName?.let {
                         user?.fcmToken?.let { token ->
-                            val winningAmount = "당첨 확인 완료 ($it)"
-                            notificationService.sendWinningNotification(token, winningAmount)
+                            fcmService.sendWinningNotification(token, it, game.getNumbers())
                         }
 
                         CheckWinning.UserWinningTicket(
