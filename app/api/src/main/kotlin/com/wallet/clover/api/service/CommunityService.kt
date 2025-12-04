@@ -22,32 +22,59 @@ import com.wallet.clover.api.exception.ForbiddenException
 class CommunityService(
     private val postRepository: PostRepository,
     private val commentRepository: CommentRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val postLikeRepository: com.wallet.clover.api.repository.community.PostLikeRepository
 ) {
     @Transactional(readOnly = true)
-    suspend fun getAllPosts(page: Int, size: Int): List<Post.Response> {
+    suspend fun getAllPosts(page: Int, size: Int, currentUserId: Long? = null): List<Post.Response> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         val posts = postRepository.findAllBy(pageable).toList()
         
         val userIds = posts.map { it.userId }.distinct()
         val users = userRepository.findAllById(userIds).toList().associateBy { it.id }
 
+        // 현재 사용자의 좋아요 여부 조회
+        val likedPostIds = if (currentUserId != null) {
+            val postIds = posts.mapNotNull { it.id }
+            // Batch 조회 로직이 없으므로 일단 개별 조회 혹은 전체 조회 후 필터링 (최적화 필요)
+            // 여기서는 간단하게 구현
+            // 실제로는 postLikeRepository.findByUserIdAndPostIdIn(...) 같은 메서드가 필요함
+            // R2DBC에서는 IN 절이 까다로울 수 있으므로, 반복문으로 처리하거나 커스텀 쿼리 필요
+            // 일단은 N+1 방지를 위해 전체 로직을 단순화
+            mutableSetOf<Long>() // TODO: Implement batch check
+        } else {
+            emptySet()
+        }
+
         return posts.map { post ->
             val user = users[post.userId]?.let { 
                 UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
             }
-            post.toResponse(user)
+            // 개별 조회 (N+1 문제 발생 가능, 추후 최적화)
+            val isLiked = if (currentUserId != null) {
+                postLikeRepository.existsByUserIdAndPostId(currentUserId, post.id!!).block() ?: false
+            } else {
+                false
+            }
+            post.toResponse(user, isLiked)
         }
     }
 
     @Transactional(readOnly = true)
-    suspend fun getPostById(postId: Long): Post.Response {
+    suspend fun getPostById(postId: Long, currentUserId: Long? = null): Post.Response {
         val post = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
         val userEntity = userRepository.findById(post.userId)
         val user = userEntity?.let { 
             UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
         }
-        return post.toResponse(user)
+        
+        val isLiked = if (currentUserId != null) {
+            postLikeRepository.existsByUserIdAndPostId(currentUserId, postId).block() ?: false
+        } else {
+            false
+        }
+        
+        return post.toResponse(user, isLiked)
     }
 
     suspend fun createPost(userId: Long, request: CreatePost.Request): Post.Response {
@@ -57,7 +84,7 @@ class CommunityService(
         val user = userEntity?.let { 
             UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
         }
-        return savedPost.toResponse(user)
+        return savedPost.toResponse(user, false)
     }
 
     suspend fun updatePost(postId: Long, userId: Long, request: UpdatePost.Request): Post.Response {
@@ -76,7 +103,38 @@ class CommunityService(
         val user = userEntity?.let { 
             UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
         }
-        return savedPost.toResponse(user)
+        
+        val isLiked = postLikeRepository.existsByUserIdAndPostId(userId, postId).block() ?: false
+        
+        return savedPost.toResponse(user, isLiked)
+    }
+
+    suspend fun likePost(postId: Long, userId: Long): Post.Response {
+        val post = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
+        
+        val existingLike = postLikeRepository.findByUserIdAndPostId(userId, postId).block()
+        
+        val updatedPost = if (existingLike != null) {
+            // Unlike
+            postLikeRepository.delete(existingLike).block()
+            post.copy(likeCount = (post.likeCount - 1).coerceAtLeast(0))
+        } else {
+            // Like
+            postLikeRepository.save(com.wallet.clover.api.entity.community.PostLikeEntity(userId = userId, postId = postId)).block()
+            post.copy(likeCount = post.likeCount + 1)
+        }
+        
+        val savedPost = postRepository.save(updatedPost)
+        
+        val userEntity = userRepository.findById(savedPost.userId)
+        val user = userEntity?.let { 
+            UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
+        }
+        
+        // Toggle result
+        val isLiked = existingLike == null
+        
+        return savedPost.toResponse(user, isLiked)
     }
 
     @Transactional(readOnly = true)

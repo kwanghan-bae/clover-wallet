@@ -17,14 +17,20 @@ class CommunityController(
     @GetMapping("/posts")
     suspend fun getAllPosts(
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int
+        @RequestParam(defaultValue = "10") size: Int,
+        @AuthenticationPrincipal jwt: Jwt?
     ): CommonResponse<List<Post.Response>> {
-        return CommonResponse.success(communityService.getAllPosts(page, size))
+        val userId = jwt?.subject?.toLongOrNull()
+        return CommonResponse.success(communityService.getAllPosts(page, size, userId))
     }
 
     @GetMapping("/posts/{postId}")
-    suspend fun getPost(@PathVariable postId: Long): CommonResponse<Post.Response> {
-        return CommonResponse.success(communityService.getPostById(postId))
+    suspend fun getPost(
+        @PathVariable postId: Long,
+        @AuthenticationPrincipal jwt: Jwt?
+    ): CommonResponse<Post.Response> {
+        val userId = jwt?.subject?.toLongOrNull()
+        return CommonResponse.success(communityService.getPostById(postId, userId))
     }
 
     @PostMapping("/posts")
@@ -44,6 +50,15 @@ class CommunityController(
     ): CommonResponse<Post.Response> {
         val userId = jwt.subject.toLong()
         return CommonResponse.success(communityService.updatePost(postId, userId, request))
+    }
+
+    @PostMapping("/posts/{postId}/like")
+    suspend fun likePost(
+        @PathVariable postId: Long,
+        @AuthenticationPrincipal jwt: Jwt
+    ): CommonResponse<Post.Response> {
+        val userId = jwt.subject.toLong()
+        return CommonResponse.success(communityService.likePost(postId, userId))
     }
 
     @GetMapping("/posts/{postId}/comments")

@@ -15,6 +15,8 @@ abstract class Post {
         val viewCount: Int,
         /** 좋아요 수 */
         val likeCount: Int,
+        /** 현재 사용자가 좋아요를 눌렀는지 여부 */
+        val isLiked: Boolean,
         /** 생성 일시 */
         val createdAt: LocalDateTime,
         /** 수정 일시 */
@@ -22,12 +24,13 @@ abstract class Post {
     )
 }
 
-fun PostEntity.toResponse(user: UserSummary?) = Post.Response(
+fun PostEntity.toResponse(user: UserSummary?, isLiked: Boolean = false) = Post.Response(
     id = this.id ?: throw IllegalStateException("Post ID must not be null"),
     user = user,
     content = this.content,
     viewCount = this.viewCount,
     likeCount = this.likeCount,
+    isLiked = isLiked,
     createdAt = this.createdAt,
     updatedAt = this.updatedAt
 )
