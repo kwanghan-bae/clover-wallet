@@ -1,35 +1,41 @@
 package com.wallet.clover.api.service
 
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.Message
-import com.google.firebase.messaging.Notification
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import org.slf4j.LoggerFactory
+import com.wallet.clover.api.entity.notification.NotificationEntity
+import com.wallet.clover.api.repository.notification.NotificationRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.toList
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 
 @Service
-class NotificationService {
-    private val logger = LoggerFactory.getLogger(javaClass)
-
-    suspend fun sendWinningNotification(deviceToken: String, winningAmount: String) = withContext(Dispatchers.IO) {
-        val message = Message.builder()
-            .setToken(deviceToken)
-            .setNotification(
-                Notification.builder()
-                    .setTitle("로또 당첨 알림!")
-                    .setBody("축하합니다! ${winningAmount}에 당첨되셨습니다!")
-                    .build(),
+class NotificationService(
+    private val notificationRepository: NotificationRepository
+) {
+    suspend fun createNotification(userId: Long, title: String, message: String, type: String = "INFO"): NotificationEntity {
+        return notificationRepository.save(
+            NotificationEntity(
+                userId = userId,
+                title = title,
+                message = message,
+                type = type
             )
-            .putData("type", "lotto_winning")
-            .putData("amount", winningAmount)
-            .build()
+        )
+    }
 
-        try {
-            val response = FirebaseMessaging.getInstance().send(message)
-            logger.info("Successfully sent message: {}", response)
-        } catch (e: Exception) {
-            logger.error("Error sending message: {}", e.message)
+    suspend fun getMyNotifications(userId: Long, page: Int = 0, size: Int = 20): List<NotificationEntity> {
+        val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
+        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable).toList()
+    }
+
+    suspend fun markAsRead(notificationId: Long, userId: Long) {
+        val notification = notificationRepository.findById(notificationId)
+        if (notification != null && notification.userId == userId) {
+            notificationRepository.save(notification.copy(isRead = true))
         }
+    }
+
+    suspend fun getUnreadCount(userId: Long): Long {
+        return notificationRepository.countByUserIdAndIsReadFalse(userId)
     }
 }
