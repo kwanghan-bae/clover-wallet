@@ -45,4 +45,8 @@ class LottoInfoService(
             "estimatedJackpot" to estimatedJackpot
         )
     }
+
+    suspend fun getDrawResult(round: Int): com.wallet.clover.api.entity.winning.WinningInfoEntity? {
+        return winningInfoRepository.findByRound(round)
+    }
 }
