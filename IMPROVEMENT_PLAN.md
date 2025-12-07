@@ -39,21 +39,41 @@
 **개선 계획**:
 - 반환 타입을 `Page<T>` 또는 `Slice<T>`와 유사한 구조(예: `PageResponse<T>`)로 변경하여 메타데이터(totalElements, totalPages 등)를 포함시킵니다.
 
-## 4. 코드 정리 및 컨벤션 준수
+## 5. 예외 처리 표준화 강화
 
 **현황**:
-- `LottoController`에서 `SaveGeneratedGameRequest` DTO를 Full Package Name으로 참조하고 있습니다.
-- 일부 메서드에서 Null Safety 처리가 다소 느슨합니다 (예: `userRepository.findById` 후 `user?.fcmToken`).
+- `GlobalExceptionHandler`에서 `ProblemDetail`을 반환하고 있습니다. 이는 Spring Boot 3의 표준 방식이지만, 앞서 도입한 `CommonResponse`와 형식이 다릅니다.
+- 클라이언트는 성공 시 `CommonResponse`, 실패 시 `ProblemDetail` 구조를 받게 되어 처리가 복잡해질 수 있습니다.
 
 **개선 계획**:
-- 불필요한 Full Package Name을 Import로 정리합니다.
-- 명시적인 예외 처리를 통해 Null 상태를 더 안전하게 제어합니다.
+- `GlobalExceptionHandler`의 응답도 `CommonResponse.fail()` 형태로 통일하거나, `ProblemDetail`을 `CommonResponse` 내부로 포함시키는 전략을 수립합니다.
+- 일관성을 위해 `CommonResponse.fail(message, code)` 형태로 에러 응답을 표준화합니다.
+
+## 6. 보안 설정 강화
+
+**현황**:
+- `SecurityConfig`에서 `jwt.secret`을 `@Value`로 주입받고 있습니다.
+- `application.yml`에 기본값이 하드코딩되어 있어 실수로 프로덕션에 나갈 위험이 있습니다.
+
+**개선 계획**:
+- `ConfigurationProperties`를 사용하여 Type-safe하게 설정을 관리합니다.
+- 프로덕션 프로필에서는 기본값이 없도록 하여 필수 설정을 강제합니다.
+
+## 7. 테스트 코드 보강
+
+**현황**:
+- 현재 테스트 코드의 커버리지나 스타일을 확인하지 못했습니다.
+
+**개선 계획**:
+- 주요 비즈니스 로직(`LottoService` 등)에 대한 단위 테스트를 Kotest 스타일로 작성하여 검증합니다.
 
 ---
 
-## 실행 순서
+## 실행 순서 (업데이트)
 
-1. **API 응답 통일**: `LottoController` 리팩토링
-2. **서비스 로직 개선**: `LottoService.checkWinnings` 리팩토링
-3. **페이지네이션 적용**: `LottoGameService` 및 Controller 수정
-4. **코드 정리**: Import 정리 및 기타 마이너 수정
+1. **API 응답 통일**: `LottoController` 리팩토링 (완료)
+2. **서비스 로직 개선**: `LottoService.checkWinnings` 리팩토링 (완료)
+3. **페이지네이션 적용**: `LottoGameService` 및 Controller 수정 (완료)
+4. **예외 처리 표준화**: `GlobalExceptionHandler` 수정
+5. **설정 관리 개선**: `JwtProperties` 도입 및 `SecurityConfig` 수정
+6. **코드 정리**: Import 정리 및 기타 마이너 수정

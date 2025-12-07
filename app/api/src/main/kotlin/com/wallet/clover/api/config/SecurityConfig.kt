@@ -1,6 +1,5 @@
 package com.wallet.clover.api.config
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
@@ -13,10 +12,13 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 import java.nio.charset.StandardCharsets
 import javax.crypto.spec.SecretKeySpec
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties
+
 @Configuration
 @EnableWebFluxSecurity
+@EnableConfigurationProperties(JwtProperties::class)
 class SecurityConfig(
-    @Value("\${jwt.secret}") private val jwtSecret: String,
+    private val jwtProperties: JwtProperties,
     private val jwtBlacklistFilter: JwtBlacklistFilter
 ) {
 
@@ -52,7 +54,7 @@ class SecurityConfig(
 
     @Bean
     fun jwtDecoder(): ReactiveJwtDecoder {
-        val secretKey = SecretKeySpec(jwtSecret.toByteArray(StandardCharsets.UTF_8), "HmacSHA256")
+        val secretKey = SecretKeySpec(jwtProperties.secret.toByteArray(StandardCharsets.UTF_8), "HmacSHA256")
         return NimbusReactiveJwtDecoder.withSecretKey(secretKey)
             .macAlgorithm(MacAlgorithm.HS256)
             .build()
