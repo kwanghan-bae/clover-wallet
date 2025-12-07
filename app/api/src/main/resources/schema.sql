@@ -250,7 +250,10 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO travel_plan (id, spot_id, title, description, places, theme, estimated_hours, created_at) VALUES
 (1, 1, '강남 명당 + 문화탐방 코스', '강남역 로또명당 방문 후 코엑스와 봉은사를 둘러보는 반나절 코스', '[{"name":"강남역 로또명당","type":"lotto_spot","lat":37.498,"lng":127.027},{"name":"코엑스 별마당 도서관","type":"tourism","lat":37.512,"lng":127.059},{"name":"봉은사","type":"tourism","lat":37.514,"lng":127.053},{"name":"삼원가든","type":"restaurant","lat":37.518,"lng":127.038}]', '문화', 4, NOW()),
 (2, 2, '명동 명당 + 맛집 투어', '명동 대박로또 방문 후 근처 맛집 탐방', '[{"name":"명동 대박로또","type":"lotto_spot","lat":37.5636,"lng":126.9860},{"name":"명동교자","type":"restaurant","lat":37.5640,"lng":126.9850},{"name":"N서울타워","type":"tourism","lat":37.5512,"lng":126.9882}]', '맛집', 3, NOW()),
-(3, 3, '송파 명당 + 자연 힐링', '올림픽공원 주변 명당과 자연 코스', '[{"name":"송파 황금복권","type":"lotto_spot","lat":37.5145,"lng":127.1060},{"name":"올림픽공원","type":"tourism","lat":37.5219,"lng":127.1211},{"name":"롯데월드타워","type":"tourism","lat":37.5125,"lng":127.1025}]', '자연', 5, NOW())
+(3, 3, '송파 명당 + 자연 힐링', '올림픽공원 주변 명당과 자연 코스', '[{"name":"송파 황금복권","type":"lotto_spot","lat":37.5145,"lng":127.1060},{"name":"올림픽공원","type":"tourism","lat":37.5219,"lng":127.1211},{"name":"롯데월드타워","type":"tourism","lat":37.5125,"lng":127.1025}]', '자연', 5, NOW()),
+(4, 4, '마포 명당 + 한강 뷰', '마포 당첨로또방과 함께하는 한강 산책 코스', '[{"name":"마포 당첨로또방","type":"lotto_spot","lat":37.5547,"lng":126.9228},{"name":"망원한강공원","type":"tourism","lat":37.5556,"lng":126.8970},{"name":"경의선숲길","type":"tourism","lat":37.5550,"lng":126.9240}]', '자연', 3, NOW()),
+(5, 1, '강남 명당 + 쇼핑', '강남 명당 방문 후 현대백화점과 가로수길 쇼핑', '[{"name":"강남역 로또명당","type":"lotto_spot","lat":37.498,"lng":127.027},{"name":"현대백화점 무역점","type":"tourism","lat":37.510,"lng":127.060},{"name":"가로수길","type":"tourism","lat":37.520,"lng":127.023}]', '문화', 4, NOW()),
+(6, 2, '명동 명당 + 역사탐방', '명동 로또명당과 역사 유적지 탐방', '[{"name":"명동 대박로또","type":"lotto_spot","lat":37.5636,"lng":126.9860},{"name":"덕수궁","type":"tourism","lat":37.5658,"lng":126.9751},{"name":"정동길","type":"tourism","lat":37.5665,"lng":126.9723}]', '문화', 4, NOW())
 ON CONFLICT (id) DO NOTHING;
 
 -- ID 시퀀스 조정
