@@ -69,6 +69,20 @@
 
 ---
 
+## 8. 전체 컨트롤러 및 서비스 응답 표준화 (완료)
+
+**현황**:
+- 일부 컨트롤러(`CommunityController`, `TicketController` 등)에서 `CommonResponse`나 `PageResponse`를 사용하지 않고 있었습니다.
+- `CommunityService`에서 `block()` 호출이 발견되어 성능 이슈가 우려되었습니다.
+
+**개선 계획**:
+- 모든 리스트 조회 API에 `PageResponse` 적용.
+- 모든 API 응답에 `CommonResponse` 적용.
+- `CommunityService`의 Blocking 호출 제거 및 Coroutine Repository로 전환.
+- DTO 추출 및 정리.
+
+---
+
 ## 실행 순서 (업데이트)
 
 1. **API 응답 통일**: `LottoController` 리팩토링 (완료)
@@ -76,4 +90,5 @@
 3. **페이지네이션 적용**: `LottoGameService` 및 Controller 수정 (완료)
 4. **예외 처리 표준화**: `GlobalExceptionHandler` 수정 (완료)
 5. **설정 관리 개선**: `JwtProperties` 도입 및 `SecurityConfig` 수정 (완료)
-6. **코드 정리**: Import 정리 및 기타 마이너 수정
+6. **전체 응답 표준화**: 나머지 컨트롤러 및 서비스 리팩토링 (완료)
+7. **코드 정리**: Import 정리 및 기타 마이너 수정
