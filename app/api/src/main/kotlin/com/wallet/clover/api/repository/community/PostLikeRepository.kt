@@ -1,13 +1,12 @@
 package com.wallet.clover.api.repository.community
 
 import com.wallet.clover.api.entity.community.PostLikeEntity
-import org.springframework.data.repository.reactive.ReactiveCrudRepository
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
-import reactor.core.publisher.Mono
 
 @Repository
-interface PostLikeRepository : ReactiveCrudRepository<PostLikeEntity, Long> {
-    fun findByUserIdAndPostId(userId: Long, postId: Long): Mono<PostLikeEntity>
-    fun existsByUserIdAndPostId(userId: Long, postId: Long): Mono<Boolean>
-    fun countByPostId(postId: Long): Mono<Long>
+interface PostLikeRepository : CoroutineCrudRepository<PostLikeEntity, Long> {
+    suspend fun findByUserIdAndPostId(userId: Long, postId: Long): PostLikeEntity?
+    suspend fun existsByUserIdAndPostId(userId: Long, postId: Long): Boolean
+    suspend fun countByPostId(postId: Long): Long
 }

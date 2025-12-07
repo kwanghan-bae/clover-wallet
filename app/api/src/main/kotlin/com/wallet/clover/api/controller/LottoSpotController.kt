@@ -1,8 +1,9 @@
 package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.common.CommonResponse
+import com.wallet.clover.api.common.PageResponse
 import com.wallet.clover.api.dto.LottoSpot
-import com.wallet.clover.api.entity.lottospot.LottoWinningStoreEntity
+import com.wallet.clover.api.dto.LottoWinningStore
 import com.wallet.clover.api.service.LottoSpotService
 import com.wallet.clover.api.service.LottoWinningStoreService
 import kotlinx.coroutines.flow.Flow
@@ -19,24 +20,24 @@ class LottoSpotController(
     suspend fun getAllLottoSpots(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): Flow<LottoSpot.Response> {
-        return lottoSpotService.getAllLottoSpots(page, size)
+    ): CommonResponse<PageResponse<LottoSpot.Response>> {
+        return CommonResponse.success(lottoSpotService.getAllLottoSpots(page, size))
     }
 
     @GetMapping("/search")
-    suspend fun searchByName(@RequestParam name: String): List<LottoSpot.Response> {
-        return lottoSpotService.searchByName(name)
+    suspend fun searchByName(@RequestParam name: String): CommonResponse<List<LottoSpot.Response>> {
+        return CommonResponse.success(lottoSpotService.searchByName(name))
     }
 
     @PostMapping("/crawl/{round}")
     suspend fun crawlStores(@PathVariable round: Int): CommonResponse<String> {
         lottoWinningStoreService.crawlWinningStores(round)
-        return CommonResponse.success("Crawling started for round $round")
+        return CommonResponse.success("Crawling started for round ")
     }
 
     @GetMapping("/winning/{round}")
-    suspend fun getWinningStores(@PathVariable round: Int): CommonResponse<List<LottoWinningStoreEntity>> {
+    suspend fun getWinningStores(@PathVariable round: Int): CommonResponse<List<LottoWinningStore.Response>> {
         val stores = lottoWinningStoreService.getWinningStores(round)
-        return CommonResponse.success(stores)
+        return CommonResponse.success(stores.map { LottoWinningStore.Response.from(it) })
     }
 }

@@ -1,6 +1,8 @@
 package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.common.CommonResponse
+import com.wallet.clover.api.dto.LogoutRequest
+import com.wallet.clover.api.dto.RefreshRequest
 import com.wallet.clover.api.service.AuthService
 import com.wallet.clover.api.service.LoginResponse
 import com.wallet.clover.api.service.RefreshResponse
@@ -43,11 +45,3 @@ class AuthController(
         return CommonResponse.success("Logged out successfully")
     }
 }
-
-data class RefreshRequest(
-    val refreshToken: String
-)
-
-data class LogoutRequest(
-    val refreshToken: String
-)

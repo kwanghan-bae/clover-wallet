@@ -1,5 +1,6 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.common.CommonResponse
 import com.wallet.clover.api.dto.RegisterToken
 import com.wallet.clover.api.service.FcmService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -16,9 +17,9 @@ class FcmController(
     suspend fun registerToken(
         @AuthenticationPrincipal jwt: Jwt,
         @RequestBody request: RegisterToken.Request
-    ): RegisterToken.Response {
+    ): CommonResponse<RegisterToken.Response> {
         val ssoQualifier = jwt.subject
         fcmService.registerToken(ssoQualifier, request.token)
-        return RegisterToken.Response(true)
+        return CommonResponse.success(RegisterToken.Response(true))
     }
 }

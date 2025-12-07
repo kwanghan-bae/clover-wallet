@@ -1,7 +1,8 @@
 package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.common.CommonResponse
-import com.wallet.clover.api.entity.notification.NotificationEntity
+import com.wallet.clover.api.common.PageResponse
+import com.wallet.clover.api.dto.NotificationResponse
 import com.wallet.clover.api.service.NotificationService
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
@@ -17,9 +18,16 @@ class NotificationController(
         @RequestParam userId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): CommonResponse<List<NotificationResponse>> {
-        val notifications = notificationService.getMyNotifications(userId, page, size)
-        return CommonResponse.success(notifications.map { NotificationResponse.from(it) })
+    ): CommonResponse<PageResponse<NotificationResponse>> {
+        val notificationsPage = notificationService.getMyNotifications(userId, page, size)
+        val responsePage = PageResponse(
+            content = notificationsPage.content.map { NotificationResponse.from(it) },
+            page = notificationsPage.page,
+            size = notificationsPage.size,
+            totalElements = notificationsPage.totalElements,
+            totalPages = notificationsPage.totalPages
+        )
+        return CommonResponse.success(responsePage)
     }
 
     @PutMapping("/{id}/read")
@@ -34,27 +42,5 @@ class NotificationController(
     @GetMapping("/unread-count")
     suspend fun getUnreadCount(@RequestParam userId: Long): CommonResponse<Long> {
         return CommonResponse.success(notificationService.getUnreadCount(userId))
-    }
-
-    data class NotificationResponse(
-        val id: Long,
-        val title: String,
-        val message: String,
-        val isRead: Boolean,
-        val type: String,
-        val createdAt: LocalDateTime
-    ) {
-        companion object {
-            fun from(entity: NotificationEntity): NotificationResponse {
-                return NotificationResponse(
-                    id = entity.id!!,
-                    title = entity.title,
-                    message = entity.message,
-                    isRead = entity.isRead,
-                    type = entity.type,
-                    createdAt = entity.createdAt
-                )
-            }
-        }
     }
 }

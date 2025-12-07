@@ -2,6 +2,7 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.entity.notification.NotificationEntity
 import com.wallet.clover.api.repository.notification.NotificationRepository
+import com.wallet.clover.api.common.PageResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.PageRequest
@@ -23,9 +24,11 @@ class NotificationService(
         )
     }
 
-    suspend fun getMyNotifications(userId: Long, page: Int = 0, size: Int = 20): List<NotificationEntity> {
+    suspend fun getMyNotifications(userId: Long, page: Int = 0, size: Int = 20): PageResponse<NotificationEntity> {
         val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
-        return notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable).toList()
+        val content = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId, pageable).toList()
+        val total = notificationRepository.countByUserId(userId)
+        return PageResponse.of(content, page, size, total)
     }
 
     suspend fun markAsRead(notificationId: Long, userId: Long) {

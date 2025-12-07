@@ -1,7 +1,13 @@
 package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.common.CommonResponse
-import com.wallet.clover.api.dto.*
+import com.wallet.clover.api.common.PageResponse
+import com.wallet.clover.api.dto.Comment
+import com.wallet.clover.api.dto.CreateComment
+import com.wallet.clover.api.dto.CreatePost
+import com.wallet.clover.api.dto.Post
+import com.wallet.clover.api.dto.UpdateComment
+import com.wallet.clover.api.dto.UpdatePost
 import com.wallet.clover.api.service.CommunityService
 import jakarta.validation.Valid
 import org.springframework.security.core.annotation.AuthenticationPrincipal
@@ -19,7 +25,7 @@ class CommunityController(
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
         @AuthenticationPrincipal jwt: Jwt?
-    ): CommonResponse<List<Post.Response>> {
+    ): CommonResponse<PageResponse<Post.Response>> {
         val userId = jwt?.subject?.toLongOrNull()
         return CommonResponse.success(communityService.getAllPosts(page, size, userId))
     }
@@ -66,7 +72,7 @@ class CommunityController(
         @PathVariable postId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): CommonResponse<List<Comment.Response>> {
+    ): CommonResponse<PageResponse<Comment.Response>> {
         return CommonResponse.success(communityService.getCommentsByPostId(postId, page, size))
     }
 

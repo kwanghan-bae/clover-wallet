@@ -1,6 +1,7 @@
 package com.wallet.clover.api.controller
 
 import com.wallet.clover.api.common.CommonResponse
+import com.wallet.clover.api.dto.WinningInfo
 import com.wallet.clover.api.service.LottoInfoService
 import com.wallet.clover.api.service.WinningNewsService
 import org.springframework.web.bind.annotation.GetMapping
@@ -21,12 +22,13 @@ class LottoInfoController(
     }
 
     @GetMapping("/news/recent")
-    suspend fun getRecentWinningNews(): List<Map<String, Any>> {
-        return winningNewsService.getRecentWinningNews()
+    suspend fun getRecentWinningNews(): CommonResponse<List<Map<String, Any>>> {
+        return CommonResponse.success(winningNewsService.getRecentWinningNews())
     }
 
     @GetMapping("/draw-result")
-    suspend fun getDrawResult(@RequestParam round: Int): CommonResponse<com.wallet.clover.api.entity.winning.WinningInfoEntity?> {
-        return CommonResponse.success(lottoInfoService.getDrawResult(round))
+    suspend fun getDrawResult(@RequestParam round: Int): CommonResponse<WinningInfo.Response?> {
+        val result = lottoInfoService.getDrawResult(round)
+        return CommonResponse.success(result?.let { WinningInfo.Response.from(it) })
     }
 }

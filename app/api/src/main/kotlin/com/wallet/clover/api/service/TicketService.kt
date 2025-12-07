@@ -7,11 +7,11 @@ import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.entity.ticket.LottoTicketEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.ticket.LottoTicketRepository
+import com.wallet.clover.api.common.PageResponse
 import io.micrometer.core.instrument.MeterRegistry
 import kotlinx.coroutines.flow.toList
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 
@@ -23,9 +23,11 @@ class TicketService(
     private val ticketParser: TicketParser,
     private val meterRegistry: MeterRegistry
 ) {
-    suspend fun getMyTickets(userId: Long, page: Int = 0, size: Int = 20): List<LottoTicketEntity> {
+    suspend fun getMyTickets(userId: Long, page: Int = 0, size: Int = 20): PageResponse<LottoTicketEntity> {
         val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
-        return ticketRepository.findByUserId(userId, pageable).toList()
+        val content = ticketRepository.findByUserId(userId, pageable).toList()
+        val total = ticketRepository.countByUserId(userId)
+        return PageResponse.of(content, page, size, total)
     }
 
     suspend fun getTicketById(ticketId: Long): LottoTicketEntity? {

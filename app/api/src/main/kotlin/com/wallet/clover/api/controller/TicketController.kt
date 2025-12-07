@@ -1,5 +1,7 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.common.CommonResponse
+import com.wallet.clover.api.common.PageResponse
 import com.wallet.clover.api.dto.LottoGame
 import com.wallet.clover.api.dto.LottoTicket
 import com.wallet.clover.api.exception.TicketNotFoundException
@@ -21,19 +23,27 @@ class TicketController(
         @RequestParam userId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int
-    ): List<LottoTicket.Response> {
-        return ticketService.getMyTickets(userId, page, size).map { LottoTicket.Response.from(it) }
+    ): CommonResponse<PageResponse<LottoTicket.Response>> {
+        val ticketsPage = ticketService.getMyTickets(userId, page, size)
+        val responsePage = PageResponse(
+            content = ticketsPage.content.map { LottoTicket.Response.from(it) },
+            page = ticketsPage.page,
+            size = ticketsPage.size,
+            totalElements = ticketsPage.totalElements,
+            totalPages = ticketsPage.totalPages
+        )
+        return CommonResponse.success(responsePage)
     }
 
     @GetMapping("/{ticketId}")
-    suspend fun getTicketDetail(@PathVariable ticketId: Long): LottoTicket.DetailResponse {
+    suspend fun getTicketDetail(@PathVariable ticketId: Long): CommonResponse<LottoTicket.DetailResponse> {
         val ticket = ticketService.getTicketById(ticketId) 
-            ?: throw TicketNotFoundException("Ticket not found with id: $ticketId")
+            ?: throw TicketNotFoundException("Ticket not found with id: ")
         val games = ticketService.getGamesByTicketId(ticketId)
         
-        return LottoTicket.DetailResponse(
+        return CommonResponse.success(LottoTicket.DetailResponse(
             LottoTicket.Response.from(ticket),
             games.map { LottoGame.Response.from(it) }
-        )
+        ))
     }
 }

@@ -9,5 +9,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface NotificationRepository : CoroutineCrudRepository<NotificationEntity, Long> {
     fun findByUserIdOrderByCreatedAtDesc(userId: Long, pageable: Pageable): Flow<NotificationEntity>
+    suspend fun countByUserId(userId: Long): Long
     suspend fun countByUserIdAndIsReadFalse(userId: Long): Long
 }

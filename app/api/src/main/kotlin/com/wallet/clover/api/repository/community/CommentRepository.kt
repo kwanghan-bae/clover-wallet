@@ -12,4 +12,5 @@ interface CommentRepository : CoroutineCrudRepository<CommentEntity, Long> {
     fun findByPostId(postId: Long, pageable: Pageable): Flow<CommentEntity>
     suspend fun findByUserId(userId: Long): List<CommentEntity>
     suspend fun deleteByUserId(userId: Long)
+    suspend fun countByPostId(postId: Long): Long
 }
