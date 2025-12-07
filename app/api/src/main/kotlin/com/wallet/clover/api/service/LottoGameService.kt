@@ -52,7 +52,7 @@ class LottoGameService(
                 userId = request.userId,
                 ordinal = 0, // 0은 생성됨/가상을 의미
                 status = LottoTicketStatus.PENDING,
-                url = "" // 생성된 번호에는 이미지가 없음
+                url = null // 생성된 번호에는 이미지가 없음
             )
         )
 

@@ -22,11 +22,20 @@ class AuthService(
      * 로그인: Access Token + Refresh Token 발급
      */
     @Transactional
-    suspend fun login(ssoQualifier: String): Auth.LoginResponse {
+    suspend fun login(ssoQualifier: String, email: String? = null): Auth.LoginResponse {
         val user = userRepository.findBySsoQualifier(ssoQualifier)
+            ?.let { existingUser ->
+                // 이메일이 변경되었거나 새로 추가된 경우 업데이트
+                if (email != null && existingUser.email != email) {
+                    userRepository.save(existingUser.copy(email = email))
+                } else {
+                    existingUser
+                }
+            }
             ?: userRepository.save(
                 UserEntity(
                     ssoQualifier = ssoQualifier,
+                    email = email,
                     age = UserDefaults.DEFAULT_AGE,
                     locale = UserDefaults.DEFAULT_LOCALE
                 )

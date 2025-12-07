@@ -13,6 +13,9 @@ data class UserEntity(
     
     /** SSO 식별자 (예: Google sub) */
     val ssoQualifier: String,
+
+    /** 사용자 이메일 */
+    val email: String? = null,
     
     /** 사용자 로케일 (기본값: ko_KR) */
     val locale: String = "ko_KR",

@@ -13,7 +13,7 @@ data class LottoTicketEntity(
     val userId: Long,
     
     /** 티켓 이미지 URL (Supabase Storage) */
-    val url: String,
+    val url: String? = null,
     
     /** 로또 회차 */
     val ordinal: Int,

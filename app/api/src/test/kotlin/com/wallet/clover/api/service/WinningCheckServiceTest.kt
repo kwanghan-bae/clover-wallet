@@ -73,7 +73,7 @@ class WinningCheckServiceTest {
         coVerify { lottoGameRepository.findByTicketIdIn(any()) }
         coVerify { lottoGameRepository.saveAll(any<List<com.wallet.clover.api.entity.game.LottoGameEntity>>()) }
         coVerify { lottoTicketRepository.saveAll(any<List<com.wallet.clover.api.entity.ticket.LottoTicketEntity>>()) }
-        coVerify { fcmService.sendWinningNotification(any(), any(), any()) }
+        coVerify { fcmService.sendWinningNotification(any(), any(), any(), any()) }
         coVerify { badgeService.updateUserBadges(1L) }
     }
 

@@ -16,7 +16,8 @@ class AuthController(
     @PostMapping("/login")
     suspend fun login(@AuthenticationPrincipal jwt: Jwt): CommonResponse<Auth.LoginResponse> {
         val userId = jwt.subject
-        val loginResponse = authService.login(userId)
+        val email = jwt.claims["email"] as? String
+        val loginResponse = authService.login(userId, email)
         return CommonResponse.success(loginResponse)
     }
     

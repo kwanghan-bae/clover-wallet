@@ -99,6 +99,9 @@
 - `CommunityControllerTest` 및 `LottoControllerTest` 수정 (Mock 설정 및 인증 추가).
 - 전체 테스트 통과 확인.
 - **추가**: 모든 소스 코드의 영어 주석 및 로그를 한글로 번역 완료.
+- **추가**: 삭제되었던 TODO 항목 복원 및 구현 완료 (BadgeService 최적화, WinningCheckService 당첨금 알림, UserService 이메일 저장).
+- **추가**: LottoGameService 페이지네이션 및 URL 제약조건 수정 완료.
+- **추가**: 불필요한 코드 (LottoService, LottoCheck) 삭제 및 정리 완료.
 
 ---
 
@@ -113,3 +116,4 @@
 7. **코드 정리**: Import 정리 및 기타 마이너 수정 (완료)
 8. **테스트 및 아키텍처 개선**: 테스트 수정 및 DTO 구조 개선 (완료)
 9. **최종 품질 개선**: 한글화, 아키텍처 규칙 준수, 테스트 안정화 (완료)
+10. **심층 개선**: 삭제된 TODO 복원, 데드 코드 정리, 스키마 및 엔티티 정합성 확보 (완료)

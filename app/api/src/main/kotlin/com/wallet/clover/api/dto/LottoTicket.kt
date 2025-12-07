@@ -9,7 +9,7 @@ abstract class LottoTicket {
         val id: Long,
         
         /** 티켓 이미지 URL */
-        val url: String,
+        val url: String?,
         
         /** 회차 */
         val ordinal: Int,

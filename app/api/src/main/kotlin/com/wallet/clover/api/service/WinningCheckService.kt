@@ -168,7 +168,8 @@ class WinningCheckService(
                     fcmService.sendWinningNotification(
                         token, 
                         getRankName(bestGame.status), 
-                        listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6)
+                        listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6),
+                        bestGame.prizeAmount
                     )
                 } catch (e: Exception) {
                     logger.error("사용자 ${ticket.userId}에게 FCM 전송 실패", e)

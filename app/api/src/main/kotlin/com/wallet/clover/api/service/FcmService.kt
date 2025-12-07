@@ -62,9 +62,10 @@ class FcmService(
     /**
      * 로또 당첨 알림 전송
      */
-    suspend fun sendWinningNotification(token: String, rank: String, numbers: List<Int>) {
+    suspend fun sendWinningNotification(token: String, rank: String, numbers: List<Int>, amount: Long? = null) {
         val title = "🎉 로또 당첨!"
-        val body = "$rank 당첨! 번호: ${numbers.sorted().joinToString(", ")}"
+        val amountText = amount?.let { " (당첨금: ${it}원)" } ?: ""
+        val body = "$rank 당첨!$amountText 번호: ${numbers.sorted().joinToString(", ")}"
         
         if (FirebaseApp.getApps().isEmpty()) {
             logger.warn("Firebase가 초기화되지 않았습니다. FCM 당첨 알림을 건너뜁니다.")
