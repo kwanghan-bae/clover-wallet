@@ -10,6 +10,10 @@ import com.wallet.clover.api.repository.winning.WinningInfoRepository
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
+import com.wallet.clover.api.exception.UserNotFoundException
+import org.springframework.transaction.annotation.Transactional
+import com.wallet.clover.api.entity.game.LottoGameEntity
+import com.wallet.clover.api.entity.user.UserEntity
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -32,14 +36,40 @@ class LottoService(
      * @param userId 사용자 ID
      * @return 당첨 확인 결과 (당첨 번호 및 사용자 당첨 내역 포함)
      */
+    @Transactional
     suspend fun checkWinnings(userId: Long): CheckWinning.Response {
         val result = winningNumberProvider.getLatestWinningNumbers()
-        val user = userRepository.findById(userId)
+        val user = userRepository.findById(userId) ?: throw UserNotFoundException(userId.toString())
         
-        // 최신 회차의 당첨 정보 조회 (상금 정보 포함)
-        val winningInfo = winningInfoRepository.findByRound(result.round) ?: WinningInfoEntity(
+        // 최신 회차의 당첨 정보 조회
+        val winningInfo = winningInfoRepository.findByRound(result.round) 
+            ?: createDummyWinningInfo(result)
+
+        // 해당 회차의 사용자 티켓 조회
+        val tickets = lottoTicketRepository.findByUserIdAndOrdinal(userId, result.round)
+        val ticketIds = tickets.mapNotNull { it.id }
+        
+        val winningResult = if (ticketIds.isNotEmpty()) {
+            lottoGameRepository.findByTicketIdIn(ticketIds)
+                .map { game -> processGameResult(game, winningInfo, user) }
+                .filterNotNull()
+                .toList()
+        } else {
+            emptyList()
+        }
+
+        return CheckWinning.Response(
+            message = "${result.round}회차 당첨 확인 완료",
+            winningNumbers = result.winningNumbers + result.bonusNumber,
+            userWinningTickets = winningResult.takeIf { it.isNotEmpty() },
+        )
+    }
+
+    private fun createDummyWinningInfo(result: com.wallet.clover.api.client.ParsedLottoResult): WinningInfoEntity {
+        logger.warn("Winning info not found for round ${result.round}. Using dummy data.")
+        return WinningInfoEntity(
             round = result.round,
-            drawDate = LocalDate.now(), // Dummy
+            drawDate = LocalDate.now(),
             number1 = result.winningNumbers[0],
             number2 = result.winningNumbers[1],
             number3 = result.winningNumbers[2],
@@ -53,54 +83,43 @@ class LottoService(
             fourthPrizeAmount = 0,
             fifthPrizeAmount = 0
         )
+    }
 
-        // 해당 회차의 사용자 티켓 조회
-        val tickets = lottoTicketRepository.findByUserIdAndOrdinal(userId, result.round)
-        val ticketIds = tickets.mapNotNull { it.id }
+    private suspend fun processGameResult(
+        game: LottoGameEntity, 
+        winningInfo: WinningInfoEntity, 
+        user: UserEntity
+    ): CheckWinning.UserWinningTicket? {
+        val (status, prize) = game.calculateRank(winningInfo)
         
-        val winningResult = if (ticketIds.isNotEmpty()) {
-            lottoGameRepository.findByTicketIdIn(ticketIds)
-                .map { game ->
-                    val (status, prize) = game.calculateRank(winningInfo)
-                    
-                    // DB 상태 업데이트 (변경된 경우에만)
-                    if (game.status != status || game.prizeAmount != prize) {
-                        val updatedGame = game.copy(status = status, prizeAmount = prize)
-                        lottoGameRepository.save(updatedGame)
-                    }
-
-                    val rankName = when (status) {
-                        LottoGameStatus.WINNING_1 -> "1등"
-                        LottoGameStatus.WINNING_2 -> "2등"
-                        LottoGameStatus.WINNING_3 -> "3등"
-                        LottoGameStatus.WINNING_4 -> "4등"
-                        LottoGameStatus.WINNING_5 -> "5등"
-                        else -> null
-                    }
-
-                    rankName?.let {
-                        user?.fcmToken?.let { token ->
-                            fcmService.sendWinningNotification(token, it, game.getNumbers())
-                        }
-
-                        CheckWinning.UserWinningTicket(
-                            round = result.round,
-                            userNumbers = game.getNumbers(),
-                            matchedNumbers = game.getNumbers().intersect(result.winningNumbers.toSet()).toList(),
-                            rank = it,
-                        )
-                    }
-                }
-                .filterNotNull()
-                .toList()
-        } else {
-            emptyList()
+        // DB 상태 업데이트 (변경된 경우에만)
+        if (game.status != status || game.prizeAmount != prize) {
+            val updatedGame = game.copy(status = status, prizeAmount = prize)
+            lottoGameRepository.save(updatedGame)
         }
 
-        return CheckWinning.Response(
-            message = "${result.round}회차 당첨 확인 완료",
-            winningNumbers = result.winningNumbers + result.bonusNumber,
-            userWinningTickets = winningResult.takeIf { it.isNotEmpty() },
-        )
+        val rankName = when (status) {
+            LottoGameStatus.WINNING_1 -> "1등"
+            LottoGameStatus.WINNING_2 -> "2등"
+            LottoGameStatus.WINNING_3 -> "3등"
+            LottoGameStatus.WINNING_4 -> "4등"
+            LottoGameStatus.WINNING_5 -> "5등"
+            else -> null
+        }
+
+        return rankName?.let {
+            user.fcmToken?.let { token ->
+                fcmService.sendWinningNotification(token, it, game.getNumbers())
+            }
+
+            CheckWinning.UserWinningTicket(
+                round = winningInfo.round,
+                userNumbers = game.getNumbers(),
+                matchedNumbers = game.getNumbers().intersect(
+                    setOf(winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6)
+                ).toList(),
+                rank = it,
+            )
+        }
     }
 }
