@@ -65,7 +65,33 @@ class FcmService(
     suspend fun sendWinningNotification(token: String, rank: String, numbers: List<Int>) {
         val title = "🎉 로또 당첨!"
         val body = "$rank 당첨! 번호: ${numbers.sorted().joinToString(", ")}"
-        sendToUser(token, title, body)
+        
+        if (FirebaseApp.getApps().isEmpty()) {
+            logger.warn("Firebase not initialized. Skipping FCM winning notification.")
+            return
+        }
+
+        withContext(Dispatchers.IO) {
+            try {
+                val notification = Notification.builder()
+                    .setTitle(title)
+                    .setBody(body)
+                    .build()
+
+                val message = Message.builder()
+                    .setToken(token)
+                    .setNotification(notification)
+                    .putData("type", "WINNING")         // 알림 타입
+                    .putData("screen", "history")       // 이동할 화면
+                    .putData("rank", rank)              // 당첨 등급
+                    .build()
+
+                FirebaseMessaging.getInstance().send(message)
+                logger.info("Winning notification sent to user: $title - $body")
+            } catch (e: Exception) {
+                logger.error("Error sending winning notification", e)
+            }
+        }
     }
 
     /**
@@ -94,6 +120,8 @@ class FcmService(
                     val message = Message.builder()
                         .setToken(token)
                         .setNotification(notification)
+                        .putData("type", "DRAW_REMINDER")      // 알림 타입
+                        .putData("screen", "number_generation") // 이동할 화면
                         .build()
 
                     FirebaseMessaging.getInstance().send(message)
