@@ -66,7 +66,7 @@ class LottoService(
     }
 
     private fun createDummyWinningInfo(result: com.wallet.clover.api.client.ParsedLottoResult): WinningInfoEntity {
-        logger.warn("Winning info not found for round ${result.round}. Using dummy data.")
+        logger.warn("${result.round}회차 당첨 정보를 찾을 수 없습니다. 더미 데이터를 사용합니다.")
         return WinningInfoEntity(
             round = result.round,
             drawDate = LocalDate.now(),

@@ -19,7 +19,7 @@ class LottoTicketClient {
 
     suspend fun getHtmlByUrl(url: String): String = withContext(Dispatchers.IO) {
         retry {
-            logger.info("Fetching document from URL: {}", url)
+            logger.info("URL에서 문서 가져오기: {}", url)
             val connection = Jsoup.connect(url)
                 .timeout(TIMEOUT_MS)
                 .method(Connection.Method.GET)
@@ -27,7 +27,7 @@ class LottoTicketClient {
                 connection.execute().bodyAsBytes(),
                 Charset.forName("euc-kr"),
             )
-            logger.info("Successfully fetched and parsed document from URL: {}", url)
+            logger.info("URL에서 문서 가져오기 및 파싱 성공: {}", url)
             html
         }
     }

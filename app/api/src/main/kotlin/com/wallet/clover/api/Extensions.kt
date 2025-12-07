@@ -28,7 +28,7 @@ fun Any.toPrettyJson(): String {
     return try {
         objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(this)
     } catch (e: Exception) {
-        logger.error("Failed to convert object to pretty JSON", e)
+        logger.error("객체를 Pretty JSON으로 변환하는데 실패했습니다", e)
         ""
     }
 }

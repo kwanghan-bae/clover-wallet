@@ -18,11 +18,13 @@ class ArchitectureTest {
         .layer("Repository").definedBy("..repository..")
         .layer("Client").definedBy("..client..")
         .layer("Scheduler").definedBy("..scheduler..")
+        .layer("Config").definedBy("..config..")
         .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
-        .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Service", "Scheduler")
+        .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller", "Service", "Scheduler", "Config")
         .whereLayer("Repository").mayOnlyBeAccessedByLayers("Service")
         .whereLayer("Client").mayOnlyBeAccessedByLayers("Service")
         .whereLayer("Scheduler").mayNotBeAccessedByAnyLayer()
+        .whereLayer("Config").mayOnlyBeAccessedByLayers("Service", "Client", "Scheduler", "Controller", "Repository")
 
     @ArchTest
     val dtoShouldBeInDtoPackage: ArchRule = classes()
@@ -59,5 +61,4 @@ class ArchitectureTest {
         .orShould().haveSimpleName("CommonResponse")
         .orShould().haveSimpleName("LottoResponse")
         .orShould().haveSimpleName("PageResponse")
-        .orShould().haveSimpleName("NotificationResponse")
 }

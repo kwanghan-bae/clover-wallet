@@ -18,9 +18,6 @@ class AuthService(
     private val tokenBlacklistService: TokenBlacklistService
 ) {
     
-    // TODO: 실제 JWT 라이브러리 구현 완료 후 테스트 필요
-    // TODO: 프로덕션 배포 시 Secret Key를 환경변수로 변경
-    
     /**
      * 로그인: Access Token + Refresh Token 발급
      */

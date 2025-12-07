@@ -23,6 +23,6 @@ class WinningNumberProvider(
 
     @CacheEvict("winning-numbers", key = "'latest'")
     fun evictLatestWinningNumbersCache() {
-        // Cache eviction happens via annotation
+        // 어노테이션을 통해 캐시 무효화 수행
     }
 }

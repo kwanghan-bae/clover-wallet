@@ -40,33 +40,33 @@ class JsoupTicketParser(
 
     private fun getOrdinal(document: Document): Int {
         val content = document.select(properties.ordinalSelector).firstOrNull()?.text() ?: "0"
-        logger.debug("Parsed ordinal content: {}", content)
+        logger.debug("파싱된 회차 내용: {}", content)
         return content.filter { it.isDigit() }.toIntOrNull() ?: 0
     }
 
     private fun getTicketStatus(document: Document): LottoTicketStatus {
         val content = document.select(properties.ticketStatusSelector).firstOrNull()?.text() ?: ""
-        logger.debug("Parsed ticket status content: {}", content)
+        logger.debug("파싱된 티켓 상태 내용: {}", content)
         return when {
             content.contains(STATUS_WINNING) -> LottoTicketStatus.WINNING
             content.contains(STATUS_LOSING) -> LottoTicketStatus.LOSING
             content.contains(STATUS_DRAWING) -> LottoTicketStatus.STASHED
             else -> {
-                logger.error("Unidentifiable ticket status content: {}", content)
+                logger.error("식별할 수 없는 티켓 상태 내용: {}", content)
                 throw TicketParsingException("'$content' 는 식별할 수 없는 문구 입니다.")
             }
         }
     }
 
     private fun getGames(document: Document): List<ParsedGame> {
-        logger.info("Parsing games from document")
+        logger.info("문서에서 게임 파싱 중")
         val gameRows = document.select(properties.gameRowsSelector)
         return gameRows.map { row ->
             val resultText = row.select(properties.gameResultSelector).text().trim()
             val numbers = row.select(properties.gameNumbersSelector).mapNotNull { it.text().toIntOrNull() }
 
             if (numbers.size != 6) {
-                logger.error("Parsed game has incorrect number count: {}", numbers)
+                logger.error("파싱된 게임의 번호 개수가 올바르지 않습니다: {}", numbers)
                 throw TicketParsingException("게임의 번호가 6개가 아닙니다.")
             }
 
@@ -80,7 +80,7 @@ class JsoupTicketParser(
                 number6 = numbers[5],
             )
         }.also {
-            logger.info("Successfully parsed {} games.", it.size)
+            logger.info("{}개의 게임 파싱 성공.", it.size)
         }
     }
 

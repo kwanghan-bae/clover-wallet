@@ -31,7 +31,7 @@ class LottoResultParser(
         val bonusNumber = doc.select(properties.bonusNumberSelector).first()?.text()?.trim()?.toIntOrNull()
 
         if (roundText.isNullOrBlank() || winNumbers.size != 6 || bonusNumber == null) {
-            logger.error("Failed to parse lotto result. Round: $roundText, Numbers: $winNumbers, Bonus: $bonusNumber")
+            logger.error("로또 결과 파싱 실패. 회차: $roundText, 번호: $winNumbers, 보너스: $bonusNumber")
             throw TicketParsingException("당첨 번호를 파싱하는 데 실패했습니다.")
         }
 

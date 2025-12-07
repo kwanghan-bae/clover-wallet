@@ -17,13 +17,13 @@ suspend fun <T> retry(
         try {
             return block()
         } catch (e: Exception) {
-            // Only retry on IOExceptions or similar transient errors if possible, 
-            // but for simplicity we retry on all exceptions here, 
-            // assuming the block is idempotent (GET requests usually are).
-            logger.warn("Operation failed, retrying in ${currentDelay}ms. Error: ${e.message}")
+            // 가능한 경우 IOException 또는 유사한 일시적 오류에 대해서만 재시도해야 하지만,
+            // 여기서는 단순화를 위해 모든 예외에 대해 재시도합니다.
+            // (GET 요청은 일반적으로 멱등성이 있다고 가정)
+            logger.warn("작업 실패, ${currentDelay}ms 후 재시도합니다. 오류: ${e.message}")
             delay(currentDelay)
             currentDelay = (currentDelay * factor).toLong()
         }
     }
-    return block() // Last attempt
+    return block() // 마지막 시도
 }

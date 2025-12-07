@@ -10,7 +10,7 @@ open class LottoHistoryMapper {
 
     fun toDomain(response: LottoResponse): LottoHistory? {
         if (response.returnValue != LottoResponseCode.OK) {
-            logger.warn("LottoResponse returned FAIL: {}", response)
+            logger.warn("LottoResponse 실패 반환: {}", response)
             return null
         }
 
@@ -19,7 +19,7 @@ open class LottoHistoryMapper {
             response.bnusNo == null || response.totSellamnt == null || response.firstPrzwnerCo == null ||
             response.firstWinamnt == null || response.drwNo == null || response.drwNoDate == null
         ) {
-            logger.warn("LottoResponse contains null values: {}", response)
+            logger.warn("LottoResponse에 null 값이 포함되어 있습니다: {}", response)
             return null
         }
 

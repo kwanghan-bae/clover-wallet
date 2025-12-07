@@ -4,7 +4,6 @@ import com.wallet.clover.api.common.CommonResponse
 import com.wallet.clover.api.dto.ExtractNumbers
 import com.wallet.clover.api.dto.LottoGame
 import com.wallet.clover.api.common.PageResponse
-import com.wallet.clover.api.dto.SaveGeneratedGameRequest
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.service.ExtractionService
 import com.wallet.clover.api.service.LottoGameService
@@ -35,7 +34,7 @@ class LottoController(
     }
 
     @PostMapping("/games")
-    suspend fun saveGame(@RequestBody request: SaveGeneratedGameRequest): CommonResponse<LottoGame.Response> {
+    suspend fun saveGame(@RequestBody request: LottoGame.SaveRequest): CommonResponse<LottoGame.Response> {
         val savedGame = lottoGameService.saveGeneratedGame(request)
         return CommonResponse.success(LottoGame.Response.from(savedGame))
     }

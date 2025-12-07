@@ -30,13 +30,13 @@ class WinningCheckService(
         // 1. 해당 회차 당첨 정보 조회
         val winningInfo = winningInfoRepository.findByRound(round)
         if (winningInfo == null) {
-            logger.warn("Winning info for round $round not found.")
+            logger.warn("$round 회차 당첨 정보를 찾을 수 없습니다.")
             return
         }
 
         // 2. 해당 회차의 티켓 조회 (Flow로 스트리밍 처리)
         val tickets = lottoTicketRepository.findByOrdinal(round)
-        logger.info("Starting ticket processing for round $round")
+        logger.info("$round 회차 티켓 처리 시작")
 
         val batchSize = 100
         val ticketBuffer = mutableListOf<com.wallet.clover.api.entity.ticket.LottoTicketEntity>()
@@ -61,7 +61,7 @@ class WinningCheckService(
         try {
             processBatch(tickets, winningInfo)
         } catch (e: Exception) {
-            logger.error("Error processing batch of tickets", e)
+            logger.error("티켓 배치 처리 오류", e)
         }
     }
 
@@ -121,7 +121,7 @@ class WinningCheckService(
                         updatedAt = java.time.LocalDateTime.now()
                     )
                     updatedTickets.add(updatedTicket)
-                    logger.info("Updated ticket ${ticket.id} status to $newTicketStatus")
+                    logger.info("티켓 ${ticket.id} 상태를 $newTicketStatus 로 업데이트")
                     
                     if (hasWinningGame) {
                         winningUserIds.add(ticket.userId)
@@ -137,12 +137,12 @@ class WinningCheckService(
             // 배치 저장
             if (updatedGames.isNotEmpty()) {
                 lottoGameRepository.saveAll(updatedGames).collect()
-                logger.info("Batch updated ${updatedGames.size} games")
+                logger.info("${updatedGames.size}개 게임 배치 업데이트")
             }
 
             if (updatedTickets.isNotEmpty()) {
                 lottoTicketRepository.saveAll(updatedTickets).collect()
-                logger.info("Batch updated ${updatedTickets.size} tickets")
+                logger.info("${updatedTickets.size}개 티켓 배치 업데이트")
             }
             
             winningTickets to winningUserIds
@@ -171,13 +171,13 @@ class WinningCheckService(
                         listOf(bestGame.number1, bestGame.number2, bestGame.number3, bestGame.number4, bestGame.number5, bestGame.number6)
                     )
                 } catch (e: Exception) {
-                    logger.error("Failed to send FCM to user ${ticket.userId}", e)
+                    logger.error("사용자 ${ticket.userId}에게 FCM 전송 실패", e)
                 }
             }
             try {
                 badgeService.updateUserBadges(ticket.userId)
             } catch (e: Exception) {
-                logger.error("Failed to update badges for user ${ticket.userId}", e)
+                logger.error("사용자 ${ticket.userId}의 뱃지 업데이트 실패", e)
             }
         }
     }

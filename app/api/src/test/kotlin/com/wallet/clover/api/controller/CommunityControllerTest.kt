@@ -137,15 +137,15 @@ class CommunityControllerTest {
         val pageResponse = PageResponse.of(comments, 0, 20, 1)
         
         runBlocking {
-            given(communityService.getCommentsByPostId(any(), any(), any())).willReturn(pageResponse)
+            given(communityService.getCommentsByPostId(eq(1L), any(), any())).willReturn(pageResponse)
         }
 
-        webTestClient.get().uri("/api/v1/community/posts/1/comments")
+        webTestClient.mutateWith(mockJwt()).get().uri("/api/v1/community/posts/1/comments")
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$.success").isEqualTo(true)
-            .jsonPath("$.data.totalElements").isEqualTo(1)
+            .jsonPath("$.data.totalElements").value(org.hamcrest.Matchers.equalTo(1))
     }
 
     @Test

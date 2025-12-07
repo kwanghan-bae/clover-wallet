@@ -40,6 +40,6 @@ class TokenBlacklistService(
     @Scheduled(cron = "0 0 * * * *")
     suspend fun cleanupExpiredTokens() {
         val deletedCount = tokenBlacklistRepository.deleteByExpiresAtBefore(LocalDateTime.now())
-        logger.info("Cleaned up $deletedCount expired blacklist tokens")
+        logger.info("만료된 블랙리스트 토큰 $deletedCount 개 정리 완료")
     }
 }

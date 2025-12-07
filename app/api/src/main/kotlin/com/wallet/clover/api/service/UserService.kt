@@ -9,6 +9,9 @@ import com.wallet.clover.api.repository.community.PostRepository
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import com.wallet.clover.api.repository.user.UserRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.mapNotNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,6 +24,12 @@ class UserService(
     private val lottoGameRepository: LottoGameRepository,
     private val lottoTicketRepository: LottoTicketRepository,
 ) {
+
+    fun getAllFcmTokens(): Flow<String> {
+        return userRepository.findAll()
+            .mapNotNull { it.fcmToken }
+            .filter { it.isNotBlank() }
+    }
 
     suspend fun findUser(id: Long): User.Response? {
         return userRepository.findById(id)?.toResponse()

@@ -51,14 +51,14 @@ class GlobalExceptionHandler {
     @ExceptionHandler(TicketParsingException::class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleTicketParsingException(e: TicketParsingException): CommonResponse<Unit> {
-        logger.error("Ticket parsing failed", e)
-        return CommonResponse.fail(e.message ?: "Failed to parse ticket")
+        logger.error("티켓 파싱 실패", e)
+        return CommonResponse.fail(e.message ?: "티켓 파싱에 실패했습니다")
     }
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleGlobalException(e: Exception): CommonResponse<Unit> {
-        logger.error("Unexpected error occurred", e)
-        return CommonResponse.fail("An unexpected error occurred")
+        logger.error("예기치 않은 오류 발생", e)
+        return CommonResponse.fail("예기치 않은 오류가 발생했습니다")
     }
 }

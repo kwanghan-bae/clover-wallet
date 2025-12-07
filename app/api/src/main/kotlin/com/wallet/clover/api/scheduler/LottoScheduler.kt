@@ -26,7 +26,7 @@ class LottoScheduler(
         val today = LocalDate.now()
         val round = calculateRound(today)
         
-        logger.info("Starting scheduled tasks for round $round")
+        logger.info("$round 회차 정기 작업 시작")
         
         try {
             // 1. 당첨 번호 크롤링
@@ -41,9 +41,9 @@ class LottoScheduler(
             // 4. 사용자 당첨 확인
             winningCheckService.checkWinning(round)
             
-            logger.info("Scheduled tasks completed successfully for round $round")
+            logger.info("$round 회차 정기 작업 완료")
         } catch (e: Exception) {
-            logger.error("Scheduled tasks failed for round $round", e)
+            logger.error("$round 회차 정기 작업 실패", e)
         }
     }
 

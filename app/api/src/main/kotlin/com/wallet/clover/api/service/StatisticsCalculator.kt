@@ -26,7 +26,7 @@ class StatisticsCalculator(
 
     @Cacheable("lotto-statistics")
     suspend fun calculate(maxGameNumber: Int): Statistics = coroutineScope {
-        logger.info("Fetching and processing games up to $maxGameNumber...")
+        logger.info("$maxGameNumber 회차까지 게임 데이터 조회 및 처리 중...")
         
         val games = withContext(dispatcher + MDCContext()) {
             (1..maxGameNumber).chunked(50).map { batch ->
@@ -35,7 +35,7 @@ class StatisticsCalculator(
                         try {
                             client.getByGameNumber(gameNumber)
                         } catch (e: Exception) {
-                            logger.error("Failed to fetch game $gameNumber", e)
+                            logger.error("$gameNumber 회차 게임 조회 실패", e)
                             null
                         }
                     }
@@ -43,7 +43,7 @@ class StatisticsCalculator(
             }.flatten().mapNotNull { it?.let { response -> mapper.toDomain(response) } }
         }
 
-        logger.info("Finished fetching and processing ${games.size} games.")
+        logger.info("${games.size}개 게임 데이터 조회 및 처리 완료.")
 
         val numberFrequency = mutableMapOf<Int, Long>()
         val dateCounter = mutableMapOf<Int, MutableMap<Int, Long>>()
@@ -62,7 +62,7 @@ class StatisticsCalculator(
                     .compute(number) { _, v -> (v ?: 0L) + 1L }
             }
         }
-        logger.info("Finished calculating statistics.")
+        logger.info("통계 계산 완료.")
         Statistics(dateCounter, monthCounter, oddEvenCounter, numberFrequency)
     }
 

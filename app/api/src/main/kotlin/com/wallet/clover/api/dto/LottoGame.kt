@@ -44,6 +44,12 @@ abstract class LottoGame {
         }
     }
 
+    data class SaveRequest(
+        val userId: Long,
+        val numbers: List<Int>,
+        val extractionMethod: ExtractionMethod? = null
+    )
+
     data class Response(
         /** 게임 ID */
         val id: Long,

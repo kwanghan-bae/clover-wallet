@@ -83,19 +83,21 @@
 
 ---
 
-## 10. 테스트 안정화 및 아키텍처 개선 (완료)
+## 11. 최종 코드 품질 개선 및 테스트 완료 (완료)
 
 **현황**:
-- 리팩토링 후 다수의 테스트가 실패하고 있었습니다 (`UnsatisfiedDependencyException`, `AssertionError`).
-- `ArchitectureTest`에서 DTO 위치 및 중첩 클래스 규칙 위반이 발견되었습니다.
-- `CommunityService`에 N+1 문제가 존재했습니다.
+- 코드 전반에 영어 주석과 로그가 혼재되어 있었습니다.
+- `ArchitectureTest`에서 레이어 규칙 위반 및 DTO 규칙 위반이 발견되었습니다.
+- 일부 컨트롤러 테스트가 인증 설정 누락 및 요청 객체 불일치로 실패하고 있었습니다.
+- `NotificationScheduler`가 `Repository`에 직접 접근하여 레이어 규칙을 위반했습니다.
 
 **개선 계획**:
-- `CommunityService` N+1 문제 해결 (Batch Fetch 구현).
-- `ArchitectureTest` 규칙 준수를 위해 DTO 리팩토링 (`Auth`, `Notification` 등 중첩 클래스 적용).
-- `@WebFluxTest` 환경에서 `JwtBlacklistFilter` Mock 설정 추가.
-- `GlobalExceptionHandler`에 HTTP 상태 코드 명시 (`@ResponseStatus`).
-- 테스트 코드의 Mock 설정 및 단언문 수정.
+- 모든 영어 주석 및 로그를 한글로 번역.
+- `SaveGeneratedGameRequest`를 `LottoGame.SaveRequest`로 리팩토링하여 DTO 규칙 준수.
+- `ArchitectureTest`에 `Config` 레이어 정의 및 `Scheduler` 레이어 접근 규칙 수정.
+- `NotificationScheduler`가 `UserService`를 통해 데이터를 조회하도록 리팩토링.
+- `CommunityControllerTest` 및 `LottoControllerTest` 수정 (Mock 설정 및 인증 추가).
+- 전체 테스트 통과 확인.
 
 ---
 
@@ -109,3 +111,4 @@
 6. **전체 응답 표준화**: 나머지 컨트롤러 및 서비스 리팩토링 (완료)
 7. **코드 정리**: Import 정리 및 기타 마이너 수정 (완료)
 8. **테스트 및 아키텍처 개선**: 테스트 수정 및 DTO 구조 개선 (완료)
+9. **최종 품질 개선**: 한글화, 아키텍처 규칙 준수, 테스트 안정화 (완료)

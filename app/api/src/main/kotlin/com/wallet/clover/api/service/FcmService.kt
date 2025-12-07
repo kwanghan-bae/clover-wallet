@@ -22,7 +22,7 @@ class FcmService(
         val user = userRepository.findBySsoQualifier(ssoQualifier)
         if (user != null) {
             userRepository.save(user.copy(fcmToken = token))
-            logger.info("Registering FCM token for user ${user.id}: $token")
+            logger.info("사용자 ${user.id}의 FCM 토큰 등록: $token")
         }
     }
 
@@ -34,7 +34,7 @@ class FcmService(
      */
     suspend fun sendToUser(token: String, title: String, body: String) {
         if (FirebaseApp.getApps().isEmpty()) {
-            logger.warn("Firebase not initialized. Skipping FCM notification.")
+            logger.warn("Firebase가 초기화되지 않았습니다. FCM 알림을 건너뜁니다.")
             return
         }
 
@@ -51,9 +51,9 @@ class FcmService(
                     .build()
 
                 val response = FirebaseMessaging.getInstance().send(message)
-                logger.info("Successfully sent message to user: {}", response)
+                logger.info("사용자에게 메시지 전송 성공: {}", response)
             } catch (e: Exception) {
-                logger.error("Error sending FCM notification to token: $token", e)
+                logger.error("토큰으로 FCM 알림 전송 오류: $token", e)
                 // 에러가 발생해도 계속 진행 (non-blocking)
             }
         }
@@ -67,7 +67,7 @@ class FcmService(
         val body = "$rank 당첨! 번호: ${numbers.sorted().joinToString(", ")}"
         
         if (FirebaseApp.getApps().isEmpty()) {
-            logger.warn("Firebase not initialized. Skipping FCM winning notification.")
+            logger.warn("Firebase가 초기화되지 않았습니다. FCM 당첨 알림을 건너뜁니다.")
             return
         }
 
@@ -87,9 +87,9 @@ class FcmService(
                     .build()
 
                 FirebaseMessaging.getInstance().send(message)
-                logger.info("Winning notification sent to user: $title - $body")
+                logger.info("사용자에게 당첨 알림 전송: $title - $body")
             } catch (e: Exception) {
-                logger.error("Error sending winning notification", e)
+                logger.error("당첨 알림 전송 오류", e)
             }
         }
     }
@@ -102,7 +102,7 @@ class FcmService(
      */
     suspend fun sendBroadcastNotification(tokens: List<String>, title: String, body: String) {
         if (FirebaseApp.getApps().isEmpty()) {
-            logger.warn("Firebase not initialized. Skipping FCM broadcast notification.")
+            logger.warn("Firebase가 초기화되지 않았습니다. FCM 브로드캐스트 알림을 건너뜁니다.")
             return
         }
 
@@ -127,12 +127,12 @@ class FcmService(
                     FirebaseMessaging.getInstance().send(message)
                     successCount++
                 } catch (e: Exception) {
-                    logger.error("Error sending FCM to token: $token", e)
+                    logger.error("토큰으로 FCM 전송 오류: $token", e)
                     failureCount++
                 }
             }
 
-            logger.info("Broadcast notification sent: $successCount successful, $failureCount failed")
+            logger.info("브로드캐스트 알림 전송: 성공 $successCount, 실패 $failureCount")
         }
     }
 }

@@ -23,11 +23,11 @@ class LottoWinningStoreCrawler(
     @Transactional
     suspend fun crawlWinningStores(round: Int) {
         if (repository.existsByRound(round)) {
-            logger.info("Winning stores for round $round already exist. Skipping.")
+            logger.info("$round 회차 당첨 판매점 데이터가 이미 존재합니다. 건너뜁니다.")
             return
         }
 
-        logger.info("Starting crawling for round $round")
+        logger.info("$round 회차 크롤링 시작")
         
         try {
             val stores = withContext(Dispatchers.IO) {
@@ -86,15 +86,15 @@ class LottoWinningStoreCrawler(
 
             if (stores.isNotEmpty()) {
                 repository.saveAll(stores).collect {
-                    // logger.debug("Saved store: ${it.storeName}")
+                    // logger.debug("판매점 저장: ${it.storeName}")
                 }
-                logger.info("Successfully saved ${stores.size} winning stores for round $round")
+                logger.info("$round 회차 당첨 판매점 ${stores.size}개 저장 성공")
             } else {
-                logger.warn("No winning stores found for round $round")
+                logger.warn("$round 회차 당첨 판매점을 찾을 수 없습니다")
             }
 
         } catch (e: Exception) {
-            logger.error("Failed to crawl winning stores for round $round", e)
+            logger.error("$round 회차 당첨 판매점 크롤링 실패", e)
             throw e
         }
     }

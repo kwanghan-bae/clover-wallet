@@ -1,7 +1,7 @@
 package com.wallet.clover.api.service
 
 import com.wallet.clover.api.common.PageResponse
-import com.wallet.clover.api.dto.SaveGeneratedGameRequest
+import com.wallet.clover.api.dto.LottoGame
 import com.wallet.clover.api.entity.ticket.LottoTicketEntity
 import com.wallet.clover.api.entity.ticket.LottoTicketStatus
 import com.wallet.clover.api.entity.game.LottoGameStatus
@@ -32,27 +32,27 @@ class LottoGameService(
     suspend fun saveGame(game: LottoGameEntity): LottoGameEntity {
         val savedGame = gameRepository.save(game)
         
-        // Update badges after saving game
+        // 게임 저장 후 뱃지 업데이트
         try {
             badgeService.updateUserBadges(game.userId)
         } catch (e: Exception) {
-            // Log error but don't fail the save operation
-            logger.error("Failed to update badges for user ${game.userId}", e)
+            // 에러 로그를 남기지만 저장 작업은 실패시키지 않음
+            logger.error("사용자 ${game.userId}의 뱃지 업데이트 실패", e)
         }
         
         return savedGame
     }
 
-    suspend fun saveGeneratedGame(request: SaveGeneratedGameRequest): LottoGameEntity {
-        // Create a "Virtual Ticket" for generated numbers
-        // In a real scenario, we might want to link this to a specific round or date.
-        // For now, we create a placeholder ticket.
+    suspend fun saveGeneratedGame(request: LottoGame.SaveRequest): LottoGameEntity {
+        // 생성된 번호를 위한 "가상 티켓" 생성
+        // 실제 시나리오에서는 특정 회차나 날짜에 연결할 수 있습니다.
+        // 현재는 플레이스홀더 티켓을 생성합니다.
         val ticket = ticketRepository.save(
             LottoTicketEntity(
                 userId = request.userId,
-                ordinal = 0, // 0 indicates generated/virtual
+                ordinal = 0, // 0은 생성됨/가상을 의미
                 status = LottoTicketStatus.PENDING,
-                url = "" // No image for generated numbers
+                url = "" // 생성된 번호에는 이미지가 없음
             )
         )
 
@@ -71,12 +71,12 @@ class LottoGameService(
         
         val savedGame = gameRepository.save(game)
         
-        // Update badges after saving game
+        // 게임 저장 후 뱃지 업데이트
         try {
             badgeService.updateUserBadges(request.userId)
         } catch (e: Exception) {
-            // Log error but don't fail the save operation
-            logger.error("Failed to update badges for user ${request.userId}", e)
+            // 에러 로그를 남기지만 저장 작업은 실패시키지 않음
+            logger.error("사용자 ${request.userId}의 뱃지 업데이트 실패", e)
         }
         
         return savedGame

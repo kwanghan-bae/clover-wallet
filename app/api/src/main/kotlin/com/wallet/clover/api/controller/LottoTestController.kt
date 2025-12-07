@@ -16,7 +16,7 @@ class LottoTestController(
 
     @GetMapping("/test-scheduler")
     suspend fun triggerSchedulerManual(@RequestParam(required = false) round: Int?): String {
-        val targetRound = round ?: 1100 // Default or calculate current
+        val targetRound = round ?: 1100 // 기본값 또는 현재 회차 계산
         winningInfoCrawler.crawlWinningInfo(targetRound)
         winningCheckService.checkWinning(targetRound)
         return "Scheduler triggered successfully for round $targetRound! Check server logs for details."

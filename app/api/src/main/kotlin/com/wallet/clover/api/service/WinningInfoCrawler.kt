@@ -24,11 +24,11 @@ class WinningInfoCrawler(
     @Transactional
     suspend fun crawlWinningInfo(round: Int) {
         if (repository.existsByRound(round)) {
-            logger.info("Winning info for round $round already exists. Skipping.")
+            logger.info("$round 회차 당첨 정보가 이미 존재합니다. 건너뜁니다.")
             return
         }
 
-        logger.info("Starting crawling winning info for round $round")
+        logger.info("$round 회차 당첨 정보 크롤링 시작")
 
         try {
             val entity = withContext(Dispatchers.IO) {
@@ -81,10 +81,10 @@ class WinningInfoCrawler(
             }
 
             repository.save(entity)
-            logger.info("Successfully saved winning info for round $round")
+            logger.info("$round 회차 당첨 정보 저장 성공")
 
         } catch (e: Exception) {
-            logger.error("Failed to crawl winning info for round $round", e)
+            logger.error("$round 회차 당첨 정보 크롤링 실패", e)
             throw e
         }
     }
