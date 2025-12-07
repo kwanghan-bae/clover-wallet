@@ -20,7 +20,7 @@ class LottoResultParser(
 
     fun parse(html: String): ParsedLottoResult {
         if (html.isBlank()) {
-            throw TicketParsingException("HTML content is empty")
+            throw TicketParsingException("HTML 내용이 비어있습니다")
         }
 
         val doc = Jsoup.parse(html)

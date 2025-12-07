@@ -21,31 +21,31 @@ class GlobalExceptionHandler {
     @ExceptionHandler(ForbiddenException::class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     fun handleForbiddenException(e: ForbiddenException): CommonResponse<Unit> {
-        return CommonResponse.fail(e.message ?: "Forbidden")
+        return CommonResponse.fail(e.message ?: "접근 권한이 없습니다")
     }
 
     @ExceptionHandler(UserNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleUserNotFoundException(e: UserNotFoundException): CommonResponse<Unit> {
-        return CommonResponse.fail(e.message ?: "User not found")
+        return CommonResponse.fail(e.message ?: "사용자를 찾을 수 없습니다")
     }
 
     @ExceptionHandler(PostNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handlePostNotFoundException(e: PostNotFoundException): CommonResponse<Unit> {
-        return CommonResponse.fail(e.message ?: "Post not found")
+        return CommonResponse.fail(e.message ?: "게시글을 찾을 수 없습니다")
     }
 
     @ExceptionHandler(CommentNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleCommentNotFoundException(e: CommentNotFoundException): CommonResponse<Unit> {
-        return CommonResponse.fail(e.message ?: "Comment not found")
+        return CommonResponse.fail(e.message ?: "댓글을 찾을 수 없습니다")
     }
 
     @ExceptionHandler(TicketNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     fun handleTicketNotFoundException(e: TicketNotFoundException): CommonResponse<Unit> {
-        return CommonResponse.fail(e.message ?: "Ticket not found")
+        return CommonResponse.fail(e.message ?: "티켓을 찾을 수 없습니다")
     }
 
     @ExceptionHandler(TicketParsingException::class)

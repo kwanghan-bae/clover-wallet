@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat
 import java.time.LocalDate
 
 data class LottoResponse(
-    val returnValue: LottoResponseCode, // success, fail
+    val returnValue: LottoResponseCode, // 성공, 실패
     val drwNo: Int?,
     @JsonFormat(pattern = "yyyy-MM-dd", shape = JsonFormat.Shape.STRING)
     val drwNoDate: LocalDate?,

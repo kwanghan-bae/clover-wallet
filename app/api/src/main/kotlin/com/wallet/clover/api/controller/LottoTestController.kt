@@ -19,6 +19,6 @@ class LottoTestController(
         val targetRound = round ?: 1100 // 기본값 또는 현재 회차 계산
         winningInfoCrawler.crawlWinningInfo(targetRound)
         winningCheckService.checkWinning(targetRound)
-        return "Scheduler triggered successfully for round $targetRound! Check server logs for details."
+        return "$targetRound 회차 스케줄러가 수동으로 실행되었습니다! 자세한 내용은 서버 로그를 확인하세요."
     }
 }

@@ -18,12 +18,12 @@ class WinningInfoController(
     @PostMapping("/crawl/{round}")
     suspend fun crawlWinningInfo(@PathVariable round: Int): CommonResponse<String> {
         crawler.crawlWinningInfo(round)
-        return CommonResponse.success("Winning info crawling started for round $round")
+        return CommonResponse.success("$round 회차 당첨 정보 크롤링이 시작되었습니다")
     }
 
     @PostMapping("/check/{round}")
     suspend fun checkWinning(@PathVariable round: Int): CommonResponse<String> {
         checkService.checkWinning(round)
-        return CommonResponse.success("Winning check started for round $round")
+        return CommonResponse.success("$round 회차 당첨 확인이 시작되었습니다")
     }
 }

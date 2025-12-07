@@ -62,7 +62,7 @@ class CommunityService(
 
     @Transactional(readOnly = true)
     suspend fun getPostById(postId: Long, currentUserId: Long? = null): Post.Response {
-        val post = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
+        val post = postRepository.findById(postId) ?: throw PostNotFoundException("게시글을 찾을 수 없습니다: $postId")
         val userEntity = userRepository.findById(post.userId)
         val user = userEntity?.let { 
             UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
@@ -91,7 +91,7 @@ class CommunityService(
         val existingPost = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
         
         if (existingPost.userId != userId) {
-            throw ForbiddenException("You are not allowed to update this post")
+            throw ForbiddenException("이 게시글을 수정할 권한이 없습니다")
         }
 
         val updatedPost = existingPost.copy(
@@ -110,7 +110,7 @@ class CommunityService(
     }
 
     suspend fun likePost(postId: Long, userId: Long): Post.Response {
-        val post = postRepository.findById(postId) ?: throw PostNotFoundException("Post with id $postId not found")
+        val post = postRepository.findById(postId) ?: throw PostNotFoundException("게시글을 찾을 수 없습니다: $postId")
         
         val existingLike = postLikeRepository.findByUserIdAndPostId(userId, postId)
         
@@ -158,7 +158,7 @@ class CommunityService(
 
     suspend fun createComment(userId: Long, request: CreateComment.Request): Comment.Response {
         // Check if post exists
-        postRepository.findById(request.postId) ?: throw PostNotFoundException("Post with id ${request.postId} not found")
+        postRepository.findById(request.postId) ?: throw PostNotFoundException("게시글을 찾을 수 없습니다: ${request.postId}")
         val newComment = request.toEntity(userId)
         val savedComment = commentRepository.save(newComment)
         val userEntity = userRepository.findById(userId)
@@ -169,10 +169,10 @@ class CommunityService(
     }
 
     suspend fun updateComment(commentId: Long, userId: Long, request: UpdateComment.Request): Comment.Response {
-        val existingComment = commentRepository.findById(commentId) ?: throw CommentNotFoundException("Comment with id $commentId not found")
+        val existingComment = commentRepository.findById(commentId) ?: throw CommentNotFoundException("댓글을 찾을 수 없습니다: $commentId")
         
         if (existingComment.userId != userId) {
-            throw ForbiddenException("You are not allowed to update this comment")
+            throw ForbiddenException("이 댓글을 수정할 권한이 없습니다")
         }
 
         val updatedComment = existingComment.copy(

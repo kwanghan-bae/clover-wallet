@@ -98,6 +98,7 @@
 - `NotificationScheduler`가 `UserService`를 통해 데이터를 조회하도록 리팩토링.
 - `CommunityControllerTest` 및 `LottoControllerTest` 수정 (Mock 설정 및 인증 추가).
 - 전체 테스트 통과 확인.
+- **추가**: 모든 소스 코드의 영어 주석 및 로그를 한글로 번역 완료.
 
 ---
 

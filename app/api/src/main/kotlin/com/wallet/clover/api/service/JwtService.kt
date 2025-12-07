@@ -69,7 +69,7 @@ class JwtService(
             
             return claims.subject.toLong()
         } catch (e: Exception) {
-            throw IllegalArgumentException("Invalid or expired token", e)
+            throw IllegalArgumentException("유효하지 않거나 만료된 토큰입니다", e)
         }
     }
     

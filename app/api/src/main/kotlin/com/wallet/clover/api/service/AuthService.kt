@@ -60,12 +60,12 @@ class AuthService(
         
         // 2. DB에서 Refresh Token 확인
         val storedToken = refreshTokenRepository.findByToken(refreshToken)
-            ?: throw IllegalArgumentException("Invalid refresh token")
+            ?: throw IllegalArgumentException("유효하지 않은 리프레시 토큰입니다")
         
         // 3. 만료 확인
         if (storedToken.expiresAt.isBefore(LocalDateTime.now())) {
             refreshTokenRepository.deleteByToken(refreshToken)
-            throw IllegalArgumentException("Refresh token expired")
+            throw IllegalArgumentException("리프레시 토큰이 만료되었습니다")
         }
         
         // 4. 새 Access Token 발급

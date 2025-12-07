@@ -28,7 +28,7 @@ class RequestLoggingFilter : WebFilter {
                 .doOnSuccess {
                     val duration = System.currentTimeMillis() - startTime
                     logger.info(
-                        "Request: {} {} - Status: {} - Duration: {}ms",
+                        "요청: {} {} - 상태: {} - 소요시간: {}ms",
                         request.method,
                         request.uri.path,
                         exchange.response.statusCode,
@@ -38,7 +38,7 @@ class RequestLoggingFilter : WebFilter {
                 .doOnError { e ->
                     val duration = System.currentTimeMillis() - startTime
                     logger.error(
-                        "Request: {} {} - Status: {} - Duration: {}ms - Error: {}",
+                        "요청: {} {} - 상태: {} - 소요시간: {}ms - 에러: {}",
                         request.method,
                         request.uri.path,
                         exchange.response.statusCode,
