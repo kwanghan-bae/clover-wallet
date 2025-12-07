@@ -1,76 +1,86 @@
 package com.wallet.clover.api.service
 
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.security.Keys
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
+import javax.crypto.SecretKey
 
 @Service
-class JwtService {
-    
-    // TODO: JWT 라이브러리 추가 (io.jsonwebtoken:jjwt-api)
-    // TODO: application.yml에 jwt.secret 설정
-    
-    private val SECRET_KEY = "CHANGE_THIS_TO_ENV_VARIABLE" // TODO: 환경변수로 변경
-    private val ACCESS_TOKEN_VALIDITY = 15 * 60 * 1000L // 15분
-    private val REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000L // 7일
-    
+class JwtService(
+    @Value("\${jwt.secret}") private val secretKeyString: String,
+    @Value("\${jwt.access-token-validity}") private val accessTokenValidity: Long,
+    @Value("\${jwt.refresh-token-validity}") private val refreshTokenValidity: Long
+) {
+
+    private val key: SecretKey by lazy {
+        Keys.hmacShaKeyFor(secretKeyString.toByteArray())
+    }
+
     /**
      * Access Token 생성
-     * TODO: JWT 라이브러리를 사용한 실제 구현 필요
      */
     fun generateAccessToken(userId: Long): String {
-        // TODO: 실제 JWT 생성 로직
-        // Jwts.builder()
-        //     .setSubject(userId.toString())
-        //     .setExpiration(Date(System.currentTimeMillis() + ACCESS_TOKEN_VALIDITY))
-        //     .signWith(Keys.hmacShaKeyFor(SECRET_KEY.toByteArray()))
-        //     .compact()
-        
-        return "access_token_${userId}_${System.currentTimeMillis()}"
+        return Jwts.builder()
+            .subject(userId.toString())
+            .issuedAt(Date())
+            .expiration(Date(System.currentTimeMillis() + accessTokenValidity))
+            .signWith(key)
+            .compact()
     }
     
     /**
      * Refresh Token 생성
-     * TODO: JWT 라이브러리를 사용한 실제 구현 필요
      */
     fun generateRefreshToken(userId: Long): String {
-        // TODO: 실제 JWT 생성 로직
-        return "refresh_token_${userId}_${UUID.randomUUID()}"
+        return Jwts.builder()
+            .subject(userId.toString())
+            .issuedAt(Date())
+            .expiration(Date(System.currentTimeMillis() + refreshTokenValidity))
+            .id(UUID.randomUUID().toString()) // JTI
+            .signWith(key)
+            .compact()
     }
     
     /**
      * Access Token 검증 및 userId 추출
-     * TODO: JWT 라이브러리를 사용한 실제 구현 필요
      */
     fun validateAccessToken(token: String): Long {
-        // TODO: 실제 JWT 검증 로직
-        // val claims = Jwts.parserBuilder()
-        //     .setSigningKey(Keys.hmacShaKeyFor(SECRET_KEY.toByteArray()))
-        //     .build()
-        //     .parseClaimsJws(token)
-        //     .body
-        // return claims.subject.toLong()
-        
-        // 임시 처리
-        return token.split("_").getOrNull(2)?.toLongOrNull() ?: throw IllegalArgumentException("Invalid token")
+        return parseToken(token)
     }
     
     /**
      * Refresh Token 검증 및 userId 추출
      */
     fun validateRefreshToken(token: String): Long {
-        // TODO: 실제 JWT 검증 로직
-        return token.split("_").getOrNull(2)?.toLongOrNull() ?: throw IllegalArgumentException("Invalid token")
+        return parseToken(token)
+    }
+    
+    private fun parseToken(token: String): Long {
+        try {
+            val claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .payload
+            
+            return claims.subject.toLong()
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Invalid or expired token", e)
+        }
     }
     
     /**
      * Token 만료 시간 계산
      */
     fun getAccessTokenExpiry(): LocalDateTime {
-        return LocalDateTime.now().plusMinutes(15)
+        return LocalDateTime.now().plusNanos(accessTokenValidity * 1000000)
     }
     
     fun getRefreshTokenExpiry(): LocalDateTime {
-        return LocalDateTime.now().plusDays(7)
+        return LocalDateTime.now().plusNanos(refreshTokenValidity * 1000000)
     }
 }

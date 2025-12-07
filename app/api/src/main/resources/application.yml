@@ -4,6 +4,11 @@ spring:
   jpa:
     show-sql: true
 
+jwt:
+  secret: ${JWT_SECRET:default_secret_key_must_be_changed_in_production_min_32_chars}
+  access-token-validity: 900000 # 15 minutes
+  refresh-token-validity: 604800000 # 7 days
+
 external-api:
   dhlottery:
     winning-info-url: "https://dhlottery.co.kr/gameResult.do?method=byWin&drwNo="
