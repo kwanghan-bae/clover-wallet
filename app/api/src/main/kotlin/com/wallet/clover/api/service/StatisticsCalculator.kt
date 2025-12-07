@@ -28,6 +28,9 @@ class StatisticsCalculator(
     suspend fun calculate(maxGameNumber: Int): Statistics = coroutineScope {
         logger.info("$maxGameNumber 회차까지 게임 데이터 조회 및 처리 중...")
         
+        // TODO: 성능 최적화 필요. 현재는 모든 게임을 메모리에 로드하여 분석함.
+        // 대량의 데이터 처리 시 OutOfMemoryError 발생 가능성 있음.
+        // DB에 로또 당첨 정보를 캐싱하고, DB 쿼리(GROUP BY 등)를 통해 통계를 산출하도록 리팩토링 권장.
         val games = withContext(dispatcher + MDCContext()) {
             (1..maxGameNumber).chunked(50).map { batch ->
                 batch.map { gameNumber ->

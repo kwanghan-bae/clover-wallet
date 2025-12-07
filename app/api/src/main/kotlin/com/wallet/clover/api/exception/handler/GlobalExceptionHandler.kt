@@ -55,6 +55,13 @@ class GlobalExceptionHandler {
         return CommonResponse.fail(e.message ?: "티켓 파싱에 실패했습니다")
     }
 
+    @ExceptionHandler(IllegalArgumentException::class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    fun handleIllegalArgumentException(e: IllegalArgumentException): CommonResponse<Unit> {
+        logger.warn("잘못된 요청 인자: ${e.message}")
+        return CommonResponse.fail(e.message ?: "잘못된 요청입니다")
+    }
+
     @ExceptionHandler(Exception::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleGlobalException(e: Exception): CommonResponse<Unit> {

@@ -9,12 +9,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class TravelPlanService(
-    private val travelPlanRepository: TravelPlanRepository
+    private val travelPlanRepository: TravelPlanRepository,
+    private val travelRecommendationService: TravelRecommendationService,
+    private val externalTravelApiService: ExternalTravelApiService
 ) {
-    
-    // TODO: 사용자 선호도 기반 AI 추천 로직 추가
-    // TODO: 외부 API (카카오 로컬, 공공데이터 관광정보) 연동
-    // TODO: 실시간 날씨/교통 정보 통합
     
     /**
      * 전체 여행 플랜 조회
@@ -23,6 +21,13 @@ class TravelPlanService(
         return travelPlanRepository.findAll().map { it.toResponse() }
     }
     
+    /**
+     * 사용자 맞춤형 여행 플랜 추천
+     */
+    suspend fun getRecommendedTravelPlans(userId: Long): List<TravelPlan.Response> {
+        return travelRecommendationService.recommend(userId)
+    }
+
     /**
      * 특정 명당 기반 여행 플랜 조회
      */

@@ -4,7 +4,6 @@ import com.wallet.clover.api.service.LottoWinningStoreCrawler
 import com.wallet.clover.api.service.WinningCheckService
 import com.wallet.clover.api.service.WinningInfoCrawler
 import com.wallet.clover.api.service.WinningNumberProvider
-import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component

@@ -73,7 +73,7 @@ class LottoNumberExtractor(
      */
     private fun extractFromDream(keyword: String?): Set<Int> {
         if (keyword == null) return emptySet()
-        return dreamNumberMap[keyword] ?: emptySet()
+        return LottoExtractionData.dreamNumberMap[keyword] ?: emptySet()
     }
 
     /**
@@ -103,7 +103,7 @@ class LottoNumberExtractor(
     private fun extractFromHoroscope(birthDate: LocalDate?): Set<Int> {
         if (birthDate == null) return emptySet()
         val sign = getZodiacSign(birthDate)
-        return horoscopeNumberMap[sign] ?: emptySet()
+        return LottoExtractionData.horoscopeNumberMap[sign] ?: emptySet()
     }
 
     /**
@@ -128,14 +128,10 @@ class LottoNumberExtractor(
      * 피보나치 수열 등 자연 패턴에서 숫자를 가져옵니다.
      */
     private fun extractFromNaturePatterns(keyword: String?): Set<Int> {
-        return when (keyword) {
-            "피보나치" -> fibonacciNumbers.filter { it in LOTTO_MIN_NUMBER..LOTTO_MAX_NUMBER }.toSet()
-            "봄" -> setOf(3, 4, 5) // 봄에 해당하는 월
-            "여름" -> setOf(6, 7, 8) // 여름에 해당하는 월
-            "가을" -> setOf(9, 10, 11) // 가을에 해당하는 월
-            "겨울" -> setOf(12, 1, 2) // 겨울에 해당하는 월
-            else -> emptySet()
+        if (keyword == "피보나치") {
+            return LottoExtractionData.fibonacciNumbers.filter { it in LOTTO_MIN_NUMBER..LOTTO_MAX_NUMBER }.toSet()
         }
+        return LottoExtractionData.naturePatternsMap[keyword] ?: emptySet()
     }
 
     /**
@@ -143,11 +139,7 @@ class LottoNumberExtractor(
      * 주역 괘나 룬 문자 등에서 연관된 숫자를 가져옵니다.
      */
     private fun extractFromAncientDivination(keyword: String?): Set<Int> {
-        return when (keyword) {
-            "주역" -> setOf(1, 6, 8, 11, 24, 30) // 예시 주역 관련 숫자
-            "룬" -> setOf(3, 9, 13, 21, 27, 40) // 예시 룬 관련 숫자
-            else -> emptySet()
-        }
+        return LottoExtractionData.ancientDivinationMap[keyword] ?: emptySet()
     }
 
     /**
@@ -155,12 +147,7 @@ class LottoNumberExtractor(
      * 색상이나 소리 주파수와 연관된 숫자를 가져옵니다.
      */
     private fun extractFromColorsSounds(keyword: String?): Set<Int> {
-        return when (keyword) {
-            "빨강" -> setOf(1, 10, 19, 28, 37) // 열정, 에너지
-            "초록" -> setOf(4, 13, 22, 31, 40) // 안정, 성장
-            "금색" -> setOf(7, 16, 25, 34, 43) // 부, 행운
-            else -> emptySet()
-        }
+        return LottoExtractionData.colorsSoundsMap[keyword] ?: emptySet()
     }
 
     /**
@@ -168,12 +155,7 @@ class LottoNumberExtractor(
      * 특정 동물과 연관된 숫자를 가져옵니다.
      */
     private fun extractFromAnimalOmens(keyword: String?): Set<Int> {
-        return when (keyword) {
-            "까치" -> setOf(7, 17, 27) // 좋은 소식
-            "검은고양이" -> setOf(13, 26, 39) // 불운을 행운으로
-            "뱀" -> setOf(4, 14, 24) // 지혜, 변신
-            else -> emptySet()
-        }
+        return LottoExtractionData.animalOmensMap[keyword] ?: emptySet()
     }
 
     /**
@@ -211,36 +193,7 @@ class LottoNumberExtractor(
         }
     }
 
-    // --- 데이터 영역 ---
-    // 실제 애플리케이션에서는 DB나 외부 파일에서 관리하는 것이 좋습니다.
-
-    // TODO: DB나 외부 설정에서 동적으로 로딩하도록 개선 필요
-    private val dreamNumberMap = mapOf(
-        "돼지" to setOf(8, 18, 28),
-        "조상" to setOf(14, 15, 25),
-        "용" to setOf(1, 5, 12),
-        "물" to setOf(1, 6, 16),
-        "불" to setOf(3, 8, 13),
-    )
-
-    private val fibonacciNumbers = listOf(1, 2, 3, 5, 8, 13, 21, 34) // 피보나치 수열 예시
-
     enum class ZodiacSign {
         ARIES, TAURUS, GEMINI, CANCER, LEO, VIRGO, LIBRA, SCORPIO, SAGITTARIUS, CAPRICORN, AQUARIUS, PISCES,
     }
-
-    private val horoscopeNumberMap = mapOf(
-        ZodiacSign.ARIES to setOf(6, 17, 25, 34, 41),
-        ZodiacSign.TAURUS to setOf(5, 15, 23, 33, 45),
-        ZodiacSign.GEMINI to setOf(1, 10, 19, 28, 37),
-        ZodiacSign.CANCER to setOf(2, 7, 11, 20, 29),
-        ZodiacSign.LEO to setOf(1, 9, 18, 27, 36),
-        ZodiacSign.VIRGO to setOf(4, 14, 24, 33, 43),
-        ZodiacSign.LIBRA to setOf(6, 16, 25, 35, 44),
-        ZodiacSign.SCORPIO to setOf(8, 13, 21, 30, 38),
-        ZodiacSign.SAGITTARIUS to setOf(3, 12, 21, 30, 39),
-        ZodiacSign.CAPRICORN to setOf(4, 8, 17, 26, 34),
-        ZodiacSign.AQUARIUS to setOf(7, 11, 22, 31, 40),
-        ZodiacSign.PISCES to setOf(2, 9, 18, 27, 35),
-    )
 }
