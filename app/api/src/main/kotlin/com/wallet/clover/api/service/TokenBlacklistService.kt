@@ -2,6 +2,7 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.entity.auth.TokenBlacklistEntity
 import com.wallet.clover.api.repository.auth.TokenBlacklistRepository
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -11,6 +12,7 @@ class TokenBlacklistService(
     private val tokenBlacklistRepository: TokenBlacklistRepository,
     private val jwtService: JwtService
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
     
     /**
      * Blacklist에 토큰 추가 (로그아웃 시)
@@ -38,6 +40,6 @@ class TokenBlacklistService(
     @Scheduled(cron = "0 0 * * * *")
     suspend fun cleanupExpiredTokens() {
         val deletedCount = tokenBlacklistRepository.deleteByExpiresAtBefore(LocalDateTime.now())
-        println("Cleaned up $deletedCount expired blacklist tokens")
+        logger.info("Cleaned up $deletedCount expired blacklist tokens")
     }
 }

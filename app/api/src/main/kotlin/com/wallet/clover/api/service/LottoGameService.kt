@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.toList
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 
 @Service
@@ -20,6 +21,7 @@ class LottoGameService(
     private val ticketRepository: com.wallet.clover.api.repository.ticket.LottoTicketRepository,
     private val badgeService: BadgeService
 ) {
+    private val logger = LoggerFactory.getLogger(javaClass)
     suspend fun getGamesByUserId(userId: Long, page: Int = 0, size: Int = 20): PageResponse<LottoGameEntity> {
         val pageable = PageRequest.of(page, size, Sort.by("createdAt").descending())
         val content = gameRepository.findByUserId(userId, pageable).toList()
@@ -35,7 +37,7 @@ class LottoGameService(
             badgeService.updateUserBadges(game.userId)
         } catch (e: Exception) {
             // Log error but don't fail the save operation
-            println("Failed to update badges for user ${game.userId}: ${e.message}")
+            logger.error("Failed to update badges for user ${game.userId}", e)
         }
         
         return savedGame
@@ -74,7 +76,7 @@ class LottoGameService(
             badgeService.updateUserBadges(request.userId)
         } catch (e: Exception) {
             // Log error but don't fail the save operation
-            println("Failed to update badges for user ${request.userId}: ${e.message}")
+            logger.error("Failed to update badges for user ${request.userId}", e)
         }
         
         return savedGame
