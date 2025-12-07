@@ -22,8 +22,6 @@ class StatisticsCalculatorTest : ShouldSpec(
         val sut = StatisticsCalculator(client, mapper, dispatcher)
 
         context("calculate") {
-            // TODO: 이 테스트 수정 필요. MockK + 비동기 상호작용으로 인한 NPE 발생 추정.
-            /*
             should("return correct statistics") {
                 runTest(dispatcher) {
                     // given
@@ -77,7 +75,6 @@ class StatisticsCalculatorTest : ShouldSpec(
                     statistics.oddEvenCounter["even"]!![1]!! shouldBe evenGames
                 }
             }
-            */
         }
     },
 )

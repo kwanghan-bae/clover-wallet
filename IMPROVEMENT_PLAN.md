@@ -121,3 +121,5 @@
 9. **최종 품질 개선**: 한글화, 아키텍처 규칙 준수, 테스트 안정화 (완료)
 10. **심층 개선**: 삭제된 TODO 복원, 데드 코드 정리, 스키마 및 엔티티 정합성 확보 (완료)
 11. **추가 개선**: 매직 넘버 제거, 서비스 구조 개선, 예외 처리 강화 (완료)
+12. **크롤러 리팩토링**: WinningInfoCrawler가 Jsoup을 직접 사용하지 않고 LottoTicketClient와 WinningInfoParser를 사용하도록 개선 (완료)
+13. **테스트 수정**: StatisticsCalculatorTest 수정 및 WinningInfoParserTest 추가 (완료)
