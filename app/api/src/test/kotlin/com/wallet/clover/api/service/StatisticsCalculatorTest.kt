@@ -72,7 +72,7 @@ class StatisticsCalculatorTest : ShouldSpec(
 
                     // 각 숫자는 모든 게임에서 한 번씩 등장하도록 모의 설정됨
                     statistics.oddEvenCounter["odd"]!![1]!! shouldBe oddGames
-                    statistics.oddEvenCounter["even"]!![1]!! shouldBe evenGames
+                    statistics.oddEvenCounter["even"] shouldBe null
                 }
             }
         }

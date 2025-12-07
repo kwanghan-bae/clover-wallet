@@ -19,6 +19,7 @@ class WinningInfoCrawler(
 ) {
     private val logger = LoggerFactory.getLogger(WinningInfoCrawler::class.java)
 
+
     @Transactional
     suspend fun crawlWinningInfo(round: Int) {
         if (repository.existsByRound(round)) {
