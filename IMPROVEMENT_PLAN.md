@@ -74,6 +74,6 @@
 1. **API 응답 통일**: `LottoController` 리팩토링 (완료)
 2. **서비스 로직 개선**: `LottoService.checkWinnings` 리팩토링 (완료)
 3. **페이지네이션 적용**: `LottoGameService` 및 Controller 수정 (완료)
-4. **예외 처리 표준화**: `GlobalExceptionHandler` 수정
-5. **설정 관리 개선**: `JwtProperties` 도입 및 `SecurityConfig` 수정
+4. **예외 처리 표준화**: `GlobalExceptionHandler` 수정 (완료)
+5. **설정 관리 개선**: `JwtProperties` 도입 및 `SecurityConfig` 수정 (완료)
 6. **코드 정리**: Import 정리 및 기타 마이너 수정
