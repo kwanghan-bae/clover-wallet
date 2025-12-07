@@ -1,8 +1,9 @@
 package com.wallet.clover.api.service
 
-import com.wallet.clover.api.common.UserDefaults
+import com.wallet.clover.api.dto.Auth
 import com.wallet.clover.api.entity.user.UserEntity
 import com.wallet.clover.api.entity.auth.RefreshTokenEntity
+import com.wallet.clover.api.common.UserDefaults
 import com.wallet.clover.api.repository.user.UserRepository
 import com.wallet.clover.api.repository.auth.RefreshTokenRepository
 import org.springframework.stereotype.Service
@@ -24,7 +25,7 @@ class AuthService(
      * 로그인: Access Token + Refresh Token 발급
      */
     @Transactional
-    suspend fun login(ssoQualifier: String): LoginResponse {
+    suspend fun login(ssoQualifier: String): Auth.LoginResponse {
         val user = userRepository.findBySsoQualifier(ssoQualifier)
             ?: userRepository.save(
                 UserEntity(
@@ -46,7 +47,7 @@ class AuthService(
             )
         )
         
-        return LoginResponse(
+        return Auth.LoginResponse(
             accessToken = accessToken,
             refreshToken = refreshToken,
             user = user
@@ -56,7 +57,7 @@ class AuthService(
     /**
      * Refresh: Access Token 갱신
      */
-    suspend fun refresh(refreshToken: String): RefreshResponse {
+    suspend fun refresh(refreshToken: String): Auth.RefreshResponse {
         // 1. Refresh Token 검증
         val userId = jwtService.validateRefreshToken(refreshToken)
         
@@ -73,7 +74,7 @@ class AuthService(
         // 4. 새 Access Token 발급
         val newAccessToken = jwtService.generateAccessToken(userId)
         
-        return RefreshResponse(accessToken = newAccessToken)
+        return Auth.RefreshResponse(accessToken = newAccessToken)
     }
     
     /**
@@ -87,19 +88,3 @@ class AuthService(
         refreshTokenRepository.deleteByToken(refreshToken)
     }
 }
-
-/**
- * Login Response DTO
- */
-data class LoginResponse(
-    val accessToken: String,
-    val refreshToken: String,
-    val user: UserEntity
-)
-
-/**
- * Refresh Response DTO
- */
-data class RefreshResponse(
-    val accessToken: String
-)

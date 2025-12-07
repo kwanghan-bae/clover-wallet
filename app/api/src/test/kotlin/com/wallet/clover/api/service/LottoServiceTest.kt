@@ -27,7 +27,7 @@ class LottoServiceTest {
     private val lottoGameRepository: LottoGameRepository = mockk()
     private val lottoTicketRepository: LottoTicketRepository = mockk()
     private val winningInfoRepository: WinningInfoRepository = mockk()
-    private val notificationService: NotificationService = mockk(relaxed = true)
+    private val fcmService: FcmService = mockk(relaxed = true)
     private val winningNumberProvider: WinningNumberProvider = mockk()
     private val userRepository: UserRepository = mockk()
 
@@ -35,7 +35,7 @@ class LottoServiceTest {
         lottoGameRepository,
         lottoTicketRepository,
         winningInfoRepository,
-        notificationService,
+        fcmService,
         winningNumberProvider,
         userRepository
     )
@@ -130,7 +130,7 @@ class LottoServiceTest {
         assertEquals("1등", winningTicket.rank)
         assertEquals(listOf(1, 2, 3, 4, 5, 6), winningTicket.userNumbers)
 
-        coVerify { notificationService.sendWinningNotification("test-token", any()) }
+        coVerify { fcmService.sendWinningNotification("test-token", "1등", any()) }
         coVerify(exactly = 1) { lottoGameRepository.save(any()) } // Only winning game status updated (PENDING -> WINNING_1)
     }
 }

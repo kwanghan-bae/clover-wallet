@@ -1,5 +1,6 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.config.JwtBlacklistFilter
 import com.wallet.clover.api.dto.UpdateUser
 import com.wallet.clover.api.dto.User
 import com.wallet.clover.api.dto.UserStats
@@ -14,9 +15,12 @@ import io.mockk.mockk
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.BDDMockito.given
+import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Import
 import org.springframework.http.MediaType
@@ -26,11 +30,17 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.time.LocalDateTime
 
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilterChain
+
 @WebFluxTest(UserController::class)
 @Import(UserControllerTest.TestConfig::class, GlobalExceptionHandler::class)
 @TestPropertySource(properties = ["supabase.jwt-secret=testsecretkeytestsecretkeytestsecretkeytestsecretkey"])
 @DisplayName("UserController 테스트")
 class UserControllerTest(@Autowired private val webClient: WebTestClient) {
+
+    @MockBean
+    private lateinit var jwtBlacklistFilter: JwtBlacklistFilter
 
     @Autowired
     private lateinit var userService: UserService
@@ -50,6 +60,11 @@ class UserControllerTest(@Autowired private val webClient: WebTestClient) {
     @BeforeEach
     fun setUp() {
         clearMocks(userService, userStatsService)
+        given(jwtBlacklistFilter.filter(any(), any())).willAnswer { invocation ->
+            val exchange = invocation.getArgument<ServerWebExchange>(0)
+            val chain = invocation.getArgument<WebFilterChain>(1)
+            chain.filter(exchange)
+        }
     }
 
     @Test
@@ -161,7 +176,7 @@ class UserControllerTest(@Autowired private val webClient: WebTestClient) {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.data").isEqualTo("회원 탈퇴가 완료되었습니다")
+            .jsonPath("$.success").isEqualTo(true)
 
         coVerify(exactly = 1) { userService.deleteUserAccount(userId) }
     }

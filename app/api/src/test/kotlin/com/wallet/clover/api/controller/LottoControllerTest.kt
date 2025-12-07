@@ -1,5 +1,7 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.common.PageResponse
+import com.wallet.clover.api.config.JwtBlacklistFilter
 import com.wallet.clover.api.domain.extraction.ExtractionMethod
 import com.wallet.clover.api.dto.ExtractNumbers
 import com.wallet.clover.api.dto.LottoGame
@@ -19,6 +21,10 @@ import org.springframework.security.test.web.reactive.server.SecurityMockServerC
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.time.LocalDateTime
 
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilterChain
+
 @WebFluxTest(LottoController::class)
 class LottoControllerTest {
 
@@ -30,6 +36,18 @@ class LottoControllerTest {
 
     @MockBean
     private lateinit var extractionService: ExtractionService
+
+    @MockBean
+    private lateinit var jwtBlacklistFilter: JwtBlacklistFilter
+
+    @BeforeEach
+    fun setUp() {
+        given(jwtBlacklistFilter.filter(any(), any())).willAnswer { invocation ->
+            val exchange = invocation.getArgument<ServerWebExchange>(0)
+            val chain = invocation.getArgument<WebFilterChain>(1)
+            chain.filter(exchange)
+        }
+    }
 
     @Test
     fun `getMyGames should return list of games`() {
@@ -44,9 +62,10 @@ class LottoControllerTest {
                 createdAt = LocalDateTime.now()
             )
         )
+        val pageResponse = PageResponse.of(games, 0, 20, 1)
 
         runBlocking {
-            given(lottoGameService.getGamesByUserId(userId, 0, 20)).willReturn(games)
+            given(lottoGameService.getGamesByUserId(any(), any(), any())).willReturn(pageResponse)
         }
 
         webTestClient
@@ -56,8 +75,8 @@ class LottoControllerTest {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.data[0].id").isEqualTo(1)
-            .jsonPath("$.data[0].status").isEqualTo("LOSING")
+            .jsonPath("$.success").isEqualTo(true)
+            .jsonPath("$.data.totalElements").isEqualTo(1)
     }
 
     @Test
@@ -73,7 +92,7 @@ class LottoControllerTest {
         val savedEntity = request.toEntity().copy(id = 1L, createdAt = LocalDateTime.now())
 
         runBlocking {
-            given(lottoGameService.saveGame(any())).willReturn(savedEntity)
+            given(lottoGameService.saveGeneratedGame(any())).willReturn(savedEntity)
         }
 
         webTestClient

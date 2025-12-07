@@ -1,0 +1,4 @@
+jwt:
+  secret: testsecretkeymustbelongenoughforhmacsha256security
+  access-token-validity: 3600
+  refresh-token-validity: 86400

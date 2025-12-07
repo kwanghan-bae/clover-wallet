@@ -58,4 +58,6 @@ class ArchitectureTest {
         .orShould().haveSimpleName("UserSummary")
         .orShould().haveSimpleName("CommonResponse")
         .orShould().haveSimpleName("LottoResponse")
+        .orShould().haveSimpleName("PageResponse")
+        .orShould().haveSimpleName("NotificationResponse")
 }

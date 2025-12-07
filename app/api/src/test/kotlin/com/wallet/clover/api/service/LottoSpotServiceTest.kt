@@ -25,13 +25,15 @@ class LottoSpotServiceTest {
         val size = 10
         val spot = TestFixtures.createLottoSpot()
         coEvery { lottoSpotRepository.findAllBy(any()) } returns flowOf(spot)
+        coEvery { lottoSpotRepository.count() } returns 1L
 
         // When
-        val result = lottoSpotService.getAllLottoSpots(page, size).toList()
+        val result = lottoSpotService.getAllLottoSpots(page, size)
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals(spot.name, result[0].name)
+        assertEquals(1, result.content.size)
+        assertEquals(spot.name, result.content[0].name)
+        assertEquals(1L, result.totalElements)
         coVerify { lottoSpotRepository.findAllBy(PageRequest.of(page, size, Sort.by("id").descending())) }
     }
 

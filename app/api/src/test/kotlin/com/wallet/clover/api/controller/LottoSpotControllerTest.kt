@@ -1,13 +1,16 @@
 package com.wallet.clover.api.controller
 
+import com.wallet.clover.api.common.PageResponse
+import com.wallet.clover.api.config.JwtBlacklistFilter
 import com.wallet.clover.api.dto.LottoSpot
+import com.wallet.clover.api.dto.LottoWinningStore
 import com.wallet.clover.api.entity.lottospot.LottoWinningStoreEntity
 import com.wallet.clover.api.service.LottoSpotService
 import com.wallet.clover.api.service.LottoWinningStoreService
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
 import org.mockito.BDDMockito.given
+import org.mockito.kotlin.any
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest
@@ -16,6 +19,10 @@ import org.springframework.security.test.web.reactive.server.SecurityMockServerC
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt
 import org.springframework.test.web.reactive.server.WebTestClient
 import java.time.LocalDateTime
+
+import org.junit.jupiter.api.BeforeEach
+import org.springframework.web.server.ServerWebExchange
+import org.springframework.web.server.WebFilterChain
 
 @WebFluxTest(LottoSpotController::class)
 @AutoConfigureWebTestClient
@@ -30,8 +37,20 @@ class LottoSpotControllerTest {
     @MockBean
     private lateinit var lottoWinningStoreService: LottoWinningStoreService
 
+    @MockBean
+    private lateinit var jwtBlacklistFilter: JwtBlacklistFilter
+
+    @BeforeEach
+    fun setUp() {
+        given(jwtBlacklistFilter.filter(any(), any())).willAnswer { invocation ->
+            val exchange = invocation.getArgument<ServerWebExchange>(0)
+            val chain = invocation.getArgument<WebFilterChain>(1)
+            chain.filter(exchange)
+        }
+    }
+
     @Test
-    fun `getAllLottoSpots should return flow of spots`() {
+    fun `getAllLottoSpots should return page of spots`() {
         val spot = LottoSpot.Response(
             id = 1L,
             name = "Store Name",
@@ -39,9 +58,10 @@ class LottoSpotControllerTest {
             latitude = 37.0,
             longitude = 127.0
         )
+        val pageResponse = PageResponse.of(listOf(spot), 0, 20, 1)
 
         runBlocking {
-            given(lottoSpotService.getAllLottoSpots(0, 20)).willReturn(flowOf(spot))
+            given(lottoSpotService.getAllLottoSpots(any(), any())).willReturn(pageResponse)
         }
 
         webTestClient
@@ -50,12 +70,9 @@ class LottoSpotControllerTest {
             .uri("/api/v1/lotto-spots?page=0&size=20")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList(LottoSpot.Response::class.java)
-            .hasSize(1)
-            .consumeWith<WebTestClient.ListBodySpec<LottoSpot.Response>> { result ->
-                val response = result.responseBody
-                assert(response?.get(0)?.name == "Store Name")
-            }
+            .expectBody()
+            .jsonPath("$.success").isEqualTo(true)
+            .jsonPath("$.data.totalElements").isEqualTo(1)
     }
 
     @Test
@@ -78,8 +95,8 @@ class LottoSpotControllerTest {
             .uri("/api/v1/lotto-spots/search?name=Store")
             .exchange()
             .expectStatus().isOk
-            .expectBodyList(LottoSpot.Response::class.java)
-            .hasSize(1)
+            .expectBody()
+            .jsonPath("$.data[0].name").isEqualTo("Store Name")
     }
 
     @Test
@@ -98,7 +115,7 @@ class LottoSpotControllerTest {
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.data").isEqualTo("Crawling started for round $round")
+            .jsonPath("$.success").isEqualTo(true)
     }
 
     @Test

@@ -9,6 +9,7 @@ import com.wallet.clover.api.exception.ForbiddenException
 import com.wallet.clover.api.exception.PostNotFoundException
 import com.wallet.clover.api.repository.community.CommentRepository
 import com.wallet.clover.api.repository.community.PostRepository
+import com.wallet.clover.api.repository.community.PostLikeRepository
 import com.wallet.clover.api.repository.user.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -17,7 +18,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -27,11 +27,13 @@ class CommunityServiceTest {
     private val postRepository: PostRepository = mockk()
     private val commentRepository: CommentRepository = mockk()
     private val userRepository: UserRepository = mockk()
+    private val postLikeRepository: PostLikeRepository = mockk()
 
     private val communityService = CommunityService(
         postRepository,
         commentRepository,
-        userRepository
+        userRepository,
+        postLikeRepository
     )
 
     @Test
@@ -44,15 +46,18 @@ class CommunityServiceTest {
         val user = TestFixtures.createUser(id = userId)
 
         coEvery { postRepository.findAllBy(any()) } returns flowOf(post)
+        coEvery { postRepository.count() } returns 1L
         coEvery { userRepository.findAllById(listOf(userId)) } returns flowOf(user)
+        coEvery { postLikeRepository.findByUserIdAndPostIdIn(any(), any()) } returns emptyList()
 
         // When
         val result = communityService.getAllPosts(page, size)
 
         // Then
-        assertEquals(1, result.size)
-        assertEquals(post.content, result[0].content)
-        assertEquals(user.ssoQualifier.substringBefore("@"), result[0].user?.nickname)
+        assertEquals(1, result.content.size)
+        assertEquals(post.content, result.content[0].content)
+        assertEquals(user.ssoQualifier.substringBefore("@"), result.content[0].user?.nickname)
+        assertEquals(1L, result.totalElements)
         
         coVerify { postRepository.findAllBy(PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))) }
     }
@@ -90,6 +95,7 @@ class CommunityServiceTest {
         coEvery { postRepository.findById(postId) } returns existingPost
         coEvery { postRepository.save(any()) } returns updatedPost
         coEvery { userRepository.findById(userId) } returns user
+        coEvery { postLikeRepository.existsByUserIdAndPostId(userId, postId) } returns false
 
         // When
         val result = communityService.updatePost(postId, userId, request)

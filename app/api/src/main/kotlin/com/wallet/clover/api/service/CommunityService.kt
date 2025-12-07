@@ -37,22 +37,23 @@ class CommunityService(
         val userIds = posts.map { it.userId }.distinct()
         val users = userRepository.findAllById(userIds).toList().associateBy { it.id }
 
-        // 현재 사용자의 좋아요 여부 조회
-        // TODO: Implement batch check
-        // Batch 조회 로직이 없으므로 일단 개별 조회 혹은 전체 조회 후 필터링 (최적화 필요)
-        // 실제로는 postLikeRepository.findByUserIdAndPostIdIn(...) 같은 메서드가 필요함
-        // R2DBC에서는 IN 절이 까다로울 수 있으므로, 반복문으로 처리하거나 커스텀 쿼리 필요
-        // 일단은 N+1 방지를 위해 전체 로직을 단순화
+        // 현재 사용자의 좋아요 여부 조회 (Batch)
+        val likedPostIds = if (currentUserId != null) {
+            val postIds = posts.mapNotNull { it.id }
+            if (postIds.isNotEmpty()) {
+                postLikeRepository.findByUserIdAndPostIdIn(currentUserId, postIds).map { it.postId }.toSet()
+            } else {
+                emptySet()
+            }
+        } else {
+            emptySet()
+        }
+
         val content = posts.map { post ->
             val user = users[post.userId]?.let { 
                 UserSummary(it.id!!, it.ssoQualifier.substringBefore("@"), it.badges?.split(",") ?: emptyList()) 
             }
-            // 개별 조회 (N+1 문제 발생 가능, 추후 최적화)
-            val isLiked = if (currentUserId != null) {
-                postLikeRepository.existsByUserIdAndPostId(currentUserId, post.id!!)
-            } else {
-                false
-            }
+            val isLiked = likedPostIds.contains(post.id)
             post.toResponse(user, isLiked)
         }
         
