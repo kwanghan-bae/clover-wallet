@@ -83,15 +83,19 @@
 
 ---
 
-## 9. 코드 정리 및 로깅 개선 (완료)
+## 10. 테스트 안정화 및 아키텍처 개선 (완료)
 
 **현황**:
-- `println`을 사용하는 코드가 일부 남아있어 운영 환경에서 로그 관리가 어려울 수 있습니다.
-- `CommunityService` 리팩토링 과정에서 성능 최적화를 위한 TODO 주석이 누락되었습니다.
+- 리팩토링 후 다수의 테스트가 실패하고 있었습니다 (`UnsatisfiedDependencyException`, `AssertionError`).
+- `ArchitectureTest`에서 DTO 위치 및 중첩 클래스 규칙 위반이 발견되었습니다.
+- `CommunityService`에 N+1 문제가 존재했습니다.
 
 **개선 계획**:
-- `println`을 `Logger`로 교체.
-- 누락된 TODO 주석 복원.
+- `CommunityService` N+1 문제 해결 (Batch Fetch 구현).
+- `ArchitectureTest` 규칙 준수를 위해 DTO 리팩토링 (`Auth`, `Notification` 등 중첩 클래스 적용).
+- `@WebFluxTest` 환경에서 `JwtBlacklistFilter` Mock 설정 추가.
+- `GlobalExceptionHandler`에 HTTP 상태 코드 명시 (`@ResponseStatus`).
+- 테스트 코드의 Mock 설정 및 단언문 수정.
 
 ---
 
@@ -104,3 +108,4 @@
 5. **설정 관리 개선**: `JwtProperties` 도입 및 `SecurityConfig` 수정 (완료)
 6. **전체 응답 표준화**: 나머지 컨트롤러 및 서비스 리팩토링 (완료)
 7. **코드 정리**: Import 정리 및 기타 마이너 수정 (완료)
+8. **테스트 및 아키텍처 개선**: 테스트 수정 및 DTO 구조 개선 (완료)
