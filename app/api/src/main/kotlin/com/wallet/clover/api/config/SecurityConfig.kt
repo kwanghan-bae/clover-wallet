@@ -49,7 +49,19 @@ class SecurityConfig(
                     jwt.jwtDecoder(jwtDecoder())
                 }
             }
+            .cors { it.configurationSource(corsConfigurationSource()) }
             .build()
+    }
+
+    @Bean
+    fun corsConfigurationSource(): org.springframework.web.cors.reactive.CorsConfigurationSource {
+        val configuration = org.springframework.web.cors.CorsConfiguration()
+        configuration.allowedOrigins = listOf("*") // 개발 중 편의를 위해 모든 출처 허용 (배포 시 수정 권장)
+        configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        configuration.allowedHeaders = listOf("*")
+        val source = org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource()
+        source.registerCorsConfiguration("/**", configuration)
+        return source
     }
 
     @Bean
