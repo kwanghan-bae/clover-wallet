@@ -8,6 +8,9 @@ import java.time.LocalDateTime
 class DefaultTravelRecommendationService : TravelRecommendationService {
     override suspend fun recommend(userId: Long): List<TravelPlan.Response> {
         // Mock Data: 실제 AI 모델 연동 전, 사용자에게 보여줄 더미 데이터 반환
+        // [Live Prep] Removing mock data as requested. Returning empty list until real implementation.
+        return emptyList()
+        /*
         return listOf(
             TravelPlan.Response(
                 id = 1,
@@ -58,6 +61,7 @@ class DefaultTravelRecommendationService : TravelRecommendationService {
                 createdAt = LocalDateTime.now()
             )
         )
+        */
     }
 }
 
