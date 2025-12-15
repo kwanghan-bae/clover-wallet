@@ -17,6 +17,7 @@ import org.springframework.transaction.reactive.executeAndAwait
 @Service
 class WinningCheckService(
     private val winningInfoRepository: WinningInfoRepository,
+    private val winningInfoCrawler: WinningInfoCrawler,
     private val lottoTicketRepository: LottoTicketRepository,
     private val lottoGameRepository: LottoGameRepository,
     private val fcmService: FcmService,
@@ -28,9 +29,19 @@ class WinningCheckService(
 
     suspend fun checkWinning(round: Int) {
         // 1. 해당 회차 당첨 정보 조회
-        val winningInfo = winningInfoRepository.findByRound(round)
+        var winningInfo = winningInfoRepository.findByRound(round)
         if (winningInfo == null) {
-            logger.warn("$round 회차 당첨 정보를 찾을 수 없습니다.")
+            logger.info("$round 회차 정보 DB 미발견. 크롤링 시도...")
+            try {
+                winningInfoCrawler.crawlWinningInfo(round)
+                winningInfo = winningInfoRepository.findByRound(round)
+            } catch (e: Exception) {
+                logger.error("$round 회차 정보 수집 실패", e)
+            }
+        }
+
+        if (winningInfo == null) {
+            logger.warn("$round 회차 당첨 정보를 찾을 수 없습니다. (크롤링 실패 포함)")
             return
         }
 

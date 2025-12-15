@@ -10,6 +10,7 @@ import java.time.temporal.TemporalAdjusters
 @Service
 class LottoInfoService(
     private val winningInfoRepository: WinningInfoRepository,
+    private val winningInfoCrawler: WinningInfoCrawler,
     private val clock: Clock = Clock.systemDefaultZone()
 ) {
     suspend fun getNextDrawInfo(): Map<String, Any> {
@@ -47,6 +48,16 @@ class LottoInfoService(
     }
 
     suspend fun getDrawResult(round: Int): com.wallet.clover.api.entity.winning.WinningInfoEntity? {
-        return winningInfoRepository.findByRound(round)
+        var winningInfo = winningInfoRepository.findByRound(round)
+        if (winningInfo == null) {
+            // DB에 없으면 크롤링 시도 (Lazy Loading)
+            try {
+                winningInfoCrawler.crawlWinningInfo(round)
+                winningInfo = winningInfoRepository.findByRound(round)
+            } catch (e: Exception) {
+                // 크롤링 실패 시 null 반환
+            }
+        }
+        return winningInfo
     }
 }
