@@ -13,7 +13,14 @@ jobs:
       - name: Ping Render Backend
         run: |
           echo "Pinging https://clover-wallet-api.onrender.com/actuator/health..."
-          statusCode=$(curl -o /dev/null -s -w "%{http_code}\n" https://clover-wallet-api.onrender.com/actuator/health)
+          # Retry up to 5 times, with 5 second delay, max time 30s per request
+          statusCode=$(curl -o /dev/null -s -w "%{http_code}\n" \
+            --retry 5 \
+            --retry-delay 5 \
+            --retry-max-time 30 \
+            --retry-connrefused \
+            https://clover-wallet-api.onrender.com/actuator/health)
+            
           echo "Status Code: $statusCode"
           if [ "$statusCode" -ne 200 ]; then
             echo "Server seems down or unhealthy!"
