@@ -33,13 +33,16 @@ class SecurityConfig(
                 headers.hsts { it.includeSubdomains(true).maxAge(java.time.Duration.ofDays(365)) }
             }
             .authorizeExchange {
+                // Public Endpoints
                 it.pathMatchers(
                     "/api/v1/auth/**",
                     "/actuator/health/**",
                     "/actuator/info/**",
                     "/webjars/**",
                     "/v3/api-docs/**",
-                    "/swagger-ui.html"
+                    "/swagger-ui.html",
+                    // Admin Init APIs (Temporary Open for manual curl)
+                    "/api/v1/admin/**"
                 ).permitAll()
                 it.anyExchange().authenticated()
             }

@@ -83,3 +83,16 @@ docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... clover-wallet-api
 - **JPA -> R2DBC**: 완전한 Non-blocking I/O 전환
 - **Reactor -> Coroutines**: `Mono`/`Flux` 대신 `suspend`/`Flow` 사용하여 가독성 향상
 - **Single Module**: 불필요한 레이어 제거 및 구조 단순화
+
+## 🛠️ Data Initialization (Admin)
+서버 초기 세팅을 위한 데이터 적재 API입니다. (인증 불필요 - 임시 개방)
+
+**1. 당첨 번호 초기화 (JSON API 사용 - 고속)**
+```bash
+curl -X POST "https://clover-wallet-api.onrender.com/api/v1/admin/init/history"
+```
+
+**2. 명당 정보 초기화 (HTML 파싱 - 저속)**
+```bash
+curl -X POST "https://clover-wallet-api.onrender.com/api/v1/admin/init/spots"
+```
