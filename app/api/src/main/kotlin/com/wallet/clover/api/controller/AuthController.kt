@@ -5,20 +5,34 @@ import com.wallet.clover.api.dto.Auth
 import com.wallet.clover.api.service.AuthService
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
     private val authService: AuthService
+    private val jwtDecoder: ReactiveJwtDecoder
 ) {
 
     @PostMapping("/login")
-    suspend fun login(@AuthenticationPrincipal jwt: Jwt): CommonResponse<Auth.LoginResponse> {
-        val userId = jwt.subject
-        val email = jwt.claims["email"] as? String
-        val loginResponse = authService.login(userId, email)
-        return CommonResponse.success(loginResponse)
+    suspend fun login(@RequestHeader("Authorization") authorization: String): CommonResponse<Auth.LoginResponse> {
+        return try {
+            val token = authorization.removePrefix("Bearer ").trim()
+            // Manual verification to capture exact error
+            val jwt = jwtDecoder.decode(token).block() ?: throw IllegalArgumentException("Token decode returned null")
+            
+            val userId = jwt.subject
+            val email = jwt.claims["email"] as? String
+            val loginResponse = authService.login(userId, email)
+            CommonResponse.success(loginResponse)
+        } catch (e: Exception) {
+            // Return specific error for debugging
+             throw org.springframework.web.server.ResponseStatusException(
+                org.springframework.http.HttpStatus.UNAUTHORIZED,
+                "JWT Verification Failed: ${e.message}"
+            )
+        }
     }
     
     /**
