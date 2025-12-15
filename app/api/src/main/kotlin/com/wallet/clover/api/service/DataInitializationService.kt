@@ -12,7 +12,9 @@ import java.time.temporal.ChronoUnit
 @Service
 class DataInitializationService(
     private val winningInfoCrawler: WinningInfoCrawler,
-    private val lottoWinningStoreCrawler: LottoWinningStoreCrawler
+    private val lottoWinningStoreCrawler: LottoWinningStoreCrawler,
+    private val winningInfoRepository: com.wallet.clover.api.repository.winning.WinningInfoRepository,
+    private val lottoWinningStoreRepository: com.wallet.clover.api.repository.lottospot.LottoWinningStoreRepository
 ) {
     private val logger = LoggerFactory.getLogger(DataInitializationService::class.java)
 
@@ -24,16 +26,26 @@ class DataInitializationService(
         val targetEnd = end ?: currentRound
 
         logger.info("Starting Winning Info Initialization from $start to $targetEnd")
+        
+        // 1. Fetch all existing rounds in bulk (DB Check First)
+        val existingRounds = mutableSetOf<Int>()
+        winningInfoRepository.findAllRounds().collect { existingRounds.add(it) }
+        
+        logger.info("Found ${existingRounds.size} existing rounds")
 
-        (start..targetEnd).asFlow().collect { round ->
-            try {
-                winningInfoCrawler.crawlWinningInfo(round)
-                // Gentle delay to avoid being banned
-                delay(100) 
-            } catch (e: Exception) {
-                logger.error("Failed to init round $round", e)
+        // 2. Filter missing rounds
+        (start..targetEnd).asFlow()
+            .filter { !existingRounds.contains(it) } // Skip existing
+            .collect { round ->
+                try {
+                    // API Call
+                    winningInfoCrawler.crawlWinningInfo(round)
+                    // Gentle delay to avoid being banned
+                    delay(50) 
+                } catch (e: Exception) {
+                    logger.error("Failed to init round $round", e)
+                }
             }
-        }
         logger.info("Winning Info Initialization Completed")
     }
 
@@ -43,14 +55,23 @@ class DataInitializationService(
 
         logger.info("Starting Winning Store Initialization from $start to $targetEnd")
 
-        (start..targetEnd).asFlow().collect { round ->
-            try {
-                lottoWinningStoreCrawler.crawlWinningStores(round)
-                delay(200) // Parsing HTML is heavier, more delay
-            } catch (e: Exception) {
-                logger.error("Failed to init stores for round $round", e)
+        // 1. Fetch all existing rounds (Bulk DB Check)
+        val existingRounds = mutableSetOf<Int>()
+        lottoWinningStoreRepository.findAllRounds().collect { existingRounds.add(it) }
+        
+        logger.info("Found ${existingRounds.size} existing store rounds")
+
+        // 2. Filter missing rounds
+        (start..targetEnd).asFlow()
+            .filter { !existingRounds.contains(it) }
+            .collect { round ->
+                try {
+                    lottoWinningStoreCrawler.crawlWinningStores(round)
+                    delay(200) // Parsing HTML is heavier, more delay
+                } catch (e: Exception) {
+                    logger.error("Failed to init stores for round $round", e)
+                }
             }
-        }
         logger.info("Winning Store Initialization Completed")
     }
 

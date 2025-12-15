@@ -13,6 +13,9 @@ interface WinningInfoRepository : CoroutineCrudRepository<WinningInfoEntity, Lon
     
     /** 모든 당첨 정보를 Flow로 반환 (통계 계산용) */
     fun findAllBy(): Flow<WinningInfoEntity>
+
+    @org.springframework.data.r2dbc.repository.Query("SELECT round FROM winning_info")
+    fun findAllRounds(): Flow<Int>
     
     /** 특정 회차 이하의 모든 당첨 정보 조회 */
     fun findByRoundLessThanEqual(round: Int): Flow<WinningInfoEntity>
