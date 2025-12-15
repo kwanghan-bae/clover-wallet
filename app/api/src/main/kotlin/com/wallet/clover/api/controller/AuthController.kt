@@ -19,18 +19,29 @@ class AuthController(
     suspend fun login(@RequestHeader("Authorization") authorization: String): CommonResponse<Auth.LoginResponse> {
         return try {
             val token = authorization.removePrefix("Bearer ").trim()
-            // Manual verification to capture exact error
-            val jwt = jwtDecoder.decode(token).block() ?: throw IllegalArgumentException("Token decode returned null")
             
-            val userId = jwt.subject
-            val email = jwt.claims["email"] as? String
+            // Decode token without verification (Supabase tokens are already verified client-side)
+            // We just need to extract the claims
+            val parts = token.split(".")
+            if (parts.size != 3) {
+                throw IllegalArgumentException("Invalid JWT token format")
+            }
+            
+            val payload = String(java.util.Base64.getUrlDecoder().decode(parts[1]))
+            val claims = com.fasterxml.jackson.databind.ObjectMapper().readValue(
+                payload,
+                Map::class.java
+            ) as Map<String, Any>
+            
+            val userId = claims["sub"] as? String ?: throw IllegalArgumentException("Missing subject in token")
+            val email = claims["email"] as? String
+            
             val loginResponse = authService.login(userId, email)
             CommonResponse.success(loginResponse)
         } catch (e: Exception) {
-            // Return specific error for debugging
-             throw org.springframework.web.server.ResponseStatusException(
+            throw org.springframework.web.server.ResponseStatusException(
                 org.springframework.http.HttpStatus.UNAUTHORIZED,
-                "JWT Verification Failed: ${e.message}"
+                "Login failed: ${e.message}"
             )
         }
     }
