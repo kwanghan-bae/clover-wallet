@@ -1,0 +1,23 @@
+name: Keep Alive Ping
+
+on:
+  schedule:
+    # Run every 10 minutes to beat Render's 15-minute sleep timer
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  ping-server:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Render Backend
+        run: |
+          echo "Pinging https://clover-wallet-api.onrender.com/actuator/health..."
+          statusCode=$(curl -o /dev/null -s -w "%{http_code}\n" https://clover-wallet-api.onrender.com/actuator/health)
+          echo "Status Code: $statusCode"
+          if [ "$statusCode" -ne 200 ]; then
+            echo "Server seems down or unhealthy!"
+            exit 1
+          else
+            echo "Server is awake and healthy."
+          fi
