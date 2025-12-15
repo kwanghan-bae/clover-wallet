@@ -66,7 +66,8 @@ class SecurityConfig(
 
     @Bean
     fun jwtDecoder(): ReactiveJwtDecoder {
-        val secretKey = SecretKeySpec(jwtProperties.secret.toByteArray(StandardCharsets.UTF_8), "HmacSHA256")
+        val secretBytes = java.util.Base64.getDecoder().decode(jwtProperties.secret)
+        val secretKey = SecretKeySpec(secretBytes, "HmacSHA256")
         return NimbusReactiveJwtDecoder.withSecretKey(secretKey)
             .macAlgorithm(MacAlgorithm.HS256)
             .build()
