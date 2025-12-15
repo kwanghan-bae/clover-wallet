@@ -1,6 +1,7 @@
 package com.wallet.clover.api.repository.lottospot
 
 import com.wallet.clover.api.entity.lottospot.LottoWinningStoreEntity
+import kotlinx.coroutines.flow.Flow
 import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.stereotype.Repository
 
