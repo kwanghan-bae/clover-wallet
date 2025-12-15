@@ -31,4 +31,17 @@ class LottoTicketClient {
             html
         }
     }
+
+    suspend fun getJsonByUrl(url: String): String = withContext(Dispatchers.IO) {
+        retry {
+            logger.info("JSON API 호출: {}", url)
+            val json = Jsoup.connect(url)
+                .timeout(TIMEOUT_MS)
+                .ignoreContentType(true)
+                .execute()
+                .body()
+            logger.info("JSON API 호출 성공")
+            json
+        }
+    }
 }
