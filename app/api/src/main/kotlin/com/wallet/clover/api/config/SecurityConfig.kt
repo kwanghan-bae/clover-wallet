@@ -9,9 +9,6 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.security.web.server.SecurityWebFilterChain
-import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
-import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher
-import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher
 import java.nio.charset.StandardCharsets
 import javax.crypto.spec.SecretKeySpec
 
@@ -27,17 +24,6 @@ class SecurityConfig(
 
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
-        // Define public paths that don't need JWT validation
-        val publicPaths = OrServerWebExchangeMatcher(
-            PathPatternParserServerWebExchangeMatcher("/api/v1/auth/**"),
-            PathPatternParserServerWebExchangeMatcher("/actuator/health/**"),
-            PathPatternParserServerWebExchangeMatcher("/actuator/info/**"),
-            PathPatternParserServerWebExchangeMatcher("/webjars/**"),
-            PathPatternParserServerWebExchangeMatcher("/v3/api-docs/**"),
-            PathPatternParserServerWebExchangeMatcher("/swagger-ui.html"),
-            PathPatternParserServerWebExchangeMatcher("/api/v1/admin/**")
-        )
-        
         return http
             .csrf { it.disable() }
             .headers { headers ->
@@ -47,6 +33,7 @@ class SecurityConfig(
                 headers.hsts { it.includeSubdomains(true).maxAge(java.time.Duration.ofDays(365)) }
             }
             .authorizeExchange {
+                // Public Endpoints - JWT validation failures are ignored for these
                 it.pathMatchers(
                     "/api/v1/auth/**",
                     "/actuator/health/**",
@@ -56,6 +43,7 @@ class SecurityConfig(
                     "/swagger-ui.html",
                     "/api/v1/admin/**"
                 ).permitAll()
+                // All other endpoints require authentication
                 it.anyExchange().authenticated()
             }
             .addFilterBefore(jwtBlacklistFilter, SecurityWebFiltersOrder.AUTHENTICATION)
@@ -63,8 +51,6 @@ class SecurityConfig(
                 oauth2.jwt { jwt ->
                     jwt.jwtDecoder(jwtDecoder())
                 }
-                // Only apply JWT validation to non-public paths
-                oauth2.securityMatcher(NegatedServerWebExchangeMatcher(publicPaths))
             }
             .cors { it.configurationSource(corsConfigurationSource()) }
             .build()
