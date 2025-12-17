@@ -71,9 +71,9 @@ class SecurityConfig(
     fun jwtDecoder(): ReactiveJwtDecoder {
         // Supabase JWT Secret은 평문 문자열이므로 Base64 디코딩 없이 직접 사용
         val secretBytes = jwtProperties.secret.toByteArray(StandardCharsets.UTF_8)
-        val secretKey = SecretKeySpec(secretBytes, "HmacSHA256")
+        val secretKey = SecretKeySpec(secretBytes, "HmacSHA512")
         return NimbusReactiveJwtDecoder.withSecretKey(secretKey)
-            .macAlgorithm(MacAlgorithm.HS256)
+            .macAlgorithm(MacAlgorithm.HS512)  // HS256 -> HS512로 변경 (JwtService와 일치)
             .build()
     }
 }
