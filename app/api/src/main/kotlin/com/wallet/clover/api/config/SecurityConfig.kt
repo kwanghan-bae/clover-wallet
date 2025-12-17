@@ -51,6 +51,24 @@ class SecurityConfig(
                 oauth2.jwt { jwt ->
                     jwt.jwtDecoder(jwtDecoder())
                 }
+                // Configure to handle authentication failures gracefully for public endpoints
+                oauth2.authenticationEntryPoint { exchange, _ ->
+                    // Check if this is a public endpoint
+                    val path = exchange.request.path.toString()
+                    val isPublicPath = path.startsWith("/api/v1/auth/") || 
+                                      path.startsWith("/actuator/health") ||
+                                      path.startsWith("/actuator/info") ||
+                                      path.startsWith("/api/v1/admin/")
+                    
+                    if (isPublicPath) {
+                        // For public paths, don't fail on JWT errors - let the request through
+                        reactor.core.publisher.Mono.empty()
+                    } else {
+                        // For protected paths, return 401
+                        exchange.response.statusCode = org.springframework.http.HttpStatus.UNAUTHORIZED
+                        exchange.response.setComplete()
+                    }
+                }
             }
             .cors { it.configurationSource(corsConfigurationSource()) }
             .build()
