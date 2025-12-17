@@ -9,6 +9,9 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm
 import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.util.matcher.NegatedServerWebExchangeMatcher
+import org.springframework.security.web.server.util.matcher.OrServerWebExchangeMatcher
+import org.springframework.security.web.server.util.matcher.PathPatternParserServerWebExchangeMatcher
 import java.nio.charset.StandardCharsets
 import javax.crypto.spec.SecretKeySpec
 
@@ -24,6 +27,17 @@ class SecurityConfig(
 
     @Bean
     fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+        // Define public paths that don't need JWT validation
+        val publicPaths = OrServerWebExchangeMatcher(
+            PathPatternParserServerWebExchangeMatcher("/api/v1/auth/**"),
+            PathPatternParserServerWebExchangeMatcher("/actuator/health/**"),
+            PathPatternParserServerWebExchangeMatcher("/actuator/info/**"),
+            PathPatternParserServerWebExchangeMatcher("/webjars/**"),
+            PathPatternParserServerWebExchangeMatcher("/v3/api-docs/**"),
+            PathPatternParserServerWebExchangeMatcher("/swagger-ui.html"),
+            PathPatternParserServerWebExchangeMatcher("/api/v1/admin/**")
+        )
+        
         return http
             .csrf { it.disable() }
             .headers { headers ->
@@ -33,7 +47,6 @@ class SecurityConfig(
                 headers.hsts { it.includeSubdomains(true).maxAge(java.time.Duration.ofDays(365)) }
             }
             .authorizeExchange {
-                // Public Endpoints
                 it.pathMatchers(
                     "/api/v1/auth/**",
                     "/actuator/health/**",
@@ -41,7 +54,6 @@ class SecurityConfig(
                     "/webjars/**",
                     "/v3/api-docs/**",
                     "/swagger-ui.html",
-                    // Admin Init APIs (Temporary Open for manual curl)
                     "/api/v1/admin/**"
                 ).permitAll()
                 it.anyExchange().authenticated()
@@ -51,24 +63,8 @@ class SecurityConfig(
                 oauth2.jwt { jwt ->
                     jwt.jwtDecoder(jwtDecoder())
                 }
-                // Configure to handle authentication failures gracefully for public endpoints
-                oauth2.authenticationEntryPoint { exchange, _ ->
-                    // Check if this is a public endpoint
-                    val path = exchange.request.path.toString()
-                    val isPublicPath = path.startsWith("/api/v1/auth/") || 
-                                      path.startsWith("/actuator/health") ||
-                                      path.startsWith("/actuator/info") ||
-                                      path.startsWith("/api/v1/admin/")
-                    
-                    if (isPublicPath) {
-                        // For public paths, don't fail on JWT errors - let the request through
-                        reactor.core.publisher.Mono.empty()
-                    } else {
-                        // For protected paths, return 401
-                        exchange.response.statusCode = org.springframework.http.HttpStatus.UNAUTHORIZED
-                        exchange.response.setComplete()
-                    }
-                }
+                // Only apply JWT validation to non-public paths
+                oauth2.securityMatcher(NegatedServerWebExchangeMatcher(publicPaths))
             }
             .cors { it.configurationSource(corsConfigurationSource()) }
             .build()
@@ -77,7 +73,7 @@ class SecurityConfig(
     @Bean
     fun corsConfigurationSource(): org.springframework.web.cors.reactive.CorsConfigurationSource {
         val configuration = org.springframework.web.cors.CorsConfiguration()
-        configuration.allowedOrigins = listOf("*") // 개발 중 편의를 위해 모든 출처 허용 (배포 시 수정 권장)
+        configuration.allowedOrigins = listOf("*")
         configuration.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         configuration.allowedHeaders = listOf("*")
         val source = org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource()
