@@ -3,6 +3,10 @@ package com.wallet.clover.api.dto
 import com.wallet.clover.api.entity.user.UserEntity
 
 abstract class Auth {
+    data class LoginRequest(
+        val supabaseToken: String
+    )
+    
     data class RefreshRequest(
         val refreshToken: String
     )

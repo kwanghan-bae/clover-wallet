@@ -16,12 +16,11 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    suspend fun login(@RequestHeader("Authorization") authorization: String): CommonResponse<Auth.LoginResponse> {
+    suspend fun login(@RequestBody request: Auth.LoginRequest): CommonResponse<Auth.LoginResponse> {
         return try {
-            val token = authorization.removePrefix("Bearer ").trim()
+            val token = request.supabaseToken
             
             // Decode token without verification (Supabase tokens are already verified client-side)
-            // We just need to extract the claims
             val parts = token.split(".")
             if (parts.size != 3) {
                 throw IllegalArgumentException("Invalid JWT token format")
