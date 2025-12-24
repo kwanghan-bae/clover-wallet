@@ -3,7 +3,6 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { Trash2, Calendar } from 'lucide-react-native';
 import { LottoBall } from './LottoBall';
 import { LottoRecord } from '../../api/types/lotto';
-import { cn } from '../../utils/cn';
 
 interface HistoryItemProps {
   record: LottoRecord;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Image } from 'expo-image';
 import { Heart, MessageSquare, Share2 } from 'lucide-react-native';
 import { Post } from '../../api/types/community';
 

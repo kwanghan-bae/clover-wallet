@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import { GlassCard } from '../../components/ui/GlassCard';
-import { PrimaryButton } from '../../components/ui/PrimaryButton';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { 
@@ -18,7 +17,7 @@ import {
 export default function HomeScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  const [drawInfo, setDrawInfo] = useState({
+  const [drawInfo] = useState({
     currentRound: 1103,
     daysLeft: 3,
     hoursLeft: 4,

@@ -6,9 +6,7 @@ import {
   SafeAreaView, 
   TouchableOpacity, 
   Animated,
-  Alert,
-  Modal,
-  TextInput
+  Alert
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { 
@@ -26,7 +24,6 @@ import {
   Save,
   ChevronLeft
 } from 'lucide-react-native';
-import { PrimaryButton } from '../components/ui/PrimaryButton';
 
 const METHODS = [
   { id: 'DREAM', title: '꿈 해몽', subtitle: '밤에 꾼 꿈을 분석해요', color: '#7E57C2', icon: <Moon size={28} color="white" /> },

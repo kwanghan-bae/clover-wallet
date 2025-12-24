@@ -5,16 +5,12 @@ import {
   ScrollView, 
   SafeAreaView, 
   TouchableOpacity, 
-  Image,
-  FlatList,
   Alert
 } from 'react-native';
 import { GlassCard } from '../../components/ui/GlassCard';
 import { 
   Settings, 
-  User, 
   Trophy, 
-  TrendingUp, 
   Bell, 
   ShieldCheck, 
   Info, 

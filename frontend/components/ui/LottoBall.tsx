@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { Text } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring, withDelay } from 'react-native-reanimated';
 import { cn } from '../../utils/cn';
 
@@ -15,7 +15,7 @@ export const LottoBall = ({ number, size = 'md', delay = 0, className }: LottoBa
 
   useEffect(() => {
     scale.value = withDelay(delay, withSpring(1, { damping: 12 }));
-  }, [number]);
+  }, [number, delay, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Edit3, MessageCircle, Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -8,7 +8,7 @@ import { Post } from '../../api/types/community';
 
 export default function CommunityScreen() {
   const router = useRouter();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchPosts = async () => {

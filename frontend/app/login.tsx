@@ -5,15 +5,12 @@ import {
   SafeAreaView, 
   TouchableOpacity, 
   Image, 
-  Dimensions,
   ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Clover } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const router = useRouter();

@@ -32,7 +32,7 @@ export const unwrapCommonResponse = async (response: Response): Promise<Response
           headers: response.headers,
         });
       }
-    } catch (e) {
+    } catch {
       // JSON parsing or validation failed
     }
   }

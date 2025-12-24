@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, FlatList } from 'react-native';
 import CustomMapView from '../../components/ui/CustomMapView';
 import * as Location from 'expo-location';
-import { Map as MapIcon, List as ListIcon, MapPin, Search, Navigation, Filter, ChevronRight, LocateFixed } from 'lucide-react-native';
+import { Map as MapIcon, List as ListIcon, MapPin, ChevronRight, LocateFixed } from 'lucide-react-native';
 import { LottoSpot, Region } from '../../api/types/spots';
 
 const REGIONS = [
@@ -49,7 +49,7 @@ export default function LuckySpotsScreen() {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [spots, setSpots] = useState<LottoSpot[]>(MOCK_SPOTS);
+  const [spots] = useState<LottoSpot[]>(MOCK_SPOTS);
 
   const filteredSpots = selectedRegion === '전체' 
     ? spots 

@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
-import { View, ViewProps, Platform } from 'react-native';
+import React from 'react';
+import { View, ViewProps } from 'react-native';
 import { BlurView } from 'expo-blur';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withDelay } from 'react-native-reanimated';
-import { cn } from '../../utils/cn';
 
 interface GlassCardProps extends ViewProps {
   intensity?: number;

@@ -17,7 +17,7 @@ describe('PrimaryButton', () => {
   });
 
   test('shows activity indicator when isLoading is true', () => {
-    const { queryByText, getByTestId } = render(
+    const { queryByText } = render(
       <PrimaryButton label="Loading" onPress={() => {}} isLoading={true} />
     );
     
