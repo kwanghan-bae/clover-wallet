@@ -38,6 +38,14 @@
 
 
 
+- **빌드 최적화**: Render Blueprints에 \`buildFilter\`를 적용하여 backend/ 혹은 frontend/ 디렉토리 내 실제 변경이 발생한 서비스만 선별적으로 빌드하도록 최적화함.
+
+
+
+
+
+
+
 
 
 

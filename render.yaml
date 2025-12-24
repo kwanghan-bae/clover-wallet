@@ -6,6 +6,10 @@ services:
     region: singapore
     plan: free
     rootDir: backend
+    buildFilter:
+      paths:
+        - backend/**
+        - render.yaml
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
@@ -22,9 +26,13 @@ services:
     env: static
     region: singapore
     plan: free
+    rootDir: frontend
+    buildFilter:
+      paths:
+        - frontend/**
+        - render.yaml
     
     # 서비스 소스 루트 디렉토리 설정
-    rootDir: frontend
     
     # NPM 7 이상의 버전 충돌을 방지하고 Expo Web Export를 실행합니다.
     buildCommand: npm install --legacy-peer-deps && npx expo export --platform web
