@@ -1,4 +1,4 @@
-# {Project Name} Project Rules & Contracts (v8.1)
+# Clover Wallet Project Rules & Contracts (v8.1)
 
 이 문서는 프로젝트 수행 시 준수해야 하는 **하드 규칙**을 정의합니다.
 

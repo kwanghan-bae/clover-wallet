@@ -1,4 +1,4 @@
-# {Project Name} - Architecture Decision Records (ADR)
+# Clover Wallet - Architecture Decision Records (ADR)
 
 이 문서는 프로젝트의 중요한 설계 결정과 그 이유를 기록합니다.
 
