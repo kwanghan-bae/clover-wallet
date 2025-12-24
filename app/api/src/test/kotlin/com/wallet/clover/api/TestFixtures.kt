@@ -19,13 +19,15 @@ object TestFixtures {
         ssoQualifier: String = "test-sso",
         locale: String = "en",
         age: Int = 30,
-        fcmToken: String? = null
+        fcmToken: String? = null,
+        badges: String? = null
     ) = UserEntity(
         id = id,
         ssoQualifier = ssoQualifier,
         locale = locale,
         age = age,
         fcmToken = fcmToken,
+        badges = badges,
         createdAt = LocalDateTime.now().withNano(0),
         updatedAt = LocalDateTime.now().withNano(0)
     )

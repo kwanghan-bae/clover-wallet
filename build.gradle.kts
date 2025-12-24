@@ -24,6 +24,7 @@ plugins {
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
     id("org.jlleitschuh.gradle.ktlint") version "11.3.1"
+    id("jacoco") // Jacoco 플러그인 추가
 }
 
 repositories {
@@ -35,6 +36,7 @@ subprojects {
     apply(plugin = "io.spring.dependency-management")
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+    apply(plugin = "jacoco") // 서브모듈에 Jacoco 적용
 
     group = "com.clover.wallet"
 
@@ -87,6 +89,15 @@ subprojects {
         }
         test {
             useJUnitPlatform()
+            finalizedBy(jacocoTestReport) // 테스트 후 리포트 생성
+        }
+        
+        jacocoTestReport {
+            dependsOn(test)
+            reports {
+                xml.required.set(true)
+                html.required.set(true)
+            }
         }
     }
 }

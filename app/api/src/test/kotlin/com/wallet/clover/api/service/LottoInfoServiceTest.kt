@@ -14,11 +14,12 @@ import java.time.ZoneId
 class LottoInfoServiceTest {
 
     private val winningInfoRepository: WinningInfoRepository = mockk()
+    private val winningInfoCrawler: WinningInfoCrawler = mockk()
     // Fixed time: 2023-10-25 (Wednesday) 10:00:00 UTC
     private val fixedInstant = Instant.parse("2023-10-25T10:00:00Z")
     private val clock = Clock.fixed(fixedInstant, ZoneId.of("UTC"))
     
-    private val lottoInfoService = LottoInfoService(winningInfoRepository, clock)
+    private val lottoInfoService = LottoInfoService(winningInfoRepository, winningInfoCrawler, clock)
 
     @Test
     fun `getNextDrawInfo should calculate correct next draw date and round`() = runTest {
