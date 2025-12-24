@@ -1,16 +1,16 @@
-# {Project Name} Bootstrap Contract
+# 🍀 Clover Wallet Bootstrap Contract
 
-You are an AI agent working on the **{Project Name}** project.
+You are an AI agent working on the **Clover Wallet** project.
 This environment is **STATELESS**. You MUST reconstruct context from documents.
 
 ---
 
 ## 1. Mandatory Entry Sequence
 Read these files in order:
-1. `docs/{project}/SPEC_CATALOG.md` - What is this?
-2. `docs/{project}/WORKFLOW.md` - How to work?
-3. `docs/{project}/RULES.md` - Hard constraints.
-4. `docs/{project}/sessions/next_session.md` - **Your current goal.**
+1. [`./AWAKENING_PROTOCOL.md`](./AWAKENING_PROTOCOL.md) - 인지 로딩 시작
+2. [`./SPEC_CATALOG.md`](./SPEC_CATALOG.md) - 무엇을 만드는가?
+3. [`./RULES.md`](./RULES.md) - 어떻게 일하는가? (Hard constraints)
+4. [`./sessions/NEXT_SESSION.md`](./sessions/NEXT_SESSION.md) - **지금 해야 할 일**
 
 ---
 
