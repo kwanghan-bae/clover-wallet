@@ -5,7 +5,7 @@ import { HistoryItem } from '../../components/ui/HistoryItem';
 import { LottoRecord } from '../../api/types/lotto';
 import { loadItem, StorageKeys, removeFromItemArray } from '../../utils/storage';
 import { QrCode, Plus } from 'lucide-react-native';
-import { EmptyIllustration } from '../../components/ui/EmptyIllustration';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function HistoryScreen() {
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function HistoryScreen() {
     <SafeAreaView className="flex-1 bg-[#F5F7FA]">
       {/* Header */}
       <View className="flex-row justify-between items-center px-5 py-4 bg-transparent">
-        <Text className="text-xl font-extrabold text-[#1A1A1A]">내 로또 내역</Text>
+        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">내 로또 내역</Text>
         <TouchableOpacity onPress={() => router.push('/scan')}>
           <QrCode size={24} color="#1A1A1A" />
         </TouchableOpacity>
@@ -48,16 +48,26 @@ export default function HistoryScreen() {
           )}
           ListEmptyComponent={
             <View className="items-center justify-center py-32">
-              <EmptyIllustration color="#BDBDBD" />
-              <Text className="text-lg font-bold text-[#1A1A1A] mt-8">저장된 로또 내역이 없습니다</Text>
-              <Text className="text-gray-500 mt-2 text-center">번호를 생성하고 저장해보세요!</Text>
-              
-              <TouchableOpacity 
+              <View className="w-24 h-24 bg-[#BDBDBD]/10 rounded-full items-center justify-center mb-8">
+                <Plus size={48} color="rgba(189, 189, 189, 0.4)" />
+              </View>
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A]">저장된 로또 내역이 없습니다</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] mt-2 text-center">번호를 생성하고 저장해보세요!</Text>
+
+              <TouchableOpacity
                 onPress={() => router.push('/number-generation')}
-                className="bg-primary px-8 py-4 rounded-full mt-10 shadow-lg flex-row items-center"
+                activeOpacity={0.8}
+                className="mt-10"
               >
-                <Plus size={20} color="white" />
-                <Text className="text-white font-bold text-base ml-2">번호 생성하기</Text>
+                <LinearGradient
+                  colors={['#4CAF50', '#388E3C']}
+                  className="px-8 py-3.5 rounded-full shadow-lg"
+                >
+                  <View className="flex-row items-center">
+                    <Plus size={20} color="white" />
+                    <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-base ml-2">번호 생성하기</Text>
+                  </View>
+                </LinearGradient>
               </TouchableOpacity>
             </View>
           }

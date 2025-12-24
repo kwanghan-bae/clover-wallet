@@ -6,7 +6,7 @@ import { Map as MapIcon, List as ListIcon, MapPin, ChevronRight, LocateFixed } f
 import { LottoSpot, Region } from '../../api/types/spots';
 
 const REGIONS = [
-  '전체', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종', 
+  '전체', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종',
   '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
 ];
 
@@ -51,8 +51,8 @@ export default function LuckySpotsScreen() {
   });
   const [spots] = useState<LottoSpot[]>(MOCK_SPOTS);
 
-  const filteredSpots = selectedRegion === '전체' 
-    ? spots 
+  const filteredSpots = selectedRegion === '전체'
+    ? spots
     : spots.filter(spot => spot.address.includes(selectedRegion));
 
   const moveToCurrentLocation = async () => {
@@ -81,13 +81,13 @@ export default function LuckySpotsScreen() {
 
       {/* Region Filter - Horizontal Scroll */}
       <View className="bg-white py-3">
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false} 
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
           contentContainerStyle={{ paddingHorizontal: 20, gap: 8 }}
         >
           {REGIONS.map(r => (
-            <TouchableOpacity 
+            <TouchableOpacity
               key={r}
               onPress={() => setSelectedRegion(r)}
               className={`px-4 py-2 rounded-full ${selectedRegion === r ? 'bg-primary' : 'bg-gray-100 border border-gray-200'}`}
@@ -137,23 +137,34 @@ export default function LuckySpotsScreen() {
 
 function SpotListItem({ spot }: { spot: LottoSpot }) {
   return (
-    <View className="bg-white rounded-2xl p-4 shadow-sm border border-gray-50 flex-row items-center">
-      <View className="bg-primary/10 p-3 rounded-xl mr-4">
+    <View
+      className="bg-white rounded-[24px] p-5 mb-1 flex-row items-center"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 16,
+        elevation: 2,
+      }}
+    >
+      <View className="bg-[#4CAF50]/10 p-4 rounded-[18px] mr-4">
         <MapPin size={24} color="#4CAF50" />
       </View>
       <View className="flex-1">
-        <Text className="text-base font-bold text-[#1A1A1A]">{spot.name}</Text>
-        <Text className="text-gray-500 text-[13px] mt-1" numberOfLines={1}>{spot.address}</Text>
-        <View className="flex-row gap-2 mt-2">
-          <View className="bg-secondary/10 px-2 py-1 rounded-md border border-secondary/30">
-            <Text className="text-secondary text-[11px] font-bold">1등 {spot.winCount1st}회</Text>
+        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[17px] text-[#1A1A1A]">{spot.name}</Text>
+        <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[13px] mt-1" numberOfLines={1}>
+          {spot.address}
+        </Text>
+        <View className="flex-row gap-2 mt-3">
+          <View className="bg-[#FFC107]/10 px-2.5 py-1.5 rounded-lg border border-[#FFC107]/30">
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#FFC107] text-[11px]">1등 {spot.winCount1st}회</Text>
           </View>
-          <View className="bg-blue-50 px-2 py-1 rounded-md border border-blue-100">
-            <Text className="text-blue-600 text-[11px] font-bold">2등 {spot.winCount2nd}회</Text>
+          <View className="bg-[#BDBDBD]/10 px-2.5 py-1.5 rounded-lg border border-[#BDBDBD]/30">
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#757575] text-[11px]">2등 {spot.winCount2nd}회</Text>
           </View>
         </View>
       </View>
-      <ChevronRight size={20} color="#BDBDBD" />
+      <ChevronRight size={20} color="#E0E0E0" />
     </View>
   );
 }

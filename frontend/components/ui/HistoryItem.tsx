@@ -10,26 +10,43 @@ interface HistoryItemProps {
 }
 
 export const HistoryItem = ({ record, onDelete }: HistoryItemProps) => {
+  const dateStr = formatDate(record.createdAt);
+
   return (
-    <View className="bg-white rounded-2xl p-4 mb-4 border border-gray-100 shadow-sm">
-      <View className="flex-row justify-between items-center mb-3">
+    <View
+      className="bg-white rounded-[24px] p-5 mb-5"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.04,
+        shadowRadius: 16,
+        elevation: 2,
+      }}
+    >
+      <View className="flex-row justify-between items-center mb-4">
         <View className="flex-row items-center gap-2">
-          <View className="bg-primary/10 px-2 py-1 rounded">
-            <Text className="text-primary font-bold text-xs">Round {record.round}</Text>
+          <View className="bg-[#4CAF50]/10 px-3 py-1.5 rounded-xl">
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-[12px]">
+              {record.round}회차
+            </Text>
           </View>
-          <View className="flex-row items-center">
-            <Calendar size={12} color="#757575" />
-            <Text className="text-text-light text-xs ml-1">
-              {new Date(record.createdAt).toLocaleDateString()}
+          <View className="flex-row items-center ml-1">
+            <Calendar size={14} color="#BDBDBD" />
+            <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[12px] ml-1.5">
+              {dateStr}
             </Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => onDelete(record.id)}>
-          <Trash2 size={18} color="#FF7272" />
+        <TouchableOpacity
+          onPress={() => onDelete(record.id)}
+          className="p-1"
+          activeOpacity={0.6}
+        >
+          <Trash2 size={18} color="#FFCDCD" />
         </TouchableOpacity>
       </View>
-      
-      <View className="flex-row justify-between">
+
+      <View className="flex-row justify-between items-center px-1">
         {record.numbers.map((num, i) => (
           <LottoBall key={i} number={num} size="sm" />
         ))}
@@ -37,3 +54,15 @@ export const HistoryItem = ({ record, onDelete }: HistoryItemProps) => {
     </View>
   );
 };
+
+function formatDate(date: string | Date): string {
+  try {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, '0');
+    const day = d.getDate().toString().padStart(2, '0');
+    return `${year}.${month}.${day}`;
+  } catch (e) {
+    return String(date);
+  }
+}
