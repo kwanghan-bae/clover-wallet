@@ -23,13 +23,13 @@ services:
     region: singapore
     plan: free
     
-    # [핵심] 서비스의 기준 디렉토리를 frontend로 설정
+    # 서비스 소스 루트 디렉토리 설정
     rootDir: frontend
     
-    # 빌드 명령어: 의존성 설치 후 웹 플랫폼용으로 export
-    buildCommand: npm install && npx expo export --platform web
+    # NPM 7 이상의 버전 충돌을 방지하고 Expo Web Export를 실행합니다.
+    buildCommand: npm install --legacy-peer-deps && npx expo export --platform web
     
-    # 배포 디렉토리: Expo export 결과물 위치
+    # Expo 배포용 정적 파일 생성 경로입니다.
     publishPath: dist
     
     # 자동 배포

@@ -11,5 +11,23 @@
 - `/frontend`: Expo-based RN project using NativeWind.
 
 ## 3. 주요 API 및 정합성
+
 - JWT 기반 인증 (Supabase Auth 연동)
+
 - REST API 규격 준수
+
+
+
+## 4. 패키지 관리 및 운영 전략
+
+
+
+- **Frontend (RN)**: Expo 54 환경에서 패키지 설치 시 발생할 수 있는 호환성 경고를 해결하기 위해 \`npm install --legacy-peer-deps\` 명령어를 사용하며, 이를 \`render.yaml\` 빌드 설정에 공식 반영함.
+
+
+
+- **버전 고정**: \`react\` 패키지를 \`19.2.3\` 버전으로 명시하여 테스트 라이브러리와의 실행 정합성을 유지함.
+
+
+
+
