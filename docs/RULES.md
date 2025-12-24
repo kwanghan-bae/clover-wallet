@@ -1,4 +1,4 @@
-# Clover Wallet Project Rules & Contracts (v8.1)
+# {Project Name} Project Rules & Contracts (v8.1)
 
 이 문서는 프로젝트 수행 시 준수해야 하는 **하드 규칙**을 정의합니다.
 
@@ -45,8 +45,9 @@
 
 ---
 
-## 2. 테스트 및 커버리지 (Quality Assurance)
+## 2. 테스트 및 빌드 무결성 (Quality & Build Assurance)
 - **TDD 강제**: 모든 로직은 테스트와 함께 구현되어야 합니다. (Red-Green-Refactor)
+- **Build Guard**: 커밋 전 **로컬 배포 빌드 검증**이 필수입니다. 빌드 실패 시 해당 코드는 '환각'으로 간주되어 커밋이 차단됩니다.
 - **커버리지 목표**: 비즈니스 로직 100% 달성 지향.
 - **산출물 관리**: 커버리지 리포트는 절대 Git에 커밋하지 않습니다. (.gitignore 필수)
 
