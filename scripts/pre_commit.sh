@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# 🛡️ SOVEREIGN GUARD PRE-COMMIT V6.5 (Ultra-Strict Edition)
-# Now catches hidden errors in test logs even if exit code is 0.
+# 🛡️ SOVEREIGN GUARD PRE-COMMIT V6.5 (Ultra-Strict Polyglot)
+# Features: Self-exclusion, Language-specific linters, Hidden error detection.
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -11,9 +11,10 @@ NC='\033[0m'
 echo -e "${GREEN}🔒 [Guard] Starting intensive quality audit...${NC}"
 
 # 1. AI Laziness & Hallucination Guard
-CHECK_RE="\/\/[[:space:]]*\.\.\.|#[[:space:]]*\.\.\.|\/\*[:space:]]*\.\.\.*\*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|\(중략\)|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
-STAGED_FILES_LIST=$(git diff --cached --name-only | grep -v "scripts/pre_commit.sh" || true)
+P1='//'; P2=' ...'; P3='#'; P4='(중략)'
+CHECK_RE="\/\/[[:space:]]*\.\.\.|#[[:space:]]*\.\.\.|\/\*[:space:]]*\.\.\.*\*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
 
+STAGED_FILES_LIST=$(git diff --cached --name-only | grep -v "scripts/pre_commit.sh" || true)
 if [ -n "$STAGED_FILES_LIST" ]; then
     if git diff --cached -- $STAGED_FILES_LIST | grep "^+" | grep -Ei "$CHECK_RE" > /dev/null; then
         echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected in NEW code!${NC}"
@@ -22,7 +23,7 @@ if [ -n "$STAGED_FILES_LIST" ]; then
     fi
 fi
 
-# 2. Path Identification
+# 2. File & Project Identification
 STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM)
 HAS_KOTLIN=$(echo "$STAGED_ALL" | grep -E "\.kt$" || true)
 HAS_TS=$(echo "$STAGED_ALL" | grep -E "\.(ts|tsx)$" || true)
@@ -34,22 +35,24 @@ if ([ -n "$HAS_KOTLIN" ] || [ -n "$HAS_TS" ]) && [ -z "$HAS_DOCS" ]; then
     exit 1
 fi
 
-# 4. Specific Validation
-# 4.1 Kotlin
+# 4. Dedicated Validation
+# 4.1 Kotlin / Java
 if [ -n "$HAS_KOTLIN" ] && [ -f "backend/gradlew" ]; then
-    echo "🧪 Verifying Backend (Kotlin)..."
+    echo "🧪 Verifying Backend (Kotlin + ktlint)..."
     (cd backend && ./gradlew ktlintCheck test --quiet) || exit 1
 fi
 
-# 4.2 Frontend (RN/TS)
+# 4.2 React Native / JS / TS (Hidden Error Detection)
 if [ -n "$HAS_TS" ] && [ -f "frontend/package.json" ]; then
-    echo "🧪 Verifying Frontend (React Native)..."
+    echo "🧪 Verifying Frontend (React Native + ESLint)..."
     cd frontend
+    
+    # Lint
     if npm run | grep -q "lint"; then
         npm run lint || echo -e "${YELLOW}⚠️ Lint failed, but proceeding...${NC}"
     fi
     
-    # [강화] 테스트 로그 내 'ERROR:' 또는 'Failed to collect coverage' 탐지
+    # [핵심 지능] 테스트 로그 내 'ERROR:' 또는 'Failed' 탐지
     TEST_LOG=$(npm test -- --watchAll=false 2>&1)
     TEST_EXIT_CODE=$?
     echo "$TEST_LOG"
@@ -61,4 +64,4 @@ if [ -n "$HAS_TS" ] && [ -f "frontend/package.json" ]; then
     cd ..
 fi
 
-echo -e "${GREEN}✅ [Guard] All checks passed. Integrity is absolute.${NC}"
+echo -e "${GREEN}✅ [Guard] All specific checks passed. Quality is absolute.${NC}"

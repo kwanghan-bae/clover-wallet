@@ -10,9 +10,12 @@ export interface LoginResponse {
 }
 
 export const authApi = {
-  login: async (email: string, password: string): Promise<LoginResponse> => {
+  /**
+   * 로그인 (Supabase 토큰 전달 방식)
+   */
+  login: async (supabaseToken: string): Promise<LoginResponse> => {
     return await apiClient.post('auth/login', {
-      json: { email, password }
+      json: { supabaseToken }
     }).json();
   },
   

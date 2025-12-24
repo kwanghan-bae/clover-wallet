@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1766557646283" clover="3.2.0">
-  <project timestamp="1766557646283" name="All files">
+<coverage generated="1766557776553" clover="3.2.0">
+  <project timestamp="1766557776553" name="All files">
     <metrics statements="78" coveredstatements="27" conditionals="30" coveredconditionals="10" methods="16" coveredmethods="7" elements="124" coveredelements="44" complexity="0" loc="78" ncloc="78" packages="1" files="5" classes="5"/>
     <file name="cn.ts" path="/Users/joel/Desktop/git/clover-wallet/frontend/utils/cn.ts">
       <metrics statements="4" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
