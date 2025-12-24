@@ -12,7 +12,9 @@
 ### 0.1 문서 최신화 규칙 (MANDATORY)
 1.  **Spec-First**: 새로운 API나 로직을 추가하기 전, `SPEC_CATALOG.md`나 `TECHNICAL_SPEC.md`를 먼저 수정합니다.
 2.  **README Sync**: 프로젝트 진입점은 항상 최신 상태를 유지해야 합니다.
-3.  **ADR Record**: 설계의 근거가 변한 경우 반드시 `ADR.md`를 작성합니다.
+### 0.2 실패로부터의 학습 (MANDATORY)
+1.  **Failure Archiving**: 빌드 실패, 런타임 에러, 혹은 설계 결함 등 중대한 실수가 발생하면 즉시 `LESSONS_LEARNED.md`에 기록합니다.
+2.  **Anti-Recurrence**: 새로운 작업을 시작하기 전 `LESSONS_LEARNED.md`를 복기하여 동일한 실수가 반복되지 않도록 행동 전략을 수립합니다.
 
 ---
 

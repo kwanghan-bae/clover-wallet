@@ -23,9 +23,10 @@
 - **Build Guard**: `scripts/pre_commit.sh`를 실행하여 린트, 테스트, 빌드 무결성을 확인합니다.
 - **Doc Sync**: 소스 코드가 변했다면 반드시 관련 문서도 함께 수정합니다.
 
-### 4단계: 기록 및 종료 (Archiving)
-- **Work Log**: `docs/work_logs/`에 오늘의 성과를 기록합니다.
-- **Next Session**: `docs/sessions/next_session.md`를 업데이트하여 다음 주자에게 컨텍스트를 전달합니다.
+### 5단계: 기록 (Archive)
+- `docs/sessions/session_XXXX.md`를 작성하여 이번 세션의 활동과 배운 점을 기록합니다.
+- **Critical/Recurring Mistakes**: 작업 중 발생한 크리티컬한 에러나 반복되는 실수는 반드시 `docs/LESSONS_LEARNED.md`에 원인과 방지 전략을 기록해야 합니다.
+- `next_session.md`를 업데이트하여 다음 AI 주자에게 목표를 넘깁니다.
 
 ---
 
