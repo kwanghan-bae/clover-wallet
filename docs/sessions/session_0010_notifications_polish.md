@@ -21,7 +21,7 @@
 
 ## 📈 Outcomes
 - 사용자 참여를 유도할 수 있는 알림 인프라.
-- Flutter 특유의 부드러움을 재현한 고품질 RN UI.
+- React Native 특유의 부드러움을 재현한 고품질 RN UI.
 
 ## ⏭️ Next Steps
 - **Session 0011**: TDD & Quality Assurance (Jest Setup).

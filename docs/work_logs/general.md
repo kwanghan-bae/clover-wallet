@@ -2,13 +2,13 @@
 
 ## 1. 작업 개요
 
-Clover Lotto 기획서를 바탕으로 Flutter 앱과 백엔드 API의 MVP(최소 기능 제품) 버전을 개발했습니다. 작업은 기능 단위로 나누어 진행되었으며, 각 단계마다 빌드 검증 및 커밋이 이루어졌습니다.
+Clover Lotto 기획서를 바탕으로 React Native 앱과 백엔드 API의 MVP(최소 기능 제품) 버전을 개발했습니다. 작업은 기능 단위로 나누어 진행되었으며, 각 단계마다 빌드 검증 및 커밋이 이루어졌습니다.
 
 ---
 
 ## 2. 상세 작업 내역
 
-### 2.1. Flutter 앱 초기 설정 및 구조화 (Commit: `28e8aa8`)
+### 2.1. React Native 앱 초기 설정 및 구조화 (Commit: `28e8aa8`)
 
 - **기본 구조 설정:** 기존의 지갑 예제 코드를 모두 삭제하고, 로또 앱을 위한 새로운 기본 구조를 설정했습니다.
 - **하단 네비게이션 구현:** 기획서에 따라 홈, 내 번호, 명당, 커뮤니티의 4개 주요 섹션으로 구성된 하단 네비게이션 바를 추가했습니다.
@@ -37,7 +37,7 @@ Clover Lotto 기획서를 바탕으로 Flutter 앱과 백엔드 API의 MVP(최�
   - 실제 비즈니스 로직이 구현될 `LottoService`를 추가하고, 현재는 더미 데이터를 반환하도록 설정했습니다.
   - API 응답을 위한 DTO로 `LottoCheck`를 정의했습니다.
 
-### 2.5. Flutter 앱 - 당첨 확인 API 연동 (Commit: `5eaaeaa`)
+### 2.5. React Native 앱 - 당첨 확인 API 연동 (Commit: `5eaaeaa`)
 
 - **API 연동:** '내 번호' 화면에 '당첨 확인' 버튼을 추가하여 백엔드 API 호출을 트리거하도록 구현했습니다.
 - **서비스 및 모델 생성:** API 통신을 담당하는 `LottoApiService`와 응답 데이터를 파싱하기 위한 `LottoWinnings` 데이터 모델을 생성했습니다.
@@ -63,7 +63,7 @@ Clover Lotto 기획서를 바탕으로 Flutter 앱과 백엔드 API의 MVP(최�
     - `List` 타입 충돌을 해결하기 위해 명시적 import를 추가했습니다.
     - 불필요한 파서 임시 파일을 삭제했습니다.
 
-### 2.8. Flutter 앱 - 내 번호 화면 데이터 영속성 구현 (shared_preferences) (Commit: `33f7afd`)
+### 2.8. React Native 앱 - 내 번호 화면 데이터 영속성 구현 (shared_preferences) (Commit: `33f7afd`)
 
 - **데이터 영속성 구현:** `shared_preferences` 패키지를 사용하여 '내 번호' 화면에서 사용자가 입력한 로또 번호 목록을 로컬에 저장하고 불러오는 기능을 구현했습니다.
 - **로직 추가:** `MyNumbersScreen`의 `initState`에서 저장된 데이터를 로드하고, `_saveNumbers` 호출 시 데이터를 저장하도록 로직을 추가했습니다.

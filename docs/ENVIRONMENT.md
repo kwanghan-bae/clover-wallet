@@ -7,8 +7,8 @@
 ## 1. Core Stack Versions
 - **Java**: {e.g., 21 (Temurin)}
 - **Kotlin**: {e.g., 1.9.23}
-- **Flutter**: {e.g., 3.22.0}
-- **Dart**: {e.g., 3.4.0}
+- **React Native**: {e.g., 3.22.0}
+- **TypeScript**: {e.g., 3.4.0}
 
 ## 2. Infrastructure
 - **Database**: {e.g., PostgreSQL 15 (Supabase)}

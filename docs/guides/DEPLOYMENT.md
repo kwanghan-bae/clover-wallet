@@ -11,7 +11,7 @@
 - [ ] **서버:** GitHub 저장소와 연결된 Render Web Service 생성.
 - [ ] **환경 변수:** Render에서 `SPRING_PROFILES_ACTIVE=prod` 및 DB 자격 증명 설정.
 - [ ] **검증:** 빌드 완료 대기 및 Render URL 확인 (예: `https://backend-api.onrender.com`).
-- [ ] **프론트엔드 연결:** Flutter 앱의 `lib/utils/api_config.dart` 파일의 API URL을 Render URL로 변경.
+- [ ] **프론트엔드 연결:** React Native 앱의 `lib/utils/api_config.dart` 파일의 API URL을 Render URL로 변경.
 - [ ] **출시:** `flutter build apk` (Android) 또는 `flutter build ios` (iOS) 실행.
 
 ---
@@ -63,4 +63,4 @@
     `https://backend-api.onrender.com/actuator/health` (활성화된 경우) 또는 알려진 API 엔드포인트.
 
 ### 4. 프론트엔드 연결
-1.  Flutter 앱의 `lib/utils/api_config.dart` 파일을 열어 Render URL을 프로덕션용으로 업데이트합니다.
+1.  React Native 앱의 `lib/utils/api_config.dart` 파일을 열어 Render URL을 프로덕션용으로 업데이트합니다.

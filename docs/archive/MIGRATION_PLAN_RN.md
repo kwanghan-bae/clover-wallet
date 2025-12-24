@@ -1,16 +1,16 @@
-# ⚛️ Clover Wallet: Flutter to React Native Migration Plan
+# ⚛️ Clover Wallet: React Native to React Native Migration Plan
 
 ## 1. 개요 (Executive Summary)
-본 문서는 기존 **Flutter** 기반의 Clover Wallet 앱을 **React Native (Expo)** 환경으로 전환하기 위한 전략적 로드맵입니다. 단순한 포팅을 넘어, **TypeScript**의 안정성과 **React** 생태계의 풍부한 라이브러리를 활용하여 유지보수성을 극대화하는 것을 목표로 합니다.
+본 문서는 기존 **React Native** 기반의 Clover Wallet 앱을 **React Native (Expo)** 환경으로 전환하기 위한 전략적 로드맵입니다. 단순한 포팅을 넘어, **TypeScript**의 안정성과 **React** 생태계의 풍부한 라이브러리를 활용하여 유지보수성을 극대화하는 것을 목표로 합니다.
 
 ---
 
 ## 2. 기술 스택 매핑 (Tech Stack Mapping)
 
-| 구분 | Flutter (AS-IS) | React Native (TO-BE) | 선정 근거 |
+| 구분 | React Native (AS-IS) | React Native (TO-BE) | 선정 근거 |
 | :--- | :--- | :--- | :--- |
-| **언어** | Dart | **TypeScript** | 정적 타입 시스템 및 광범위한 생태계 |
-| **프레임워크** | Flutter SDK | **Expo (SDK 50+)** | 파일 기반 라우팅, OTA 업데이트, 설정 간소화 |
+| **언어** | TypeScript | **TypeScript** | 정적 타입 시스템 및 광범위한 생태계 |
+| **프레임워크** | React Native SDK | **Expo (SDK 50+)** | 파일 기반 라우팅, OTA 업데이트, 설정 간소화 |
 | **상태 관리** | Provider | **Zustand** (Global) + **TanStack Query** (Server) | 보일러플레이트 최소화 및 서버 상태 분리 |
 | **네비게이션** | GoRouter | **Expo Router** | 웹 표준 URL 기반 라우팅 및 딥링킹 용이성 |
 | **스타일링** | Widget Props | **NativeWind (Tailwind CSS)** | 일관된 디자인 시스템 및 빠른 개발 속도 |
@@ -63,6 +63,6 @@
 
 ## 5. 리스크 관리 (Risk Management)
 
-*   **OCR 성능**: Flutter의 ML Kit 래퍼와 RN 라이브러리 간 인식률 차이 비교 분석 필요.
-*   **애니메이션**: Flutter의 부드러운 애니메이션을 `react-native-reanimated`로 재구현 시 러닝 커브 존재.
+*   **OCR 성능**: React Native의 ML Kit 래퍼와 RN 라이브러리 간 인식률 차이 비교 분석 필요.
+*   **애니메이션**: React Native의 부드러운 애니메이션을 `react-native-reanimated`로 재구현 시 러닝 커브 존재.
 *   **복잡한 UI**: 글래스모피즘(Blur) 효과가 안드로이드 구형 기기에서 성능 저하를 일으킬 수 있으므로 최적화 필요.

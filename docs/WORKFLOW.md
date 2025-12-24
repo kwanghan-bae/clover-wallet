@@ -25,7 +25,7 @@
 
 ### 2단계: 계획 수립 및 공유 (Planning)
 *   작업 전 사용자에게 짧고 명확한 계획을 공유합니다.
-*   백엔드(Kotlin)와 프론트엔드(Flutter)의 영향 범위를 동시에 고려합니다.
+*   백엔드(Kotlin)와 프론트엔드(React Native)의 영향 범위를 동시에 고려합니다.
 
 ### 3단계: 구현 및 TDD (Implementation & Verification)
 *   `RULES.md`의 **"No Test, No Code"** 원칙을 준수합니다.

@@ -2,7 +2,7 @@
 
 ### 0. 프로젝트 경로
 
-*   **Flutter 앱 (클라이언트):** `/Users/joel/Desktop/git/frontend`
+*   **React Native 앱 (클라이언트):** `/Users/joel/Desktop/git/frontend`
 *   **Kotlin 서버 (백엔드):** `/Users/joel/Desktop/git/backend`
 
 ---
@@ -58,7 +58,7 @@
 
 ### 3. 기술 스택
 
-*   **프론트엔드 (모바일 앱):** Flutter (Dart)
+*   **프론트엔드 (모바일 앱):** React Native (TypeScript)
     *   **경로:** `frontend`
     *   **주요 라이브러리:**
         *   HTTP 통신: `http`
@@ -90,7 +90,7 @@
 
 ```
 +-------------------+       +--------------------------------+       +-------------------+
-|   Flutter Client  | <---> |   Backend API (Kotlin/Spring)  | <---> |    Database       |
+|   React Native Client  | <---> |   Backend API (Kotlin/Spring)  | <---> |    Database       |
 | (iOS/Android App) |       | (app, domain, infra modules)   |       |  (H2 / PostgreSQL)|
 +-------------------+       +--------------------------------+       +-------------------+
          ^                           ^           ^           ^
@@ -105,7 +105,7 @@
 +-----------------------+   +-----------------------+   +------------------------------+
 ```
 
-*   **Flutter Client:** 사용자 인터페이스 및 사용자 경험을 담당하며, 백엔드 API와 통신하여 데이터를 주고받습니다. FCM을 통해 푸시 알림을 수신합니다.
+*   **React Native Client:** 사용자 인터페이스 및 사용자 경험을 담당하며, 백엔드 API와 통신하여 데이터를 주고받습니다. FCM을 통해 푸시 알림을 수신합니다.
 *   **Backend API (Kotlin/Spring):** `backend`의 핵심 로직을 포함하며, 멀티모듈(app, domain, infra) 구조로 역할을 분리합니다. 로또 번호 생성, 내역 관리, 명당 정보 제공, 당첨 확인 로직, 커뮤니티 기능 등을 처리하며 외부 서비스(로또 공식 홈페이지, 지도 서비스, FCM)와 연동합니다.
 *   **Database:** 모든 애플리케이션 데이터를 저장하고 관리합니다. 개발 시에는 H2, 운영 환경에서는 PostgreSQL 등을 사용합니다.
 *   **Firebase Cloud Messaging (FCM):** 푸시 알림 전송을 위한 서비스입니다.
