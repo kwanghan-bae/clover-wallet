@@ -6,7 +6,6 @@ import { Edit3, Search, MessageSquare } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { PostCard } from '../../components/ui/PostCard';
 import { Post } from '../../api/types/community';
-import { EmptyIllustration } from '../../components/ui/EmptyIllustration';
 
 export default function CommunityScreen() {
   const router = useRouter();

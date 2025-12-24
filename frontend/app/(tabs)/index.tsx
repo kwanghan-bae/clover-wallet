@@ -3,13 +3,13 @@ import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl 
 import { GlassCard } from '../../components/ui/GlassCard';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import { 
-  Dices, 
-  QrCode, 
-  BarChart3, 
-  MapPin, 
-  Navigation, 
-  Bell, 
+import {
+  Dices,
+  QrCode,
+  BarChart3,
+  MapPin,
+  Navigation,
+  Bell,
   ChevronRight,
   Clover
 } from 'lucide-react-native';
@@ -36,8 +36,8 @@ export default function HomeScreen() {
       <View className="flex-row justify-between items-center px-5 h-14 bg-transparent">
         <View className="flex-row items-center">
           <Clover size={24} color="#4CAF50" fill="#4CAF50" />
-          <Text 
-            style={{ fontFamily: 'NotoSansKR_900Black' }} 
+          <Text
+            style={{ fontFamily: 'NotoSansKR_900Black' }}
             className="ml-2 text-xl text-[#1A1A1A] tracking-tight"
           >
             Clover Wallet
@@ -48,7 +48,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={{ padding: 20 }}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} color="#4CAF50" />}
@@ -58,9 +58,9 @@ export default function HomeScreen() {
           colors={['#4CAF50', '#388E3C']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ 
-            borderRadius: 24, 
-            paddingHorizontal: 24, 
+          style={{
+            borderRadius: 24,
+            paddingHorizontal: 24,
             paddingVertical: 32,
             shadowColor: '#000',
             shadowOffset: { width: 0, height: 8 },
@@ -71,9 +71,9 @@ export default function HomeScreen() {
           }}
         >
           <LuckyHeroIllustration />
-          
+
           <View className="items-start">
-            <View 
+            <View
               style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.3)' }}
               className="px-4 py-1.5 rounded-full border"
             >
@@ -81,24 +81,24 @@ export default function HomeScreen() {
                 제 {drawInfo.currentRound} 회
               </Text>
             </View>
-            
+
             <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="text-white/80 text-base mt-6">
               당첨 발표까지
             </Text>
-            
-            <Text 
-              style={{ 
+
+            <Text
+              style={{
                 fontFamily: 'NotoSansKR_900Black',
                 textShadowColor: 'rgba(0, 0, 0, 0.2)',
                 textShadowOffset: { width: 0, height: 2 },
                 textShadowRadius: 4
-              }} 
+              }}
               className="text-white text-[40px] tracking-tighter mt-1"
             >
               {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
             </Text>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={() => router.push('/number-generation')}
               activeOpacity={0.9}
               className="bg-white px-10 py-3.5 rounded-full mt-8 shadow-lg"
@@ -115,35 +115,35 @@ export default function HomeScreen() {
           빠른 실행
         </Text>
         <View className="flex-row justify-between">
-          <QuickActionItem 
-            icon={<Dices size={30} color="#9C27B0" />} 
-            label="번호 추첨" 
-            bgColor="bg-[#9C27B0]/8" 
-            onPress={() => router.push('/number-generation')} 
+          <QuickActionItem
+            icon={<Dices size={30} color="#9C27B0" />}
+            label="번호 추첨"
+            bgColor="bg-[#9C27B0]/8"
+            onPress={() => router.push('/number-generation')}
           />
-          <QuickActionItem 
-            icon={<QrCode size={30} color="#2196F3" />} 
-            label="QR 스캔" 
-            bgColor="bg-[#2196F3]/8" 
-            onPress={() => router.push('/scan')} 
+          <QuickActionItem
+            icon={<QrCode size={30} color="#2196F3" />}
+            label="QR 스캔"
+            bgColor="bg-[#2196F3]/8"
+            onPress={() => router.push('/scan')}
           />
-          <QuickActionItem 
-            icon={<BarChart3 size={30} color="#FF9800" />} 
-            label="번호 분석" 
-            bgColor="bg-[#FF9800]/8" 
-            onPress={() => router.push('/statistics')} 
+          <QuickActionItem
+            icon={<BarChart3 size={30} color="#FF9800" />}
+            label="번호 분석"
+            bgColor="bg-[#FF9800]/8"
+            onPress={() => router.push('/statistics')}
           />
-          <QuickActionItem 
-            icon={<Navigation size={30} color="#00BCD4" />} 
-            label="여행 플랜" 
-            bgColor="bg-[#00BCD4]/8" 
-            onPress={() => router.push('/travel')} 
+          <QuickActionItem
+            icon={<Navigation size={30} color="#00BCD4" />}
+            label="여행 플랜"
+            bgColor="bg-[#00BCD4]/8"
+            onPress={() => router.push('/travel')}
           />
-          <QuickActionItem 
-            icon={<MapPin size={30} color="#4CAF50" />} 
-            label="로또 명당" 
-            bgColor="bg-[#4CAF50]/8" 
-            onPress={() => router.push('/map')} 
+          <QuickActionItem
+            icon={<MapPin size={30} color="#4CAF50" />}
+            label="로또 명당"
+            bgColor="bg-[#4CAF50]/8"
+            onPress={() => router.push('/map')}
           />
         </View>
 
@@ -184,7 +184,15 @@ function QuickActionItem({
 }) {
   return (
     <TouchableOpacity onPress={onPress} className="items-center" activeOpacity={0.7}>
-      <View className={`${bgColor} w-14 h-14 rounded-[20px] items-center justify-center`}>
+      <View
+        className={`${bgColor} w-14 h-14 rounded-[20px] items-center justify-center`}
+        style={{
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.05,
+          shadowRadius: 4,
+        }}
+      >
         {icon}
       </View>
       <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="text-[12px] text-[#424242] mt-2.5">{label}</Text>

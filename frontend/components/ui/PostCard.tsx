@@ -119,7 +119,7 @@ function formatDate(dateString: string): string {
     const hours = d.getHours().toString().padStart(2, '0');
     const minutes = d.getMinutes().toString().padStart(2, '0');
     return `${month}/${day} ${hours}:${minutes}`;
-  } catch (e) {
+  } catch {
     return dateString;
   }
 }
