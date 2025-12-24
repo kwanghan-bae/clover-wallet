@@ -1,14 +1,17 @@
 import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import { GlobalErrorBoundary } from '../components/ErrorBoundary';
 import '../global.css';
 
 export default function RootLayout() {
   return (
-    <>
-      <StatusBar style="auto" />
-      <Stack screenOptions={{ headerShown: false }}>
+    <GlobalErrorBoundary>
+      <Stack screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor: '#F5F7FA' }
+      }}>
+        <Stack.Screen name="login" />
         <Stack.Screen name="(tabs)" />
       </Stack>
-    </>
+    </GlobalErrorBoundary>
   );
 }

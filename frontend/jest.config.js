@@ -17,6 +17,7 @@ module.exports = {
     'utils/**/*.ts',
   ],
   testMatch: [
-    '**/__tests__/**/*.test.ts', // .tsx 제외, .ts 로직 테스트만 우선 수행
+    '**/__tests__/**/*.test.ts',
+    // '**/__tests__/**/*.test.tsx', // TSX 테스트는 환경 안정화 후 복구
   ],
 };
