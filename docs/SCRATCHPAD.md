@@ -1,17 +1,22 @@
-# 📝 AI Thinking Scratchpad - Phase 2 API Alignment
+# 📝 AI Thinking Scratchpad - Data Model Consistency Audit
 
-## [Current Goal]: 프론트엔드 API 클라이언트 고도화 및 백엔드 규격 정렬
+## [Current Goal]: 백엔드 DTO(Kotlin)와 프론트엔드 Type(TS) 간의 필드명 및 구조 전수 대조
 
 ### 1. 설계 고려 사항
-- **ky Hook**: `apiClient`의 `afterResponse` 훅에서 `CommonResponse<T>`의 `data`만 추출하여 반환할 것.
-- **Error Handling**: `CommonResponse`의 `code`가 200이 아닌 경우에 대한 전역 예외 처리 로직 검토.
-- **Login Payload**: `login(email, password)` 대신 `login(supabaseToken)`으로 시그니처 변경.
+- **JSON Mapping**: 백엔드에서 `@JsonProperty`를 사용하는지, 혹은 기본 CamelCase를 사용하는지 확인.
+- **Nullability**: Kotlin의 `?` 필드와 TS의 `?` 혹은 `null | undefined` 정의가 일치하는지 확인.
+- **Enum Sync**: 공통 코드(예: LottoTicketStatus)의 명칭과 값이 일치하는지 확인.
 
-### 2. 가상 시뮬레이션
-- **Step 1**: `client.ts` 수정 - 인터셉터에서 `response.json()`을 파싱하여 `data` 필드 반환.
-- **Step 2**: `auth.ts` 수정 - 백엔드 `Auth.LoginRequest` 규격에 맞춰 `supabaseToken` 필드 사용.
-- **Step 3**: `community.ts` 수정 - 모든 엔드포인트에 `community/` prefix 수동 추가 (prefixUrl이 v1까지만 정의되어 있음).
+### 2. 감사 대상 목록
+- **User**: `UserEntity` vs `api/types/user.ts` (현재 유실됨, 확인 필요)
+- **Post**: `PostEntity` vs `api/types/community.ts`
+- **LottoGame**: `LottoGameEntity` vs `api/types/lotto.ts`
+- **LottoSpot**: `LottoSpotEntity` vs `api/types/spots.ts`
 
-### 3. 잠재적 리스크
-- **Type Mismatch**: `CommonResponse` 언래핑 후 TypeScript가 리턴 타입을 정확히 `T`로 추론하게 만드는 Generic 처리가 중요함.
-- **Auth Token**: Supabase에서 토큰을 가져오는 과정(Frontend 내부)과 백엔드 연동 사이의 정합성.
+### 3. 작업 순서
+- **Step 1**: 백엔드 `entity` 폴더를 스캔하여 핵심 모델 구조 파악.
+- **Step 2**: 프론트엔드 `api/types` 폴더를 스캔하여 대조.
+- **Step 3**: `AUDIT_REPORT.md` 업데이트 및 불일치 지점 동기화.
+
+---
+*(작업 완료 후 자율 커밋 수행 예정)*

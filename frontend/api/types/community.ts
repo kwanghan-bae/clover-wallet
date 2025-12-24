@@ -1,16 +1,16 @@
+import { UserSummary } from './user';
+
 export interface Post {
   id: number;
-  title: string;
+  user: UserSummary;
   content: string;
-  imageUrl?: string;
-  authorNickname: string;
-  createdAt: string;
+  viewCount: number;
   likeCount: number;
-  commentCount: number;
-  badges?: string[];
+  isLiked: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreatePostRequest {
-  title: string;
   content: string;
 }
