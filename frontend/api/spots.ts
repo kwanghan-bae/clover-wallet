@@ -13,5 +13,9 @@ export const spotsApi = {
     return await apiClient.get('lotto-spots/search', {
       searchParams: { name: query }
     }).json();
+  },
+
+  getSpotHistory: async (spotId: number): Promise<any[]> => {
+    return await apiClient.get(`lotto-spots/${spotId}/history`).json();
   }
 };

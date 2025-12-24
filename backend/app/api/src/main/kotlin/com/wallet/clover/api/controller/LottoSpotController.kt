@@ -40,4 +40,11 @@ class LottoSpotController(
         val stores = lottoWinningStoreService.getWinningStores(round)
         return CommonResponse.success(stores.map { LottoWinningStore.Response.from(it) })
     }
+
+    @GetMapping("/{spotId}/history")
+    suspend fun getSpotWinningHistory(@PathVariable spotId: Long): CommonResponse<List<LottoWinningStore.Response>> {
+        val spot = lottoSpotService.getSpotById(spotId)
+        val history = lottoWinningStoreService.getWinningHistoryByName(spot.name)
+        return CommonResponse.success(history.map { LottoWinningStore.Response.from(it) })
+    }
 }

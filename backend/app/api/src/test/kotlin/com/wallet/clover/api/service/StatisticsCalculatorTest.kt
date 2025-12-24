@@ -19,7 +19,7 @@ class StatisticsCalculatorTest : ShouldSpec(
                 val win1 = TestFixtures.createWinningInfo(round = 1, number1 = 1, number2 = 2, number3 = 3, number4 = 4, number5 = 5, number6 = 6)
                 val win2 = TestFixtures.createWinningInfo(round = 2, number1 = 10, number2 = 11, number3 = 12, number4 = 13, number5 = 14, number6 = 15)
 
-                coEvery { repository.findByRoundLessThanEqual(2) } returns kotlinx.coroutines.flow.flowOf(win1, win2)
+                coEvery { repository.findByRoundLessThanEqual(2) } returns listOf(win1, win2)
 
                 // when
                 val statistics = sut.calculate(2)

@@ -16,4 +16,8 @@ class LottoWinningStoreService(
     suspend fun getWinningStores(round: Int): List<LottoWinningStoreEntity> {
         return repository.findByRound(round)
     }
+
+    suspend fun getWinningHistoryByName(storeName: String): List<LottoWinningStoreEntity> {
+        return repository.findByStoreNameOrderByRoundDesc(storeName)
+    }
 }

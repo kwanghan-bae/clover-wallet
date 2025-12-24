@@ -25,4 +25,9 @@ class LottoSpotService(
     suspend fun searchByName(name: String): List<LottoSpot.Response> {
         return lottoSpotRepository.findByNameContaining(name).map { it.toResponse() }
     }
+
+    suspend fun getSpotById(id: Long): LottoSpot.Response {
+        val entity = lottoSpotRepository.findById(id) ?: throw IllegalArgumentException("LottoSpot not found with id: $id")
+        return entity.toResponse()
+    }
 }
