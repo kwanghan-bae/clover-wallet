@@ -8,10 +8,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface LottoWinningStoreRepository : CoroutineCrudRepository<LottoWinningStoreEntity, Long> {
-    suspend fun findByRound(round: Int): List<LottoWinningStoreEntity>
+    fun findByRound(round: Int): Flow<LottoWinningStoreEntity>
     suspend fun existsByRound(round: Int): Boolean
     
-    suspend fun findByStoreNameOrderByRoundDesc(storeName: String): List<LottoWinningStoreEntity>
+    fun findByStoreNameOrderByRoundDesc(storeName: String): Flow<LottoWinningStoreEntity>
 
     @Query("SELECT DISTINCT round FROM lotto_winning_store")
     fun findAllRounds(): Flow<Int>

@@ -5,6 +5,7 @@
 ## 1. 기술적 통찰 (Technical Insights)
 - **Expo Web 호환성**: `react-native-maps`와 같은 네이티브 라이브러리는 웹 빌드(`npx expo export`) 시 충돌을 일으키므로, `.web.tsx`를 통한 Mocking이나 플랫폼별 분기 처리가 필수적임.
 - **Babel 플러그인 의존성**: Reanimated v4와 같은 최신 라이브러리는 `react-native-worklets`와 같은 피어 의존성을 수동으로 맞춰주어야 함.
+- **Spring Data R2DBC 페이징 규약**: R2DBC 리포지토리에서 `Pageable`을 사용하는 메서드는 반드시 `Flux<T>` 또는 `Flow<T>`와 같은 리액티브 스트림을 반환해야 함. `suspend` 함수로 단일 객체나 `List`를 직접 반환하려 하면 `QueryCreationException`이 발생하며 애플리케이션 기동이 실패함.
 
 ## 2. 규약 및 가드 개선점 (Guard & Rules Improvements)
 - **가드 유연성 확보**: 마크다운 문서(.md) 내의 자유로운 표현(`...`, `TODO`)이 커밋을 방해하지 않도록 `pre_commit.sh`에서 파일 확장자별 검사 로직을 분리함.

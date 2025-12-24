@@ -46,7 +46,7 @@ class WinningCheckService(
         }
 
         // 2. 해당 회차의 티켓 조회 (List 패턴 사용)
-        val tickets = lottoTicketRepository.findByOrdinal(round)
+        val tickets = lottoTicketRepository.findByOrdinal(round).toList()
         logger.info("$round 회차 티켓 ${tickets.size}건 처리 시작")
 
         if (tickets.isEmpty()) return

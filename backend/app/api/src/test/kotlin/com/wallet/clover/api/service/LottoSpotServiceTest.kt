@@ -42,7 +42,7 @@ class LottoSpotServiceTest {
         // Given
         val name = "Test"
         val spot = TestFixtures.createLottoSpot(name = "Test Spot")
-        coEvery { lottoSpotRepository.findByNameContaining(name) } returns listOf(spot)
+        coEvery { lottoSpotRepository.findByNameContaining(name) } returns flowOf(spot)
 
         // When
         val result = lottoSpotService.searchByName(name)

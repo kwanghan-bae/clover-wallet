@@ -35,7 +35,7 @@ class TicketService(
     }
 
     suspend fun getGamesByTicketId(ticketId: Long): List<LottoGameEntity> {
-        return gameRepository.findByTicketId(ticketId)
+        return gameRepository.findByTicketId(ticketId).toList()
     }
 
     @Transactional

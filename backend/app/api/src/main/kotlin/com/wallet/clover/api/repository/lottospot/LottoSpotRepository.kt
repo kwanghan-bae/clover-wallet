@@ -8,6 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Repository
 interface LottoSpotRepository : CoroutineCrudRepository<LottoSpotEntity, Long> {
-    suspend fun findByNameContaining(name: String): List<LottoSpotEntity>
+    fun findByNameContaining(name: String): Flow<LottoSpotEntity>
     fun findAllBy(pageable: Pageable): Flow<LottoSpotEntity>
 }

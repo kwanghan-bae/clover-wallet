@@ -23,7 +23,7 @@ class LottoSpotService(
     }
 
     suspend fun searchByName(name: String): List<LottoSpot.Response> {
-        return lottoSpotRepository.findByNameContaining(name).map { it.toResponse() }
+        return lottoSpotRepository.findByNameContaining(name).map { it.toResponse() }.toList()
     }
 
     suspend fun getSpotById(id: Long): LottoSpot.Response {
