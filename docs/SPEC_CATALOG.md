@@ -50,7 +50,7 @@
 ---
 
 ## 4. 참조 문서
-*   `docs/backend/TECHNICAL_SPEC.md`: 구체적 기술 명세
-*   `docs/backend/RULES.md`: 프로젝트 하드 규칙
-*   `docs/backend/WORKFLOW.md`: 개발 워크플로우
-*   `docs/backend/ROADMAP.md`: 개발 로드맵 및 현황
+*   `docs/TECHNICAL_SPEC.md`: 구체적 기술 명세
+*   `docs/RULES.md`: 프로젝트 하드 규칙
+*   `docs/WORKFLOW.md`: 개발 워크플로우
+*   `docs/ROADMAP.md`: 개발 로드맵 및 현황

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository
 @Repository
 interface LottoTicketRepository : CoroutineCrudRepository<LottoTicketEntity, Long> {
     suspend fun findByUserId(userId: Long): List<LottoTicketEntity>
-    fun findByUserId(userId: Long, pageable: Pageable): kotlinx.coroutines.flow.Flow<LottoTicketEntity>
+    suspend fun findByUserId(userId: Long, pageable: Pageable): List<LottoTicketEntity>
     suspend fun findByUrl(url: String): LottoTicketEntity?
 
     suspend fun findByStatus(status: LottoTicketStatus): List<LottoTicketEntity>
     suspend fun deleteByUserId(userId: Long)
-    fun findByOrdinal(ordinal: Int): kotlinx.coroutines.flow.Flow<LottoTicketEntity>
+    suspend fun findByOrdinal(ordinal: Int): List<LottoTicketEntity>
     suspend fun findByUserIdAndOrdinal(userId: Long, ordinal: Int): List<LottoTicketEntity>
     suspend fun countByUserId(userId: Long): Long
 }

@@ -1,17 +1,20 @@
-# 🚫 Strict AI Constraints & Anti-Patterns - Clover Wallet
+# 🚫 Strict AI Constraints & Anti-Patterns
 
-당신은 Clover Wallet의 무결성을 수호해야 합니다.
+이 문서는 AI가 절대 범해서는 안 되는 **금기 사항(Taboos)**을 정의합니다.
 
 ---
 
-## 1. Coding Taboos
-- **Kotlin**: 
-    - `!!` (Non-null assertion) 사용 금지. 반드시 안전한 호출이나 엘비스 연산자를 사용하십시오.
-    - **No Full Package Annotations**: 어노테이션 사용 시 풀 패키지 경로(e.g., @org.springframework...)를 직접 사용하지 마십시오. 반드시 `import` 문을 추가하고 짧은 이름을 사용하십시오.
-- **Flutter**: `setState` 남용 금지. 반드시 `Provider`를 통한 상태 관리를 우선하십시오.
+## 1. 금지된 코딩 패턴 (Coding Taboos)
+- **Unity (C#)**: 
+    - `Update()`, `FixedUpdate()` 내에서 `new` 키워드를 통한 객체 생성(Allocation) 금지. (가비지 컬렉션 부하 방지)
+    - 매 프레임 실행되는 루프 내에서 `GameObject.Find()`, `GetComponent()` 사용 금지. (Caching 권장)
+    - `OnGUI` 메서드 사용 지양.
+- **Kotlin**: `!!` (Non-null assertion) 사용 금지.
 
-- **Common**: 절대 생략 기호(`// ...`)를 사용하지 마십시오.
+## 2. 금지된 소통 패턴 (Communication Taboos)
+- **추측 금지**: 모르는 내용이 나오면 추측하지 말고 사용자에게 질문하십시오.
+- **문서 방치 금지**: 코드를 수정하고 문서를 업데이트하지 않는 행위는 '직무 유기'로 간주합니다.
 
-## 2. Project Specific Constraints
-- 모든 API 응답은 `Result` 래퍼 클래스로 감싸야 합니다.
-- 색상 팔레트는 반드시 `CloverTheme` 클래스에 정의된 값을 사용하십시오.
+## 3. 학습된 금기 (User-Specific Learned Taboos)
+*(사용자로부터 수정을 받은 사항을 여기에 추가하여 AI가 영구적으로 학습하게 합니다)*
+- [ ] 예: "우리 프로젝트에서는 `print()` 대신 반드시 전용 `Logger`를 사용해야 함."

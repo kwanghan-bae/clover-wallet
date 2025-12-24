@@ -1,17 +1,21 @@
-# 📝 AI Thinking Scratchpad - Lotto Spot Data Alignment
+# 📝 AI Thinking Scratchpad
 
-## [Current Goal]: 로또 명당(Lotto Spot) 정보의 백엔드-프론트엔드 데이터 모델 동기화
+복잡한 작업을 시작하기 전, 당신의 **생각 과정(Thinking Process)**을 여기에 먼저 기록하십시오.
+
+---
+
+## [Current Goal]: {현재 달성하려는 목표}
 
 ### 1. 설계 고려 사항
-- **좌표 시스템**: 위도(latitude), 경도(longitude) 필드명이 일치하는가? 타입이 `Double`인가 `String`인가?
-- **상세 정보**: 판매점 이름, 주소, 전화번호 등의 필드명 대조 (e.g., `storeName` vs `name`, `address` vs `addr`).
-- **당첨 통계**: 1등/2등 당첨 횟수 등의 통계 데이터 필드 구조 확인.
+- {고려사항 1}
+- {고려사항 2}
 
-### 2. 감사 대상
-- **Backend**: `LottoSpotEntity.kt`, `LottoSpot.kt` (DTO)
-- **Frontend**: `api/types/spots.ts`
+### 2. 가상 시뮬레이션 (Pseudocode or Flow)
+- {Step 1}: ...
+- {Step 2}: ...
 
-### 3. 작업 순서
-- **Step 1**: 백엔드 명당 관련 엔티티 및 DTO 스캔.
-- **Step 2**: 프론트엔드 타입 정의와 대조 및 불일치 지점 식별.
-- **Step 3**: `AUDIT_REPORT.md` 업데이트 및 프론트엔드 타입 수정.
+### 3. 잠재적 리스크
+- {리스크 1}: ...
+
+---
+*(이 파일의 내용은 작업이 완료되면 `LESSONS_LEARNED.md`에 정제하여 기록하고, 여기서는 삭제하거나 아카이빙합니다.)*
