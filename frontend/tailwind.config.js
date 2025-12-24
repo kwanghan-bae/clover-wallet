@@ -8,6 +8,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["NotoSansKR_400Regular"],
+        medium: ["NotoSansKR_500Medium"],
+        bold: ["NotoSansKR_700Bold"],
+        black: ["NotoSansKR_900Black"],
+      },
       colors: {
         primary: "#4CAF50", // Clover Green
         "primary-dark": "#388E3C",

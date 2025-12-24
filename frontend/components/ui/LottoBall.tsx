@@ -14,7 +14,14 @@ export const LottoBall = ({ number, size = 'md', delay = 0, className }: LottoBa
   const scale = useSharedValue(0);
 
   useEffect(() => {
-    scale.value = withDelay(delay, withSpring(1, { damping: 12 }));
+    scale.value = withDelay(delay, withSpring(1, { 
+      damping: 12,
+      mass: 0.8,
+      stiffness: 100,
+      overshootClamping: false,
+      restDisplacementThreshold: 0.01,
+      restSpeedThreshold: 2
+    }));
   }, [number, delay, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
