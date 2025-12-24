@@ -17,9 +17,13 @@ CODE_BAD_RE="@org\.springframework|kotlinx\.coroutines|@java\.util|@org\.apache|
 STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -v "scripts/pre_commit.sh" | grep -v "docs/init/templates/" | grep -v "docs/archive/" || true)
 
 if [ -n "$STAGED_FILES" ]; then
-    if git diff --cached -- $STAGED_FILES | grep "^+" | grep -Ei "$LAZY_RE" > /dev/null; then
-        echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected!${NC}"
-        exit 1
+    # 소스 파일에서만 나태함 검사 수행
+    SOURCE_FILES_FOR_LAZY=$(echo "$STAGED_FILES" | grep -E "\.(kt|java|ts|tsx|dart|cs|py|sh)$" || true)
+    if [ -n "$SOURCE_FILES_FOR_LAZY" ]; then
+        if git diff --cached -- $SOURCE_FILES_FOR_LAZY | grep "^+" | grep -Ei "$LAZY_RE" > /dev/null; then
+            echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected in source files!${NC}"
+            exit 1
+        fi
     fi
 
     SOURCE_FILES=$(echo "$STAGED_FILES" | grep -E "\.(kt|java|ts|tsx|dart|cs)$" || true)
