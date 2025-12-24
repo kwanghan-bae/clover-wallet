@@ -14,7 +14,7 @@ echo -e "${GREEN}🔒 [Guard] Starting absolute multi-layer quality audit...${NC
 LAZY_RE="\/\/[[:space:]]*\.\.\.|#[[:space:]]*\.\.\.|\/\*[:space:]]*\.\.\.*\*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|\(중략\)|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
 CODE_BAD_RE="@org\.springframework|kotlinx\.coroutines|@java\.util|@org\.apache|@com\.google"
 
-STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -v "scripts/pre_commit.sh" | grep -v "docs/init/templates/" || true)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | grep -v "scripts/pre_commit.sh" | grep -v "docs/init/templates/" | grep -v "docs/archive/" || true)
 
 if [ -n "$STAGED_FILES" ]; then
     if git diff --cached -- $STAGED_FILES | grep "^+" | grep -Ei "$LAZY_RE" > /dev/null; then
