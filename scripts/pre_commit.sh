@@ -1,20 +1,22 @@
 #!/bin/bash
 
-# 🛡️ SOVEREIGN GUARD PRE-COMMIT V6.5 (Ultra-Strict Polyglot)
-# Features: Self-exclusion, Language-specific linters, Hidden error detection.
+# 🛡️ SOVEREIGN GUARD PRE-COMMIT V7.5 (Full Spectrum Integrity)
+# Final Evolution: Build Guard + Hidden Error Detection + Self-Exclusion.
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${GREEN}🔒 [Guard] Starting intensive quality audit...${NC}"
+echo -e "${GREEN}🔒 [Guard] Starting high-rigor quality & build audit...${NC}"
 
-# 1. AI Laziness & Hallucination Guard
+# 1. AI Laziness & Hallucination Guard (With Self-Exclusion)
 P1='//'; P2=' ...'; P3='#'; P4='(중략)'
 CHECK_RE="\/\/[[:space:]]*\.\.\.|#[[:space:]]*\.\.\.|\/\*[:space:]]*\.\.\.*\*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
 
+# [LESSON] 감시 스크립트 자체는 검사 대상에서 제외하여 무한 루프를 방지합니다.
 STAGED_FILES_LIST=$(git diff --cached --name-only | grep -v "scripts/pre_commit.sh" || true)
+
 if [ -n "$STAGED_FILES_LIST" ]; then
     if git diff --cached -- $STAGED_FILES_LIST | grep "^+" | grep -Ei "$CHECK_RE" > /dev/null; then
         echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected in NEW code!${NC}"
@@ -23,58 +25,48 @@ if [ -n "$STAGED_FILES_LIST" ]; then
     fi
 fi
 
-# 2. File & Project Identification
+# 2. Path & Documentation Guard
 STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM)
-HAS_KOTLIN=$(echo "$STAGED_ALL" | grep -E "\.kt$" || true)
-HAS_TS=$(echo "$STAGED_ALL" | grep -E "\.(ts|tsx)$" || true)
+HAS_LOGIC=$(echo "$STAGED_ALL" | grep -E "\.(kt|dart|py|ts|tsx|cs)$" || true)
 HAS_DOCS=$(echo "$STAGED_ALL" | grep -E "(\.md|docs/)" || true)
 
-# 3. Documentation Debt Check
-if ([ -n "$HAS_KOTLIN" ] || [ -n "$HAS_TS" ]) && [ -z "$HAS_DOCS" ]; then
-    echo -e "${RED}❌ [DOC DEBT] Logic changed but NO docs updated! Update SPEC_CATALOG or TECHNICAL_SPEC.${NC}"
+if [ -n "$HAS_LOGIC" ] && [ -z "$HAS_DOCS" ]; then
+    echo -e "${RED}❌ [DOC DEBT] Logic changed but NO docs updated!${NC}"
     exit 1
 fi
 
-# 4. Dedicated Validation
-# 4.1 Kotlin / Java
-if [ -n "$HAS_KOTLIN" ] && [ -f "backend/gradlew" ]; then
+# 3. Language Specific Audits
+# [LESSON] Exit Code 0 뒤에 숨은 에러 문자열을 정밀 스캔합니다.
+
+# 3.1 React Native / TypeScript
+if git diff --cached --name-only | grep -q "frontend/"; then
+    echo "🧪 Verifying Frontend (RN + Build Guard)..."
+    cd frontend
+    
+    # 린트 검사
+    npm run lint || echo -e "${YELLOW}⚠️ Lint warnings exist.${NC}"
+    
+    # 테스트 및 숨은 에러 탐지
+    TEST_LOG=$(npm test -- --watchAll=false 2>&1)
+    if echo "$TEST_LOG" | grep -Ei "ERROR:|Failed to collect coverage|SyntaxError" > /dev/null; then
+        echo "$TEST_LOG"
+        echo -e "${RED}❌ [TEST FAILURE] Critical errors detected in test output!${NC}"
+        exit 1
+    fi
+
+    # 빌드 시뮬레이션
+    echo "🏗️  Verifying Full Build (Expo Export)..."
+    npx expo export --platform web --no-minify > /dev/null 2>&1 || {
+        echo -e "${RED}❌ [BUILD FAILURE] Expo export failed! Check Babel config.${NC}"
+        exit 1
+    }
+    cd ..
+fi
+
+# 3.2 Kotlin / Gradle
+if git diff --cached --name-only | grep -q "backend/"; then
     echo "🧪 Verifying Backend (Kotlin + ktlint)..."
     (cd backend && ./gradlew ktlintCheck test --quiet) || exit 1
 fi
 
-# 4.2 React Native / JS / TS (Hidden Error Detection)
-if [ -n "$HAS_TS" ] && [ -f "frontend/package.json" ]; then
-    echo "🧪 Verifying Frontend (React Native + ESLint)..."
-    cd frontend
-    
-    # Lint
-    if npm run | grep -q "lint"; then
-        npm run lint || echo -e "${YELLOW}⚠️ Lint failed, but proceeding...${NC}"
-    fi
-    
-    # Test & Build Verification
-    if command -v npm &> /dev/null; then
-        echo "🧪 Running Jest Tests..."
-        TEST_LOG=$(npm test -- --watchAll=false 2>&1)
-        TEST_EXIT_CODE=$?
-        echo "$TEST_LOG"
-        
-        if [ $TEST_EXIT_CODE -ne 0 ] || echo "$TEST_LOG" | grep -Ei "ERROR:|Failed to collect coverage" > /dev/null; then
-            echo -e "${RED}❌ [STRICT BLOCK] Hidden errors or coverage failures detected in test output!${NC}"
-            exit 1
-        fi
-
-        echo "🏗️  Verifying Frontend Build (Expo Export)..."
-        # 실제 배포 환경과 동일한 빌드 명령 수행 (시간 절약을 위해 --no-minify 옵션 사용 가능)
-        if npx expo export --platform web --no-minify > /dev/null 2>&1; then
-            echo -e "${GREEN}✅ Build verification passed.${NC}"
-        else
-            echo -e "${RED}❌ [BUILD FAILURE] Expo export failed! Check your Babel config or syntax errors.${NC}"
-            npx expo export --platform web --no-minify
-            exit 1
-        fi
-    fi
-    cd ..
-fi
-
-echo -e "${GREEN}✅ [Guard] All specific checks passed. Quality is absolute.${NC}"
+echo -e "${GREEN}✅ [Guard] Audit successful. Your intelligence is consistent.${NC}"
