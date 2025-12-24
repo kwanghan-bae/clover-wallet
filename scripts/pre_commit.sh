@@ -77,8 +77,9 @@ fi
 
 # 3.2 Kotlin
 if echo "$STAGED_ALL" | grep -E "(\.kt|\.java)$" | grep -q "backend/"; then
-    echo "🧪 Verifying JVM Backend..."
-    (cd backend && ./gradlew ktlintCheck test --quiet) || exit 1
+    echo "🧪 Verifying JVM Backend (Full Build & Test)..."
+    # bootJar를 포함한 전체 빌드 수행 (테스트는 별도 수행으로 병렬성 확보 가능하나 여기선 안전하게 통합)
+    (cd backend && ./gradlew ktlintCheck :app:api:bootJar test --quiet) || { echo -e "${RED}❌ Backend build failed!${NC}"; exit 1; }
 fi
 
 echo -e "${GREEN}✅ [Guard] Audit successful. Total Integrity Guaranteed.${NC}"

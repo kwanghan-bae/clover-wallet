@@ -2,12 +2,12 @@ package com.wallet.clover.api.service
 
 import com.wallet.clover.api.entity.game.LottoGameEntity
 import com.wallet.clover.api.entity.game.LottoGameStatus
+import com.wallet.clover.api.entity.ticket.LottoTicketEntity
 import com.wallet.clover.api.entity.ticket.LottoTicketStatus
 import com.wallet.clover.api.entity.winning.WinningInfoEntity
 import com.wallet.clover.api.repository.game.LottoGameRepository
 import com.wallet.clover.api.repository.ticket.LottoTicketRepository
 import com.wallet.clover.api.repository.winning.WinningInfoRepository
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -45,28 +45,20 @@ class WinningCheckService(
             return
         }
 
-        // 2. 해당 회차의 티켓 조회 (Flow로 스트리밍 처리)
+        // 2. 해당 회차의 티켓 조회 (List 패턴 사용)
         val tickets = lottoTicketRepository.findByOrdinal(round)
-        logger.info("$round 회차 티켓 처리 시작")
+        logger.info("$round 회차 티켓 ${tickets.size}건 처리 시작")
 
-        val batchSize = 100
-        val ticketBuffer = mutableListOf<com.wallet.clover.api.entity.ticket.LottoTicketEntity>()
+        if (tickets.isEmpty()) return
 
-        tickets.collect { ticket ->
-            ticketBuffer.add(ticket)
-            if (ticketBuffer.size >= batchSize) {
-                processBatchSafe(ticketBuffer, winningInfo)
-                ticketBuffer.clear()
-            }
-        }
-
-        if (ticketBuffer.isNotEmpty()) {
-            processBatchSafe(ticketBuffer, winningInfo)
+        // 100개씩 청크로 나누어 처리
+        tickets.chunked(100).forEach { batch ->
+            processBatchSafe(batch, winningInfo)
         }
     }
 
     private suspend fun processBatchSafe(
-        tickets: List<com.wallet.clover.api.entity.ticket.LottoTicketEntity>,
+        tickets: List<LottoTicketEntity>,
         winningInfo: WinningInfoEntity
     ) {
         try {
@@ -77,7 +69,7 @@ class WinningCheckService(
     }
 
     private suspend fun processBatch(
-        tickets: List<com.wallet.clover.api.entity.ticket.LottoTicketEntity>,
+        tickets: List<LottoTicketEntity>,
         winningInfo: WinningInfoEntity
     ) {
         val ticketIds = tickets.mapNotNull { it.id }
@@ -89,9 +81,9 @@ class WinningCheckService(
             val gamesMap = gamesFlow.toList().groupBy { it.ticketId }
 
             val updatedGames = mutableListOf<LottoGameEntity>()
-            val updatedTickets = mutableListOf<com.wallet.clover.api.entity.ticket.LottoTicketEntity>()
+            val updatedTickets = mutableListOf<LottoTicketEntity>()
             val winningUserIds = mutableSetOf<Long>()
-            val winningTickets = mutableListOf<Pair<com.wallet.clover.api.entity.ticket.LottoTicketEntity, LottoGameEntity>>() // Ticket and Best Game
+            val winningTickets = mutableListOf<Pair<LottoTicketEntity, LottoGameEntity>>()
 
             for (ticket in tickets) {
                 val games = gamesMap[ticket.id] ?: emptyList()
@@ -111,11 +103,8 @@ class WinningCheckService(
                         if (status != LottoGameStatus.LOSING) {
                             ticketWinningGames.add(updatedGame)
                         }
-                    } else {
-                         // 상태가 변하지 않았더라도 당첨된 게임이면 리스트에 추가 (알림용)
-                         if (game.status != LottoGameStatus.LOSING) {
-                            ticketWinningGames.add(game)
-                         }
+                    } else if (game.status != LottoGameStatus.LOSING) {
+                        ticketWinningGames.add(game)
                     }
                     
                     if (prize > 0) {
@@ -123,7 +112,6 @@ class WinningCheckService(
                     }
                 }
                 
-                // 티켓 상태 업데이트
                 val newTicketStatus = if (hasWinningGame) LottoTicketStatus.WINNING else LottoTicketStatus.LOSING
                 
                 if (ticket.status != newTicketStatus) {
@@ -132,11 +120,9 @@ class WinningCheckService(
                         updatedAt = java.time.LocalDateTime.now()
                     )
                     updatedTickets.add(updatedTicket)
-                    logger.info("티켓 ${ticket.id} 상태를 $newTicketStatus 로 업데이트")
                     
                     if (hasWinningGame) {
                         winningUserIds.add(ticket.userId)
-                        // 가장 높은 등수의 게임 찾기
                         val bestGame = ticketWinningGames.maxByOrNull { it.status.ordinal }
                         if (bestGame != null) {
                             winningTickets.add(updatedTicket to bestGame)
@@ -145,21 +131,20 @@ class WinningCheckService(
                 }
             }
 
-            // 배치 저장
+            // 배치 저장 (saveAll 결과 Flow를 List로 변환하여 처리)
             if (updatedGames.isNotEmpty()) {
-                lottoGameRepository.saveAll(updatedGames).collect()
-                logger.info("${updatedGames.size}개 게임 배치 업데이트")
+                lottoGameRepository.saveAll(updatedGames).toList()
+                logger.info("${updatedGames.size}개 게임 업데이트 완료")
             }
 
             if (updatedTickets.isNotEmpty()) {
-                lottoTicketRepository.saveAll(updatedTickets).collect()
-                logger.info("${updatedTickets.size}개 티켓 배치 업데이트")
+                lottoTicketRepository.saveAll(updatedTickets).toList()
+                logger.info("${updatedTickets.size}개 티켓 업데이트 완료")
             }
             
             winningTickets to winningUserIds
-        }
+        } ?: (emptyList<Pair<LottoTicketEntity, LottoGameEntity>>() to emptySet<Long>())
 
-        // 알림 및 뱃지 처리 (트랜잭션 외부에서 실행)
         if (winningUserIds.isNotEmpty()) {
             notifyWinners(winningUserIds, winningTickets)
         }
@@ -167,11 +152,10 @@ class WinningCheckService(
 
     private suspend fun notifyWinners(
         winningUserIds: Set<Long>,
-        winningTickets: List<Pair<com.wallet.clover.api.entity.ticket.LottoTicketEntity, LottoGameEntity>>
+        winningTickets: List<Pair<LottoTicketEntity, LottoGameEntity>>
     ) {
         val users = userRepository.findAllById(winningUserIds).toList().associateBy { it.id }
         
-        // 병렬 처리 고려 가능 (현재는 순차 처리)
         for ((ticket, bestGame) in winningTickets) {
             val user = users[ticket.userId]
             user?.fcmToken?.let { token ->

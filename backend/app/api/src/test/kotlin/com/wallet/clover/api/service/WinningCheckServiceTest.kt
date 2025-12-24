@@ -56,7 +56,7 @@ class WinningCheckServiceTest {
         val user = TestFixtures.createUser(id = 1L, fcmToken = "token")
 
         coEvery { winningInfoRepository.findByRound(round) } returns winningInfo
-        coEvery { lottoTicketRepository.findByOrdinal(round) } returns flowOf(ticket)
+        coEvery { lottoTicketRepository.findByOrdinal(round) } returns listOf(ticket)
         
         // Mock TransactionalOperator
         // Note: WinningCheckService uses executeAndAwait which is an extension function.
