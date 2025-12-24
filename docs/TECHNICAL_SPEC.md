@@ -1,53 +1,38 @@
-# 🛠️ Clover Wallet Technical Specification (Unified Monorepo)
+# Clover Wallet - Technical Specification (v1.0)
 
-## 1. 아키텍처 개요
-- **Backend**: Kotlin 1.9.23, Spring Boot 3.2.5 (Location: `/backend`)
-- **Frontend**: React Native (Expo SDK 54), TypeScript (Location: `/frontend`)
-- **Database**: PostgreSQL (Supabase)
-- **Deployment**: Render (Hybrid: Docker + Static Web)
+이 문서는 `SPEC_CATALOG.md`에서 정의한 기능을 구현하기 위한 세부 기술 명세를 정의합니다.
 
-## 2. 모듈 구조
-- `/backend`: Multi-module Spring Boot project.
-- `/frontend`: Expo-based RN project using NativeWind.
+---
 
-## 3. 주요 API 및 정합성
+## 1. 아키텍처 개요 (Hexagonal / Layered Architecture)
 
-- JWT 기반 인증 (Supabase Auth 연동)
+### 1.1 Backend (Kotlin/Spring Boot)
+- **Module Structure**: 
+  - `app`: 메인 애플리케이션 및 설정
+  - `api`: REST 엔드포인트 및 DTO
+  - `core`: 도메인 로직 및 서비스
+  - `infrastructure`: DB 접근(JPA), 외부 API(Lotto Scraping) 연동
+- **Security**: Supabase JWT Secret을 이용한 커스텀 필터링 기반 인증.
 
-- REST API 규격 준수
+### 1.2 Frontend (React Native/Expo)
+- **UI Architecture**: Atomic Design Pattern (components/ui -> components/features -> app/pages).
+- **Styling**: NativeWind (Tailwind CSS) + Glassmorphism Theme.
+- **State Management**: React Query (Server State) + React Native MMKV (Local State).
 
+---
 
+## 2. 주요 기술 인터페이스 명세
 
-## 4. 패키지 관리 및 운영 전략
+### 2.1 Lotto Data Scraping
+- 동행복권 사이트 혹은 공개 API를 통한 추첨 결과 수집 엔진.
+- 회차별 당첨금, 당첨 번호, 명당 판매점 리스트 동기화 배치 로직.
 
+### 2.2 OCR Engine (ML Kit)
+- 로또 용지의 QR 코드 및 텍스트(회차, 번호) 인식.
+- 오차 범위를 줄이기 위한 이미지 전처리 및 검증 알고리즘.
 
+---
 
-- **Frontend (RN)**: Expo 54 환경에서 패키지 설치 시 발생할 수 있는 호환성 경고를 해결하기 위해 \`npm install --legacy-peer-deps\` 명령어를 사용하며, 이를 \`render.yaml\` 빌드 설정에 공식 반영함.
-
-
-
-- **버전 고정**: React 및 React-DOM 패키지 버전을 19-2-3으로 명시하여 실행 정합성을 유지함.
-
-
-
-- **웹 지원**: Expo Web 환경 구동을 위해 필수 패키지를 추가함.
-
-
-
-- **타입 안정성**: MMKV의 TS2693 오류 해결을 위해 require 로딩 방식을 채택하고, Expo Notifications의 타입 누락 필드를 보강함.
-
-
-
-- **빌드 최적화**: Render Blueprints에 \`buildFilter\`를 적용하여 backend/ 혹은 frontend/ 디렉토리 내 실제 변경이 발생한 서비스만 선별적으로 빌드하도록 최적화함.
-
-
-
-
-
-
-
-
-
-
-
-
+## 3. 데이터 인프라
+- **Primary DB**: PostgreSQL (PostGIS 확장 검토 - 명당 지도 검색 최적화).
+- **Cache**: 로컬 MMKV를 통한 오프라인 당첨 내역 조회 지원.

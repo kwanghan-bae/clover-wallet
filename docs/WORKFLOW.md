@@ -1,4 +1,4 @@
-# {Project Name} Development Workflow
+# Clover Wallet Development Workflow
 
 이 프로젝트는 AI의 자율성과 무결성을 보장하는 고도화된 워크플로우를 따릅니다.
 
