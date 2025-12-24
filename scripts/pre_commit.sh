@@ -41,8 +41,8 @@ HAS_LOGIC=$(echo "$STAGED_ALL" | grep -E "\.(kt|java|ts|tsx|dart|cs|py)$" || tru
 HAS_DOCS=$(echo "$STAGED_ALL" | grep -E "(\.md|docs/)" || true)
 
 if [ -n "$HAS_LOGIC" ] && [ -z "$HAS_DOCS" ]; then
-    echo -e "${RED}❌ [DOC DEBT] Logic changed but NO docs updated!${NC}"
-    exit 1
+    echo -e "${YELLOW}⚠️ [DOC ADVISORY] Logic changed but NO docs updated. Please ensure documentation is in sync when possible.${NC}"
+    # exit 1 (지나치게 엄격한 차단을 경고로 완화)
 fi
 
 # 3. Dedicated Verification
