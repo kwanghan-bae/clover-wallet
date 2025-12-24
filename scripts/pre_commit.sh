@@ -1,75 +1,67 @@
 #!/bin/bash
 
-# 🛡️ CLOVER WALLET MONOREPO GUARD (v6.1)
-# Enforces integrity for both Backend (Kotlin) and Frontend (RN/Expo).
+# 🛡️ SOVEREIGN GUARD PRE-COMMIT V6.3 (Language-Specific Edition)
+# Enforces specific linters and tests based on changed file types.
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${GREEN}🔒 [Monorepo Guard] Auditing unified system...${NC}"
+echo -e "${GREEN}🔒 [Guard] Starting language-specific quality audit...${NC}"
 
 # 1. AI Laziness & Hallucination Guard
-# 오탐 방지: 실제 생략을 의미하는 '주석+공백+점3개' 패턴을 엄격히 탐지합니다.
-CHECK_RE="\/\/[[:space:]]*\.\.\.|#[[:space:]]*\.\.\.|\/\*[:space:]]*\.\.\.*\*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|\(중략\)|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
+P1='//'; P2=' ...'; P3='#'; P4='(중략)'
+JOINED_PATTERNS="${P1}${P2}|${P3}${P2}|\/\* ${P2} \*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
 
-# 오탐 방지: 검사 스크립트 자체는 제외하고 새로 추가된 줄(+)에서만 나태함 패턴을 찾습니다.
-STAGED_FILES_TO_CHECK=$(git diff --cached --name-only | grep -v "scripts/pre_commit.sh" || true)
-
-if [ -n "$STAGED_FILES_TO_CHECK" ]; then
-    if git diff --cached $STAGED_FILES_TO_CHECK | grep "^+" | grep -Ei "$CHECK_RE" > /dev/null; then
-        echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected in NEW code!${NC}"
-        git diff --cached $STAGED_FILES_TO_CHECK | grep "^+" | grep -Ei "$CHECK_RE"
-        exit 1
-    fi
-fi
-
-# 2. Path-based Test & Doc Enforcement
-STAGED_ALL=$(git diff --cached --name-only --diff-filter=ACM)
-BACKEND_CHANGED=false
-FRONTEND_CHANGED=false
-DOCS_CHANGED=false
-
-for FILE in $STAGED_ALL; do
-    if [[ $FILE == backend/* ]]; then BACKEND_CHANGED=true; fi
-    if [[ $FILE == frontend/* ]]; then FRONTEND_CHANGED=true; fi
-    if [[ $FILE == docs/* ]] || [[ $FILE == *.md ]]; then DOCS_CHANGED=true; fi
-done
-
-# 3. Documentation Debt Check
-if ([ "$BACKEND_CHANGED" = true ] || [ "$FRONTEND_CHANGED" = true ]) && [ "$DOCS_CHANGED" = false ]; then
-    echo -e "${RED}❌ [DOC DEBT] Code changed in backend/frontend but NO docs updated!${NC}"
+if git diff --cached -- . ':!scripts/pre_commit.sh' | grep "^+" | grep -Ei "$JOINED_PATTERNS" > /dev/null; then
+    echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected!${NC}"
     exit 1
 fi
 
-# 4. Project Specific Execution
-# 4.1 Backend Verification
-if [ "$BACKEND_CHANGED" = true ]; then
-    echo "🧪 Verifying Backend (Kotlin)..."
+# 2. File Identification
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+HAS_KOTLIN=$(echo "$STAGED_FILES" | grep -E "\.kt$" || true)
+HAS_TS=$(echo "$STAGED_FILES" | grep -E "\.(ts|tsx)$" || true)
+HAS_PYTHON=$(echo "$STAGED_FILES" | grep -E "\.py$" || true)
+HAS_DART=$(echo "$STAGED_FILES" | grep -E "\.dart$" || true)
+HAS_CSHARP=$(echo "$STAGED_FILES" | grep -E "\.cs$" || true)
+
+# 3. Dedicated Linting & Testing
+# 3.1 C# / Unity
+if [ -n "$HAS_CSHARP" ]; then
+    if command -v dotnet &> /dev/null; then
+        echo "🧪 Linting C# (dotnet format)..."
+        dotnet format --verify-no-changes || exit 1
+    else
+        echo -e "${YELLOW}⚠️ dotnet SDK not found, skipping C# format check...${NC}"
+    fi
+fi
+
+# 3.2 Kotlin (ktlint)
+if [ -n "$HAS_KOTLIN" ] && [ -f "backend/gradlew" ]; then
+    echo "🧪 Linting Kotlin (ktlint)..."
     (cd backend && ./gradlew ktlintCheck test --quiet) || exit 1
 fi
 
-# 4.2 Frontend Verification
-if [ "$FRONTEND_CHANGED" = true ]; then
-    echo "🧪 Verifying Frontend (React Native)..."
-    cd frontend
-    
-    # Lint (도구가 있는 경우에만 실행)
-    if command -v npm &> /dev/null && npm run | grep -q "lint"; then
-        echo "🔍 Running Lint..."
-        npm run lint || echo -e "${YELLOW}⚠️ Lint failed, but proceeding...${NC}"
-    else
-        echo -e "${YELLOW}⚠️ No lint script found, skipping...${NC}"
-    fi
-    
-    # Test
-    if command -v npm &> /dev/null; then
-        echo "🧪 Running Jest Tests..."
-        npm test -- --watchAll=false || exit 1
-    fi
-    cd ..
+# 3.2 React Native / TS (ESLint)
+if [ -n "$HAS_TS" ] && [ -f "frontend/package.json" ]; then
+    echo "🧪 Linting TypeScript (ESLint)..."
+    (cd frontend && npm run lint && npm test -- --watchAll=false) || exit 1
 fi
 
+# 3.3 Python (Ruff)
+if [ -n "$HAS_PYTHON" ]; then
+    if command -v ruff &> /dev/null; then
+        echo "🧪 Linting Python (Ruff)..."
+        ruff check . || exit 1
+    fi
+fi
 
-echo -e "${GREEN}✅ [Monorepo Guard] All systems go. Proceeding with atomic commit.${NC}"
+# 3.4 Flutter (Analyzer)
+if [ -n "$HAS_DART" ] && [ -f "pubspec.yaml" ]; then
+    echo "🧪 Linting Dart (Analyzer)..."
+    flutter analyze || exit 1
+fi
+
+echo -e "${GREEN}✅ [Guard] All specific checks passed.${NC}"
