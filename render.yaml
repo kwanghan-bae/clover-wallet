@@ -1,23 +1,42 @@
 services:
+  # 1. Backend API (Kotlin/Spring Boot)
   - type: web
     name: clover-wallet-api
     runtime: docker
     region: singapore
     plan: free
-    
-    # 환경 변수
+    rootDir: backend
     envVars:
       - key: SPRING_PROFILES_ACTIVE
         value: prod
       - key: JAVA_OPTS
         value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
-    
-    # 헬스체크
     healthCheckPath: /actuator/health
+    autoDeploy: true
+    dockerfilePath: Dockerfile
+    dockerContext: .
+
+  # 2. Frontend Web (React Native/Expo)
+  - type: static
+    name: clover-wallet-web
+    env: static
+    region: singapore
+    plan: free
+    
+    # [핵심] 서비스의 기준 디렉토리를 frontend로 설정
+    rootDir: frontend
+    
+    # 빌드 명령어: 의존성 설치 후 웹 플랫폼용으로 export
+    buildCommand: npm install && npx expo export --platform web
+    
+    # 배포 디렉토리: Expo export 결과물 위치
+    publishPath: dist
     
     # 자동 배포
     autoDeploy: true
     
-    # 빌드 설정
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
+    # SPA를 위한 라우팅 규칙 (Deep Linking 지원)
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

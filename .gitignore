@@ -1,50 +1,26 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+# Clover Wallet Monorepo Ignore
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
+# OS
+.DS_Store
+*.swp
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
+# Backend (Kotlin/Gradle)
+backend/.gradle
+backend/build
+backend/out
+backend/bin
+backend/.idea
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Frontend (RN/Expo)
+frontend/node_modules/
+frontend/.expo/
+frontend/dist/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
 
-### VS Code ###
-.vscode/
-
-# Local configuration
-# Secrets
-.env.local
-.env.*.local
-
-# Firebase
-firebase-keys/
-*firebase*.json
-service-account.json
-application-local.yml
-.yml
-/gemini/
+# AI Logs
+logs/
+*.log
+docs/*/sessions/session_*.md
+!docs/*/sessions/next_session.md

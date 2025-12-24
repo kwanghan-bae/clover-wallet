@@ -49,10 +49,10 @@ Clover Wallet의 백엔드 API 서버입니다. 최신 Reactive 기술 스택을
 ### 3. 실행 (Docker)
 ```bash
 # Docker 이미지 빌드
-docker build -t clover-wallet-api .
+docker build -t backend-api .
 
 # 컨테이너 실행
-docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... clover-wallet-api
+docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... backend-api
 ```
 
 ## ☁️ Deployment (Render)
@@ -89,10 +89,10 @@ docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... clover-wallet-api
 
 **1. 당첨 번호 초기화 (JSON API 사용 - 고속)**
 ```bash
-curl -X POST "https://clover-wallet-api.onrender.com/api/v1/admin/init/history"
+curl -X POST "https://backend-api.onrender.com/api/v1/admin/init/history"
 ```
 
 **2. 명당 정보 초기화 (HTML 파싱 - 저속)**
 ```bash
-curl -X POST "https://clover-wallet-api.onrender.com/api/v1/admin/init/spots"
+curl -X POST "https://backend-api.onrender.com/api/v1/admin/init/spots"
 ```

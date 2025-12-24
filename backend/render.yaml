@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: clover-wallet-api
+    runtime: docker
+    region: singapore
+    plan: free
+    
+    # 환경 변수
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: JAVA_OPTS
+        value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
+    
+    # 헬스체크
+    healthCheckPath: /actuator/health
+    
+    # 자동 배포
+    autoDeploy: true
+    
+    # 빌드 설정
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
