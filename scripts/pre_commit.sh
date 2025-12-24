@@ -52,14 +52,27 @@ if [ -n "$HAS_TS" ] && [ -f "frontend/package.json" ]; then
         npm run lint || echo -e "${YELLOW}⚠️ Lint failed, but proceeding...${NC}"
     fi
     
-    # [핵심 지능] 테스트 로그 내 'ERROR:' 또는 'Failed' 탐지
-    TEST_LOG=$(npm test -- --watchAll=false 2>&1)
-    TEST_EXIT_CODE=$?
-    echo "$TEST_LOG"
-    
-    if [ $TEST_EXIT_CODE -ne 0 ] || echo "$TEST_LOG" | grep -Ei "ERROR:|Failed to collect coverage" > /dev/null; then
-        echo -e "${RED}❌ [STRICT BLOCK] Hidden errors or coverage failures detected in test output!${NC}"
-        exit 1
+    # Test & Build Verification
+    if command -v npm &> /dev/null; then
+        echo "🧪 Running Jest Tests..."
+        TEST_LOG=$(npm test -- --watchAll=false 2>&1)
+        TEST_EXIT_CODE=$?
+        echo "$TEST_LOG"
+        
+        if [ $TEST_EXIT_CODE -ne 0 ] || echo "$TEST_LOG" | grep -Ei "ERROR:|Failed to collect coverage" > /dev/null; then
+            echo -e "${RED}❌ [STRICT BLOCK] Hidden errors or coverage failures detected in test output!${NC}"
+            exit 1
+        fi
+
+        echo "🏗️  Verifying Frontend Build (Expo Export)..."
+        # 실제 배포 환경과 동일한 빌드 명령 수행 (시간 절약을 위해 --no-minify 옵션 사용 가능)
+        if npx expo export --platform web --no-minify > /dev/null 2>&1; then
+            echo -e "${GREEN}✅ Build verification passed.${NC}"
+        else
+            echo -e "${RED}❌ [BUILD FAILURE] Expo export failed! Check your Babel config or syntax errors.${NC}"
+            npx expo export --platform web --no-minify
+            exit 1
+        fi
     fi
     cd ..
 fi
