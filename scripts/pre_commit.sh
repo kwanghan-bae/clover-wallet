@@ -1,46 +1,59 @@
 #!/bin/bash
 
-# 🛡️ CLOVER WALLET BACKEND PRE-COMMIT HOOK
-# 이 스크립트는 커밋 전에 코드 품질과 테스트 존재 여부를 강제로 검사합니다.
+# 🛡️ SOVEREIGN GUARD PRE-COMMIT V6.0 (Final Evolution)
+# High-rigor enforcement of documentation-code integrity.
 
-echo "🔒 [Backend] Starting Pre-commit checks..."
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
 
-# 1. AI Laziness Guard (플레이스홀더 감지)
-echo "🔍 Checking for forbidden placeholders..."
-FORBIDDEN_PATTERNS='^(\s)*// \.\.\.|^(\s)*# \.\.\.|TODO: Implement'
-if git diff --cached | grep -E "$FORBIDDEN_PATTERNS"; then
-    echo "❌ [ERROR] Forbidden placeholders detected! (e.g., '// ...', '# ...')"
-    echo "Please implement the logic fully or remove the placeholder."
+echo -e "${GREEN}🔒 [Sovereign Guard] Executing absolute quality audit...${NC}"
+
+# 1. AI Laziness & Placeholder Detection (Hard Block)
+# 패턴 정의 (패턴 자체가 grep에 걸리지 않도록 쪼개서 작성)
+P1='//'
+P2=' ...'
+P3='#'
+P4='(중략)'
+JOINED_PATTERNS="${P1}${P2}|${P3}${P2}|\/\* ${P2} \*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
+if git diff --cached | grep -Ei "$JOINED_PATTERNS"; then
+    echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected!${NC}"
     exit 1
 fi
 
-# 2. Test Existence Check (No Test, No Code)
-echo "🔍 Verifying test existence for changed files..."
-CHANGED_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep "^clover-wallet/.*src/main/kotlin/.*\.kt$")
+# 2. Strict Documentation Enforcement (NEW: Hard Link)
+# 논리적 코드 변경 시 docs/ 하위 파일이나 README.md 수정이 없으면 커밋을 막습니다.
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+HAS_LOGIC=$(echo "$STAGED_FILES" | grep -E "\.(kt|dart|py)$" || true)
+HAS_DOCS=$(echo "$STAGED_FILES" | grep -E "(\.md|docs/)" || true)
 
-for FILE in $CHANGED_FILES; do
-    # 파일명 추출 (e.g., UserService.kt)
-    FILENAME=$(basename "$FILE")
-    # 테스트 파일명 예상 (e.g., UserServiceTest.kt)
-    TEST_FILENAME="${FILENAME%.*}Test.kt"
-    
-    # 해당 테스트 파일이 프로젝트 내에 존재하는지 검색
-    if ! find clover-wallet -name "$TEST_FILENAME" | grep -q .; then
-        echo "❌ [ERROR] No test found for: $FILENAME"
-        echo "   You must create a test file named '$TEST_FILENAME' before committing."
-        exit 1
+if [ -n "$HAS_LOGIC" ] && [ -z "$HAS_DOCS" ]; then
+    echo -e "${RED}❌ [DOCUMENTATION DEBT] You modified code but NOT documentation!${NC}"
+    echo "AI는 반드시 SPEC_CATALOG.md, TECHNICAL_SPEC.md 혹은 ADR.md 중 하나를 업데이트해야 합니다."
+    exit 1
+fi
+
+# 3. TDD Enforcement (Strict Pair Matching)
+for FILE in $STAGED_FILES; do
+    if [[ $FILE == *.kt ]] || [[ $FILE == *.dart ]]; then
+        FILENAME=$(basename "$FILE")
+        if [[ $FILENAME == *Test* ]] || [[ $FILENAME == *_test* ]]; then continue; fi
+        TEST_KT="${FILENAME%.*}Test.kt"
+        TEST_DART="${FILENAME%.*}_test.dart"
+        if ! find . -name "$TEST_KT" -o -name "$TEST_DART" | grep -q .; then
+            echo -e "${RED}❌ [TDD VIOLATION] Missing test file for: $FILENAME${NC}"
+            exit 1
+        fi
     fi
 done
 
-# 3. Static Analysis & Test Execution
-echo "🧪 Running Tests & Lint..."
-cd clover-wallet
-
-# ktlintCheck (있는 경우) 및 test 실행
-if ./gradlew test --quiet; then
-    echo "✅ [Backend] All checks passed!"
-    exit 0
-else
-    echo "❌ [Backend] Tests failed. Commit aborted."
-    exit 1
+# 4. Project Specific Verification
+if [ -f "clover-wallet/gradlew" ]; then
+    (cd clover-wallet && ./gradlew ktlintCheck test --quiet) || exit 1
 fi
+if [ -f "clover_wallet_app/pubspec.yaml" ]; then
+    (cd clover_wallet_app && flutter analyze && flutter test) || exit 1
+fi
+
+echo -e "${GREEN}✅ [Sovereign Guard] Audit successful. Your intelligence is consistent.${NC}"
