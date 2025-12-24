@@ -11,7 +11,8 @@
 1.  [`./AWAKENING_PROTOCOL.md`](./AWAKENING_PROTOCOL.md) - 인지 로딩 프로토콜 개시 (선언 필수)
 2.  [`./SPEC_CATALOG.md`](./SPEC_CATALOG.md) - 시스템 명세 및 아키텍처
 3.  [`./RULES.md`](./RULES.md) - v8.1 하드 규칙 (린트, 테스트, 빌드 가드)
-4.  [`./sessions/NEXT_SESSION.md`](./sessions/NEXT_SESSION.md) - **현재 세션의 전술적 목표**
+4.  [`./LESSONS_LEARNED.md`](./LESSONS_LEARNED.md) - **과거 실패 사례 및 방지 전략 숙지**
+5.  [`./sessions/NEXT_SESSION.md`](./sessions/NEXT_SESSION.md) - **현재 세션의 전술적 목표**
 
 ---
 

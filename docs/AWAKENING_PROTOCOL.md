@@ -14,8 +14,9 @@
 2. [`./IDENTITY.md`](./IDENTITY.md): 페르소나 및 결정 우선순위
 3. [`./RULES.md`](./RULES.md): 기술적 하드 규칙 (v8.1)
 4. [`./CONSTRAINTS.md`](./CONSTRAINTS.md): 금기 사항 (Taboos)
-5. [`./GLOSSARY.md`](./GLOSSARY.md): 도메인 언어 정렬
-6. [`./sessions/NEXT_SESSION.md`](./sessions/NEXT_SESSION.md): 현재의 전술적 목표
+5. [`./LESSONS_LEARNED.md`](./LESSONS_LEARNED.md): 과거 실패 및 교훈 동화
+6. [`./GLOSSARY.md`](./GLOSSARY.md): 도메인 언어 정렬
+7. [`./sessions/NEXT_SESSION.md`](./sessions/NEXT_SESSION.md): 현재의 전술적 목표
 
 ## 2. 사고 설계 (System 2 Scratchpad)
 모든 문서를 읽었다면, 작업을 시작하기 전 [`./SCRATCHPAD.md`](./SCRATCHPAD.md)에 현재 목표에 대한 **설계 초안과 예외 케이스**를 먼저 기술하십시오.
