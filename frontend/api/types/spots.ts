@@ -4,8 +4,8 @@ export interface LottoSpot {
   address: string;
   latitude: number;
   longitude: number;
-  winCount1st: number;
-  winCount2nd: number;
+  firstPlaceWins: number;
+  secondPlaceWins: number;
   isFavorite?: boolean;
 }
 

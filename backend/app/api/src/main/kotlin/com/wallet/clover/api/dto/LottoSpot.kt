@@ -13,7 +13,11 @@ abstract class LottoSpot {
         /** 위도 */
         val latitude: Double,
         /** 경도 */
-        val longitude: Double
+        val longitude: Double,
+        /** 1등 당첨 횟수 */
+        val firstPlaceWins: Int,
+        /** 2등 당첨 횟수 */
+        val secondPlaceWins: Int
     )
 }
 
@@ -22,5 +26,7 @@ fun LottoSpotEntity.toResponse() = LottoSpot.Response(
     name = this.name,
     address = this.address,
     latitude = this.latitude,
-    longitude = this.longitude
+    longitude = this.longitude,
+    firstPlaceWins = this.firstPlaceWins,
+    secondPlaceWins = this.secondPlaceWins
 )

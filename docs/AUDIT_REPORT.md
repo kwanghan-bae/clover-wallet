@@ -28,11 +28,10 @@
 | :--- | :--- | :--- |
 | **Auth** | ✅ Fixed | Supabase 토큰 전송 방식으로 동기화 완료 |
 | **Community** | ✅ Fixed | \`Post.Response\` 규격으로 동기화 완료 |
-| **LottoGame** | ⚠️ Mismatch | 백엔드는 개별 필드(number1~6), 프론트는 배열 사용 중. 변환 레이어 필요 |
+| **LottoGame** | ✅ Fixed | \`LottoGameResponse\` 브릿지 타입 정의 및 동기화 완료 |
+| **LottoSpot** | ✅ Fixed | 당첨 횟수 필드명(\`firstPlaceWins\` 등) 통일 완료 |
 
 ---
 
-## 3. 세부 정합성 이슈 (Lotto Record)
-- **ID Type**: Backend \`Long\` vs Frontend \`string\`. 프론트엔드를 \`number\`로 수정함.
-- **Numbers Format**: 백엔드 DB 구조 최적화를 위해 번호를 분리하여 제공함. 프론트엔드에서 \`numbers: number[]\`로 변환하는 유틸리티 필요.
-- **Status Enum**: 당첨 등수(WINNING_1~5) 정보 처리를 위해 Frontend에 \`LottoGameStatus\` Enum 추가.
+## 3. 세부 정합성 이슈 (Lotto Spot)
+- **Winning Stats**: Backend DTO에 누락되었던 당첨 통계 필드를 추가하고, Frontend의 \`winCount1st\` 등의 명칭을 백엔드 엔티티 명칭과 일치시킴.

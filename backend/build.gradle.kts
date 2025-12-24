@@ -91,7 +91,7 @@ subprojects {
             useJUnitPlatform()
             finalizedBy(jacocoTestReport) // 테스트 후 리포트 생성
         }
-        
+
         jacocoTestReport {
             dependsOn(test)
             reports {

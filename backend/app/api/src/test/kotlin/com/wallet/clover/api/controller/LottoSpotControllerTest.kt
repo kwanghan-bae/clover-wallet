@@ -56,7 +56,9 @@ class LottoSpotControllerTest {
             name = "Store Name",
             address = "Address",
             latitude = 37.0,
-            longitude = 127.0
+            longitude = 127.0,
+            firstPlaceWins = 5,
+            secondPlaceWins = 10
         )
         val pageResponse = PageResponse.of(listOf(spot), 0, 20, 1)
 
@@ -82,7 +84,9 @@ class LottoSpotControllerTest {
             name = "Store Name",
             address = "Address",
             latitude = 37.0,
-            longitude = 127.0
+            longitude = 127.0,
+            firstPlaceWins = 5,
+            secondPlaceWins = 10
         )
 
         runBlocking {
