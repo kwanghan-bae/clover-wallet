@@ -1,4 +1,4 @@
-import 'react-native-reanimated/jestSetup';
+import 'react-native-reanimated/lib/module/jestUtils';
 
 jest.mock('react-native-reanimated', () => {
   const Reanimated = require('react-native-reanimated/mock');

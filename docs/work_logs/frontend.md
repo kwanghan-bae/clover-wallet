@@ -53,6 +53,18 @@ Clover Lotto 기획서를 바탕으로 React Native 앱의 MVP(최소 기능 제
 - **테스트 코드 작성:** `CommunityApiService`와 `CommunityViewModel`에 대한 단위 테스트를 작성하여 기능의 안정성을 확보했습니다.
 - **빌드 환경 개선:** Android `compileSdkVersion`을 34로 업데이트하고, Kotlin 버전 불일치 경고를 해결하기 위해 Gradle 설정을 수정했습니다.
 
+### 2.8. 배포 안정성 확보 및 빌드 가드(Build Guard) 강화
+
+- **배포 에러 해결:**
+    - Render 배포 시 발생하던 `Cannot resolve entry file` 에러를 진입점(`index.js`) 명시 및 `package.json` 수정을 통해 해결했습니다.
+    - 웹 환경에서 `react-native-maps` 참조 시 발생하는 빌드 오류를 플랫폼별 컴포넌트 분리(`.web.tsx`) 및 Mock 구현으로 해결했습니다.
+- **의존성 정규화:**
+    - Reanimated v4 구동에 필수적인 `react-native-worklets` 및 아이콘 렌더링을 위한 `react-native-svg` 누락을 확인하고 설치했습니다.
+    - `jest.setup.js`의 잘못된 모듈 경로를 수정하여 테스트 환경을 정상화했습니다.
+- **빌드 가드(pre-commit) 고도화:**
+    - `pre_commit.sh`에 실제 `expo export` 빌드 검증 로직을 안착시켜, 코드 커밋 전 배포 성공 가능성을 100% 검증하도록 개선했습니다.
+    - 파일 삭제 등 특정 상황에서 발생하던 스크립트 오류를 수정했습니다.
+
 ---
 
 ## 3. TODO 리스트 (향후 개발 계획)
