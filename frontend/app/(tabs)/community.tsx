@@ -10,21 +10,30 @@ import { Post } from '../../api/types/community';
 const MOCK_POSTS: Post[] = [
   {
     id: 1,
-    title: "Round 1102 Winner here!",
     content: "I can't believe I won the 3rd prize with the numbers I generated from this app! Best luck ever.",
-    authorNickname: "LuckyClover",
+    user: {
+      id: 101,
+      nickname: "LuckyClover",
+      badges: ["Winner"],
+    },
     createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
     likeCount: 24,
-    commentCount: 5,
+    viewCount: 150,
+    isLiked: false,
   },
   {
     id: 2,
-    title: "Best Lotto Spot in Seoul?",
     content: "Has anyone visited the famous spot near Gangnam station? Thinking of going there this weekend.",
-    authorNickname: "Seoulite",
+    user: {
+      id: 102,
+      nickname: "Seoulite",
+    },
     createdAt: new Date(Date.now() - 86400000).toISOString(),
+    updatedAt: new Date(Date.now() - 86400000).toISOString(),
     likeCount: 12,
-    commentCount: 8,
+    viewCount: 85,
+    isLiked: true,
   },
 ];
 
