@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { FlashList } from '@shopify/flash-list';
 import { Edit3, Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -32,7 +33,7 @@ export default function CommunityScreen() {
           data={posts}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <PostCard post={item} onPress={() => {}} />
+            <PostCard post={item} onPress={() => { }} />
           )}
           estimatedItemSize={180}
           showsVerticalScrollIndicator={false}
@@ -44,8 +45,8 @@ export default function CommunityScreen() {
               <EmptyIllustration />
               <Text className="text-lg font-bold text-[#1A1A1A] mt-8">아직 게시물이 없습니다</Text>
               <Text className="text-gray-500 mt-2 text-center">첫 번째 게시물의 주인공이 되어보세요!</Text>
-              
-              <TouchableOpacity 
+
+              <TouchableOpacity
                 onPress={() => router.push('/create-post')}
                 className="bg-primary px-8 py-4 rounded-full mt-10 shadow-lg"
               >
@@ -56,14 +57,22 @@ export default function CommunityScreen() {
         />
       </View>
 
-      {/* Floating Action Button - Gradient simulated with bg-primary */}
-      <TouchableOpacity 
-        activeOpacity={0.8}
-        onPress={() => router.push('/create-post')}
-        className="absolute bottom-6 right-6 w-14 h-14 rounded-full bg-primary items-center justify-center shadow-xl border border-white/20"
-      >
-        <Edit3 size={24} color="white" />
-      </TouchableOpacity>
+      {/* Floating Action Button - Gradient */}
+      <View className="absolute bottom-6 right-6" style={{ borderRadius: 28, overflow: 'hidden', shadowColor: '#4CAF50', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 8 }}>
+        <TouchableOpacity
+          activeOpacity={0.8}
+          onPress={() => router.push('/create-post')}
+        >
+          <LinearGradient
+            colors={['#4CAF50', '#388E3C']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <Edit3 size={24} color="white" />
+          </LinearGradient>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }

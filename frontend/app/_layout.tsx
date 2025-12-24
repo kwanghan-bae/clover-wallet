@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Stack } from 'expo-router';
 import { GlobalErrorBoundary } from '../components/ErrorBoundary';
-// eslint-disable-next-line import/no-unresolved
 import * as SplashScreen from 'expo-splash-screen';
 import {
   useFonts,
