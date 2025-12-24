@@ -83,6 +83,55 @@ class WinningCheckServiceTest {
     }
 
     @Test
+    fun `checkWinning should handle 2nd prize correctly`() = runTest {
+        // Given
+        val round = 1000
+        val winningInfo = TestFixtures.createWinningInfo(round = round, bonusNumber = 7)
+        val ticket = TestFixtures.createLottoTicket(id = 1L, ordinal = round)
+        val game = TestFixtures.createLottoGame(
+            id = 1L, ticketId = 1L,
+            number1 = 1, number2 = 2, number3 = 3, number4 = 4, number5 = 5, number6 = 7, // 5개 일치 + 보너스
+            status = LottoGameStatus.LOSING
+        )
+        val user = TestFixtures.createUser(id = 1L, fcmToken = "token")
+
+        coEvery { winningInfoRepository.findByRound(round) } returns winningInfo
+        coEvery { lottoTicketRepository.findByOrdinal(round) } returns flowOf(ticket)
+        coEvery { transactionalOperator.execute(any<TransactionCallback<Any>>()) } answers {
+            val callback = firstArg<TransactionCallback<Any>>()
+            Flux.from(callback.doInTransaction(mockk(relaxed = true)))
+        }
+        coEvery { lottoGameRepository.findByTicketIdIn(any()) } returns flowOf(game)
+        coEvery { lottoGameRepository.saveAll(any<List<com.wallet.clover.api.entity.game.LottoGameEntity>>()) } returns flowOf(game.copy(status = LottoGameStatus.WINNING_2))
+        coEvery { lottoTicketRepository.saveAll(any<List<com.wallet.clover.api.entity.ticket.LottoTicketEntity>>()) } returns flowOf(ticket.copy(status = LottoTicketStatus.WINNING))
+        coEvery { userRepository.findAllById(any<Iterable<Long>>()) } returns flowOf(user)
+
+        // When
+        winningCheckService.checkWinning(round)
+
+        // Then
+        coVerify { fcmService.sendWinningNotification(any(), "2등", any(), any()) }
+    }
+
+    @Test
+    fun `checkWinning should try crawling if DB record is missing`() = runTest {
+        // Given
+        val round = 1000
+        val winningInfo = TestFixtures.createWinningInfo(round = round)
+        
+        coEvery { winningInfoRepository.findByRound(round) } returnsMany listOf(null, winningInfo)
+        coEvery { winningInfoCrawler.crawlWinningInfo(round) } returns Unit
+        coEvery { lottoTicketRepository.findByOrdinal(round) } returns flowOf()
+
+        // When
+        winningCheckService.checkWinning(round)
+
+        // Then
+        coVerify(exactly = 1) { winningInfoCrawler.crawlWinningInfo(round) }
+        coVerify(exactly = 2) { winningInfoRepository.findByRound(round) }
+    }
+
+    @Test
     fun `checkWinning should do nothing if winning info not found`() = runTest {
         // Given
         val round = 1000

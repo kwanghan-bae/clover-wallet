@@ -60,4 +60,29 @@ class LottoGameServiceTest {
         assertEquals(game, result)
         coVerify { badgeService.updateUserBadges(game.userId) }
     }
+
+    @Test
+    fun `saveGeneratedGame should create virtual ticket and save game`() = runTest {
+        // Given
+        val request = com.wallet.clover.api.dto.LottoGame.SaveRequest(
+            userId = 1L,
+            numbers = listOf(1, 2, 3, 4, 5, 6),
+            extractionMethod = com.wallet.clover.api.domain.extraction.ExtractionMethod.DREAM
+        )
+        val virtualTicket = TestFixtures.createLottoTicket(id = 100L, userId = 1L, ordinal = 0)
+        val savedGame = TestFixtures.createLottoGame(id = 200L, userId = 1L, ticketId = 100L)
+
+        coEvery { ticketRepository.save(any()) } returns virtualTicket
+        coEvery { gameRepository.save(any()) } returns savedGame
+        coEvery { badgeService.updateUserBadges(1L) } just Runs
+
+        // When
+        val result = lottoGameService.saveGeneratedGame(request)
+
+        // Then
+        assertEquals(savedGame, result)
+        coVerify { ticketRepository.save(match { it.ordinal == 0 }) }
+        coVerify { gameRepository.save(match { it.extractionMethod == com.wallet.clover.api.domain.extraction.ExtractionMethod.DREAM }) }
+        coVerify { badgeService.updateUserBadges(1L) }
+    }
 }
