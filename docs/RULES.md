@@ -22,6 +22,7 @@
 
 ### 1.1 Universal Import Rigor (ABSOLUTE)
 모든 소스 코드(.kt, .java, .ts, .tsx, .dart, .cs, .go, .py 등)는 다음 임포트 무결성을 준수해야 합니다.
+- **Lint-Zero Policy**: 모든 린트 경고(Warning)는 잠재적 버그로 간주합니다. 커밋 전 반드시 모든 경고를 해결하거나, 정당한 사유가 있는 경우에만 로컬에서 억제(Suppress) 처리 후 문서에 기록합니다. 무시된 경고는 '나태함'으로 간주되어 차단됩니다.
 - **Import Isolation**: 모든 외부/내부 참조는 파일 최상단의 `import` 구문에만 존재해야 합니다.
 - **No Inline Full-Paths**: 코드 본문 내에서 풀 패키지 경로(e.g., `java.util.List`, `org.springframework...`)를 직접 호출하는 것은 엄격히 금지됩니다.
 - **Annotation Integrity**: 어노테이션 사용 시 풀 패키지 경로를 포함하지 마십시오. (BAD: `@org.junit.Test`, GOOD: `@Test`)
