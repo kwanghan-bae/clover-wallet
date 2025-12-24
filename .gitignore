@@ -24,3 +24,7 @@ logs/
 *.log
 docs/*/sessions/session_*.md
 !docs/*/sessions/next_session.md
+coverage/
+lcov.info
+*.lcov
+.nyc_output/

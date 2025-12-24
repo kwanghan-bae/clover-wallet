@@ -1,5 +1,8 @@
-import { MMKV } from 'react-native-mmkv';
-
+/**
+ * MMKV 인스턴스 생성
+ * TypeScript가 MMKV를 오직 타입으로만 인지하는 문제를 해결하기 위해 require를 사용하여 값을 로드합니다.
+ */
+const { MMKV } = require('react-native-mmkv');
 export const storage = new MMKV();
 
 export const StorageKeys = {
