@@ -26,13 +26,13 @@
 
 | Entity | Field Status | Notes |
 | :--- | :--- | :--- |
-| **Auth** | ⚠️ Mismatch | `refreshToken` 누락, `user` 모델 불일치 |
-| **Community** | 🔍 Investigating | `CommonResponse` 적용 여부에 따라 배열 파싱 오류 예상 |
-| **LottoGame** | 🔍 Investigating | 백엔드 `/api/v1/lotto/games` 확인 필요 |
+| **Auth** | ✅ Fixed | Supabase 토큰 전송 방식으로 동기화 완료 |
+| **Community** | ✅ Fixed | \`Post.Response\` 규격으로 동기화 완료 |
+| **LottoGame** | ⚠️ Mismatch | 백엔드는 개별 필드(number1~6), 프론트는 배열 사용 중. 변환 레이어 필요 |
 
 ---
 
-## 3. Next Steps for Implementation
-1. `frontend/api/client.ts` 고도화 (Response Wrapper 처리).
-2. `frontend/api/auth.ts` 로그인 명세 수정.
-3. `frontend/api/` 전역 경로 검수 및 수정.
+## 3. 세부 정합성 이슈 (Lotto Record)
+- **ID Type**: Backend \`Long\` vs Frontend \`string\`. 프론트엔드를 \`number\`로 수정함.
+- **Numbers Format**: 백엔드 DB 구조 최적화를 위해 번호를 분리하여 제공함. 프론트엔드에서 \`numbers: number[]\`로 변환하는 유틸리티 필요.
+- **Status Enum**: 당첨 등수(WINNING_1~5) 정보 처리를 위해 Frontend에 \`LottoGameStatus\` Enum 추가.
