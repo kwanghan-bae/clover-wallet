@@ -4,7 +4,8 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { HistoryItem } from '../../components/ui/HistoryItem';
 import { LottoRecord } from '../../api/types/lotto';
 import { loadItem, StorageKeys, removeFromItemArray } from '../../utils/storage';
-import { Inbox, QrCode, Plus } from 'lucide-react-native';
+import { QrCode, Plus } from 'lucide-react-native';
+import { EmptyIllustration } from '../../components/ui/EmptyIllustration';
 
 export default function HistoryScreen() {
   const router = useRouter();
@@ -47,10 +48,8 @@ export default function HistoryScreen() {
           )}
           ListEmptyComponent={
             <View className="items-center justify-center py-32">
-              <View className="bg-gray-100 p-8 rounded-full mb-6">
-                <Inbox size={60} color="#BDBDBD" />
-              </View>
-              <Text className="text-lg font-bold text-[#1A1A1A]">저장된 로또 내역이 없습니다</Text>
+              <EmptyIllustration color="#BDBDBD" />
+              <Text className="text-lg font-bold text-[#1A1A1A] mt-8">저장된 로또 내역이 없습니다</Text>
               <Text className="text-gray-500 mt-2 text-center">번호를 생성하고 저장해보세요!</Text>
               
               <TouchableOpacity 

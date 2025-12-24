@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
-import { Edit3, MessageCircle, Search } from 'lucide-react-native';
+import { Edit3, Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { PostCard } from '../../components/ui/PostCard';
 import { Post } from '../../api/types/community';
+import { EmptyIllustration } from '../../components/ui/EmptyIllustration';
 
 export default function CommunityScreen() {
   const router = useRouter();
@@ -40,10 +41,8 @@ export default function CommunityScreen() {
           contentContainerStyle={{ padding: 20 }}
           ListEmptyComponent={
             <View className="items-center justify-center py-32">
-              <View className="bg-primary/5 p-8 rounded-full mb-6">
-                <MessageCircle size={60} color="#4CAF50" className="opacity-50" />
-              </View>
-              <Text className="text-lg font-bold text-[#1A1A1A]">아직 게시물이 없습니다</Text>
+              <EmptyIllustration />
+              <Text className="text-lg font-bold text-[#1A1A1A] mt-8">아직 게시물이 없습니다</Text>
               <Text className="text-gray-500 mt-2 text-center">첫 번째 게시물의 주인공이 되어보세요!</Text>
               
               <TouchableOpacity 

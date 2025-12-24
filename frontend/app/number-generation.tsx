@@ -6,7 +6,9 @@ import {
   SafeAreaView, 
   TouchableOpacity, 
   Animated,
-  Alert
+  Alert,
+  Modal,
+  TextInput
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { 
@@ -43,24 +45,39 @@ export default function NumberGenerationScreen() {
   const [generatedNumbers, setGeneratedNumbers] = useState<number[]>([]);
   const [selectedMethod, setSelectedMethod] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [paramInput, setParamInput] = useState('');
   
   // Animation
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
-  const generateNumbers = (methodId: string) => {
+  const handleMethodSelect = (methodId: string) => {
     setSelectedMethod(methodId);
-    
-    // Logic: In real app, this would call API or complex algorithm
-    // For now, mirroring Flutter's fallback logic
-    const numbers: Set<number> = new Set();
-    while (numbers.size < 6) {
-      numbers.add(Math.floor(Math.random() * 45) + 1);
+    if (['DREAM', 'SAJU', 'PERSONAL_SIGNIFICANCE'].includes(methodId)) {
+      setParamInput('');
+      setIsModalVisible(true);
+    } else {
+      generateNumbers(methodId);
     }
+  };
+
+  const generateNumbers = (methodId: string, param?: string) => {
+    // Simulated algorithm logic based on method
+    const numbers: Set<number> = new Set();
+    const seed = param ? param.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : Math.random();
+    
+    // Simple deterministic random for "Premium" feel
+    let currentSeed = seed;
+    while (numbers.size < 6) {
+      currentSeed = (currentSeed * 9301 + 49297) % 233280;
+      const num = Math.floor((currentSeed / 233280) * 45) + 1;
+      if (num > 0) numbers.add(num);
+    }
+    
     const sorted = Array.from(numbers).sort((a, b) => a - b);
-    
     setGeneratedNumbers(sorted);
+    setIsModalVisible(false);
     
-    // Start Animation
     scaleAnim.setValue(0);
     Animated.spring(scaleAnim, {
       toValue: 1,
@@ -126,7 +143,7 @@ export default function NumberGenerationScreen() {
               disabled={isSaving}
               className="bg-white px-10 py-3 rounded-full mt-8 shadow-sm flex-row items-center"
             >
-              <Save size={18} color="#4CAF50" className="mr-2" />
+              <Save size={18} color="#4CAF50" />
               <Text className="text-primary font-bold ml-2">{isSaving ? "저장 중" : "번호 저장하기"}</Text>
             </TouchableOpacity>
           )}
@@ -139,7 +156,7 @@ export default function NumberGenerationScreen() {
           {METHODS.map((method) => (
             <TouchableOpacity 
               key={method.id}
-              onPress={() => generateNumbers(method.id)}
+              onPress={() => handleMethodSelect(method.id)}
               className={`bg-white rounded-2xl p-4 flex-row items-center border ${selectedMethod === method.id ? 'border-primary shadow-md' : 'border-gray-50 shadow-sm'}`}
             >
               <View style={{ backgroundColor: method.color }} className="p-3 rounded-xl mr-4 shadow-sm">
@@ -159,6 +176,45 @@ export default function NumberGenerationScreen() {
             </TouchableOpacity>
           ))}
         </View>
+
+        {/* Modal for Input */}
+        <Modal
+          visible={isModalVisible}
+          transparent
+          animationType="fade"
+        >
+          <View className="flex-1 bg-black/50 justify-center items-center px-10">
+            <View className="bg-white w-full rounded-3xl p-6 shadow-2xl">
+              <Text className="text-lg font-bold text-[#1A1A1A] mb-2 text-center">
+                {METHODS.find(m => m.id === selectedMethod)?.title}
+              </Text>
+              <Text className="text-gray-500 text-center text-xs mb-6">분석을 위해 필요한 정보를 입력해주세요.</Text>
+              
+              <TextInput
+                className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-base mb-6"
+                placeholder={selectedMethod === 'DREAM' ? '꿈의 키워드를 적어주세요 (예: 뱀, 금)' : '날짜나 숫자를 적어주세요'}
+                value={paramInput}
+                onChangeText={setParamInput}
+                autoFocus
+              />
+
+              <View className="flex-row gap-3">
+                <TouchableOpacity 
+                  onPress={() => setIsModalVisible(false)}
+                  className="flex-1 py-4 bg-gray-100 rounded-xl items-center"
+                >
+                  <Text className="text-gray-500 font-bold">취소</Text>
+                </TouchableOpacity>
+                <TouchableOpacity 
+                  onPress={() => generateNumbers(selectedMethod, paramInput)}
+                  className="flex-2 py-4 bg-primary rounded-xl items-center"
+                >
+                  <Text className="text-white font-bold">분석 및 생성</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {/* Tip Section */}
         <View className="bg-amber-50 rounded-2xl p-4 border border-amber-100 mt-8 mb-10 flex-row">

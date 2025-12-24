@@ -68,21 +68,24 @@ export default function ScanScreen() {
         style={StyleSheet.absoluteFill}
         facing="back"
       >
-        {/* Overlay Guide */}
+        {/* Full Screen Overlay with centered hole */}
         <View style={styles.overlay}>
-          <View style={styles.unfocusedContainer}></View>
+          <View style={styles.unfocusedContainer} />
           <View className="flex-row">
-            <View style={styles.unfocusedContainer}></View>
+            <View style={styles.unfocusedContainer} />
             <View style={styles.focusedContainer}>
-              <View style={[styles.corner, styles.topLeft]} />
-              <View style={[styles.corner, styles.topRight]} />
-              <View style={[styles.corner, styles.bottomLeft]} />
-              <View style={[styles.corner, styles.bottomRight]} />
+              {/* Custom Corner Markers matching Flutter's ScanOverlayPainter */}
+              <View style={[styles.corner, styles.topLeft, { borderLeftWidth: 5, borderTopWidth: 5 }]} />
+              <View style={[styles.corner, styles.topRight, { borderRightWidth: 5, borderTopWidth: 5 }]} />
+              <View style={[styles.corner, styles.bottomLeft, { borderLeftWidth: 5, borderBottomWidth: 5 }]} />
+              <View style={[styles.corner, styles.bottomRight, { borderRightWidth: 5, borderBottomWidth: 5 }]} />
             </View>
-            <View style={styles.unfocusedContainer}></View>
+            <View style={styles.unfocusedContainer} />
           </View>
           <View style={styles.unfocusedContainer}>
-            <Text className="text-white text-center mt-4">Align the lotto numbers inside the box</Text>
+            <Text className="text-white text-center mt-8 px-10 text-sm leading-5">
+              로또 티켓의 번호 부분을 가이드에 맞춰주세요
+            </Text>
           </View>
         </View>
       </CameraView>
@@ -97,39 +100,48 @@ export default function ScanScreen() {
       </SafeAreaView>
 
       {/* Bottom Controls */}
-      <View className="absolute bottom-12 left-0 right-0 items-center">
+      <View className="absolute bottom-16 left-0 right-0 items-center">
         {!scanResult ? (
           <TouchableOpacity 
             onPress={handleCapture}
             disabled={isProcessing}
-            className="w-20 h-20 rounded-full bg-white/20 items-center justify-center border-4 border-white"
+            className="bg-primary px-10 py-4 rounded-full flex-row items-center shadow-2xl"
           >
-            {isProcessing ? <ActivityIndicator color="white" size="large" /> : <CameraIcon size={32} color="white" />}
+            {isProcessing ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <>
+                <CameraIcon size={20} color="white" />
+                <Text className="text-white font-black text-lg ml-3">촬영</Text>
+              </>
+            )}
           </TouchableOpacity>
         ) : (
           <View className="bg-white rounded-3xl p-6 w-[90%] shadow-2xl">
-            <Text className="text-xl font-bold text-text-dark mb-2 text-center">Numbers Recognized!</Text>
-            {scanResult.round && <Text className="text-primary font-bold text-center mb-4">Round {scanResult.round}</Text>}
-            <BallRow numbers={scanResult.numbers} className="mb-6" />
+            <Text className="text-xl font-bold text-text-dark mb-2 text-center">인식된 번호 확인</Text>
+            {scanResult.round && <Text className="text-primary font-bold text-center mb-4">{scanResult.round}회차</Text>}
+            <View className="items-center mb-6">
+              <BallRow numbers={scanResult.numbers} />
+            </View>
             
             <View className="flex-row gap-3">
               <TouchableOpacity 
                 onPress={() => setScanResult(null)}
-                className="flex-1 h-12 bg-gray-100 rounded-xl items-center justify-center flex-row"
+                className="flex-1 h-14 bg-gray-100 rounded-xl items-center justify-center flex-row"
               >
-                <RotateCw size={18} color="#757575" className="mr-2" />
-                <Text className="text-text-light font-bold">Retry</Text>
+                <RotateCw size={18} color="#757575" />
+                <Text className="text-text-light font-bold ml-2">다시 촬영</Text>
               </TouchableOpacity>
               <TouchableOpacity 
                 onPress={() => {
-                  // TODO: Save to storage and go back
                   router.back();
                 }}
-                className="flex-2 h-12 bg-primary rounded-xl items-center justify-center"
+                className="flex-2 h-14 bg-primary rounded-xl items-center justify-center"
               >
-                <Text className="text-white font-bold text-lg px-8">Confirm & Save</Text>
+                <Text className="text-white font-bold text-lg px-8">확인</Text>
               </TouchableOpacity>
             </View>
+            <Text className="text-gray-400 text-[10px] text-center mt-4">※ 인식된 번호가 정확한지 확인해주세요.</Text>
           </View>
         )}
       </View>
@@ -140,27 +152,26 @@ export default function ScanScreen() {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.3)',
   },
   unfocusedContainer: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
   },
   focusedContainer: {
-    width: width * 0.85,
-    height: height * 0.25,
-    borderWidth: 0,
+    width: width * 0.8,
+    height: height * 0.2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
     position: 'relative',
   },
   corner: {
     position: 'absolute',
-    width: 20,
-    height: 20,
-    borderColor: '#4CAF50',
-    borderWidth: 4,
+    width: 25,
+    height: 25,
+    borderColor: '#FFFFFF',
   },
-  topLeft: { top: 0, left: 0, borderRightWidth: 0, borderBottomWidth: 0 },
-  topRight: { top: 0, right: 0, borderLeftWidth: 0, borderBottomWidth: 0 },
-  bottomLeft: { bottom: 0, left: 0, borderRightWidth: 0, borderTopWidth: 0 },
-  bottomRight: { bottom: 0, right: 0, borderLeftWidth: 0, borderTopWidth: 0 },
+  topLeft: { top: -2, left: -2 },
+  topRight: { top: -2, right: -2 },
+  bottomLeft: { bottom: -2, left: -2 },
+  bottomRight: { bottom: -2, right: -2 },
 });
