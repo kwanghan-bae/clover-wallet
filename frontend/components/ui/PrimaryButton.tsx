@@ -45,13 +45,13 @@ export const PrimaryButton = ({
       {...props}
     >
       <LinearGradient
-        colors={disabled ? ['#E0E0E0', '#BDBDBD'] : ['#66BB6A', '#43A047']}
+        colors={disabled ? ['#E0E0E0', '#BDBDBD'] : ['#4CAF50', '#388E3C']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        className="py-4 px-6 items-center justify-center flex-row space-x-2"
+        className="py-4 px-6 items-center justify-center flex-row"
       >
-        {isLoading && <ActivityIndicator color="white" size="small" className="mr-2" />}
-        <Text className={cn("text-white font-bold text-lg", textClassName)}>
+        {isLoading && <ActivityIndicator color="white" size="small" style={{ marginRight: 8 }} />}
+        <Text className={cn("text-white font-black text-base tracking-wide", textClassName)}>
           {label}
         </Text>
       </LinearGradient>

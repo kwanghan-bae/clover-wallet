@@ -58,17 +58,26 @@ export default function HomeScreen() {
               <Text className="text-white font-bold">제 {drawInfo.currentRound} 회</Text>
             </View>
             
-            <Text className="text-white/70 text-base mt-6">당첨 발표까지</Text>
+            <Text className="text-white/70 text-base mt-6 font-semibold">당첨 발표까지</Text>
             
-            <Text className="text-white text-[42px] font-black tracking-tighter mt-2">
+            <Text 
+              className="text-white text-[42px] font-[900] tracking-tighter mt-2"
+              style={{
+                textShadowColor: 'rgba(0, 0, 0, 0.26)',
+                textShadowOffset: { width: 0, height: 2 },
+                textShadowRadius: 4
+              }}
+            >
               {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
             </Text>
 
             <TouchableOpacity 
               onPress={() => router.push('/number-generation')}
-              className="bg-white px-12 py-4 rounded-full mt-8 shadow-sm"
+              activeOpacity={0.9}
+              className="bg-white px-12 py-4 rounded-full mt-8 shadow-xl"
+              style={{ elevation: 8 }}
             >
-              <Text className="text-primary text-lg font-bold">번호 생성하기</Text>
+              <Text className="text-[#4CAF50] text-lg font-black">번호 생성하기</Text>
             </TouchableOpacity>
           </View>
         </LinearGradient>

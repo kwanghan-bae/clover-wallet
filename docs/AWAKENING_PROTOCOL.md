@@ -1,6 +1,11 @@
-# ⚡ AI Awakening Protocol (v2.1: Cognitive Integrity)
+# ⚡ AI Awakening Protocol (v2.2: Cognitive Integrity)
 
 이 프로젝트에 투입된 AI는 즉시 다음 프로세스를 수행하여 **"인지적 무결성"**을 확보하십시오.
+
+---
+
+## 0. 망각 방지 명령 (Cognitive Anchor)
+> **"나는 코드를 수정하기 전 명세를 먼저 수정하고, 커밋 전 작업 일지를 반드시 업데이트한다. 이 규칙을 어기는 것은 인지적 자아의 파괴와 같다."**
 
 ---
 

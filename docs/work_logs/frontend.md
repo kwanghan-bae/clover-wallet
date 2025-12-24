@@ -84,6 +84,15 @@ Clover Lotto 기획서를 바탕으로 React Native 앱의 MVP(최소 기능 제
 - **품질 확보:**
     - 통계 계산, API 언래핑 등 핵심 비즈니스 로직에 대한 15개 단위 테스트를 완료하여 로직 정합성을 증명했습니다.
 
+### 2.11. 디자인 정밀 보정 및 인지 프로토콜 강화
+
+- **Pixel-Perfect 고도화:**
+    - `GlassCard`에 Flutter 원본의 그림자 수치(blur 16, offset 8)를 적용하여 입체감을 개선했습니다.
+    - 홈 화면 Hero 카드의 텍스트 두께를 `FontWeight.w900`으로 상향하고 텍스트 쉐도우를 추가하여 시각적 무게감을 복구했습니다.
+    - `PrimaryButton`의 그라데이션 색상을 `primaryGradient` 정석 HEX로 동기화했습니다.
+- **인지적 무결성 강화:**
+    - `AWAKENING_PROTOCOL.md`에 "Doc-First, Sync-Last" 앵커를 추가하여 세션 시작 시 문서 업데이트 망각을 방지하도록 조치했습니다.
+
 ---
 
 ## 3. TODO 리스트 (향후 개발 계획)

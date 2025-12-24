@@ -9,21 +9,31 @@ interface GlassCardProps extends ViewProps {
   children: React.ReactNode;
 }
 
-export const GlassCard = ({
-  children,
-  className = "",
-  opacity = 0.15,
+export const GlassCard = ({ 
+  children, 
+  className = "", 
+  opacity = 0.15, 
   blur = 10,
-  borderRadius = 24
+  borderRadius = 24 
 }: GlassCardProps) => {
   return (
-    <View className={`overflow-hidden shadow-sm ${className}`} style={{ borderRadius }}>
+    <View 
+      className={`overflow-hidden ${className}`} 
+      style={{ 
+        borderRadius,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.05,
+        shadowRadius: 16,
+        elevation: 5 // Android fallback
+      }}
+    >
       <BlurView
-        intensity={blur * 2} // Expo intensity is roughly 2x Flutter's sigma
+        intensity={blur * 2}
         tint="light"
         style={{
           backgroundColor: `rgba(255, 255, 255, ${opacity})`,
-          padding: 20,
+          padding: 24,
           borderWidth: 1.5,
           borderColor: 'rgba(255, 255, 255, 0.2)',
         }}
