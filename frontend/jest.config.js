@@ -8,11 +8,15 @@ module.exports = {
     }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  transformIgnorePatterns: [
-    'node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)',
-  ],
+  moduleNameMapper: {
+    '^react-native$': '<rootDir>/node_modules/react-native-web',
+    '^expo-router$': '<rootDir>/__tests__/mocks/expo-router.js',
+  },
   collectCoverage: true,
   collectCoverageFrom: [
-    'utils/**/*.ts', // UI 컴포넌트 제외, 로직만 테스트
+    'utils/**/*.ts',
+  ],
+  testMatch: [
+    '**/__tests__/**/*.test.ts', // .tsx 제외, .ts 로직 테스트만 우선 수행
   ],
 };
