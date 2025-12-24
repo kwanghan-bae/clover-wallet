@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { 
+  View, 
+  Text, 
+  SafeAreaView, 
+  TouchableOpacity, 
+  Image, 
+  Dimensions,
+  ActivityIndicator
+} from 'react-native';
 import { useRouter } from 'expo-router';
-import { PrimaryButton } from '../components/ui/PrimaryButton';
-import { Input } from '../components/ui/Input';
 import { GlassCard } from '../components/ui/GlassCard';
+import { Filter } from 'lucide-react-native';
+
+const { width, height } = Dimensions.get('window');
 
 export default function LoginScreen() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleGoogleSignIn = async () => {
     setIsLoading(true);
-    // TODO: Implement actual API call
     setTimeout(() => {
       setIsLoading(false);
       router.replace('/(tabs)');
@@ -21,51 +27,51 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <KeyboardAvoidingView 
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1 px-6 justify-center"
-      >
-        <View className="items-center mb-12">
-          <Text className="text-4xl font-bold text-primary">Clover Wallet</Text>
-          <Text className="text-text-light mt-2 text-lg">Your luck starts here</Text>
-        </View>
+    <View className="flex-1 bg-primary">
+      {/* Decorative Background Circles */}
+      <View 
+        className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-white/10" 
+      />
+      <View 
+        className="absolute bottom-24 -right-8 w-36 h-36 rounded-full bg-white/10" 
+      />
 
-        <GlassCard className="p-2">
-          <View className="gap-4 p-4">
-            <Input 
-              label="Email" 
-              placeholder="example@clover.com"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-            <Input 
-              label="Password" 
-              placeholder="Enter your password"
-              value={password}
-              onChangeText={setPassword}
-              secureTextEntry
-            />
-            
-            <PrimaryButton 
-              label="Login" 
-              className="mt-4"
-              onPress={handleLogin}
-              isLoading={isLoading}
-            />
-
-            <View className="flex-row justify-center mt-4">
-              <Text className="text-text-light">Don't have an account? </Text>
-              <TouchableOpacity>
-                <Text className="text-primary font-bold">Sign Up</Text>
-              </TouchableOpacity>
-            </View>
+      <SafeAreaView className="flex-1 justify-center items-center px-6">
+        <GlassCard 
+          className="w-full py-12 px-8 items-center border border-white/20 shadow-2xl" 
+          opacity={0.15}
+          blur={15}
+        >
+          <View className="bg-white p-4 rounded-full shadow-lg mb-6">
+            <Filter size={48} color="#4CAF50" />
           </View>
-        </GlassCard>
 
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          <Text className="text-white text-3xl font-black tracking-widest">
+            Clover Wallet
+          </Text>
+          <Text className="text-white/90 text-sm mt-2 mb-12">
+            행운을 관리하는 스마트한 습관
+          </Text>
+
+          {isLoading ? (
+            <ActivityIndicator color="white" size="large" />
+          ) : (
+            <TouchableOpacity 
+              onPress={handleGoogleSignIn}
+              activeOpacity={0.8}
+              className="bg-white w-full py-4 rounded-full flex-row justify-center items-center shadow-md"
+            >
+              <Image 
+                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/240px-Google_%22G%22_logo.svg.png' }}
+                className="w-6 h-6 mr-3"
+              />
+              <Text className="text-[#1A1A1A] text-base font-bold">
+                Google 계정으로 계속하기
+              </Text>
+            </TouchableOpacity>
+          )}
+        </GlassCard>
+      </SafeAreaView>
+    </View>
   );
 }

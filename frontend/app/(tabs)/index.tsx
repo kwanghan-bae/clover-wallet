@@ -1,125 +1,145 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import { GlassCard } from '../../components/ui/GlassCard';
-import { LottoBall } from '../../components/ui/LottoBall';
 import { PrimaryButton } from '../../components/ui/PrimaryButton';
-import { BallRow } from '../../components/ui/BallRow';
-import { generateLottoNumbers } from '../../utils/lotto';
-import { StorageKeys, appendToItemArray } from '../../utils/storage';
-import { LottoRecord } from '../../api/types/lotto';
-
 import { useRouter } from 'expo-router';
+import { 
+  Dices, 
+  QrCode, 
+  BarChart3, 
+  MapPin, 
+  Navigation, 
+  Bell, 
+  ChevronRight,
+  Filter
+} from 'lucide-react-native';
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [currentNumbers, setCurrentNumbers] = useState<number[]>([]);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [hasSaved, setHasSaved] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [drawInfo, setDrawInfo] = useState({
+    currentRound: 1103,
+    daysLeft: 3,
+    hoursLeft: 4,
+    minutesLeft: 20
+  });
 
-  const handleGenerate = () => {
-    setIsGenerating(true);
-    setHasSaved(false);
-    // Simulate generation delay for UX
-    setTimeout(() => {
-      const newNumbers = generateLottoNumbers();
-      setCurrentNumbers(newNumbers);
-      setIsGenerating(false);
-    }, 800);
-  };
-
-  const handleSave = () => {
-    if (currentNumbers.length === 0 || hasSaved) return;
-
-    const newRecord: LottoRecord = {
-      id: Date.now().toString(),
-      round: 1103, // TODO: Get current round from API
-      numbers: currentNumbers,
-      createdAt: new Date().toISOString(),
-    };
-
-    appendToItemArray(StorageKeys.SAVED_NUMBERS, newRecord);
-    setHasSaved(true);
-    alert('Numbers saved successfully!');
-  };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-background">
-      <ScrollView contentContainerStyle={{ padding: 20, gap: 24 }}>
-        
-        {/* Welcome Section */}
-        <View className="py-4">
-          <Text className="text-3xl font-bold text-text-dark">Hello, Lucky!</Text>
-          <Text className="text-text-light text-lg">Today is a great day to win.</Text>
+    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+      {/* AppBar Style Header */}
+      <View className="flex-row justify-between items-center px-5 py-4 bg-transparent">
+        <View className="flex-row items-center">
+          <Filter size={24} color="#4CAF50" />
+          <Text className="ml-2 text-xl font-extrabold text-[#1A1A1A]">Clover Wallet</Text>
         </View>
+        <TouchableOpacity onPress={() => router.push('/notification')}>
+          <Bell size={24} color="#1A1A1A" />
+        </TouchableOpacity>
+      </View>
 
-        {/* 1. Last Draw Result (Mock) */}
-        <View className="gap-4">
-          <Text className="text-xl font-bold text-text-dark">Last Draw Result</Text>
-          <GlassCard>
-            <View className="flex-row justify-between items-center mb-4">
-              <Text className="text-lg font-bold text-primary">Round 1102</Text>
-              <Text className="text-text-light text-sm">2024.03.23</Text>
-            </View>
-            <BallRow numbers={[7, 13, 20, 24, 27, 35]} />
-          </GlassCard>
-        </View>
-
-        {/* 2. Generation Area */}
-        <View className="gap-4">
-          <Text className="text-xl font-bold text-text-dark">Quick Pick</Text>
-          <GlassCard className="items-center py-8">
-            {currentNumbers.length > 0 ? (
-              <BallRow numbers={currentNumbers} className="w-full px-2" />
-            ) : (
-              <View className="h-14 justify-center">
-                <Text className="text-text-light italic">Tap the button to pick numbers</Text>
-              </View>
-            )}
-          </GlassCard>
+      <ScrollView 
+        contentContainerStyle={{ padding: 20 }}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} color="#4CAF50" />}
+      >
+        {/* Next Draw Info Card - Hero Section (Gradient represented by bg-primary) */}
+        <View className="bg-primary rounded-[24px] p-8 shadow-lg items-center overflow-hidden">
+          <View className="bg-white/20 px-4 py-2 rounded-full border border-white/30">
+            <Text className="text-white font-bold">제 {drawInfo.currentRound} 회</Text>
+          </View>
           
-          <View className="gap-3">
-            <PrimaryButton 
-              label={isGenerating ? "Picking..." : "Generate Random Numbers"} 
-              onPress={handleGenerate}
-              isLoading={isGenerating}
-            />
-            
-            {currentNumbers.length > 0 && (
-              <PrimaryButton 
-                label={hasSaved ? "Saved" : "Save to My History"} 
-                onPress={handleSave}
-                disabled={hasSaved}
-                className={hasSaved ? "bg-gray-300" : "bg-transparent border border-primary"}
-                textClassName={hasSaved ? "text-gray-500" : "text-primary"}
-              />
-            )}
-          </View>
+          <Text className="text-white/70 text-base mt-6">당첨 발표까지</Text>
+          
+          <Text className="text-white text-[42px] font-black tracking-tighter mt-2 shadow-sm">
+            {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
+          </Text>
+
+          <TouchableOpacity 
+            onPress={() => router.push('/number-generation')}
+            className="bg-white px-12 py-4 rounded-full mt-8 shadow-md"
+          >
+            <Text className="text-primary text-lg font-bold">번호 생성하기</Text>
+          </TouchableOpacity>
         </View>
 
-        {/* 3. Navigation Shortcuts */}
-        <View className="gap-4">
-          <Text className="text-xl font-bold text-text-dark">More Features</Text>
-          <View className="flex-row gap-4">
-            <View className="flex-1">
-              <PrimaryButton 
-                label="Scan Ticket" 
-                className="bg-transparent border border-primary h-12"
-                textClassName="text-primary text-sm"
-                onPress={() => router.push('/scan')} 
-              />
-            </View>
-            <View className="flex-1">
-              <PrimaryButton 
-                label="My History" 
-                className="bg-transparent border border-primary h-12"
-                textClassName="text-primary text-sm"
-                onPress={() => router.push('/history')} 
-              />
-            </View>
-          </View>
+        {/* Quick Actions Section */}
+        <Text className="text-lg font-bold text-[#1A1A1A] mt-8 mb-4">빠른 실행</Text>
+        <View className="flex-row justify-between">
+          <QuickActionItem 
+            icon={<Dices size={32} color="#9C27B0" />} 
+            label="번호 추첨" 
+            bgColor="bg-[#9C27B0]/10" 
+            onPress={() => router.push('/number-generation')} 
+          />
+          <QuickActionItem 
+            icon={<QrCode size={32} color="#2196F3" />} 
+            label="QR 스캔" 
+            bgColor="bg-[#2196F3]/10" 
+            onPress={() => router.push('/scan')} 
+          />
+          <QuickActionItem 
+            icon={<BarChart3 size={32} color="#FF9800" />} 
+            label="번호 분석" 
+            bgColor="bg-[#FF9800]/10" 
+            onPress={() => router.push('/statistics')} 
+          />
+          <QuickActionItem 
+            icon={<Navigation size={32} color="#00BCD4" />} 
+            label="여행 플랜" 
+            bgColor="bg-[#00BCD4]/10" 
+            onPress={() => router.push('/travel')} 
+          />
+          <QuickActionItem 
+            icon={<MapPin size={32} color="#4CAF50" />} 
+            label="로또 명당" 
+            bgColor="bg-[#4CAF50]/10" 
+            onPress={() => router.push('/map')} 
+          />
         </View>
+
+        {/* Recent History Preview */}
+        <Text className="text-lg font-bold text-[#1A1A1A] mt-8 mb-4">최근 당첨 결과</Text>
+        <TouchableOpacity onPress={() => router.push('/history')}>
+          <GlassCard className="flex-row items-center p-6">
+            <View className="bg-gray-100 p-3 rounded-2xl mr-5">
+              <View className="opacity-40">
+                <Filter size={24} color="#757575" />
+              </View>
+            </View>
+            <View className="flex-1">
+              <Text className="text-base font-bold text-[#1A1A1A]">최근 구매 내역</Text>
+              <Text className="text-sm text-gray-500 mt-1">아직 구매한 로또가 없습니다.</Text>
+            </View>
+            <ChevronRight size={20} color="#BDBDBD" />
+          </GlassCard>
+        </TouchableOpacity>
 
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+function QuickActionItem({ 
+  icon, 
+  label, 
+  bgColor, 
+  onPress 
+}: { 
+  icon: React.ReactNode, 
+  label: string, 
+  bgColor: string, 
+  onPress: () => void 
+}) {
+  return (
+    <TouchableOpacity onPress={onPress} className="items-center">
+      <View className={`${bgColor} p-4 rounded-[20px]`}>
+        {icon}
+      </View>
+      <Text className="text-[13px] font-semibold text-[#1A1A1A] mt-2">{label}</Text>
+    </TouchableOpacity>
   );
 }
