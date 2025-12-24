@@ -3,6 +3,7 @@ import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl 
 import { GlassCard } from '../../components/ui/GlassCard';
 import { PrimaryButton } from '../../components/ui/PrimaryButton';
 import { useRouter } from 'expo-router';
+import { LinearGradient } from 'expo-linear-gradient';
 import { 
   Dices, 
   QrCode, 
@@ -11,7 +12,7 @@ import {
   Navigation, 
   Bell, 
   ChevronRight,
-  Filter
+  Clover
 } from 'lucide-react-native';
 
 export default function HomeScreen() {
@@ -34,7 +35,7 @@ export default function HomeScreen() {
       {/* AppBar Style Header */}
       <View className="flex-row justify-between items-center px-5 py-4 bg-transparent">
         <View className="flex-row items-center">
-          <Filter size={24} color="#4CAF50" />
+          <Clover size={28} color="#4CAF50" fill="#4CAF50" />
           <Text className="ml-2 text-xl font-extrabold text-[#1A1A1A]">Clover Wallet</Text>
         </View>
         <TouchableOpacity onPress={() => router.push('/notification')}>
@@ -46,25 +47,32 @@ export default function HomeScreen() {
         contentContainerStyle={{ padding: 20 }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} color="#4CAF50" />}
       >
-        {/* Next Draw Info Card - Hero Section (Gradient represented by bg-primary) */}
-        <View className="bg-primary rounded-[24px] p-8 shadow-lg items-center overflow-hidden">
-          <View className="bg-white/20 px-4 py-2 rounded-full border border-white/30">
-            <Text className="text-white font-bold">제 {drawInfo.currentRound} 회</Text>
-          </View>
-          
-          <Text className="text-white/70 text-base mt-6">당첨 발표까지</Text>
-          
-          <Text className="text-white text-[42px] font-black tracking-tighter mt-2 shadow-sm">
-            {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
-          </Text>
+        {/* Next Draw Info Card - Hero Section with Real Gradient */}
+        <LinearGradient
+          colors={['#4CAF50', '#388E3C']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ borderRadius: 24, padding: 32, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.1, shadowRadius: 10, elevation: 5 }}
+        >
+          <View className="items-center">
+            <View className="bg-white/20 px-4 py-2 rounded-full border border-white/30">
+              <Text className="text-white font-bold">제 {drawInfo.currentRound} 회</Text>
+            </View>
+            
+            <Text className="text-white/70 text-base mt-6">당첨 발표까지</Text>
+            
+            <Text className="text-white text-[42px] font-black tracking-tighter mt-2">
+              {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
+            </Text>
 
-          <TouchableOpacity 
-            onPress={() => router.push('/number-generation')}
-            className="bg-white px-12 py-4 rounded-full mt-8 shadow-md"
-          >
-            <Text className="text-primary text-lg font-bold">번호 생성하기</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity 
+              onPress={() => router.push('/number-generation')}
+              className="bg-white px-12 py-4 rounded-full mt-8 shadow-sm"
+            >
+              <Text className="text-primary text-lg font-bold">번호 생성하기</Text>
+            </TouchableOpacity>
+          </View>
+        </LinearGradient>
 
         {/* Quick Actions Section */}
         <Text className="text-lg font-bold text-[#1A1A1A] mt-8 mb-4">빠른 실행</Text>
@@ -107,7 +115,7 @@ export default function HomeScreen() {
           <GlassCard className="flex-row items-center p-6">
             <View className="bg-gray-100 p-3 rounded-2xl mr-5">
               <View className="opacity-40">
-                <Filter size={24} color="#757575" />
+                <Clover size={24} color="#757575" />
               </View>
             </View>
             <View className="flex-1">

@@ -10,13 +10,14 @@ module.exports = {
     extend: {
       colors: {
         primary: "#4CAF50", // Clover Green
-        secondary: "#FFC107", // Gold Yellow
-        accent: "#2196F3", // Sky Blue
-        background: "#F5F5F5",
-        text: {
-          dark: "#212121",
-          light: "#757575",
-        }
+        "primary-dark": "#388E3C",
+        "primary-light": "#C8E6C9",
+        secondary: "#FFC107", // Gold
+        accent: "#2196F3", // Blue
+        background: "#F5F7FA", // Light Grey-Blue
+        "text-dark": "#1A1A1A",
+        "text-grey": "#757575",
+        error: "#E53935",
       },
     },
   },

@@ -11,34 +11,27 @@ interface GlassCardProps extends ViewProps {
   children: React.ReactNode;
 }
 
-export const GlassCard = ({ intensity = 50, className, delay = 0, children, ...props }: GlassCardProps) => {
-  const opacity = useSharedValue(0);
-
-  useEffect(() => {
-    opacity.value = withDelay(delay, withTiming(1, { duration: 500 }));
-  }, []);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: opacity.value,
-    transform: [{ translateY: withTiming(opacity.value === 1 ? 0 : 10) }]
-  }));
-
+export const GlassCard = ({
+  children,
+  className = "",
+  opacity = 0.15,
+  blur = 10,
+  borderRadius = 24
+}: GlassCardProps) => {
   return (
-    <Animated.View 
-      className={cn("overflow-hidden rounded-2xl border border-white/20 shadow-sm", className)} 
-      style={animatedStyle}
-      {...props}
-    >
-      <BlurView 
-        intensity={intensity} 
-        tint="light" 
-        style={{ flex: 1 }}
-        className="bg-white/60 dark:bg-black/40"
+    <View className={`overflow-hidden shadow-sm ${className}`} style={{ borderRadius }}>
+      <BlurView
+        intensity={blur * 2} // Expo intensity is roughly 2x Flutter's sigma
+        tint="light"
+        style={{
+          backgroundColor: `rgba(255, 255, 255, ${opacity})`,
+          padding: 20,
+          borderWidth: 1.5,
+          borderColor: 'rgba(255, 255, 255, 0.2)',
+        }}
       >
-        <View className="p-4">
-          {children}
-        </View>
+        {children}
       </BlurView>
-    </Animated.View>
+    </View>
   );
 };

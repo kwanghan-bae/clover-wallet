@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { GlassCard } from '../components/ui/GlassCard';
-import { Filter } from 'lucide-react-native';
+import { Clover } from 'lucide-react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 
@@ -27,23 +28,26 @@ export default function LoginScreen() {
   };
 
   return (
-    <View className="flex-1 bg-primary">
+    <LinearGradient
+      colors={['#4CAF50', '#388E3C']}
+      style={{ flex: 1 }}
+    >
       {/* Decorative Background Circles */}
       <View 
-        className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-white/10" 
+        style={{ width: 200, height: 200, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.1)', position: 'absolute', top: -50, left: -50 }} 
       />
       <View 
-        className="absolute bottom-24 -right-8 w-36 h-36 rounded-full bg-white/10" 
+        style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(255,255,255,0.1)', position: 'absolute', bottom: 100, right: -30 }} 
       />
 
       <SafeAreaView className="flex-1 justify-center items-center px-6">
         <GlassCard 
           className="w-full py-12 px-8 items-center border border-white/20 shadow-2xl" 
           opacity={0.15}
-          blur={15}
+          blur={10}
         >
           <View className="bg-white p-4 rounded-full shadow-lg mb-6">
-            <Filter size={48} color="#4CAF50" />
+            <Clover size={48} color="#4CAF50" fill="#4CAF50" />
           </View>
 
           <Text className="text-white text-3xl font-black tracking-widest">
@@ -72,6 +76,6 @@ export default function LoginScreen() {
           )}
         </GlassCard>
       </SafeAreaView>
-    </View>
+    </LinearGradient>
   );
 }

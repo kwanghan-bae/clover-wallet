@@ -21,13 +21,13 @@ export const LottoBall = ({ number, size = 'md', delay = 0, className }: LottoBa
     transform: [{ scale: scale.value }],
   }));
 
-  const getBallColor = (num: number) => {
-    if (num <= 10) return 'bg-[#FBC400]';
-    if (num <= 20) return 'bg-[#69C8F2]';
-    if (num <= 30) return 'bg-[#FF7272]';
-    if (num <= 40) return 'bg-[#AAAAAA]';
-    return 'bg-[#B0D840]';
-  };
+const getBallColor = (number: number) => {
+  if (number <= 10) return 'bg-[#FFA726]';
+  if (number <= 20) return 'bg-[#42A5F5]';
+  if (number <= 30) return 'bg-[#EF5350]';
+  if (number <= 40) return 'bg-[#9E9E9E]';
+  return 'bg-[#66BB6A]';
+};
 
   const sizeClasses = {
     sm: 'w-8 h-8',
