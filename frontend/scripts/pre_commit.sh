@@ -13,11 +13,11 @@ echo -e "${GREEN}🔒 [Sovereign Guard] Executing absolute quality audit...${NC}
 # 1. AI Laziness & Placeholder Detection (Hard Block)
 # 패턴 정의 (패턴 자체가 grep에 걸리지 않도록 쪼개서 작성)
 P1='//'
-P2=' ...'
+P2=' \.\.\.'
 P3='#'
 P4='(중략)'
 JOINED_PATTERNS="${P1}${P2}|${P3}${P2}|\/\* ${P2} \*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
-if git diff --cached | grep -Ei "$JOINED_PATTERNS"; then
+if git diff --cached -- . ':!scripts/pre_commit.sh' | grep -Ei "$JOINED_PATTERNS"; then
     echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected!${NC}"
     exit 1
 fi

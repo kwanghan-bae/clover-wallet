@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Alert
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import {
   Settings,
   Trophy,
@@ -22,124 +21,78 @@ import {
   CheckCircle2
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import GlassCard from '../../components/ui/GlassCard';
 
 const MOCK_BADGES = [
-  { id: '1', label: '첫 당첨', icon: <Trophy size={24} color="#FFC107" />, color: 'bg-amber-100' },
-  { id: '2', label: '열정', icon: <Flame size={24} color="#FF5252" />, color: 'bg-red-100' },
-  { id: '3', label: '인증됨', icon: <CheckCircle2 size={24} color="#2196F3" />, color: 'bg-blue-100' },
-  { id: '4', label: 'VIP', icon: <Star size={24} color="#9C27B0" />, color: 'bg-purple-100' },
+  { id: '1', label: '첫 당첨', icon: <Trophy size={20} color="#FFC107" />, color: 'bg-amber-50' },
+  { id: '2', label: '열정', icon: <Flame size={20} color="#FF5252" />, color: 'bg-red-50' },
+  { id: '3', label: '인증됨', icon: <CheckCircle2 size={20} color="#2196F3" />, color: 'bg-blue-50' },
+  { id: '4', label: 'VIP', icon: <Star size={20} color="#9C27B0" />, color: 'bg-purple-50' },
 ];
 
 export default function MyPageScreen() {
   const router = useRouter();
+  
   const user = {
     name: '클로버님',
     email: 'clover@example.com'
   };
 
-  const stats = {
-    totalWinnings: 1250000,
-    roi: 15.4
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA]">
-      {/* Profile Section with Gradient Background */}
-      <LinearGradient
-        colors={['#4CAF50', '#388E3C']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={{ borderBottomLeftRadius: 32, borderBottomRightRadius: 32 }}
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
-        <View className="px-5 py-8">
-          <View className="flex-row items-center mb-6">
-            <View className="w-16 h-16 rounded-full bg-white/20 items-center justify-center border-2 border-white/50">
-              <Text className="text-white text-2xl font-bold">C</Text>
-            </View>
-            <View className="ml-5 flex-1">
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-xl">{user.name}</Text>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-white/80 text-sm mt-1">{user.email}</Text>
-            </View>
-            <TouchableOpacity onPress={() => router.push('/settings')}>
-              <Settings size={24} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </LinearGradient>
-
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
-
-        {/* Badges Section */}
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mt-6 mb-4">나의 뱃지</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="gap-4">
-          {MOCK_BADGES.map((badge) => (
-            <View
-              key={badge.id}
-              className="w-[100px] items-center p-4 mr-4 bg-white rounded-3xl"
-              style={{
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.05,
-                shadowRadius: 10,
-                elevation: 3
-              }}
-            >
-              <View className={`${badge.color} p - 3 rounded - full mb - 3`}>
-                {badge.icon}
+        {/* Profile Header */}
+        <View className="px-5 pt-8 pb-6">
+          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-2xl text-[#1A1A1A] mb-6">마이페이지</Text>
+          <GlassCard className="p-6">
+            <View className="flex-row items-center mb-6">
+              <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mr-4">
+                <Text className="text-primary text-xl font-bold">C</Text>
               </View>
-              <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="text-[#1A1A1A] text-xs">{badge.label}</Text>
+              <View>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">{user.name}</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-sm">{user.email}</Text>
+              </View>
             </View>
-          ))}
-        </ScrollView>
 
-        {/* Stats Section */}
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mt-8 mb-4">당첨 통계</Text>
-        <View className="flex-row gap-4">
-          <View
-            className="flex-1 p-5 bg-white rounded-3xl"
-            style={{
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.05,
-              shadowRadius: 10,
-              elevation: 3
-            }}
-          >
-            <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#757575] text-xs mb-2">총 당첨금</Text>
-            <Text style={{ fontFamily: 'NotoSansKR_900Black' }} className="text-[#4CAF50] text-xl">
-              ₩ {stats.totalWinnings.toLocaleString()}
-            </Text>
-          </View>
-          <View
-            className="flex-1 p-5 bg-white rounded-3xl"
-            style={{
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.05,
-              shadowRadius: 10,
-              elevation: 3
-            }}
-          >
-            <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#757575] text-xs mb-2">수익률</Text>
-            <Text style={{ fontFamily: 'NotoSansKR_900Black' }} className={`${stats.roi >= 0 ? 'text-[#4CAF50]' : 'text-red-400'} text - xl`}>
-              {stats.roi >= 0 ? '+' : ''}{stats.roi}%
-            </Text>
+            <View className="flex-row justify-between bg-gray-50 rounded-2xl p-4">
+              <View className="items-center flex-1">
+                <Text className="text-[#BDBDBD] text-xs mb-1">총 당첨금</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A]">1,250,000원</Text>
+              </View>
+              <View className="w-[1px] bg-gray-200" />
+              <View className="items-center flex-1">
+                <Text className="text-[#BDBDBD] text-xs mb-1">수익률</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-primary">+15.4%</Text>
+              </View>
+            </View>
+          </GlassCard>
+        </View>
+
+        {/* Badges */}
+        <View className="px-5 mb-8">
+          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mb-4">내 뱃지</Text>
+          <View className="flex-row justify-between">
+            {MOCK_BADGES.map(badge => (
+              <View key={badge.id} className="items-center">
+                <View className={`${badge.color} w-14 h-14 rounded-2xl items-center justify-center mb-2 shadow-sm`}>
+                  {badge.icon}
+                </View>
+                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-xs text-[#757575]">{badge.label}</Text>
+              </View>
+            ))}
           </View>
         </View>
 
-        {/* Menu Section */}
-        <View className="mt-10 mb-10">
-          <View
-            className="bg-white rounded-3xl overflow-hidden"
-            style={{
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.05,
-              shadowRadius: 10,
-              elevation: 3
-            }}
-          >
-            <MenuItem icon={<Bell size={20} color="#1A1A1A" />} label="알림 설정" onPress={() => { }} />
+        {/* Menu List */}
+        <View className="px-5">
+          <View className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-50">
+            <MenuItem icon={<Settings size={20} color="#1A1A1A" />} label="계정 설정" />
+            <MenuDivider />
+            <MenuItem icon={<Bell size={20} color="#1A1A1A" />} label="알림 설정" />
             <MenuDivider />
             <MenuItem icon={<ShieldCheck size={20} color="#1A1A1A" />} label="개인정보 처리방침" onPress={() => router.push('/privacy-policy')} />
             <MenuDivider />
@@ -179,7 +132,7 @@ function MenuItem({
       <View className="mr-4">
         {icon}
       </View>
-      <Text className={`flex - 1 text - base ${isDestructive ? 'text-red-400' : 'text-[#1A1A1A]'} `} style={{ fontFamily: 'NotoSansKR_500Medium' }}>
+      <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className={`flex-1 text-base ${isDestructive ? 'text-red-400' : 'text-[#1A1A1A]'}`}>
         {label}
       </Text>
       <ChevronRight size={18} color="#E0E0E0" />

@@ -39,7 +39,10 @@ export default function CommunityScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA]">
       {/* Header */}
-      <View className="flex-row justify-between items-center px-5 py-4 bg-transparent">
+      <View
+        className="flex-row justify-between items-center px-5 py-4 bg-white/80"
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
+      >
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">커뮤니티</Text>
         <TouchableOpacity>
           <Search size={24} color="#1A1A1A" />
@@ -64,12 +67,12 @@ export default function CommunityScreen() {
           refreshing={isLoading}
           contentContainerStyle={{ padding: 20 }}
           ListEmptyComponent={
-            <View className="items-center justify-center py-32">
-              <View className="w-24 h-24 bg-[#4CAF50]/5 rounded-full items-center justify-center mb-8">
+            <View className="items-center justify-center py-32" style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <View className="w-24 h-24 bg-[#4CAF50]/5 rounded-full items-center justify-center mb-8" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <MessageSquare size={48} color="rgba(76, 175, 80, 0.4)" />
               </View>
               <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A]">아직 게시물이 없습니다</Text>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#757575] mt-2 text-center">첫 번째 게시물의 주인공이 되어보세요!</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] mt-2 text-center">첫 번째 게시물의 주인공이 되어보세요!</Text>
 
               <TouchableOpacity
                 onPress={() => router.push('/create-post')}
@@ -78,9 +81,10 @@ export default function CommunityScreen() {
               >
                 <LinearGradient
                   colors={['#4CAF50', '#388E3C']}
-                  className="px-8 py-3.5 rounded-full shadow-lg"
+                  className="px-8 py-3.5 rounded-full"
+                  style={{ shadowColor: '#4CAF50', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 8 }}
                 >
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center" style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Edit3 size={18} color="white" className="mr-2" />
                     <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-base">게시물 작성하기</Text>
                   </View>
@@ -91,8 +95,11 @@ export default function CommunityScreen() {
         />
       </View>
 
-      {/* Floating Action Button - Gradient */}
-      <View className="absolute bottom-6 right-6" style={{
+      {/* Floating Action Button - Fixed positioning for Web/Native */}
+      <View style={{
+        position: 'absolute',
+        bottom: 24,
+        right: 24,
         shadowColor: '#4CAF50',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,

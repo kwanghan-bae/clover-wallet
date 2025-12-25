@@ -1,19 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
-import { GlassCard } from '../../components/ui/GlassCard';
+import { Clover, Bell, Dices, QrCode, BarChart3, Navigation, MapPin, ChevronRight } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import {
-  Dices,
-  QrCode,
-  BarChart3,
-  MapPin,
-  Navigation,
-  Bell,
-  ChevronRight,
-  Clover
-} from 'lucide-react-native';
-import { LuckyHeroIllustration } from '../../components/ui/LuckyHeroIllustration';
+import LuckyHeroIllustration from '../../components/ui/LuckyHeroIllustration';
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -33,8 +23,8 @@ export default function HomeScreen() {
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA]">
       {/* AppBar Style Header */}
-      <View className="flex-row justify-between items-center px-5 h-14 bg-transparent">
-        <View className="flex-row items-center">
+      <View className="flex-row justify-between items-center px-5 h-14 bg-transparent" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+        <View className="flex-row items-center" style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Clover size={24} color="#4CAF50" fill="#4CAF50" />
           <Text
             style={{ fontFamily: 'NotoSansKR_900Black' }}
@@ -62,22 +52,23 @@ export default function HomeScreen() {
             borderRadius: 24,
             paddingHorizontal: 24,
             paddingVertical: 32,
-            shadowColor: '#000',
+            shadowColor: '#4CAF50',
             shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.15,
+            shadowOpacity: 0.2,
             shadowRadius: 16,
             elevation: 10,
-            overflow: 'hidden'
+            overflow: 'hidden',
+            width: '100%'
           }}
         >
           <LuckyHeroIllustration />
 
-          <View className="items-start">
+          <View className="items-start" style={{ alignItems: 'flex-start' }}>
             <View
               style={{ backgroundColor: 'rgba(255, 255, 255, 0.2)', borderColor: 'rgba(255, 255, 255, 0.3)' }}
               className="px-4 py-1.5 rounded-full border"
             >
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-xs">
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-[12px]">
                 제 {drawInfo.currentRound} 회
               </Text>
             </View>
@@ -91,9 +82,10 @@ export default function HomeScreen() {
                 fontFamily: 'NotoSansKR_900Black',
                 textShadowColor: 'rgba(0, 0, 0, 0.2)',
                 textShadowOffset: { width: 0, height: 2 },
-                textShadowRadius: 4
+                textShadowRadius: 4,
+                fontSize: 36
               }}
-              className="text-white text-[40px] tracking-tighter mt-1"
+              className="text-white tracking-tighter mt-1"
             >
               {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
             </Text>
@@ -110,50 +102,61 @@ export default function HomeScreen() {
           </View>
         </LinearGradient>
 
-        {/* Quick Actions - Exact Flutter Spacing */}
+        {/* Quick Actions - Explicit Flex for Web */}
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mt-10 mb-5">
           빠른 실행
         </Text>
-        <View className="flex-row justify-between">
+        <View className="flex-row justify-between w-full" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <QuickActionItem
-            icon={<Dices size={30} color="#9C27B0" />}
+            icon={<Dices size={28} color="#9C27B0" />}
             label="번호 추첨"
-            bgColor="bg-[#9C27B0]/8"
+            bgColor="bg-[#9C27B0]/10"
             onPress={() => router.push('/number-generation')}
           />
           <QuickActionItem
-            icon={<QrCode size={30} color="#2196F3" />}
+            icon={<QrCode size={28} color="#2196F3" />}
             label="QR 스캔"
-            bgColor="bg-[#2196F3]/8"
+            bgColor="bg-[#2196F3]/10"
             onPress={() => router.push('/scan')}
           />
           <QuickActionItem
-            icon={<BarChart3 size={30} color="#FF9800" />}
+            icon={<BarChart3 size={28} color="#FF9800" />}
             label="번호 분석"
-            bgColor="bg-[#FF9800]/8"
+            bgColor="bg-[#FF9800]/10"
             onPress={() => router.push('/statistics')}
           />
           <QuickActionItem
-            icon={<Navigation size={30} color="#00BCD4" />}
+            icon={<Navigation size={28} color="#00BCD4" />}
             label="여행 플랜"
-            bgColor="bg-[#00BCD4]/8"
+            bgColor="bg-[#00BCD4]/10"
             onPress={() => router.push('/travel')}
           />
           <QuickActionItem
-            icon={<MapPin size={30} color="#4CAF50" />}
+            icon={<MapPin size={28} color="#4CAF50" />}
             label="로또 명당"
-            bgColor="bg-[#4CAF50]/8"
+            bgColor="bg-[#4CAF50]/10"
             onPress={() => router.push('/map')}
           />
         </View>
 
-        {/* Recent History Preview */}
+        {/* Recent History Preview - Premium Standard Card */}
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mt-10 mb-5">
           최근 당첨 결과
         </Text>
         <TouchableOpacity onPress={() => router.push('/history')} activeOpacity={0.8}>
-          <GlassCard className="flex-row items-center p-6">
-            <View className="bg-gray-100/50 p-3.5 rounded-2xl mr-5">
+          <View
+            className="flex-row items-center p-6 bg-white rounded-[24px]"
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.04,
+              shadowRadius: 16,
+              elevation: 2
+            }}
+          >
+            <View className="bg-gray-100 p-3.5 rounded-2xl mr-5">
               <Clover size={24} color="#BDBDBD" />
             </View>
             <View className="flex-1">
@@ -161,10 +164,10 @@ export default function HomeScreen() {
               <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-sm text-gray-400 mt-1">아직 구매한 로또가 없습니다.</Text>
             </View>
             <ChevronRight size={20} color="#E0E0E0" />
-          </GlassCard>
+          </View>
         </TouchableOpacity>
 
-        {/* Bottom Spacing for FAB */}
+        {/* Bottom Spacing */}
         <View className="h-24" />
       </ScrollView>
     </SafeAreaView>

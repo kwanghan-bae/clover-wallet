@@ -93,6 +93,19 @@ Clover Lotto 기획서를 바탕으로 React Native 앱의 MVP(최소 기능 제
 - **인지적 무결성 강화:**
     - `AWAKENING_PROTOCOL.md`에 "Doc-First, Sync-Last" 앵커를 추가하여 세션 시작 시 문서 업데이트 망각을 방지하도록 조치했습니다.
 
+### 2.12. 배포 검증 및 명당 상세 기능 연동 (Phase 6)
+
+- **배포 상태 확인 및 엔드포인트 최적화:**
+    - Render 백엔드(`clover-wallet-api`) 헬스체크 성공 확인 및 커스텀 도메인 이슈 대응을 위해 기본 API 주소를 Render 전용 URL로 전환했습니다.
+    - NativeWind v4와 Tailwind v4 간의 호환성 이슈를 발견하고, `tailwindcss`를 v3로 다운그레이드하여 빌드 무결성을 확보했습니다.
+- **명당 상세(Spot Detail) 기능 구현:**
+    - `frontend/app/spot/[id].tsx` 화면을 신규 생성하여 특정 판매점의 역대 당첨 이력을 조회하고 표시하는 기능을 연동했습니다.
+    - `react-query`를 도입하여 데이터 페칭 및 캐싱을 최적화하고, `GlassCard` 기반의 프리미엄 UI 레이아웃을 적용했습니다.
+- **가드(Guard) 정밀도 개선:**
+    - `pre_commit.sh`의 정규표현식 버그(이스케이프 누락으로 인한 과도한 매칭)를 수정하고, 스크립트 파일 자체를 검사 대상에서 제외하여 가드의 신뢰도를 높였습니다.
+- **버그 수정 및 UI 복구:**
+    - 문법 에러로 인해 화면이 깨져있던 `mypage.tsx`를 복구하고, 누락된 `LinearGradient` 임포트 및 미사용 변수들을 정리했습니다.
+
 ---
 
 ## 3. TODO 리스트 (향후 개발 계획)

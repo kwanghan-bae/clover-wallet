@@ -1,11 +1,10 @@
 import ky from 'ky';
 import { unwrapCommonResponse } from '../utils/api';
 
-const API_BASE_URL = 'https://api.cloverwallet.com/v1';
+const API_BASE_URL = 'https://clover-wallet-api.onrender.com/api/v1';
 
 export const apiClient = ky.create({
-  prefixUrl: API_BASE_URL,
-  timeout: 10000,
+  prefixUrl: API_BASE_URL,  timeout: 10000,
   retry: {
     limit: 2,
     methods: ['get', 'put', 'head', 'delete', 'options', 'trace'],

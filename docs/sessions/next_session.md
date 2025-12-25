@@ -10,13 +10,13 @@
 
 ## Scope
 ### Do
-- [ ] **Deployment Audit**: Render 대시보드에서 API(Docker)와 Web(Static) 빌드 결과 확인.
-- [ ] **Health Check**: 배포된 서버의 `/actuator/health` 및 프론트엔드 접속 확인.
-- [ ] **Feature Implementation**: 로또 명당 상세 페이지(`SpotDetail`) 연동 (백엔드 당첨 이력 API ↔ 프론트엔드 리스트 UI).
+- [x] **Deployment Audit**: Render 대시보드에서 API(Docker)와 Web(Static) 빌드 결과 확인.
+- [x] **Health Check**: 배포된 서버의 `/actuator/health` 및 프론트엔드 접속 확인.
+- [x] **Feature Implementation**: 로또 명당 상세 페이지(`SpotDetail`) 연동 (백엔드 당첨 이력 API ↔ 프론트엔드 리스트 UI).
 
 ## 🏁 Documentation Sync Checklist
-- [ ] `ROADMAP.md` (완료된 모델 동기화 항목 체크)
-- [ ] `ADR.md` (모노레포 통합 및 배포 전략 기록)
+- [x] `ROADMAP.md` (완료된 모델 동기화 항목 체크)
+- [x] `ADR.md` (모노레포 통합 및 배포 전략 기록)
 
 ## Completion Criteria
 - 실 배포 환경에서 백엔드-프론트엔드 간 통신 성공 확인.

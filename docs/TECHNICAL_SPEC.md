@@ -36,3 +36,19 @@
 ## 3. 데이터 인프라
 - **Primary DB**: PostgreSQL (PostGIS 확장 검토 - 명당 지도 검색 최적화).
 - **Cache**: 로컬 MMKV를 통한 오프라인 당첨 내역 조회 지원.
+
+---
+
+## 4. 세부 기능 기술 명세
+
+### 4.1 로또 명당 상세 (Spot Detail)
+- **API**: `GET /api/v1/lotto-spots/{spotId}/history`
+  - 해당 판매점의 역대 당첨 이력을 조회.
+  - 응답 데이터: 회차, 등수, 당첨일, 당첨금(선택적).
+- **UI Components**:
+  - `GlassCard` 기반의 정보 요약 섹션 (이름, 주소, 누적 당첨 횟수).
+  - 당첨 이력을 보여주는 `FlatList` 또는 타임라인 뷰.
+  - 상단 투명 헤더 및 명당 이미지(Placeholder) 적용.
+- **Data Handling**:
+  - `react-query`를 통한 데이터 페칭 및 캐싱.
+  - 로딩 상태 시 Skeleton Screen 제공.

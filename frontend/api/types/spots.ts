@@ -9,6 +9,14 @@ export interface LottoSpot {
   isFavorite?: boolean;
 }
 
+export interface WinningHistory {
+  round: number;
+  rank: number;
+  storeName: string;
+  address: string;
+  method: string | null;
+}
+
 export interface Region {
   latitude: number;
   longitude: number;

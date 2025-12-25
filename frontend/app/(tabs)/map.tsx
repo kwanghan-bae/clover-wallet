@@ -1,46 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, FlatList } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import CustomMapView from '../../components/ui/CustomMapView';
 import * as Location from 'expo-location';
 import { Map as MapIcon, List as ListIcon, MapPin, ChevronRight, LocateFixed } from 'lucide-react-native';
 import { LottoSpot, Region } from '../../api/types/spots';
+import { spotsApi } from '../../api/spots';
+import { useQuery } from '@tanstack/react-query';
+import { useRouter } from 'expo-router';
 
 const REGIONS = [
   '전체', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종',
   '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
 ];
 
-const MOCK_SPOTS: LottoSpot[] = [
-  {
-    id: 1,
-    name: "로또킹 강남점",
-    address: "서울특별시 강남구 테헤란로 123",
-    latitude: 37.4979,
-    longitude: 127.0276,
-    winCount1st: 15,
-    winCount2nd: 42,
-  },
-  {
-    id: 2,
-    name: "행운복권방",
-    address: "서울특별시 종로구 종로 456",
-    latitude: 37.5704,
-    longitude: 126.9922,
-    winCount1st: 8,
-    winCount2nd: 25,
-  },
-  {
-    id: 3,
-    name: "대박기원점",
-    address: "경기도 수원시 팔달구 789",
-    latitude: 37.2636,
-    longitude: 127.0286,
-    winCount1st: 12,
-    winCount2nd: 30,
-  }
-];
-
 export default function LuckySpotsScreen() {
+  const router = useRouter();
   const [isMapView, setIsMapView] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('전체');
   const [region, setRegion] = useState<Region>({
@@ -49,7 +23,11 @@ export default function LuckySpotsScreen() {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [spots] = useState<LottoSpot[]>(MOCK_SPOTS);
+
+  const { data: spots = [], isLoading } = useQuery({
+    queryKey: ['spots'],
+    queryFn: () => spotsApi.getSpots(0, 500),
+  });
 
   const filteredSpots = selectedRegion === '전체'
     ? spots
@@ -65,6 +43,10 @@ export default function LuckySpotsScreen() {
         longitude: location.coords.longitude,
       }));
     }
+  };
+
+  const handleSpotPress = (spotId: number) => {
+    router.push(`/spot/${spotId}`);
   };
 
   return (
@@ -99,7 +81,11 @@ export default function LuckySpotsScreen() {
       </View>
 
       <View className="flex-1">
-        {isMapView ? (
+        {isLoading ? (
+          <View className="flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color="#4CAF50" />
+          </View>
+        ) : isMapView ? (
           <View className="flex-1">
             <CustomMapView
               region={region}
@@ -121,7 +107,11 @@ export default function LuckySpotsScreen() {
             data={filteredSpots}
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={{ padding: 20, gap: 12 }}
-            renderItem={({ item }) => <SpotListItem spot={item} />}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => handleSpotPress(item.id)}>
+                <SpotListItem spot={item} />
+              </TouchableOpacity>
+            )}
             ListEmptyComponent={
               <View className="items-center justify-center py-20">
                 <MapPin size={64} color="#BDBDBD" />
@@ -157,10 +147,10 @@ function SpotListItem({ spot }: { spot: LottoSpot }) {
         </Text>
         <View className="flex-row gap-2 mt-3">
           <View className="bg-[#FFC107]/10 px-2.5 py-1.5 rounded-lg border border-[#FFC107]/30">
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#FFC107] text-[11px]">1등 {spot.winCount1st}회</Text>
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#FFC107] text-[11px]">1등 {spot.firstPlaceWins}회</Text>
           </View>
           <View className="bg-[#BDBDBD]/10 px-2.5 py-1.5 rounded-lg border border-[#BDBDBD]/30">
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#757575] text-[11px]">2등 {spot.winCount2nd}회</Text>
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#757575] text-[11px]">2등 {spot.secondPlaceWins}회</Text>
           </View>
         </View>
       </View>
@@ -177,10 +167,10 @@ function MapCalloutContent({ spot }: { spot?: LottoSpot }) {
       <Text className="text-text-light text-[11px] mb-2">{spot.address}</Text>
       <View className="flex-row gap-2">
         <View className="bg-primary/10 px-2 py-1 rounded">
-          <Text className="text-primary font-bold text-[11px]">1등: {spot.winCount1st}</Text>
+          <Text className="text-primary font-bold text-[11px]">1등: {spot.firstPlaceWins}</Text>
         </View>
         <View className="bg-secondary/10 px-2 py-1 rounded">
-          <Text className="text-secondary font-bold text-[11px]">2등: {spot.winCount2nd}</Text>
+          <Text className="text-secondary font-bold text-[11px]">2등: {spot.secondPlaceWins}</Text>
         </View>
       </View>
     </View>
