@@ -47,4 +47,12 @@
     `https://backend-api.onrender.com/actuator/health` (활성화된 경우) 또는 알려진 API 엔드포인트.
 
 ## 4. 프론트엔드 연결
-1.  React Native 앱의 `lib/utils/api_config.dart` 파일을 열어 Render URL을 프로덕션용으로 업데이트합니다.
+1.  React Native 앱의 `frontend/api/client.ts` 파일을 열어 Render URL을 프로덕션용으로 업데이트합니다.
+
+---
+
+## 5. 실 배포 현황 (Live Deployment Status)
+*   **Backend API**: [https://clover-wallet-api.onrender.com](https://clover-wallet-api.onrender.com)
+*   **Frontend Web**: [https://clover-wallet-app-web.onrender.com/](https://clover-wallet-app-web.onrender.com/)
+*   **Database**: Supabase (Connection via JDBC/R2DBC)
+

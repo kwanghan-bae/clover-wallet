@@ -30,7 +30,9 @@
 ---
 
 ## ☁️ 인프라 및 배포
-- **Hosting**: Render (Backend: Docker / Frontend: Static Web)
+- **Hosting**: Render
+  - **Backend**: [API Server](https://clover-wallet-api.onrender.com) (Docker)
+  - **Frontend**: [Web App](https://clover-wallet-app-web.onrender.com/) (Static Web)
 - **Database**: Supabase (PostgreSQL)
 - **Auth**: Supabase Auth (Google SSO) + JWT Sync
 
