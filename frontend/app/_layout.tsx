@@ -10,9 +10,12 @@ import {
   NotoSansKR_700Bold,
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -34,28 +37,30 @@ export default function RootLayout() {
 
   return (
     <GlobalErrorBoundary>
-      <View style={{ flex: 1, backgroundColor: '#111827', alignItems: 'center' }}>
-        <View
-          className="flex-1 w-full bg-[#F5F7FA]"
-          style={{
-            maxWidth: 500, // Slightly wider for better desktop experience
-            width: '100%',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 0 },
-            shadowOpacity: 0.1,
-            shadowRadius: 50,
-            elevation: 10,
-          }}
-        >
-          <Stack screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#F5F7FA' }
-          }}>
-            <Stack.Screen name="login" />
-            <Stack.Screen name="(tabs)" />
-          </Stack>
+      <QueryClientProvider client={queryClient}>
+        <View style={{ flex: 1, backgroundColor: '#111827', alignItems: 'center' }}>
+          <View
+            className="flex-1 w-full bg-[#F5F7FA]"
+            style={{
+              maxWidth: 500, // Slightly wider for better desktop experience
+              width: '100%',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 0 },
+              shadowOpacity: 0.1,
+              shadowRadius: 50,
+              elevation: 10,
+            }}
+          >
+            <Stack screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: '#F5F7FA' }
+            }}>
+              <Stack.Screen name="login" />
+              <Stack.Screen name="(tabs)" />
+            </Stack>
+          </View>
         </View>
-      </View>
+      </QueryClientProvider>
     </GlobalErrorBoundary>
   );
 }
