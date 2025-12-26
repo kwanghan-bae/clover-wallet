@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { 
   View, 
-  Text, 
   SafeAreaView, 
-  TouchableOpacity, 
-  Image, 
-  ActivityIndicator
+  Image,
+  Text
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { GlassCard } from '../components/ui/GlassCard';
 import { Clover } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../components/ui/Card';
+import { Button } from '../components/ui/Button';
 
 export default function LoginScreen() {
   const router = useRouter();
@@ -26,53 +25,59 @@ export default function LoginScreen() {
 
   return (
     <LinearGradient
-      colors={['#4CAF50', '#388E3C']}
+      colors={['#10b981', '#047857']}
       style={{ flex: 1 }}
     >
       {/* Decorative Background Circles */}
       <View 
-        style={{ width: 200, height: 200, borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.1)', position: 'absolute', top: -50, left: -50 }} 
+        className="w-48 h-48 rounded-full bg-white/10 absolute -top-12 -left-12 blur-2xl"
       />
       <View 
-        style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(255,255,255,0.1)', position: 'absolute', bottom: 100, right: -30 }} 
+        className="w-32 h-32 rounded-full bg-white/10 absolute bottom-24 -right-8 blur-xl"
       />
 
       <SafeAreaView className="flex-1 justify-center items-center px-6">
-        <GlassCard 
-          className="w-full py-12 px-8 items-center border border-white/20 shadow-2xl" 
-          opacity={0.15}
-          blur={10}
-        >
-          <View className="bg-white p-4 rounded-full shadow-lg mb-6">
-            <Clover size={48} color="#4CAF50" fill="#4CAF50" />
-          </View>
+        <Card className="w-full max-w-sm bg-white/90 backdrop-blur-xl border-white/20 shadow-xl">
+          <CardHeader className="items-center pb-2">
+            <View className="bg-emerald-100 p-4 rounded-full mb-4 ring-4 ring-emerald-50">
+              <Clover size={40} color="#10b981" fill="#10b981" />
+            </View>
+            <CardTitle className="text-3xl text-emerald-950">Clover Wallet</CardTitle>
+            <CardDescription className="text-emerald-700/80 text-center">
+              당신의 행운을 스마트하게 관리하세요
+            </CardDescription>
+          </CardHeader>
 
-          <Text className="text-white text-3xl font-black tracking-widest">
-            Clover Wallet
-          </Text>
-          <Text className="text-white/90 text-sm mt-2 mb-12">
-            행운을 관리하는 스마트한 습관
-          </Text>
+          <CardContent>
+            {/* Space for future inputs if needed */}
+          </CardContent>
 
-          {isLoading ? (
-            <ActivityIndicator color="white" size="large" />
-          ) : (
-            <TouchableOpacity 
+          <CardFooter className="flex-col gap-4">
+            <Button
               onPress={handleGoogleSignIn}
-              activeOpacity={0.8}
-              className="bg-white w-full py-4 rounded-full flex-row justify-center items-center shadow-md"
+              disabled={isLoading}
+              className="w-full bg-white border border-slate-200 shadow-sm active:bg-slate-50"
             >
               <Image 
                 source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/240px-Google_%22G%22_logo.svg.png' }}
-                className="w-6 h-6 mr-3"
+                className="w-5 h-5 mr-3"
               />
-              <Text className="text-[#1A1A1A] text-base font-bold">
-                Google 계정으로 계속하기
-              </Text>
-            </TouchableOpacity>
-          )}
-        </GlassCard>
+              <View>
+                <LinkText text="Google 계정으로 계속하기" isLoading={isLoading} />
+              </View>
+            </Button>
+            <View className="flex-row justify-center mt-2">
+              <Button variant="link" size="sm" label="개인정보 처리방침" className="text-xs text-slate-400" />
+            </View>
+          </CardFooter>
+        </Card>
       </SafeAreaView>
     </LinearGradient>
   );
 }
+
+const LinkText = ({ text, isLoading }: { text: string, isLoading: boolean }) => (
+  <Text className="text-slate-700 font-semibold text-base">
+    {isLoading ? "로그인 중..." : text}
+  </Text>
+);

@@ -1,27 +1,34 @@
 import React from 'react';
-import { TextInput, View, Text, TextInputProps } from 'react-native';
+import { TextInput, TextInputProps, View, Text } from 'react-native';
 import { cn } from '../../utils/cn';
 
 interface InputProps extends TextInputProps {
   label?: string;
   error?: string;
-  containerClassName?: string;
 }
 
-export const Input = ({ label, error, containerClassName, className, ...props }: InputProps) => {
+export function Input({ className, label, error, ...props }: InputProps) {
   return (
-    <View className={cn("gap-2", containerClassName)}>
-      {label && <Text className="text-text-dark font-medium ml-1">{label}</Text>}
+    <View className="space-y-2">
+      {label && (
+        <Text className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-slate-700 dark:text-slate-300">
+          {label}
+        </Text>
+      )}
       <TextInput
         className={cn(
-          "bg-white border border-gray-200 rounded-xl px-4 py-3 text-text-dark",
-          error && "border-red-500",
+          "flex h-12 w-full rounded-xl border border-slate-200 bg-transparent px-4 py-2 text-base shadow-sm placeholder:text-slate-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-800 dark:text-slate-50 dark:focus:ring-emerald-500",
+          error && "border-red-500 focus:border-red-500 focus:ring-red-500",
           className
         )}
-        placeholderTextColor="#757575"
+        placeholderTextColor="#94a3b8"
         {...props}
       />
-      {error && <Text className="text-red-500 text-xs ml-1">{error}</Text>}
+      {error && (
+        <Text className="text-xs font-medium text-red-500">
+          {error}
+        </Text>
+      )}
     </View>
   );
-};
+}
