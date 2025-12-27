@@ -1,3 +1,6 @@
+// Mock NativeWind - Removed to avoid _ReactNativeCSSInterop error
+// jest.mock("nativewind", ...);
+
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
   const React = require('react');
