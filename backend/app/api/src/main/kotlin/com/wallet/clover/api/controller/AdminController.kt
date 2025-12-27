@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 @RestController
@@ -14,6 +16,8 @@ import kotlinx.coroutines.launch
 class AdminController(
     private val dataInitializationService: DataInitializationService
 ) {
+    // Define a safe scope for background tasks
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     @PostMapping("/init/history")
     suspend fun initHistory(
@@ -21,7 +25,7 @@ class AdminController(
         @RequestParam(required = false) end: Int?
     ): CommonResponse<String> {
         // Run in background to avoid timeout
-        GlobalScope.launch {
+        serviceScope.launch {
             dataInitializationService.initializeWinningInfo(start, end)
         }
         return CommonResponse.success("History initialization started in background")
@@ -33,7 +37,7 @@ class AdminController(
         @RequestParam(required = false) end: Int?
     ): CommonResponse<String> {
         // Run in background
-        GlobalScope.launch {
+        serviceScope.launch {
             dataInitializationService.initializeWinningStores(start, end)
         }
         return CommonResponse.success("Store initialization started in background")
