@@ -5,10 +5,10 @@ services:
     runtime: docker
     region: singapore
     plan: free
-    rootDir: backend
+    rootDir: backend-kotlin
     buildFilter:
       paths:
-        - backend/**
+        - backend-kotlin/**
         - render.yaml
     envVars:
       - key: SPRING_PROFILES_ACTIVE
