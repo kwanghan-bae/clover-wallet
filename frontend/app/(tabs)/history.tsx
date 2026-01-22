@@ -47,7 +47,7 @@ export default function HistoryScreen() {
             <HistoryItem record={item} onDelete={handleDelete} />
           )}
           ListEmptyComponent={
-            <View className="items-center justify-center py-32">
+            <View className="items-center justify-center py-32" style={{ alignItems: 'center', justifyContent: 'center' }}>
               <View className="w-24 h-24 bg-[#BDBDBD]/10 rounded-full items-center justify-center mb-8">
                 <Plus size={48} color="rgba(189, 189, 189, 0.4)" />
               </View>

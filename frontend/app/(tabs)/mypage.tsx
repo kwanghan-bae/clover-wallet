@@ -21,7 +21,6 @@ import {
   CheckCircle2
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import GlassCard from '../../components/ui/GlassCard';
 
 const MOCK_BADGES = [
   { id: '1', label: '첫 당첨', icon: <Trophy size={20} color="#FFC107" />, color: 'bg-amber-50' },
@@ -32,7 +31,7 @@ const MOCK_BADGES = [
 
 export default function MyPageScreen() {
   const router = useRouter();
-  
+
   const user = {
     name: '클로버님',
     email: 'clover@example.com'
@@ -47,10 +46,19 @@ export default function MyPageScreen() {
         {/* Profile Header */}
         <View className="px-5 pt-8 pb-6">
           <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-2xl text-[#1A1A1A] mb-6">마이페이지</Text>
-          <GlassCard className="p-6">
+          <View
+            className="bg-white rounded-[24px] p-6"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.04,
+              shadowRadius: 16,
+              elevation: 2
+            }}
+          >
             <View className="flex-row items-center mb-6">
-              <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mr-4">
-                <Text className="text-primary text-xl font-bold">C</Text>
+              <View className="w-16 h-16 rounded-full bg-[#4CAF50]/10 items-center justify-center mr-4">
+                <Text className="text-[#4CAF50] text-xl font-bold">C</Text>
               </View>
               <View>
                 <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">{user.name}</Text>
@@ -66,10 +74,10 @@ export default function MyPageScreen() {
               <View className="w-[1px] bg-gray-200" />
               <View className="items-center flex-1">
                 <Text className="text-[#BDBDBD] text-xs mb-1">수익률</Text>
-                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-primary">+15.4%</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50]">+15.4%</Text>
               </View>
             </View>
-          </GlassCard>
+          </View>
         </View>
 
         {/* Badges */}

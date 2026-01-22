@@ -113,7 +113,7 @@ export default function LuckySpotsScreen() {
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <View className="items-center justify-center py-20">
+              <View className="items-center justify-center py-20" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <MapPin size={64} color="#BDBDBD" />
                 <Text className="text-gray-400 mt-4 font-semibold">{selectedRegion} 지역의 명당이 없습니다.</Text>
               </View>

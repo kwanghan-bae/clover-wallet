@@ -61,13 +61,14 @@ export default function HomeScreen() {
             alignItems: 'center'
           }}
         >
+          <LuckyHeroIllustration />
           {/* Round Badge */}
           <View
-            style={{ 
-              backgroundColor: 'rgba(255, 255, 255, 0.2)', 
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
               borderColor: 'rgba(255, 255, 255, 0.3)',
               borderWidth: 1,
-              paddingHorizontal: 16, 
+              paddingHorizontal: 16,
               paddingVertical: 8,
               borderRadius: 20
             }}
