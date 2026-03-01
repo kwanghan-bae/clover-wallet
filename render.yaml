@@ -1,24 +1,30 @@
 services:
-  # 1. Backend API (Kotlin/Spring Boot)
+  # 1. Backend API (Node.js/NestJS) - Kotlin에서 이관됨
   - type: web
     name: clover-wallet-api
-    runtime: docker
+    runtime: node
     region: singapore
     plan: free
-    rootDir: backend-kotlin
+    rootDir: backend-node
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
     buildFilter:
       paths:
-        - backend-kotlin/**
+        - backend-node/**
         - render.yaml
     envVars:
-      - key: SPRING_PROFILES_ACTIVE
-        value: prod
-      - key: JAVA_OPTS
-        value: -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
-    healthCheckPath: /actuator/health
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false # Render 대시보드에서 직접 설정 필요
+      - key: JWT_SECRET
+        sync: false # Render 대시보드에서 직접 설정 필요
+      - key: SUPABASE_JWT_SECRET
+        sync: false # Render 대시보드에서 직접 설정 필요
+      - key: FIREBASE_KEY_PATH
+        value: ./firebase-key.json # 필요 시 설정
+    healthCheckPath: /api/v1
     autoDeploy: true
-    dockerfilePath: Dockerfile
-    dockerContext: .
 
   # 2. Frontend Web (React Native/Expo)
   - type: static
@@ -34,6 +40,9 @@ services:
     buildCommand: npm install --legacy-peer-deps && npx expo export --platform web
     publishPath: dist
     autoDeploy: true
+    envVars:
+      - key: EXPO_PUBLIC_API_URL
+        value: https://clover-wallet-api.onrender.com/api/v1
     routes:
       - type: rewrite
         source: /*
