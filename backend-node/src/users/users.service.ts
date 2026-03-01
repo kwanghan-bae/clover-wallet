@@ -68,6 +68,7 @@ export class UsersService {
 
     async deleteUserAccount(id: bigint | number | string) {
         try {
+            // Prisma schema에 onDelete: Cascade가 설정되어 있으므로 user 삭제 시 연관 데이터가 함께 삭제됨
             await this.prisma.user.delete({
                 where: { id: BigInt(id) },
             });
@@ -77,5 +78,44 @@ export class UsersService {
             }
             throw error;
         }
+    }
+
+    /**
+     * 사용자의 통계 정보(총 게임 수, 총 당첨금, 수익률 등)를 조회합니다.
+     * Kotlin UserStatsService 로직을 이식함.
+     */
+    async getUserStats(userId: bigint | number | string) {
+        const id = BigInt(userId);
+        
+        // 총 게임 수 조회
+        const totalGames = await this.prisma.lottoGame.count({
+            where: { userId: id },
+        });
+
+        // 총 당첨금 합계 조회
+        const aggregate = await this.prisma.lottoGame.aggregate({
+            where: { userId: id },
+            _sum: {
+                prizeAmount: true,
+            },
+        });
+        const totalWinnings = aggregate._sum.prizeAmount || BigInt(0);
+
+        // 총 지출 (1게임당 1000원)
+        const totalSpent = BigInt(totalGames) * BigInt(1000);
+
+        // 수익률(ROI) 계산
+        let roi = 0;
+        if (totalSpent > BigInt(0)) {
+            const profit = Number(totalWinnings) - Number(totalSpent);
+            roi = Math.round((profit / Number(totalSpent)) * 100);
+        }
+
+        return {
+            totalGames,
+            totalWinnings,
+            totalSpent,
+            roi,
+        };
     }
 }
