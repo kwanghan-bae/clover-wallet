@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { CommunityModule } from './community/community.module';
 import { LottoModule } from './lotto/lotto.module';
 import { LottoSpotModule } from './lotto-spot/lotto-spot.module';
+import { TicketModule } from './ticket/ticket.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 /**
@@ -27,6 +28,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CommunityModule,
     LottoModule,
     LottoSpotModule,
+    TicketModule,
     PrismaModule,
   ],
   controllers: [AppController],
