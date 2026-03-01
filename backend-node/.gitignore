@@ -1,0 +1,16 @@
+# compiled output
+/dist
+/node_modules
+
+# logs
+npm-debug.log
+yarn-error.log
+
+# env variables
+.env
+.env.test
+
+# prisma
+/prisma/*.db
+
+/generated/prisma

@@ -1,0 +1,251 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  relationMode = "prisma"
+
+}
+
+// ------------------------------------------------------
+// 1. Users & Auth
+// ------------------------------------------------------
+
+model User {
+  id             BigInt    @id @default(autoincrement())
+  ssoQualifier   String    @unique @map("sso_qualifier") @db.VarChar(255)
+  email          String?   @db.VarChar(255)
+  locale         String    @default("ko") @db.VarChar(10)
+  age            Int       @default(0)
+  fcmToken       String?   @map("fcm_token") @db.VarChar(500)
+  badges         String?   @db.VarChar(1000)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
+
+  // Relations
+  tickets        LottoTicket[]
+  games          LottoGame[]
+  posts          Post[]
+  comments       Comment[]
+  postLikes      PostLike[]
+  notifications  Notification[]
+  refreshTokens  RefreshToken[]
+
+  @@map("users")
+  @@index([ssoQualifier], map: "idx_users_sso_qualifier")
+}
+
+model RefreshToken {
+  id        BigInt   @id @default(autoincrement())
+  userId    BigInt   @map("user_id")
+  token     String   @unique @db.VarChar(500)
+  expiresAt DateTime @map("expires_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refresh_token")
+  @@index([userId], map: "idx_refresh_token_user_id")
+  @@index([token], map: "idx_refresh_token_token")
+}
+
+model TokenBlacklist {
+  id        BigInt   @id @default(autoincrement())
+  token     String   @unique @db.VarChar(500)
+  expiresAt DateTime @map("expires_at") @db.Timestamp(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+
+  @@map("token_blacklist")
+  @@index([token], map: "idx_token_blacklist_token")
+  @@index([expiresAt], map: "idx_token_blacklist_expires_at")
+}
+
+// ------------------------------------------------------
+// 2. Lotto Domain
+// ------------------------------------------------------
+
+model LottoTicket {
+  id        BigInt    @id @default(autoincrement())
+  userId    BigInt    @map("user_id")
+  ordinal   Int
+  url       String?   @unique
+  status    String    @db.VarChar(50) // e.g., 'WINNING', 'LOSING'
+  createdAt DateTime? @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(6)
+
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  games     LottoGame[]
+
+  @@map("lotto_ticket")
+  @@index([userId], map: "idx_lotto_ticket_user_id")
+  @@index([status], map: "idx_lotto_ticket_status")
+}
+
+model LottoGame {
+  id               BigInt    @id @default(autoincrement())
+  ticketId         BigInt    @map("ticket_id")
+  userId           BigInt    @map("user_id")
+  status           String    @db.VarChar(50)
+  number1          Int
+  number2          Int
+  number3          Int
+  number4          Int
+  number5          Int
+  number6          Int
+  extractionMethod String?   @map("extraction_method") @db.VarChar(50)
+  prizeAmount      BigInt?   @default(0) @map("prize_amount")
+  createdAt        DateTime? @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime? @map("updated_at") @db.Timestamp(6)
+
+  ticket           LottoTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("lotto_game")
+  @@index([ticketId], map: "idx_lotto_game_ticket_id")
+  @@index([userId], map: "idx_lotto_game_user_id")
+}
+
+model WinningInfo {
+  id                BigInt   @id @default(autoincrement())
+  round             Int      @unique
+  drawDate          DateTime @map("draw_date") @db.Date
+  number1           Int
+  number2           Int
+  number3           Int
+  number4           Int
+  number5           Int
+  number6           Int
+  bonusNumber       Int      @map("bonus_number")
+  firstPrizeAmount  BigInt   @map("first_prize_amount")
+  secondPrizeAmount BigInt   @map("second_prize_amount")
+  thirdPrizeAmount  BigInt   @map("third_prize_amount")
+  fourthPrizeAmount BigInt   @map("fourth_prize_amount")
+  fifthPrizeAmount  BigInt   @map("fifth_prize_amount")
+
+  @@map("winning_info")
+}
+
+model LottoSpot {
+  id              BigInt    @id @default(autoincrement())
+  name            String    @db.VarChar(255)
+  address         String    @db.VarChar(500)
+  latitude        Float
+  longitude       Float
+  firstPlaceWins  Int       @default(0) @map("first_place_wins")
+  secondPlaceWins Int       @default(0) @map("second_place_wins")
+  createdAt       DateTime? @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime? @map("updated_at") @db.Timestamp(6)
+
+  travelPlans     TravelPlan[]
+
+  @@map("lotto_spot")
+  @@index([name], map: "idx_lotto_spot_name")
+}
+
+model LottoWinningStore {
+  id        BigInt    @id @default(autoincrement())
+  round     Int
+  rank      Int
+  storeName String    @map("store_name") @db.VarChar(255)
+  address   String    @db.VarChar(500)
+  method    String?   @db.VarChar(50)
+  createdAt DateTime? @map("created_at") @db.Timestamp(6)
+
+  @@map("lotto_winning_store")
+  @@index([round], map: "idx_lotto_winning_store_round")
+}
+
+model TravelPlan {
+  id             BigInt    @id @default(autoincrement())
+  spotId         BigInt    @map("spot_id")
+  title          String    @db.VarChar(255)
+  description    String
+  places         String
+  theme          String    @db.VarChar(50)
+  estimatedHours Int       @map("estimated_hours")
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  spot           LottoSpot @relation(fields: [spotId], references: [id], onDelete: Cascade)
+
+  @@map("travel_plan")
+  @@index([spotId], map: "idx_travel_plan_spot_id")
+  @@index([theme], map: "idx_travel_plan_theme")
+}
+
+// ------------------------------------------------------
+// 3. Community
+// ------------------------------------------------------
+
+model Post {
+  id        BigInt     @id @default(autoincrement())
+  userId    BigInt     @map("user_id")
+  title     String     @db.VarChar(255)
+  content   String
+  likes     Int        @default(0)
+  createdAt DateTime?  @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime?  @map("updated_at") @db.Timestamp(6)
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  postLikes PostLike[]
+
+  @@map("post")
+  @@index([userId], map: "idx_post_user_id")
+  @@index([createdAt(sort: Desc)], map: "idx_post_created_at")
+}
+
+model Comment {
+  id        BigInt    @id @default(autoincrement())
+  postId    BigInt    @map("post_id")
+  userId    BigInt    @map("user_id")
+  content   String
+  likes     Int       @default(0)
+  createdAt DateTime? @map("created_at") @db.Timestamp(6)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(6)
+
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comment")
+  @@index([postId], map: "idx_comment_post_id")
+  @@index([userId], map: "idx_comment_user_id")
+}
+
+model PostLike {
+  id        BigInt    @id @default(autoincrement())
+  postId    BigInt    @map("post_id")
+  userId    BigInt    @map("user_id")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("post_like")
+  @@unique([postId, userId])
+  @@index([postId], map: "idx_post_like_post_id")
+  @@index([userId], map: "idx_post_like_user_id")
+}
+
+// ------------------------------------------------------
+// 4. Notification
+// ------------------------------------------------------
+
+model Notification {
+  id        BigInt    @id @default(autoincrement())
+  userId    BigInt    @map("user_id")
+  title     String    @db.VarChar(255)
+  message   String
+  isRead    Boolean?  @default(false) @map("is_read")
+  type      String?   @default("INFO") @db.VarChar(50)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notification")
+  @@index([userId], map: "idx_notification_user_id")
+  @@index([isRead], map: "idx_notification_is_read")
+}
