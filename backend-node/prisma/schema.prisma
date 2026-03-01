@@ -8,44 +8,71 @@ generator client {
 datasource db {
   provider = "postgresql"
   relationMode = "prisma"
-
 }
 
 // ------------------------------------------------------
-// 1. Users & Auth
+// 1. 사용자 및 인증 (Users & Auth)
 // ------------------------------------------------------
 
+/**
+ * 사용자 정보를 저장하는 모델입니다.
+ */
 model User {
+  /// 고유 식별자 (PK)
   id             BigInt    @id @default(autoincrement())
+  /// SSO 식별자 (예: Google sub, Supabase user_id)
   ssoQualifier   String    @unique @map("sso_qualifier") @db.VarChar(255)
+  /// 이메일 주소
   email          String?   @db.VarChar(255)
+  /// 로케일 설정 (기본값: ko)
   locale         String    @default("ko") @db.VarChar(10)
+  /// 나이
   age            Int       @default(0)
+  /// FCM 푸시 알림 토큰
   fcmToken       String?   @map("fcm_token") @db.VarChar(500)
+  /// 획득한 뱃지 목록 (콤마 또는 JSON 형식 문자열)
   badges         String?   @db.VarChar(1000)
+  /// 생성 일시
   createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  /// 수정 일시
   updatedAt      DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
 
-  // Relations
+  // 관계 (Relations)
+  /// 사용자가 보유한 로또 티켓 목록
   tickets        LottoTicket[]
+  /// 사용자가 수행한 로또 게임 목록
   games          LottoGame[]
+  /// 사용자가 작성한 게시글 목록
   posts          Post[]
+  /// 사용자가 작성한 댓글 목록
   comments       Comment[]
+  /// 사용자가 누른 좋아요 목록
   postLikes      PostLike[]
+  /// 사용자에게 발송된 알림 목록
   notifications  Notification[]
+  /// 사용자의 리프레시 토큰 목록
   refreshTokens  RefreshToken[]
 
   @@map("users")
   @@index([ssoQualifier], map: "idx_users_sso_qualifier")
 }
 
+/**
+ * 리프레시 토큰 정보를 저장하는 모델입니다.
+ */
 model RefreshToken {
+  /// 고유 식별자 (PK)
   id        BigInt   @id @default(autoincrement())
+  /// 사용자 ID (FK)
   userId    BigInt   @map("user_id")
+  /// 리프레시 토큰 값
   token     String   @unique @db.VarChar(500)
+  /// 만료 일시
   expiresAt DateTime @map("expires_at") @db.Timestamp(6)
+  /// 생성 일시
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
 
+  /// 연결된 사용자 정보
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("refresh_token")
@@ -53,10 +80,17 @@ model RefreshToken {
   @@index([token], map: "idx_refresh_token_token")
 }
 
+/**
+ * 로그아웃되거나 만료된 액세스 토큰 블랙리스트 모델입니다.
+ */
 model TokenBlacklist {
+  /// 고유 식별자 (PK)
   id        BigInt   @id @default(autoincrement())
+  /// 블랙리스트에 등록된 토큰 값
   token     String   @unique @db.VarChar(500)
+  /// 토큰 만료 일시
   expiresAt DateTime @map("expires_at") @db.Timestamp(6)
+  /// 등록 일시
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamp(6)
 
   @@map("token_blacklist")
@@ -65,19 +99,31 @@ model TokenBlacklist {
 }
 
 // ------------------------------------------------------
-// 2. Lotto Domain
+// 2. 로또 도메인 (Lotto Domain)
 // ------------------------------------------------------
 
+/**
+ * 로또 종이(티켓) 정보를 저장하는 모델입니다.
+ */
 model LottoTicket {
+  /// 고유 식별자 (PK)
   id        BigInt    @id @default(autoincrement())
+  /// 사용자 ID (FK)
   userId    BigInt    @map("user_id")
+  /// 로또 회차
   ordinal   Int
+  /// 티켓 이미지 URL (선택 사항)
   url       String?   @unique
-  status    String    @db.VarChar(50) // e.g., 'WINNING', 'LOSING'
-  createdAt DateTime? @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamp(6)
+  /// 티켓 상태 (STASHED, WINNING, LOSING 등)
+  status    String    @db.VarChar(50)
+  /// 생성 일시
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  /// 수정 일시
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
 
+  /// 연결된 사용자 정보
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// 티켓에 포함된 개별 게임 목록
   games     LottoGame[]
 
   @@map("lotto_ticket")
@@ -85,23 +131,42 @@ model LottoTicket {
   @@index([status], map: "idx_lotto_ticket_status")
 }
 
+/**
+ * 티켓 내 개별 로또 게임(6개 번호) 정보를 저장하는 모델입니다.
+ */
 model LottoGame {
+  /// 고유 식별자 (PK)
   id               BigInt    @id @default(autoincrement())
+  /// 소속된 티켓 ID (FK)
   ticketId         BigInt    @map("ticket_id")
+  /// 사용자 ID (FK)
   userId           BigInt    @map("user_id")
+  /// 게임 상태 (WINNING, LOSING, WAITING 등)
   status           String    @db.VarChar(50)
+  /// 당첨 번호 1
   number1          Int
+  /// 당첨 번호 2
   number2          Int
+  /// 당첨 번호 3
   number3          Int
+  /// 당첨 번호 4
   number4          Int
+  /// 당첨 번호 5
   number5          Int
+  /// 당첨 번호 6
   number6          Int
+  /// 번호 추출 방식 (예: DREAM, SAJU, AUTO)
   extractionMethod String?   @map("extraction_method") @db.VarChar(50)
+  /// 당첨 금액
   prizeAmount      BigInt?   @default(0) @map("prize_amount")
-  createdAt        DateTime? @map("created_at") @db.Timestamp(6)
-  updatedAt        DateTime? @map("updated_at") @db.Timestamp(6)
+  /// 생성 일시
+  createdAt        DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  /// 수정 일시
+  updatedAt        DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
 
+  /// 연결된 티켓 정보
   ticket           LottoTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  /// 연결된 사용자 정보
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("lotto_game")
@@ -109,66 +174,119 @@ model LottoGame {
   @@index([userId], map: "idx_lotto_game_user_id")
 }
 
+/**
+ * 역대 로또 당첨 결과 정보를 저장하는 모델입니다.
+ */
 model WinningInfo {
+  /// 고유 식별자 (PK)
   id                BigInt   @id @default(autoincrement())
+  /// 로또 회차
   round             Int      @unique
+  /// 추첨 날짜
   drawDate          DateTime @map("draw_date") @db.Date
+  /// 당첨 번호 1
   number1           Int
+  /// 당첨 번호 2
   number2           Int
+  /// 당첨 번호 3
   number3           Int
+  /// 당첨 번호 4
   number4           Int
+  /// 당첨 번호 5
   number5           Int
+  /// 당첨 번호 6
   number6           Int
+  /// 보너스 번호
   bonusNumber       Int      @map("bonus_number")
+  /// 1등 당첨 금액
   firstPrizeAmount  BigInt   @map("first_prize_amount")
+  /// 2등 당첨 금액
   secondPrizeAmount BigInt   @map("second_prize_amount")
+  /// 3등 당첨 금액
   thirdPrizeAmount  BigInt   @map("third_prize_amount")
+  /// 4등 당첨 금액
   fourthPrizeAmount BigInt   @map("fourth_prize_amount")
+  /// 5등 당첨 금액
   fifthPrizeAmount  BigInt   @map("fifth_prize_amount")
 
   @@map("winning_info")
 }
 
+/**
+ * 로또 판매점 정보를 저장하는 모델입니다.
+ */
 model LottoSpot {
+  /// 고유 식별자 (PK)
   id              BigInt    @id @default(autoincrement())
+  /// 판매점 이름
   name            String    @db.VarChar(255)
+  /// 판매점 주소
   address         String    @db.VarChar(500)
+  /// 위도
   latitude        Float
+  /// 경도
   longitude       Float
+  /// 1등 배출 횟수
   firstPlaceWins  Int       @default(0) @map("first_place_wins")
+  /// 2등 배출 횟수
   secondPlaceWins Int       @default(0) @map("second_place_wins")
-  createdAt       DateTime? @map("created_at") @db.Timestamp(6)
-  updatedAt       DateTime? @map("updated_at") @db.Timestamp(6)
+  /// 생성 일시
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  /// 수정 일시
+  updatedAt       DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
 
+  /// 판매점 근처 여행 플랜 목록
   travelPlans     TravelPlan[]
 
   @@map("lotto_spot")
   @@index([name], map: "idx_lotto_spot_name")
 }
 
+/**
+ * 회차별 로또 당첨 판매점 정보를 저장하는 모델입니다.
+ */
 model LottoWinningStore {
+  /// 고유 식별자 (PK)
   id        BigInt    @id @default(autoincrement())
+  /// 로또 회차
   round     Int
+  /// 당첨 순위 (1 또는 2)
   rank      Int
+  /// 판매점 상호명
   storeName String    @map("store_name") @db.VarChar(255)
+  /// 판매점 주소
   address   String    @db.VarChar(500)
+  /// 당첨 방식 (자동, 수동, 반자동 등)
   method    String?   @db.VarChar(50)
-  createdAt DateTime? @map("created_at") @db.Timestamp(6)
+  /// 생성 일시
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
 
   @@map("lotto_winning_store")
   @@index([round], map: "idx_lotto_winning_store_round")
 }
 
+/**
+ * 로또 판매점 주변 여행 계획 정보를 저장하는 모델입니다.
+ */
 model TravelPlan {
+  /// 고유 식별자 (PK)
   id             BigInt    @id @default(autoincrement())
+  /// 연결된 판매점 ID (FK)
   spotId         BigInt    @map("spot_id")
+  /// 플랜 제목
   title          String    @db.VarChar(255)
+  /// 플랜 설명
   description    String
+  /// 포함된 장소 정보 (JSON 형식)
   places         String
+  /// 테마 (예: 자연, 맛집, 역사)
   theme          String    @db.VarChar(50)
+  /// 예상 소요 시간 (시간 단위)
   estimatedHours Int       @map("estimated_hours")
+  /// 생성 일시
   createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
 
+  /// 연결된 판매점 정보
   spot           LottoSpot @relation(fields: [spotId], references: [id], onDelete: Cascade)
 
   @@map("travel_plan")
@@ -177,20 +295,33 @@ model TravelPlan {
 }
 
 // ------------------------------------------------------
-// 3. Community
+// 3. 커뮤니티 (Community)
 // ------------------------------------------------------
 
+/**
+ * 게시글 정보를 저장하는 모델입니다.
+ */
 model Post {
+  /// 고유 식별자 (PK)
   id        BigInt     @id @default(autoincrement())
+  /// 작성자 ID (FK)
   userId    BigInt     @map("user_id")
+  /// 게시글 제목
   title     String     @db.VarChar(255)
+  /// 게시글 내용
   content   String
+  /// 좋아요 수
   likes     Int        @default(0)
-  createdAt DateTime?  @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime?  @map("updated_at") @db.Timestamp(6)
+  /// 생성 일시
+  createdAt DateTime?  @default(now()) @map("created_at") @db.Timestamp(6)
+  /// 수정 일시
+  updatedAt DateTime?  @updatedAt @map("updated_at") @db.Timestamp(6)
 
+  /// 연결된 작성자 정보
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// 게시글에 달린 댓글 목록
   comments  Comment[]
+  /// 게시글 좋아요 목록
   postLikes PostLike[]
 
   @@map("post")
@@ -198,16 +329,28 @@ model Post {
   @@index([createdAt(sort: Desc)], map: "idx_post_created_at")
 }
 
+/**
+ * 댓글 정보를 저장하는 모델입니다.
+ */
 model Comment {
+  /// 고유 식별자 (PK)
   id        BigInt    @id @default(autoincrement())
+  /// 소속된 게시글 ID (FK)
   postId    BigInt    @map("post_id")
+  /// 작성자 ID (FK)
   userId    BigInt    @map("user_id")
+  /// 댓글 내용
   content   String
+  /// 좋아요 수
   likes     Int       @default(0)
-  createdAt DateTime? @map("created_at") @db.Timestamp(6)
-  updatedAt DateTime? @map("updated_at") @db.Timestamp(6)
+  /// 생성 일시
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
+  /// 수정 일시
+  updatedAt DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
 
+  /// 연결된 게시글 정보
   post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  /// 연결된 작성자 정보
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("comment")
@@ -215,13 +358,22 @@ model Comment {
   @@index([userId], map: "idx_comment_user_id")
 }
 
+/**
+ * 게시글 좋아요 정보를 저장하는 모델입니다.
+ */
 model PostLike {
+  /// 고유 식별자 (PK)
   id        BigInt    @id @default(autoincrement())
+  /// 대상 게시글 ID (FK)
   postId    BigInt    @map("post_id")
+  /// 사용자 ID (FK)
   userId    BigInt    @map("user_id")
+  /// 좋아요 누른 일시
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
 
+  /// 연결된 게시글 정보
   post      Post      @relation(fields: [postId], references: [id], onDelete: Cascade)
+  /// 연결된 사용자 정보
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("post_like")
@@ -231,18 +383,29 @@ model PostLike {
 }
 
 // ------------------------------------------------------
-// 4. Notification
+// 4. 알림 (Notification)
 // ------------------------------------------------------
 
+/**
+ * 사용자에게 발송되는 알림 정보를 저장하는 모델입니다.
+ */
 model Notification {
+  /// 고유 식별자 (PK)
   id        BigInt    @id @default(autoincrement())
+  /// 대상 사용자 ID (FK)
   userId    BigInt    @map("user_id")
+  /// 알림 제목
   title     String    @db.VarChar(255)
+  /// 알림 내용
   message   String
+  /// 읽음 여부
   isRead    Boolean?  @default(false) @map("is_read")
+  /// 알림 유형 (예: INFO, WINNING, SYSTEM)
   type      String?   @default("INFO") @db.VarChar(50)
+  /// 생성 일시
   createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(6)
 
+  /// 연결된 사용자 정보
   user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notification")
