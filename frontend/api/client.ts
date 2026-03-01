@@ -1,10 +1,13 @@
 import ky from 'ky';
 import { unwrapCommonResponse } from '../utils/api';
 
-const API_BASE_URL = 'https://clover-wallet-api.onrender.com/api/v1';
+// Node.js(NestJS) 기반의 새로운 백엔드 서버 주소입니다.
+// Expo 환경변수(EXPO_PUBLIC_API_URL)가 있으면 우선적으로 사용합니다.
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://clover-wallet-api-node.onrender.com/api/v1';
 
 export const apiClient = ky.create({
-  prefixUrl: API_BASE_URL,  timeout: 10000,
+  prefixUrl: API_BASE_URL,
+  timeout: 10000,
   retry: {
     limit: 2,
     methods: ['get', 'put', 'head', 'delete', 'options', 'trace'],

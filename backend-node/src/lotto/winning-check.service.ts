@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadgeService } from '../users/badge.service';
 import { WinningInfoCrawlerService } from './winning-info-crawler.service';
@@ -14,6 +14,7 @@ export class WinningCheckService {
 
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => WinningInfoCrawlerService))
     private readonly winningInfoCrawler: WinningInfoCrawlerService,
     private readonly badgeService: BadgeService,
     private readonly fcmService: FcmService,

@@ -6,13 +6,14 @@ import { LottoNumberExtractor } from './lotto-number.extractor';
 import { WinningInfoCrawlerService } from './winning-info-crawler.service';
 import { WinningCheckService } from './winning-check.service';
 import { UsersModule } from '../users/users.module';
+import { NotificationModule } from '../notification/notification.module';
 import { PrismaModule } from '../prisma/prisma.service';
 
 /**
  * 로또 번호 생성, 당첨 확인, 크롤링 기능을 제공하는 모듈입니다.
  */
 @Module({
-  imports: [UsersModule],
+  imports: [UsersModule, NotificationModule],
   controllers: [LottoController],
   providers: [
     LottoService,

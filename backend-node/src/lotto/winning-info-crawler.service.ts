@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import axios from 'axios';
-import { Cron, CronExpression } from '@nestjs/schedule';
+import { Cron } from '@nestjs/schedule';
 import { WinningCheckService } from './winning-check.service';
 
 /**
@@ -19,6 +19,7 @@ export class WinningInfoCrawlerService {
 
   constructor(
     private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => WinningCheckService))
     private readonly winningCheckService: WinningCheckService,
   ) {}
 
@@ -80,8 +81,8 @@ export class WinningInfoCrawlerService {
           number6: data.drwtNo6,
           bonusNumber: data.bnusNo,
           firstPrizeAmount: BigInt(data.firstWinamnt),
-          secondPrizeAmount: BigInt(data.firstWinamnt) / BigInt(6), // 실제 API는 1등만 주므로 임시 계산 (또는 0)
-          thirdPrizeAmount: BigInt(1500000), // 평균값
+          secondPrizeAmount: BigInt(data.firstWinamnt) / BigInt(6),
+          thirdPrizeAmount: BigInt(1500000),
           fourthPrizeAmount: BigInt(50000),
           fifthPrizeAmount: BigInt(5000),
         },
