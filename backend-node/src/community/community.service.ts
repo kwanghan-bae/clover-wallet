@@ -1,16 +1,34 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { PageResponse } from '../common/types/page-response'; // Assuming I created this
+import { PageResponse } from '../common/types/page-response';
 
+/**
+ * 커뮤니티 게시글 및 댓글 로직을 처리하는 서비스입니다.
+ * Kotlin CommunityService 로직을 이식함.
+ */
 @Injectable()
 export class CommunityService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async getAllPosts(page: number, size: number, userId?: bigint): Promise<PageResponse<any>> {
+  /**
+   * 모든 게시글을 최신순으로 조회합니다.
+   * @param page 페이지 번호
+   * @param size 페이지당 게시글 수
+   * @param currentUserId 현재 로그인한 사용자 ID (좋아요 여부 확인용)
+   */
+  async getAllPosts(
+    page: number,
+    size: number,
+    currentUserId?: bigint,
+  ): Promise<PageResponse<any>> {
     const skip = page * size;
     const [posts, total] = await Promise.all([
       this.prisma.post.findMany({
@@ -19,30 +37,38 @@ export class CommunityService {
         orderBy: { createdAt: 'desc' },
         include: {
           user: {
-            select: { id: true, ssoQualifier: true, email: true } // Exclude sensitive
+            select: { id: true, ssoQualifier: true, email: true, badges: true },
           },
-          _count: { select: { comments: true } }
-        }
+          _count: { select: { comments: true } },
+        },
       }),
       this.prisma.post.count(),
     ]);
 
-    // Map posts to include isLiked if userId provided?
-    // Doing it in JS since nested query is complex or needs raw query
-    let content = posts;
-    if (userId) {
-       // Check likes for these posts
-       const postIds = posts.map(p => p.id);
-       const likes = await this.prisma.postLike.findMany({
-         where: { userId: BigInt(userId), postId: { in: postIds } },
-         select: { postId: true }
-       });
-       const likedSet = new Set(likes.map(l => l.postId.toString()));
-       
-       content = posts.map(p => ({
-         ...p,
-         isLiked: likedSet.has(p.id.toString())
-       }));
+    let content = posts.map((p) => ({
+      ...p,
+      isLiked: false,
+      userSummary: p.user
+        ? {
+            id: p.user.id,
+            nickname: p.user.ssoQualifier.split('@')[0],
+            badges: p.user.badges?.split(',') || [],
+          }
+        : null,
+    }));
+
+    if (currentUserId) {
+      const postIds = posts.map((p) => p.id);
+      const likes = await this.prisma.postLike.findMany({
+        where: { userId: currentUserId, postId: { in: postIds } },
+        select: { postId: true },
+      });
+      const likedSet = new Set(likes.map((l) => l.postId.toString()));
+
+      content = content.map((p) => ({
+        ...p,
+        isLiked: likedSet.has(p.id.toString()),
+      }));
     }
 
     return {
@@ -54,144 +80,186 @@ export class CommunityService {
     };
   }
 
-  async getPostById(postId: bigint | number, userId?: bigint) {
+  /**
+   * 특정 게시글 상세 정보를 조회합니다.
+   */
+  async getPostById(postId: bigint, currentUserId?: bigint) {
     const post = await this.prisma.post.findUnique({
-      where: { id: BigInt(postId) },
+      where: { id: postId },
       include: {
-        user: { select: { id: true, ssoQualifier: true, email: true } }
-      }
+        user: {
+          select: { id: true, ssoQualifier: true, email: true, badges: true },
+        },
+      },
     });
 
     if (!post) {
-      throw new NotFoundException(`Post not found with id: ${postId}`);
+      throw new NotFoundException(`게시글을 찾을 수 없습니다: ${postId}`);
     }
 
     let isLiked = false;
-    if (userId) {
+    if (currentUserId) {
       const like = await this.prisma.postLike.findUnique({
-        where: { postId_userId: { postId: BigInt(postId), userId: BigInt(userId) } }
+        where: { postId_userId: { postId, userId: currentUserId } },
       });
       isLiked = !!like;
     }
 
-    return { ...post, isLiked };
-  }
-
-  async createPost(userId: bigint, dto: CreatePostDto) {
-    return this.prisma.post.create({
-      data: {
-        userId: BigInt(userId),
-        title: dto.title,
-        content: dto.content,
-        likes: 0
-      },
-      include: { user: { select: { id: true, ssoQualifier: true, email: true } } }
-    });
-  }
-
-  async updatePost(postId: bigint | number, userId: bigint, dto: UpdatePostDto) {
-    const post = await this.getPostById(postId);
-    if (post.userId !== BigInt(userId)) {
-        // Simple ownership check
-        // In real app, maybe admin can edit too.
-        throw new BadRequestException("You can only edit your own posts");
-    }
-
-    return this.prisma.post.update({
-      where: { id: BigInt(postId) },
-      data: {
-        ...dto,
-        updatedAt: new Date()
-      },
-      include: { user: { select: { id: true, ssoQualifier: true, email: true } } }
-    });
-  }
-
-  async likePost(postId: bigint | number, userId: bigint) {
-    const pId = BigInt(postId);
-    const uId = BigInt(userId);
-
-    // Check if liked
-    const existing = await this.prisma.postLike.findUnique({
-      where: { postId_userId: { postId: pId, userId: uId } }
-    });
-
-    if (existing) {
-      // Unlike
-      await this.prisma.$transaction([
-        this.prisma.postLike.delete({
-          where: { postId_userId: { postId: pId, userId: uId } }
-        }),
-        this.prisma.post.update({
-          where: { id: pId },
-          data: { likes: { decrement: 1 } }
-        })
-      ]);
-      return this.getPostById(pId, uId);
-    } else {
-      // Like
-      await this.prisma.$transaction([
-        this.prisma.postLike.create({
-          data: { postId: pId, userId: uId }
-        }),
-        this.prisma.post.update({
-          where: { id: pId },
-          data: { likes: { increment: 1 } }
-        })
-      ]);
-      return this.getPostById(pId, uId);
-    }
-  }
-
-  async getCommentsByPostId(postId: bigint | number, page: number, size: number) {
-    const skip = page * size;
-    const [comments, total] = await Promise.all([
-      this.prisma.comment.findMany({
-        where: { postId: BigInt(postId) },
-        skip,
-        take: size,
-        orderBy: { createdAt: 'asc' },
-        include: { user: { select: { id: true, ssoQualifier: true, email: true } } }
-      }),
-      this.prisma.comment.count({ where: { postId: BigInt(postId) } })
-    ]);
-
     return {
-        content: comments,
-        pageNumber: page,
-        pageSize: size,
-        totalElements: total,
-        totalPages: Math.ceil(total / size),
+      ...post,
+      isLiked,
+      userSummary: post.user
+        ? {
+            id: post.user.id,
+            nickname: post.user.ssoQualifier.split('@')[0],
+            badges: post.user.badges?.split(',') || [],
+          }
+        : null,
     };
   }
 
-  async createComment(userId: bigint, dto: CreateCommentDto) {
-    return this.prisma.comment.create({
+  /**
+   * 새 게시글을 작성합니다.
+   */
+  async createPost(userId: bigint, dto: CreatePostDto) {
+    return this.prisma.post.create({
       data: {
-        userId: BigInt(userId),
-        postId: BigInt(dto.postId),
+        userId,
+        title: dto.title,
         content: dto.content,
-        likes: 0
+        likes: 0,
       },
-      include: { user: { select: { id: true, ssoQualifier: true, email: true } } }
     });
   }
 
-  async updateComment(commentId: bigint | number, userId: bigint, dto: UpdateCommentDto) {
-    const comment = await this.prisma.comment.findUnique({ where: { id: BigInt(commentId) }});
-    if (!comment) throw new NotFoundException("Comment not found");
-    
-    if (comment.userId !== BigInt(userId)) {
-        throw new BadRequestException("You can only edit your own comments");
+  /**
+   * 게시글을 수정합니다. (작성자 확인)
+   */
+  async updatePost(postId: bigint, userId: bigint, dto: UpdatePostDto) {
+    const post = await this.prisma.post.findUnique({ where: { id: postId } });
+    if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
+    if (post.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+
+    return this.prisma.post.update({
+      where: { id: postId },
+      data: {
+        ...dto,
+        updatedAt: new Date(),
+      },
+    });
+  }
+
+  /**
+   * 게시글에 '좋아요' 토글 처리를 합니다.
+   */
+  async likePost(postId: bigint, userId: bigint) {
+    const existing = await this.prisma.postLike.findUnique({
+      where: { postId_userId: { postId, userId } },
+    });
+
+    if (existing) {
+      // 좋아요 취소
+      await this.prisma.$transaction([
+        this.prisma.postLike.delete({
+          where: { postId_userId: { postId, userId } },
+        }),
+        this.prisma.post.update({
+          where: { id: postId },
+          data: { likes: { decrement: 1 } },
+        }),
+      ]);
+    } else {
+      // 좋아요 추가
+      await this.prisma.$transaction([
+        this.prisma.postLike.create({
+          data: { postId, userId },
+        }),
+        this.prisma.post.update({
+          where: { id: postId },
+          data: { likes: { increment: 1 } },
+        }),
+      ]);
     }
 
+    return this.getPostById(postId, userId);
+  }
+
+  /**
+   * 특정 게시글의 댓글 목록을 조회합니다.
+   */
+  async getCommentsByPostId(postId: bigint, page: number, size: number) {
+    const skip = page * size;
+    const [comments, total] = await Promise.all([
+      this.prisma.comment.findMany({
+        where: { postId },
+        skip,
+        take: size,
+        orderBy: { createdAt: 'asc' },
+        include: {
+          user: {
+            select: { id: true, ssoQualifier: true, badges: true },
+          },
+        },
+      }),
+      this.prisma.comment.count({ where: { postId } }),
+    ]);
+
+    const content = comments.map((c) => ({
+      ...c,
+      userSummary: c.user
+        ? {
+            id: c.user.id,
+            nickname: c.user.ssoQualifier.split('@')[0],
+            badges: c.user.badges?.split(',') || [],
+          }
+        : null,
+    }));
+
+    return {
+      content,
+      pageNumber: page,
+      pageSize: size,
+      totalElements: total,
+      totalPages: Math.ceil(total / size),
+    };
+  }
+
+  /**
+   * 새 댓글을 작성합니다.
+   */
+  async createComment(userId: bigint, dto: CreateCommentDto) {
+    // 게시글 존재 여부 확인
+    const post = await this.prisma.post.findUnique({
+      where: { id: BigInt(dto.postId) },
+    });
+    if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
+
+    return this.prisma.comment.create({
+      data: {
+        userId,
+        postId: BigInt(dto.postId),
+        content: dto.content,
+        likes: 0,
+      },
+    });
+  }
+
+  /**
+   * 댓글을 수정합니다. (작성자 확인)
+   */
+  async updateComment(commentId: bigint, userId: bigint, dto: UpdateCommentDto) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+    });
+    if (!comment) throw new NotFoundException('댓글을 찾을 수 없습니다.');
+    if (comment.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+
     return this.prisma.comment.update({
-      where: { id: BigInt(commentId) },
+      where: { id: commentId },
       data: {
         content: dto.content,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       },
-      include: { user: { select: { id: true, ssoQualifier: true, email: true } } }
     });
   }
 }
