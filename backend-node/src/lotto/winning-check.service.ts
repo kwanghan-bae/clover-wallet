@@ -2,19 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { BadgeService } from '../users/badge.service';
 import { WinningInfoCrawlerService } from './winning-info-crawler.service';
-
-/**
- * 게임 상태 정의 (Kotlin LottoGameStatus 기반)
- */
-export enum LottoGameStatus {
-  WINNING_1 = 'WINNING_1',
-  WINNING_2 = 'WINNING_2',
-  WINNING_3 = 'WINNING_3',
-  WINNING_4 = 'WINNING_4',
-  WINNING_5 = 'WINNING_5',
-  LOSING = 'LOSING',
-  PENDING = 'PENDING',
-}
+import { FcmService } from '../notification/fcm.service';
 
 /**
  * 사용자의 로또 게임 결과와 당첨 번호를 대조하여 등수를 계산하고 상태를 업데이트하는 서비스입니다.
@@ -28,6 +16,7 @@ export class WinningCheckService {
     private readonly prisma: PrismaService,
     private readonly winningInfoCrawler: WinningInfoCrawlerService,
     private readonly badgeService: BadgeService,
+    private readonly fcmService: FcmService,
   ) {}
 
   /**
@@ -35,7 +24,6 @@ export class WinningCheckService {
    * @param round 로또 회차
    */
   async checkWinning(round: number) {
-    // 1. 당첨 정보 조회
     let winningInfo = await this.prisma.winningInfo.findUnique({
       where: { round },
     });
@@ -53,7 +41,6 @@ export class WinningCheckService {
       return;
     }
 
-    // 2. 해당 회차의 티켓 조회
     const tickets = await this.prisma.lottoTicket.findMany({
       where: { ordinal: round },
       include: { games: true },
@@ -88,12 +75,10 @@ export class WinningCheckService {
         }
       }
 
-      // 게임 업데이트 실행
       if (updates.length > 0) {
         await Promise.all(updates);
       }
 
-      // 티켓 상태 업데이트
       const newStatus = hasWinningGame ? 'WINNING' : 'LOSING';
       if (ticket.status !== newStatus) {
         await this.prisma.lottoTicket.update({
@@ -102,13 +87,13 @@ export class WinningCheckService {
         });
 
         if (hasWinningGame) {
-          // 뱃지 업데이트 (에러 무시)
           this.badgeService.updateUserBadges(ticket.userId).catch((e) =>
             this.logger.error(`사용자 ${ticket.userId} 뱃지 업데이트 실패`, e.stack),
           );
           
-          // TODO: FCM 알림 발송 (FcmService 구현 시 추가)
-          this.logger.log(`사용자 ${ticket.userId} 당첨 알림 대상 (티켓: ${ticket.id})`);
+          this.notifyWinner(ticket, winningInfo).catch((e) =>
+            this.logger.error(`사용자 ${ticket.userId} 당첨 알림 발송 실패`, e.stack),
+          );
         }
       }
     } catch (error) {
@@ -116,10 +101,35 @@ export class WinningCheckService {
     }
   }
 
-  /**
-   * 게임 번호와 당첨 번호를 비교하여 등수와 당첨금을 계산합니다.
-   * Kotlin LottoGameEntity.calculateRank 로직 이식.
-   */
+  private async notifyWinner(ticket: any, winningInfo: any) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: ticket.userId },
+      select: { fcmToken: true },
+    });
+
+    if (user?.fcmToken) {
+      const bestGame = ticket.games
+        .map((g) => ({ game: g, res: this.calculateRank(g, winningInfo) }))
+        .filter((r) => r.res.prize > BigInt(0))
+        .sort((a, b) => (a.res.status < b.res.status ? -1 : 1))[0];
+
+      if (bestGame) {
+        const rankName = this.getRankName(bestGame.res.status);
+        const numbers = [
+          bestGame.game.number1, bestGame.game.number2, bestGame.game.number3,
+          bestGame.game.number4, bestGame.game.number5, bestGame.game.number6
+        ];
+        
+        await this.fcmService.sendWinningNotification(
+          user.fcmToken,
+          rankName,
+          numbers,
+          bestGame.res.prize,
+        );
+      }
+    }
+  }
+
   calculateRank(game: any, winning: any): { status: string; prize: bigint } {
     const myNumbers = new Set([
       game.number1, game.number2, game.number3,
@@ -134,18 +144,24 @@ export class WinningCheckService {
     const bonusMatch = myNumbers.has(winning.bonusNumber);
 
     switch (matchCount) {
-      case 6:
-        return { status: 'WINNING_1', prize: winning.firstPrizeAmount };
-      case 5:
-        return bonusMatch
+      case 6: return { status: 'WINNING_1', prize: winning.firstPrizeAmount };
+      case 5: return bonusMatch
           ? { status: 'WINNING_2', prize: winning.secondPrizeAmount }
           : { status: 'WINNING_3', prize: winning.thirdPrizeAmount };
-      case 4:
-        return { status: 'WINNING_4', prize: winning.fourthPrizeAmount };
-      case 3:
-        return { status: 'WINNING_5', prize: winning.fifthPrizeAmount };
-      default:
-        return { status: 'LOSING', prize: BigInt(0) };
+      case 4: return { status: 'WINNING_4', prize: winning.fourthPrizeAmount };
+      case 3: return { status: 'WINNING_5', prize: winning.fifthPrizeAmount };
+      default: return { status: 'LOSING', prize: BigInt(0) };
+    }
+  }
+
+  private getRankName(status: string): string {
+    switch (status) {
+      case 'WINNING_1': return '1등';
+      case 'WINNING_2': return '2등';
+      case 'WINNING_3': return '3등';
+      case 'WINNING_4': return '4등';
+      case 'WINNING_5': return '5등';
+      default: return '당첨';
     }
   }
 }
