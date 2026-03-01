@@ -16,14 +16,43 @@ export class UsersService {
         return user;
     }
 
-    async findUserBySsoQualifier(ssoQualifier: string) {
+    async findUserBySsoQualifier(ssoQualifier: string, throwError = true) {
         const user = await this.prisma.user.findUnique({
             where: { ssoQualifier },
         });
-        if (!user) {
+        if (!user && throwError) {
             throw new NotFoundException(`User not found with SSO qualifier: ${ssoQualifier}`);
         }
         return user;
+    }
+
+    /**
+     * SSO 식별자로 사용자를 찾거나, 없으면 새로 생성합니다.
+     * Kotlin AuthService.login 로직을 이식함.
+     */
+    async findOrCreateBySsoQualifier(ssoQualifier: string, email?: string) {
+        const existingUser = await this.findUserBySsoQualifier(ssoQualifier, false);
+
+        if (existingUser) {
+            // 이메일이 변경되었거나 새로 추가된 경우 업데이트
+            if (email && existingUser.email !== email) {
+                return this.prisma.user.update({
+                    where: { id: existingUser.id },
+                    data: { email },
+                });
+            }
+            return existingUser;
+        }
+
+        // 신규 사용자 생성
+        return this.prisma.user.create({
+            data: {
+                ssoQualifier,
+                email,
+                age: 0,
+                locale: 'ko',
+            },
+        });
     }
 
     async updateUser(id: bigint | number | string, dto: UpdateUserDto) {
@@ -38,14 +67,11 @@ export class UsersService {
     }
 
     async deleteUserAccount(id: bigint | number | string) {
-        // Check existence first if strictly needed, or let delete throw if not found
-        // But typical "fail if not found" logic implies checking or handling the error.
         try {
             await this.prisma.user.delete({
                 where: { id: BigInt(id) },
             });
         } catch (error) {
-            // Prisma P2025: Record to delete does not exist.
             if (error.code === 'P2025') {
                 throw new NotFoundException(`User not found with id: ${id}`);
             }
