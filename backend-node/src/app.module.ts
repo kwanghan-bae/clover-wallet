@@ -9,6 +9,7 @@ import { CommunityModule } from './community/community.module';
 import { LottoModule } from './lotto/lotto.module';
 import { LottoSpotModule } from './lotto-spot/lotto-spot.module';
 import { TicketModule } from './ticket/ticket.module';
+import { TravelModule } from './travel/travel.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 /**
@@ -29,9 +30,10 @@ import { PrismaModule } from './prisma/prisma.module';
     LottoModule,
     LottoSpotModule,
     TicketModule,
+    TravelModule,
     PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
