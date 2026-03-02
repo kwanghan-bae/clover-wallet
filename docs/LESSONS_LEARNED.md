@@ -9,7 +9,7 @@
 - **테스트 환경 의존성 충돌**: NativeWind v4와 Reanimated v4가 포함된 Expo 프로젝트에서 Jest 테스트 시 `ReferenceError: _ReactNativeCSSInterop` 및 Worklets 초기화 에러가 발생하기 쉬움. 컴포넌트 테스트가 복잡해질 경우, 우선적으로 `ts-jest` 설정을 통해 비즈니스 로직(`utils/`)의 무결성을 먼저 확보하는 전략이 유효함.
 
 ## 2. 규약 및 가드 개선점 (Guard & Rules Improvements)
-- **가드 유연성 확보**: 마크다운 문서(.md) 내의 자유로운 표현(`...`, `TODO`)이 커밋을 방해하지 않도록 `pre_commit.sh`에서 파일 확장자별 검사 로직을 분리함.
+- **가드 유연성 확보**: 마크다운 문서(.md) 내의 자유로운 표현(`...`, `TASK`)이 커밋을 방해하지 않도록 `pre_commit.sh`에서 파일 확장자별 검사 로직을 분리함.
 - **문서 동기화**: 로직 수정 시 문서 수정을 강제하는 규칙은 엄격히 유지하되, 작업의 긴급도를 고려하여 경고(Warning) 수준으로 완화하여 생산성을 확보함.
 
 ## 3. 회고 (Retrospective)

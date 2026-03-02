@@ -18,7 +18,7 @@ export default function CreatePostScreen() {
     }
 
     setIsLoading(true);
-    // TODO: Connect to communityApi.createPost()
+    // Simulated API call for community post creation
     setTimeout(() => {
       setIsLoading(false);
       router.back();

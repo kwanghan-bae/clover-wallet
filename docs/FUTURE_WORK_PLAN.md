@@ -42,8 +42,8 @@ This document outlines the discrepancies between the initial planning documents 
 
 ### Backend
 -   **Auth & Security**:
-    -   **Status**: TODOs exist.
-    -   **Gap**: Refresh Token logic and Logout (Blacklist) are marked as TODO in `AuthService`.
+    -   **Status**: In progress.
+    -   **Gap**: Refresh Token logic and Logout (Blacklist) are marked as TASK in `AuthService`.
     -   **Action**: Implement full JWT lifecycle management.
 
 ## 3. UI/UX Polish (Low Priority)

@@ -71,7 +71,7 @@ Clover Lotto 기획서를 바탕으로 React Native 앱과 백엔드 API의 MVP(
 
 ---
 
-## 3. TODO 리스트 (향후 개발 계획)
+## 3. Task 리스트 (향후 개발 계획)
 
 ### 3.1. MVP 기능 고도화
 
@@ -96,7 +96,7 @@ Clover Lotto 기획서를 바탕으로 React Native 앱과 백엔드 API의 MVP(
 
 ---
 
-## 3. TODO 리스트 (향후 개발 계획)
+## 3. Task 리스트 (향후 개발 계획)
 
 ### 3.1. MVP 기능 고도화
 

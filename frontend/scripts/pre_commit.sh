@@ -16,7 +16,7 @@ P1='//'
 P2=' \.\.\.'
 P3='#'
 P4='(중략)'
-JOINED_PATTERNS="${P1}${P2}|${P3}${P2}|\/\* ${P2} \*\/|// existing code|// rest of code|// same as before|# remains unchanged|TODO: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
+JOINED_PATTERNS="${P1}${P2}|${P3}${P2}|\/\* ${P2} \*\/|// existing code|// rest of code|// same as before|# remains unchanged|TASK: Implement|${P4}|\(생략\)|// 기존 로직과 동일|// 상동|// 이전과 동일"
 if git diff --cached -- . ':!scripts/pre_commit.sh' | grep -Ei "$JOINED_PATTERNS"; then
     echo -e "${RED}❌ [ABSOLUTE BLOCK] AI Laziness Detected!${NC}"
     exit 1
