@@ -48,37 +48,52 @@ export class JsoupTicketParser {
    */
   parse(html: string): ParsedTicket {
     const $ = cheerio.load(html);
-    
+
     const ordinal = this.getOrdinal($);
     const status = this.getTicketStatus($);
     const games = this.getGames($);
-    
+
     return { ordinal, status, games };
   }
 
+  /**
+   * HTML 데이터에서 로또 회차(ordinal) 정보를 추출합니다.
+   * @param $ Cheerio 인스턴스
+   */
   private getOrdinal($: cheerio.CheerioAPI): number {
     const text = $(this.selectors.ordinalSelector).first().text() || '0';
     return parseInt(text.replace(/[^0-9]/g, ''), 10) || 0;
   }
 
+  /**
+   * HTML 데이터에서 티켓의 전체 당첨 상태를 추출합니다.
+   * @param $ Cheerio 인스턴스
+   */
   private getTicketStatus($: cheerio.CheerioAPI): string {
     const text = $(this.selectors.ticketStatusSelector).first().text() || '';
-    
+
     if (text.includes('당첨')) return 'WINNING';
     if (text.includes('낙첨')) return 'LOSING';
     if (text.includes('추첨')) return 'STASHED';
-    
+
     this.logger.error(`식별할 수 없는 티켓 상태: ${text}`);
     throw new BadRequestException(`식별할 수 없는 티켓 상태입니다: ${text}`);
   }
 
+  /**
+   * HTML 데이터에서 각 게임별 번호와 당첨 여부 목록을 추출합니다.
+   * @param $ Cheerio 인스턴스
+   */
   private getGames($: cheerio.CheerioAPI): ParsedGame[] {
     const games: ParsedGame[] = [];
     const rows = $(this.selectors.gameRowsSelector);
-    
+
     rows.each((_, element) => {
       const row = $(element);
-      const resultText = row.find(this.selectors.gameResultSelector).text().trim();
+      const resultText = row
+        .find(this.selectors.gameResultSelector)
+        .text()
+        .trim();
       const numbers = row
         .find(this.selectors.gameNumbersSelector)
         .map((_, el) => parseInt($(el).text(), 10))
@@ -100,6 +115,10 @@ export class JsoupTicketParser {
     return games;
   }
 
+  /**
+   * 게임 결과 텍스트를 분석하여 내부 상태 코드로 변환합니다.
+   * @param text 결과 텍스트 (예: '1등당첨')
+   */
   private parseGameStatus(text: string): string {
     if (text.includes('1등당첨')) return 'WINNING_1';
     if (text.includes('2등당첨')) return 'WINNING_2';

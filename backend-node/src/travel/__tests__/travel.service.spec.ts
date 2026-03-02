@@ -3,6 +3,10 @@ import { TravelService } from '../travel.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
+/**
+ * TravelService에 대한 단위 테스트입니다.
+ * 데이터베이스로부터 여행 계획 정보를 조회하는 기능을 검증합니다.
+ */
 describe('TravelService', () => {
   let service: TravelService;
   let prisma: PrismaService;
@@ -33,7 +37,9 @@ describe('TravelService', () => {
 
   describe('getAllTravelPlans', () => {
     it('should return all plans', async () => {
-      (prisma.travelPlan.findMany as jest.Mock).mockResolvedValue([{ id: BigInt(1) }]);
+      (prisma.travelPlan.findMany as jest.Mock).mockResolvedValue([
+        { id: BigInt(1) },
+      ]);
       const result = await service.getAllTravelPlans();
       expect(result).toHaveLength(1);
     });
@@ -50,7 +56,9 @@ describe('TravelService', () => {
 
     it('should throw NotFoundException if not found', async () => {
       (prisma.travelPlan.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(service.getTravelPlanById(BigInt(1))).rejects.toThrow(NotFoundException);
+      await expect(service.getTravelPlanById(BigInt(1))).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

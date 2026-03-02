@@ -24,7 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
    * @param payload 디코딩된 JWT 페이로드
    * @returns 사용자 식별 정보
    */
-  async validate(payload: any) {
+  validate(payload: any) {
     // sub 클레임에 저장된 DB 사용자 ID 반환
     return { id: BigInt(payload.sub) };
   }

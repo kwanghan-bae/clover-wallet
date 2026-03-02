@@ -46,7 +46,7 @@ export class BadgeService {
 
     // 2. 뱃지 조건 확인
     if (winningGamesCount > 0) currentBadges.add(BadgeService.BADGE_FIRST_WIN);
-    
+
     const hasFirstPlace = await this.prisma.lottoGame.findFirst({
       where: { userId, status: 'WINNING_1' },
     });
@@ -56,10 +56,30 @@ export class BadgeService {
     if (totalGames >= 50) currentBadges.add(BadgeService.BADGE_VETERAN);
 
     // 3. 추출 방식별 뱃지 확인
-    await this.checkAndAddExtractionBadge(userId, 'DREAM', BadgeService.BADGE_DREAM_MASTER, currentBadges);
-    await this.checkAndAddExtractionBadge(userId, 'SAJU', BadgeService.BADGE_SAJU_EXPERT, currentBadges);
-    await this.checkAndAddExtractionBadge(userId, 'HOROSCOPE', BadgeService.BADGE_HOROSCOPE_BELIEVER, currentBadges);
-    await this.checkAndAddExtractionBadge(userId, 'NATURE_PATTERNS', BadgeService.BADGE_NATURE_LOVER, currentBadges);
+    await this.checkAndAddExtractionBadge(
+      userId,
+      'DREAM',
+      BadgeService.BADGE_DREAM_MASTER,
+      currentBadges,
+    );
+    await this.checkAndAddExtractionBadge(
+      userId,
+      'SAJU',
+      BadgeService.BADGE_SAJU_EXPERT,
+      currentBadges,
+    );
+    await this.checkAndAddExtractionBadge(
+      userId,
+      'HOROSCOPE',
+      BadgeService.BADGE_HOROSCOPE_BELIEVER,
+      currentBadges,
+    );
+    await this.checkAndAddExtractionBadge(
+      userId,
+      'NATURE_PATTERNS',
+      BadgeService.BADGE_NATURE_LOVER,
+      currentBadges,
+    );
 
     // 통계 뱃지는 HOT 또는 COLD 방식 당첨 시 부여
     const hasStatsWin = await this.prisma.lottoGame.findFirst({
@@ -77,10 +97,19 @@ export class BadgeService {
         where: { id: userId },
         data: { badges: Array.from(currentBadges).join(',') },
       });
-      this.logger.log(`사용자 ${userId}의 뱃지가 업데이트되었습니다. 개수: ${currentBadges.size}`);
+      this.logger.log(
+        `사용자 ${userId}의 뱃지가 업데이트되었습니다. 개수: ${currentBadges.size}`,
+      );
     }
   }
 
+  /**
+   * 특정 번호 추출 방식을 사용하여 당첨된 경우 해당 분야의 뱃지를 부여합니다.
+   * @param userId 사용자 ID
+   * @param method 추출 방식 이름
+   * @param badgeName 부여할 뱃지 이름
+   * @param currentBadges 현재 사용자가 보유한 뱃지 셋
+   */
   private async checkAndAddExtractionBadge(
     userId: bigint,
     method: string,

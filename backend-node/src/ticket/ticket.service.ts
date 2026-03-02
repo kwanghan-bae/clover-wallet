@@ -68,7 +68,11 @@ export class TicketService {
    * @param url QR 코드 URL
    * @param extractionMethod 추출 방식 (선택)
    */
-  async saveScannedTicket(userId: bigint, url: string, extractionMethod?: string) {
+  async saveScannedTicket(
+    userId: bigint,
+    url: string,
+    extractionMethod?: string,
+  ) {
     // 1. 이미 등록된 티켓인지 확인
     const existingTicket = await this.prisma.lottoTicket.findUnique({
       where: { url },
@@ -119,7 +123,10 @@ export class TicketService {
         return savedTicket;
       });
     } catch (error) {
-      this.logger.error(`티켓 스캔 및 저장 중 오류 발생: ${error.message}`, error.stack);
+      this.logger.error(
+        `티켓 스캔 및 저장 중 오류 발생: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }

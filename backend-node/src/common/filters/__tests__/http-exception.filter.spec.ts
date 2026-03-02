@@ -2,6 +2,10 @@ import { GlobalExceptionFilter } from '../http-exception.filter';
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { ArgumentsHost } from '@nestjs/common';
 
+/**
+ * GlobalExceptionFilter에 대한 단위 테스트입니다.
+ * HTTP 예외 및 일반 예외를 표준 응답 형식으로 올바르게 변환하는지 검증합니다.
+ */
 describe('GlobalExceptionFilter', () => {
   let filter: GlobalExceptionFilter;
   let mockResponse: any;

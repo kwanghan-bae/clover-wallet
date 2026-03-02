@@ -34,7 +34,7 @@ export class AuthController {
       const email = payload.email;
 
       return await this.authService.login(userId, email);
-    } catch (e) {
+    } catch (_e) {
       throw new UnauthorizedException('로그인에 실패했습니다');
     }
   }

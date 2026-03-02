@@ -21,10 +21,14 @@ export class FcmService implements OnModuleInit {
     this.initializeFirebase();
   }
 
+  /**
+   * Firebase Admin SDK를 설정 파일의 키 경로를 사용하여 초기화합니다.
+   */
   private initializeFirebase() {
     try {
-      const serviceAccountPath = this.configService.get<string>('FIREBASE_KEY_PATH');
-      
+      const serviceAccountPath =
+        this.configService.get<string>('FIREBASE_KEY_PATH');
+
       if (serviceAccountPath && !admin.apps.length) {
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccountPath),
@@ -32,7 +36,9 @@ export class FcmService implements OnModuleInit {
         this.isFirebaseInitialized = true;
         this.logger.log('Firebase Admin SDK 초기화 성공');
       } else {
-        this.logger.warn('FIREBASE_KEY_PATH가 설정되지 않았습니다. FCM 기능을 사용할 수 없습니다.');
+        this.logger.warn(
+          'FIREBASE_KEY_PATH가 설정되지 않았습니다. FCM 기능을 사용할 수 없습니다.',
+        );
       }
     } catch (error) {
       this.logger.error('Firebase Admin SDK 초기화 실패', error.stack);

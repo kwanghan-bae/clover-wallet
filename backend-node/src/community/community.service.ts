@@ -138,7 +138,8 @@ export class CommunityService {
   async updatePost(postId: bigint, userId: bigint, dto: UpdatePostDto) {
     const post = await this.prisma.post.findUnique({ where: { id: postId } });
     if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
-    if (post.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+    if (post.userId !== userId)
+      throw new ForbiddenException('수정 권한이 없습니다.');
 
     return this.prisma.post.update({
       where: { id: postId },
@@ -247,12 +248,17 @@ export class CommunityService {
   /**
    * 댓글을 수정합니다. (작성자 확인)
    */
-  async updateComment(commentId: bigint, userId: bigint, dto: UpdateCommentDto) {
+  async updateComment(
+    commentId: bigint,
+    userId: bigint,
+    dto: UpdateCommentDto,
+  ) {
     const comment = await this.prisma.comment.findUnique({
       where: { id: commentId },
     });
     if (!comment) throw new NotFoundException('댓글을 찾을 수 없습니다.');
-    if (comment.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+    if (comment.userId !== userId)
+      throw new ForbiddenException('수정 권한이 없습니다.');
 
     return this.prisma.comment.update({
       where: { id: commentId },

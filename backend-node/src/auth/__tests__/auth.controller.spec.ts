@@ -3,6 +3,10 @@ import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import { UnauthorizedException } from '@nestjs/common';
 
+/**
+ * AuthController에 대한 단위 테스트입니다.
+ * Supabase 토큰을 통한 로그인, 토큰 갱신, 로그아웃 기능을 검증합니다.
+ */
 describe('AuthController', () => {
   let controller: AuthController;
   let service: AuthService;
@@ -55,7 +59,9 @@ describe('AuthController', () => {
 
   describe('refresh', () => {
     it('should call service.refresh', async () => {
-      (service.refresh as jest.Mock).mockResolvedValue({ accessToken: 'new-at' });
+      (service.refresh as jest.Mock).mockResolvedValue({
+        accessToken: 'new-at',
+      });
 
       const result = await controller.refresh({ refreshToken: 'rt' });
 

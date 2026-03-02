@@ -21,9 +21,9 @@ export class TravelService {
 
   /**
    * 사용자 맞춤형 여행 플랜 추천 (현재는 빈 목록 반환 - Kotlin 사양)
-   * @param userId 사용자 ID
+   * @param _userId 사용자 ID
    */
-  async getRecommendedTravelPlans(userId: bigint) {
+  getRecommendedTravelPlans(_userId: bigint) {
     // Kotlin DefaultTravelRecommendationService 로직 이식
     return [];
   }

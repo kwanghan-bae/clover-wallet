@@ -3,6 +3,10 @@ import { UsersService } from '../users.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
+/**
+ * UsersService에 대한 단위 테스트입니다.
+ * 사용자 조회, SSO 기반 생성/업데이트, 통계 계산 로직을 검증합니다.
+ */
 describe('UsersService', () => {
   let service: UsersService;
   let prisma: PrismaService;
@@ -54,11 +58,21 @@ describe('UsersService', () => {
 
   describe('findOrCreateBySsoQualifier', () => {
     it('should return existing user and update email if changed', async () => {
-      const mockUser = { id: BigInt(1), ssoQualifier: 'sub', email: 'old@test.com' };
+      const mockUser = {
+        id: BigInt(1),
+        ssoQualifier: 'sub',
+        email: 'old@test.com',
+      };
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(mockUser);
-      (prisma.user.update as jest.Mock).mockResolvedValue({ ...mockUser, email: 'new@test.com' });
+      (prisma.user.update as jest.Mock).mockResolvedValue({
+        ...mockUser,
+        email: 'new@test.com',
+      });
 
-      const result = await service.findOrCreateBySsoQualifier('sub', 'new@test.com');
+      const result = await service.findOrCreateBySsoQualifier(
+        'sub',
+        'new@test.com',
+      );
 
       expect(prisma.user.update).toHaveBeenCalled();
       expect(result.email).toBe('new@test.com');
@@ -66,9 +80,15 @@ describe('UsersService', () => {
 
     it('should create a new user if not found', async () => {
       (prisma.user.findUnique as jest.Mock).mockResolvedValue(null);
-      (prisma.user.create as jest.Mock).mockResolvedValue({ id: BigInt(2), ssoQualifier: 'new' });
+      (prisma.user.create as jest.Mock).mockResolvedValue({
+        id: BigInt(2),
+        ssoQualifier: 'new',
+      });
 
-      const result = await service.findOrCreateBySsoQualifier('new', 'test@test.com');
+      const result = await service.findOrCreateBySsoQualifier(
+        'new',
+        'test@test.com',
+      );
 
       expect(prisma.user.create).toHaveBeenCalled();
       expect(result.ssoQualifier).toBe('new');

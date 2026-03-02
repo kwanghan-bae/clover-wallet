@@ -34,7 +34,11 @@ export class NotificationController {
     @Query('page') page = 0,
     @Query('size') size = 20,
   ) {
-    return this.notificationService.getMyNotifications(req.user.id, +page, +size);
+    return this.notificationService.getMyNotifications(
+      req.user.id,
+      +page,
+      +size,
+    );
   }
 
   /**

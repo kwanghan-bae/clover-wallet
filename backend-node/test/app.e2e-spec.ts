@@ -3,8 +3,12 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { AppModule } from './../src/app.module';
 import { PrismaService } from '../src/prisma/prisma.service';
 import { TransformInterceptor } from '../src/common/interceptors/transform.interceptor';
-const request = require('supertest');
+import * as request from 'supertest';
 
+/**
+ * 시스템 통합(e2e) 테스트입니다.
+ * API 엔드포인트의 전반적인 동작(헬스 체크, 번호 추출, 커뮤니티 피드 등)을 검증합니다.
+ */
 describe('System Integration (e2e)', () => {
   let app: INestApplication;
 
@@ -19,7 +23,9 @@ describe('System Integration (e2e)', () => {
       count: jest.fn().mockResolvedValue(0),
     },
     user: {
-      findUnique: jest.fn().mockResolvedValue({ id: BigInt(1), ssoQualifier: 'test@test.com' }),
+      findUnique: jest
+        .fn()
+        .mockResolvedValue({ id: BigInt(1), ssoQualifier: 'test@test.com' }),
     },
     winningInfo: {
       findUnique: jest.fn().mockResolvedValue(null),
@@ -56,7 +62,7 @@ describe('System Integration (e2e)', () => {
     return request(app.getHttpServer())
       .get('/api/v1')
       .expect(200)
-      .then(response => {
+      .then((response) => {
         expect(response.body.success).toBe(true);
         expect(response.body.data).toBe('Hello World!');
       });
@@ -67,7 +73,7 @@ describe('System Integration (e2e)', () => {
       .post('/api/v1/lotto/extraction')
       .send({ method: 'RANDOM' })
       .expect(201)
-      .then(response => {
+      .then((response) => {
         expect(response.body.success).toBe(true);
         expect(response.body.data).toHaveLength(6);
       });
@@ -77,7 +83,7 @@ describe('System Integration (e2e)', () => {
     return request(app.getHttpServer())
       .get('/api/v1/community/posts')
       .expect(200)
-      .then(response => {
+      .then((response) => {
         expect(response.body.success).toBe(true);
         expect(response.body.data.content).toBeDefined();
       });

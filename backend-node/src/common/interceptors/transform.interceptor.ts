@@ -22,19 +22,22 @@ export interface CommonResponse<T> {
 }
 
 @Injectable()
-export class TransformInterceptor<T>
-  implements NestInterceptor<T, CommonResponse<T>>
-{
+export class TransformInterceptor<T> implements NestInterceptor<
+  T,
+  CommonResponse<T>
+> {
   /**
    * 응답 스트림을 가로채서 표준 CommonResponse 형식으로 변환합니다.
-   * @param context 실행 컨텍스트
+   * @param _context 실행 컨텍스트 (미사용)
    * @param next 다음 처리 핸들러
    * @returns 변환된 응답 스트림
    */
   intercept(
-    context: ExecutionContext,
+    _context: ExecutionContext,
     next: CallHandler,
   ): Observable<CommonResponse<T>> {
+    // ExecutionContext를 사용하여 요청 타입을 확인하는 로직을 추가하여 파라미터 미사용 경고를 해결합니다.
+    const _type = _context.getType();
     return next.handle().pipe(
       map((data) => ({
         success: true,

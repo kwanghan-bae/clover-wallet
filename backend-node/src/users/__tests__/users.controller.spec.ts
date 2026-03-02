@@ -3,6 +3,10 @@ import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { AuthGuard } from '@nestjs/passport';
 
+/**
+ * UsersController에 대한 단위 테스트입니다.
+ * 프로필 조회, 특정 사용자 조회, 통계 조회 기능을 검증합니다.
+ */
 describe('UsersController', () => {
   let controller: UsersController;
   let service: UsersService;

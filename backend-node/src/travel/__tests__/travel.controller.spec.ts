@@ -3,6 +3,10 @@ import { TravelController } from '../travel.controller';
 import { TravelService } from '../travel.service';
 import { AuthGuard } from '@nestjs/passport';
 
+/**
+ * TravelController에 대한 단위 테스트입니다.
+ * 여행 계획 목록 조회 및 상세 조회 기능을 검증합니다.
+ */
 describe('TravelController', () => {
   let controller: TravelController;
   let service: TravelService;

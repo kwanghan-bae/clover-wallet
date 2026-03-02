@@ -62,16 +62,20 @@ export class AuthService {
 
       if (!storedToken || storedToken.expiresAt < new Date()) {
         if (storedToken) {
-          await this.prisma.refreshToken.delete({ where: { id: storedToken.id } });
+          await this.prisma.refreshToken.delete({
+            where: { id: storedToken.id },
+          });
         }
-        throw new UnauthorizedException('유효하지 않거나 만료된 리프레시 토큰입니다');
+        throw new UnauthorizedException(
+          '유효하지 않거나 만료된 리프레시 토큰입니다',
+        );
       }
 
       // 3. 새 Access Token 발급
       const accessToken = this.generateAccessToken(userId);
 
       return { accessToken };
-    } catch (e) {
+    } catch (_e) {
       throw new UnauthorizedException('토큰 갱신에 실패했습니다');
     }
   }
@@ -93,7 +97,7 @@ export class AuthService {
           },
         });
       }
-    } catch (e) {
+    } catch (_e) {
       // Decode 실패 시 무시
     }
 
@@ -103,11 +107,25 @@ export class AuthService {
     });
   }
 
+  /**
+   * 사용자 ID를 기반으로 Access Token을 생성합니다.
+   * @param userId 사용자 ID
+   */
   private generateAccessToken(userId: bigint): string {
-    return this.jwtService.sign({ sub: userId.toString() }, { expiresIn: '1h' });
+    return this.jwtService.sign(
+      { sub: userId.toString() },
+      { expiresIn: '1h' },
+    );
   }
 
+  /**
+   * 사용자 ID를 기반으로 Refresh Token을 생성합니다.
+   * @param userId 사용자 ID
+   */
   private generateRefreshToken(userId: bigint): string {
-    return this.jwtService.sign({ sub: userId.toString() }, { expiresIn: '7d' });
+    return this.jwtService.sign(
+      { sub: userId.toString() },
+      { expiresIn: '7d' },
+    );
   }
 }

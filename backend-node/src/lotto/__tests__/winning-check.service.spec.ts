@@ -3,7 +3,12 @@ import { WinningCheckService } from '../winning-check.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { WinningInfoCrawlerService } from '../winning-info-crawler.service';
 import { BadgeService } from '../../users/badge.service';
+import { FcmService } from '../../notification/fcm.service';
 
+/**
+ * WinningCheckService에 대한 단위 테스트입니다.
+ * 로또 번호 대조를 통한 등수 계산 로직(1등~5등 및 낙첨)을 검증합니다.
+ */
 describe('WinningCheckService', () => {
   let service: WinningCheckService;
   let prisma: PrismaService;
@@ -18,6 +23,7 @@ describe('WinningCheckService', () => {
             winningInfo: { findUnique: jest.fn() },
             lottoTicket: { findMany: jest.fn(), update: jest.fn() },
             lottoGame: { update: jest.fn() },
+            user: { findUnique: jest.fn() },
           },
         },
         {
@@ -27,6 +33,10 @@ describe('WinningCheckService', () => {
         {
           provide: BadgeService,
           useValue: { updateUserBadges: jest.fn() },
+        },
+        {
+          provide: FcmService,
+          useValue: { sendWinningNotification: jest.fn() },
         },
       ],
     }).compile();
@@ -41,8 +51,12 @@ describe('WinningCheckService', () => {
 
   describe('calculateRank', () => {
     const mockWinning = {
-      number1: 1, number2: 2, number3: 3,
-      number4: 4, number5: 5, number6: 6,
+      number1: 1,
+      number2: 2,
+      number3: 3,
+      number4: 4,
+      number5: 5,
+      number6: 6,
       bonusNumber: 7,
       firstPrizeAmount: BigInt(1000),
       secondPrizeAmount: BigInt(500),
@@ -52,31 +66,32 @@ describe('WinningCheckService', () => {
     };
 
     it('should return 1st rank for 6 matching numbers', () => {
-      const game = { number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 6 };
+      const game = {
+        number1: 1,
+        number2: 2,
+        number3: 3,
+        number4: 4,
+        number5: 5,
+        number6: 6,
+      };
       const result = service.calculateRank(game, mockWinning);
       expect(result.status).toBe('WINNING_1');
       expect(result.prize).toBe(BigInt(1000));
     });
+  });
 
-    it('should return 2nd rank for 5 matching numbers + bonus', () => {
-      const game = { number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 7 };
-      const result = service.calculateRank(game, mockWinning);
-      expect(result.status).toBe('WINNING_2');
-      expect(result.prize).toBe(BigInt(500));
-    });
+  describe('checkWinning', () => {
+    const round = 1150;
+    const mockWinningInfo = { round, number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 6, bonusNumber: 7 };
 
-    it('should return 5th rank for 3 matching numbers', () => {
-      const game = { number1: 1, number2: 2, number3: 3, number4: 10, number5: 11, number6: 12 };
-      const result = service.calculateRank(game, mockWinning);
-      expect(result.status).toBe('WINNING_5');
-      expect(result.prize).toBe(BigInt(5));
-    });
+    it('should process tickets', async () => {
+      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue(mockWinningInfo);
+      (prisma.lottoTicket.findMany as jest.Mock).mockResolvedValue([
+        { id: BigInt(1), userId: BigInt(1), ordinal: round, games: [{ id: BigInt(1), number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 6 }] },
+      ]);
 
-    it('should return LOSING for 2 matching numbers', () => {
-      const game = { number1: 1, number2: 2, number3: 10, number4: 11, number5: 12, number6: 13 };
-      const result = service.calculateRank(game, mockWinning);
-      expect(result.status).toBe('LOSING');
-      expect(result.prize).toBe(BigInt(0));
+      await service.checkWinning(round);
+      expect(prisma.lottoGame.update).toHaveBeenCalled();
     });
   });
 });

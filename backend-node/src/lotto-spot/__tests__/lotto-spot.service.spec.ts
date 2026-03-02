@@ -2,6 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LottoSpotService } from '../lotto-spot.service';
 import { PrismaService } from '../../prisma/prisma.service';
 
+/**
+ * LottoSpotService에 대한 단위 테스트입니다.
+ * 판매점 목록 조회, 검색, 상세 조회 기능을 검증합니다.
+ */
 describe('LottoSpotService', () => {
   let service: LottoSpotService;
   let prisma: PrismaService;
@@ -33,7 +37,9 @@ describe('LottoSpotService', () => {
 
   describe('getAllLottoSpots', () => {
     it('should return paginated spots', async () => {
-      (prisma.lottoSpot.findMany as jest.Mock).mockResolvedValue([{ id: BigInt(1) }]);
+      (prisma.lottoSpot.findMany as jest.Mock).mockResolvedValue([
+        { id: BigInt(1) },
+      ]);
       (prisma.lottoSpot.count as jest.Mock).mockResolvedValue(1);
 
       const result = await service.getAllLottoSpots(0, 20);

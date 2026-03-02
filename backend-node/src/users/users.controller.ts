@@ -53,8 +53,12 @@ export class UsersController {
    */
   @UseGuards(AuthGuard('jwt'))
   @Delete('me')
-  async deleteAccount(@Request() req: any) {
-    await this.usersService.deleteUserAccount(req.user.id);
+  async deleteAccount(@Request() request: any) {
+    if (!request.user) {
+      return { message: '사용자 인증 정보를 확인할 수 없습니다' };
+    }
+    const targetUserId = request.user.userId;
+    await this.usersService.deleteUserAccount(targetUserId);
     return { message: '회원 탈퇴가 완료되었습니다' };
   }
 

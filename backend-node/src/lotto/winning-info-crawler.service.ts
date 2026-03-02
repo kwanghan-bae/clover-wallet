@@ -1,8 +1,8 @@
-import { Injectable, Logger, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import axios from 'axios';
 import { Cron } from '@nestjs/schedule';
-import { WinningCheckService } from './winning-check.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 /**
  * 당첨 정보 수집 및 정기 작업을 담당하는 서비스입니다.
@@ -19,8 +19,7 @@ export class WinningInfoCrawlerService {
 
   constructor(
     private readonly prisma: PrismaService,
-    @Inject(forwardRef(() => WinningCheckService))
-    private readonly winningCheckService: WinningCheckService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   /**
@@ -35,10 +34,10 @@ export class WinningInfoCrawlerService {
       // 1. 당첨 번호 크롤링
       await this.crawlWinningInfo(round);
 
-      // 2. 사용자 당첨 확인 및 뱃지 업데이트
-      await this.winningCheckService.checkWinning(round);
+      // 2. 이벤트 발행 (WinningCheckService 등에서 수신)
+      this.eventEmitter.emit('lotto.winning-info.created', { round });
 
-      this.logger.log(`${round} 회차 정기 작업 완료`);
+      this.logger.log(`${round} 회차 정기 작업 완료 및 이벤트 발행`);
     } catch (error) {
       this.logger.error(`${round} 회차 정기 작업 실패`, error.stack);
     }

@@ -3,6 +3,10 @@ import { TicketController } from '../ticket.controller';
 import { TicketService } from '../ticket.service';
 import { AuthGuard } from '@nestjs/passport';
 
+/**
+ * TicketController에 대한 단위 테스트입니다.
+ * 내 티켓 목록 조회, 상세 조회, 스캔된 티켓 저장 기능을 검증합니다.
+ */
 describe('TicketController', () => {
   let controller: TicketController;
   let service: TicketService;
@@ -38,7 +42,11 @@ describe('TicketController', () => {
       const mockResult = { content: [], totalElements: 0 };
       (service.getMyTickets as jest.Mock).mockResolvedValue(mockResult);
 
-      const result = await controller.getMyTickets({ user: { id: BigInt(1) } }, 0, 20);
+      const result = await controller.getMyTickets(
+        { user: { id: BigInt(1) } },
+        0,
+        20,
+      );
       expect(service.getMyTickets).toHaveBeenCalledWith(BigInt(1), 0, 20);
       expect(result).toEqual(mockResult);
     });
@@ -65,7 +73,11 @@ describe('TicketController', () => {
         { url: 'test-url', extractionMethod: 'DREAM' },
       );
 
-      expect(service.saveScannedTicket).toHaveBeenCalledWith(BigInt(1), 'test-url', 'DREAM');
+      expect(service.saveScannedTicket).toHaveBeenCalledWith(
+        BigInt(1),
+        'test-url',
+        'DREAM',
+      );
       expect(result).toEqual(mockTicket);
     });
   });

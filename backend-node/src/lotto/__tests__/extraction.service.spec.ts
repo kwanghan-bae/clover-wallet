@@ -3,6 +3,10 @@ import { ExtractionService } from '../extraction.service';
 import { LottoNumberExtractor } from '../lotto-number.extractor';
 import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
+/**
+ * ExtractionService에 대한 단위 테스트입니다.
+ * 다양한 키워드 정보를 바탕으로 로또 번호 추출 로직이 올바르게 호출되는지 검증합니다.
+ */
 describe('ExtractionService', () => {
   let service: ExtractionService;
   let extractor: LottoNumberExtractor;
@@ -40,9 +44,12 @@ describe('ExtractionService', () => {
 
       const result = await service.extractLottoNumbers(dto);
 
-      expect(extractor.extract).toHaveBeenCalledWith(ExtractionMethod.DREAM, expect.objectContaining({
-        dreamKeyword: '돼지',
-      }));
+      expect(extractor.extract).toHaveBeenCalledWith(
+        ExtractionMethod.DREAM,
+        expect.objectContaining({
+          dreamKeyword: '돼지',
+        }),
+      );
       expect(result).toEqual(mockNumbers);
     });
   });

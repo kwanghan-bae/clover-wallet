@@ -5,6 +5,10 @@ import { UsersService } from '../../users/users.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { UnauthorizedException } from '@nestjs/common';
 
+/**
+ * AuthService에 대한 단위 테스트입니다.
+ * JWT 발급, 리프레시 토큰 관리, 블랙리스트 기반 로그아웃 로직을 검증합니다.
+ */
 describe('AuthService', () => {
   let service: AuthService;
   let usersService: UsersService;
@@ -58,12 +62,21 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should create a user and return tokens', async () => {
-      const mockUser = { id: BigInt(1), ssoQualifier: 'sub', email: 'test@test.com' };
-      (usersService.findOrCreateBySsoQualifier as jest.Mock).mockResolvedValue(mockUser);
+      const mockUser = {
+        id: BigInt(1),
+        ssoQualifier: 'sub',
+        email: 'test@test.com',
+      };
+      (usersService.findOrCreateBySsoQualifier as jest.Mock).mockResolvedValue(
+        mockUser,
+      );
 
       const result = await service.login('sub', 'test@test.com');
 
-      expect(usersService.findOrCreateBySsoQualifier).toHaveBeenCalledWith('sub', 'test@test.com');
+      expect(usersService.findOrCreateBySsoQualifier).toHaveBeenCalledWith(
+        'sub',
+        'test@test.com',
+      );
       expect(prisma.refreshToken.create).toHaveBeenCalled();
       expect(result.accessToken).toBe('mock-token');
       expect(result.refreshToken).toBe('mock-token');
@@ -88,7 +101,9 @@ describe('AuthService', () => {
       (jwtService.verify as jest.Mock).mockReturnValue({ sub: '1' });
       (prisma.refreshToken.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(service.refresh('invalid-token')).rejects.toThrow(UnauthorizedException);
+      await expect(service.refresh('invalid-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 

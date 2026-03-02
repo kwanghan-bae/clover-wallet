@@ -22,7 +22,7 @@ export class LottoTicketClient {
         timeout: this.TIMEOUT_MS,
         responseType: 'arraybuffer', // 바이너리로 받아서 직접 디코딩
       });
-      
+
       // 동행복권은 EUC-KR을 사용하므로 변환 필요
       const html = iconv.decode(Buffer.from(response.data), 'euc-kr');
       this.logger.log(`URL에서 문서 가져오기 성공: ${url}`);

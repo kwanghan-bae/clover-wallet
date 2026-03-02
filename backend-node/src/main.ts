@@ -31,4 +31,7 @@ async function bootstrap() {
 }
 
 // 애플리케이션 부트스트랩 실행
-bootstrap();
+bootstrap().catch((err) => {
+  console.error('애플리케이션 구동 중 오류가 발생했습니다:', err);
+  process.exit(1);
+});

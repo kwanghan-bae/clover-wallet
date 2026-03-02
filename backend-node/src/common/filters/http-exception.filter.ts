@@ -38,13 +38,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         : '내부 서버 오류가 발생했습니다.';
 
     // 500 에러인 경우 에러 로그 기록, 그 외에는 경고 로그 기록
-    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (status === (HttpStatus.INTERNAL_SERVER_ERROR as number)) {
       this.logger.error(
         `[${request.method}] ${request.url} - ${exception.message}`,
         exception.stack,
       );
     } else {
-      this.logger.warn(`[${request.method}] ${request.url} - ${JSON.stringify(message)}`);
+      this.logger.warn(
+        `[${request.method}] ${request.url} - ${JSON.stringify(message)}`,
+      );
     }
 
     // Kotlin 규격에 맞춰 응답 반환

@@ -5,6 +5,10 @@ import { LottoTicketClient } from '../client/lotto-ticket.client';
 import { JsoupTicketParser } from '../client/jsoup-ticket.parser';
 import { NotFoundException } from '@nestjs/common';
 
+/**
+ * TicketService에 대한 단위 테스트입니다.
+ * 티켓 조회 및 외부 URL로부터의 티켓 스캔/파싱/저장 로직을 검증합니다.
+ */
 describe('TicketService', () => {
   let service: TicketService;
   let prisma: PrismaService;
@@ -57,7 +61,9 @@ describe('TicketService', () => {
 
   describe('getMyTickets', () => {
     it('should return paginated tickets', async () => {
-      (prisma.lottoTicket.findMany as jest.Mock).mockResolvedValue([{ id: BigInt(1) }]);
+      (prisma.lottoTicket.findMany as jest.Mock).mockResolvedValue([
+        { id: BigInt(1) },
+      ]);
       (prisma.lottoTicket.count as jest.Mock).mockResolvedValue(1);
 
       const result = await service.getMyTickets(BigInt(1));
@@ -70,7 +76,9 @@ describe('TicketService', () => {
   describe('getTicketById', () => {
     it('should return ticket with games', async () => {
       const mockTicket = { id: BigInt(1), games: [] };
-      (prisma.lottoTicket.findUnique as jest.Mock).mockResolvedValue(mockTicket);
+      (prisma.lottoTicket.findUnique as jest.Mock).mockResolvedValue(
+        mockTicket,
+      );
 
       const result = await service.getTicketById(BigInt(1));
       expect(result).toEqual(mockTicket);
@@ -78,14 +86,18 @@ describe('TicketService', () => {
 
     it('should throw NotFoundException if ticket not found', async () => {
       (prisma.lottoTicket.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(service.getTicketById(BigInt(1))).rejects.toThrow(NotFoundException);
+      await expect(service.getTicketById(BigInt(1))).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('saveScannedTicket', () => {
     it('should return existing ticket if already scanned', async () => {
       const mockTicket = { id: BigInt(1), url: 'test-url' };
-      (prisma.lottoTicket.findUnique as jest.Mock).mockResolvedValue(mockTicket);
+      (prisma.lottoTicket.findUnique as jest.Mock).mockResolvedValue(
+        mockTicket,
+      );
 
       const result = await service.saveScannedTicket(BigInt(1), 'test-url');
 
@@ -99,9 +111,21 @@ describe('TicketService', () => {
       (parser.parse as jest.Mock).mockReturnValue({
         ordinal: 1150,
         status: 'WINNING',
-        games: [{ status: 'LOSING', number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 6 }],
+        games: [
+          {
+            status: 'LOSING',
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 4,
+            number5: 5,
+            number6: 6,
+          },
+        ],
       });
-      (prisma.lottoTicket.create as jest.Mock).mockResolvedValue({ id: BigInt(2) });
+      (prisma.lottoTicket.create as jest.Mock).mockResolvedValue({
+        id: BigInt(2),
+      });
 
       const result = await service.saveScannedTicket(BigInt(1), 'new-url');
 
