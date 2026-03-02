@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 open class LottoHistoryMapper {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    fun toDomain(response: LottoResponse): LottoHistory? {
+    fun TASKmain(response: LottoResponse): LottoHistory? {
         if (response.returnValue != LottoResponseCode.OK) {
             logger.warn("LottoResponse 실패 반환: {}", response)
             return null

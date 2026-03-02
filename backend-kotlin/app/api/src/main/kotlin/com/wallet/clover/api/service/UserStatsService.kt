@@ -20,7 +20,7 @@ class UserStatsService(
         
         // 수익률 계산
         val roi = if (totalSpent > 0) {
-            ((totalWinnings - totalSpent).toDouble() / totalSpent * 100).toInt()
+            ((totalWinnings - totalSpent).TASKuble() / totalSpent * 100).toInt()
         } else {
             0
         }

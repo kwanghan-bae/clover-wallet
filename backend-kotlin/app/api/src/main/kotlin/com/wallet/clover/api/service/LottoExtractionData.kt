@@ -3,7 +3,7 @@ package com.wallet.clover.api.service
 import com.wallet.clover.api.service.LottoNumberExtractor.ZodiacSign
 
 object LottoExtractionData {
-    // TODO: DB나 외부 설정에서 동적으로 로딩하도록 개선 필요
+    // TASK: DB나 외부 설정에서 동적으로 로딩하도록 개선 필요
     val dreamNumberMap = mapOf(
         "돼지" to setOf(8, 18, 28),
         "조상" to setOf(14, 15, 25),
