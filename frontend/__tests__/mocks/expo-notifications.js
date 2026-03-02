@@ -1,0 +1,1 @@
+module.exports = { setNotificationHandler: jest.fn(), getPermissionsAsync: jest.fn(async () => ({ status: 'granted' })), requestPermissionsAsync: jest.fn(async () => ({ status: 'granted' })), getExpoPushTokenAsync: jest.fn(async () => ({ data: 'token' })), setNotificationChannelAsync: jest.fn(async () => {}), AndroidImportance: { MAX: 5 } };
