@@ -53,8 +53,12 @@ describe('LottoSpotController', () => {
 
     controller = module.get<LottoSpotController>(LottoSpotController);
     lottoSpotService = module.get<LottoSpotService>(LottoSpotService);
-    lottoWinningStoreService = module.get<LottoWinningStoreService>(LottoWinningStoreService);
-    winningInfoCrawlerService = module.get<WinningInfoCrawlerService>(WinningInfoCrawlerService);
+    lottoWinningStoreService = module.get<LottoWinningStoreService>(
+      LottoWinningStoreService,
+    );
+    winningInfoCrawlerService = module.get<WinningInfoCrawlerService>(
+      WinningInfoCrawlerService,
+    );
   });
 
   it('should be defined', () => {
@@ -77,45 +81,66 @@ describe('LottoSpotController', () => {
 
   describe('crawlStores', () => {
     it('should call lottoWinningStoreService.crawlWinningStores', async () => {
-      mockLottoWinningStoreService.crawlWinningStores.mockResolvedValue({ count: 10 });
+      mockLottoWinningStoreService.crawlWinningStores.mockResolvedValue({
+        count: 10,
+      });
       const result = await controller.crawlStores('1000');
-      expect(lottoWinningStoreService.crawlWinningStores).toHaveBeenCalledWith(1000);
-      expect(result).toEqual({ message: 'Crawling started for round 1000', result: { count: 10 } });
+      expect(lottoWinningStoreService.crawlWinningStores).toHaveBeenCalledWith(
+        1000,
+      );
+      expect(result).toEqual({
+        message: 'Crawling started for round 1000',
+        result: { count: 10 },
+      });
     });
   });
 
   describe('crawlWinningInfo', () => {
     it('should call winningInfoCrawlerService.crawlWinningInfo', async () => {
       const result = await controller.crawlWinningInfo('1000');
-      expect(winningInfoCrawlerService.crawlWinningInfo).toHaveBeenCalledWith(1000);
-      expect(result).toEqual({ message: 'Winning Info Crawling started for round 1000' });
+      expect(winningInfoCrawlerService.crawlWinningInfo).toHaveBeenCalledWith(
+        1000,
+      );
+      expect(result).toEqual({
+        message: 'Winning Info Crawling started for round 1000',
+      });
     });
   });
 
   describe('getWinningInfo', () => {
     it('should call winningInfoCrawlerService.getWinningInfo', async () => {
       await controller.getWinningInfo('1000');
-      expect(winningInfoCrawlerService.getWinningInfo).toHaveBeenCalledWith(1000);
+      expect(winningInfoCrawlerService.getWinningInfo).toHaveBeenCalledWith(
+        1000,
+      );
     });
   });
 
   describe('getWinningStores', () => {
     it('should call lottoWinningStoreService.getWinningStores', async () => {
       await controller.getWinningStores('1000');
-      expect(lottoWinningStoreService.getWinningStores).toHaveBeenCalledWith(1000);
+      expect(lottoWinningStoreService.getWinningStores).toHaveBeenCalledWith(
+        1000,
+      );
     });
   });
 
   describe('getSpotWinningHistory', () => {
     it('should call lottoWinningStoreService.getWinningHistoryByName', async () => {
-      mockLottoSpotService.getSpotById.mockResolvedValue({ name: 'store-name' });
+      mockLottoSpotService.getSpotById.mockResolvedValue({
+        name: 'store-name',
+      });
       await controller.getSpotWinningHistory('1');
-      expect(lottoWinningStoreService.getWinningHistoryByName).toHaveBeenCalledWith('store-name');
+      expect(
+        lottoWinningStoreService.getWinningHistoryByName,
+      ).toHaveBeenCalledWith('store-name');
     });
 
     it('should throw NotFoundException if spot not found', async () => {
       mockLottoSpotService.getSpotById.mockResolvedValue(null);
-      await expect(controller.getSpotWinningHistory('1')).rejects.toThrow(NotFoundException);
+      await expect(controller.getSpotWinningHistory('1')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

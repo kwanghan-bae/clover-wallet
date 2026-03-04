@@ -57,7 +57,9 @@ describe('WinningInfoCrawlerService', () => {
 
   describe('crawlWinningInfo', () => {
     it('should skip if winning info already exists', async () => {
-      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue({ round: 1000 });
+      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue({
+        round: 1000,
+      });
       await service.crawlWinningInfo(1000);
       expect(mockedAxios.get).not.toHaveBeenCalled();
     });
@@ -68,7 +70,13 @@ describe('WinningInfoCrawlerService', () => {
         data: {
           returnValue: 'success',
           drwNoDate: '2024-01-01',
-          drwtNo1: 1, drwtNo2: 2, drwtNo3: 3, drwtNo4: 4, drwtNo5: 5, drwtNo6: 6, bnusNo: 7,
+          drwtNo1: 1,
+          drwtNo2: 2,
+          drwtNo3: 3,
+          drwtNo4: 4,
+          drwtNo5: 5,
+          drwtNo6: 6,
+          bnusNo: 7,
           firstWinamnt: 1000000,
         },
       });
@@ -87,10 +95,15 @@ describe('WinningInfoCrawlerService', () => {
 
   describe('handleWeeklyLottoTasks', () => {
     it('should call crawlWinningInfo and emit event', async () => {
-      const spy = jest.spyOn(service, 'crawlWinningInfo').mockResolvedValue(undefined);
+      const spy = jest
+        .spyOn(service, 'crawlWinningInfo')
+        .mockResolvedValue(undefined);
       await service.handleWeeklyLottoTasks();
       expect(spy).toHaveBeenCalled();
-      expect(eventEmitter.emit).toHaveBeenCalledWith('lotto.winning-info.created', expect.any(Object));
+      expect(eventEmitter.emit).toHaveBeenCalledWith(
+        'lotto.winning-info.created',
+        expect.any(Object),
+      );
     });
   });
 });

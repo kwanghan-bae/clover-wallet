@@ -41,7 +41,9 @@ describe('LottoWinningStoreService', () => {
   describe('getWinningStores', () => {
     it('should return winning stores for a round', async () => {
       const mockStores = [{ id: BigInt(1), round: 1150 }];
-      (prisma.lottoWinningStore.findMany as jest.Mock).mockResolvedValue(mockStores);
+      (prisma.lottoWinningStore.findMany as jest.Mock).mockResolvedValue(
+        mockStores,
+      );
       const result = await service.getWinningStores(1150);
       expect(result).toEqual(mockStores);
     });
@@ -49,7 +51,9 @@ describe('LottoWinningStoreService', () => {
 
   describe('getWinningHistoryByName', () => {
     it('should return history for a store', async () => {
-      (prisma.lottoWinningStore.findMany as jest.Mock).mockResolvedValue([{ storeName: 'S' }]);
+      (prisma.lottoWinningStore.findMany as jest.Mock).mockResolvedValue([
+        { storeName: 'S' },
+      ]);
       const result = await service.getWinningHistoryByName('S');
       expect(result).toHaveLength(1);
     });
@@ -57,7 +61,9 @@ describe('LottoWinningStoreService', () => {
 
   describe('crawlWinningStores', () => {
     it('should skip if already exists', async () => {
-      (prisma.lottoWinningStore.findFirst as jest.Mock).mockResolvedValue({ id: BigInt(1) });
+      (prisma.lottoWinningStore.findFirst as jest.Mock).mockResolvedValue({
+        id: BigInt(1),
+      });
       const result = await service.crawlWinningStores(1150);
       expect(result.count).toBe(0);
       expect(mockedAxios.get).not.toHaveBeenCalled();
@@ -86,7 +92,9 @@ describe('LottoWinningStoreService', () => {
 
     it('should handle no stores found', async () => {
       (prisma.lottoWinningStore.findFirst as jest.Mock).mockResolvedValue(null);
-      mockedAxios.get.mockResolvedValue({ data: iconv.encode('<table></table>', 'EUC-KR') });
+      mockedAxios.get.mockResolvedValue({
+        data: iconv.encode('<table></table>', 'EUC-KR'),
+      });
 
       const result = await service.crawlWinningStores(1150);
       expect(result.count).toBe(0);
@@ -96,7 +104,9 @@ describe('LottoWinningStoreService', () => {
     it('should throw error if axios fails', async () => {
       (prisma.lottoWinningStore.findFirst as jest.Mock).mockResolvedValue(null);
       mockedAxios.get.mockRejectedValue(new Error('Network Error'));
-      await expect(service.crawlWinningStores(1150)).rejects.toThrow('Network Error');
+      await expect(service.crawlWinningStores(1150)).rejects.toThrow(
+        'Network Error',
+      );
     });
   });
 });

@@ -80,7 +80,11 @@ describe('CommunityController', () => {
       const req = { user: { id: 'user-id' } };
       const dto: UpdatePostDto = { title: 'updated', content: 'updated' };
       await controller.updatePost(req, '1', dto);
-      expect(service.updatePost).toHaveBeenCalledWith(BigInt(1), 'user-id', dto);
+      expect(service.updatePost).toHaveBeenCalledWith(
+        BigInt(1),
+        'user-id',
+        dto,
+      );
     });
   });
 
@@ -95,7 +99,11 @@ describe('CommunityController', () => {
   describe('getComments', () => {
     it('should call service.getCommentsByPostId', async () => {
       await controller.getComments('1', 0, 20);
-      expect(service.getCommentsByPostId).toHaveBeenCalledWith(BigInt(1), 0, 20);
+      expect(service.getCommentsByPostId).toHaveBeenCalledWith(
+        BigInt(1),
+        0,
+        20,
+      );
     });
   });
 
@@ -113,7 +121,11 @@ describe('CommunityController', () => {
       const req = { user: { id: 'user-id' } };
       const dto: UpdateCommentDto = { content: 'updated comment' };
       await controller.updateComment(req, '1', dto);
-      expect(service.updateComment).toHaveBeenCalledWith(BigInt(1), 'user-id', dto);
+      expect(service.updateComment).toHaveBeenCalledWith(
+        BigInt(1),
+        'user-id',
+        dto,
+      );
     });
   });
 });

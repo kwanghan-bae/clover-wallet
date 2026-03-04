@@ -5,7 +5,7 @@ import { NotFoundException } from '@nestjs/common';
 
 /**
  * TravelService에 대한 단위 테스트입니다.
- * 데이터베이스로부터 여행 계획 정보를 조회하는 기능을 검증합니다.
+ * 로또 판매점 주변 여행 정보 조회, 추천 및 테마별 검색 기능을 검증합니다.
  */
 describe('TravelService', () => {
   let service: TravelService;
@@ -31,32 +31,76 @@ describe('TravelService', () => {
     prisma = module.get<PrismaService>(PrismaService);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('getAllTravelPlans', () => {
+    it('모든 여행 플랜 목록을 최신순으로 반환해야 한다', async () => {
+      const mockPlans = [{ id: BigInt(1) }];
+      (prisma.travelPlan.findMany as jest.Mock).mockResolvedValue(mockPlans);
+
+      const result = await service.getAllTravelPlans();
+
+      expect(result).toEqual(mockPlans);
+      expect(prisma.travelPlan.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: { createdAt: 'desc' },
+        }),
+      );
+    });
   });
 
-  describe('getAllTravelPlans', () => {
-    it('should return all plans', async () => {
-      (prisma.travelPlan.findMany as jest.Mock).mockResolvedValue([
-        { id: BigInt(1) },
-      ]);
-      const result = await service.getAllTravelPlans();
-      expect(result).toHaveLength(1);
+  describe('getRecommendedTravelPlans', () => {
+    it('사용자 추천 플랜 조회 시 빈 배열을 반환해야 한다 (사양 준수)', () => {
+      const result = service.getRecommendedTravelPlans(BigInt(1));
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getTravelPlansBySpot', () => {
+    it('특정 판매점 ID에 속한 플랜 목록을 반환해야 한다', async () => {
+      const spotId = BigInt(10);
+      const mockPlans = [{ id: BigInt(1), spotId }];
+      (prisma.travelPlan.findMany as jest.Mock).mockResolvedValue(mockPlans);
+
+      const result = await service.getTravelPlansBySpot(spotId);
+
+      expect(result).toEqual(mockPlans);
+      expect(prisma.travelPlan.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { spotId },
+        }),
+      );
+    });
+  });
+
+  describe('getTravelPlansByTheme', () => {
+    it('특정 테마에 속한 플랜 목록을 반환해야 한다', async () => {
+      const theme = '바다';
+      const mockPlans = [{ id: BigInt(1), theme }];
+      (prisma.travelPlan.findMany as jest.Mock).mockResolvedValue(mockPlans);
+
+      const result = await service.getTravelPlansByTheme(theme);
+
+      expect(result).toEqual(mockPlans);
+      expect(prisma.travelPlan.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { theme },
+        }),
+      );
     });
   });
 
   describe('getTravelPlanById', () => {
-    it('should return a plan if found', async () => {
-      const mockPlan = { id: BigInt(1), title: 'Test Plan' };
+    it('ID로 플랜을 성공적으로 조회해야 한다', async () => {
+      const mockPlan = { id: BigInt(1), title: '여행지' };
       (prisma.travelPlan.findUnique as jest.Mock).mockResolvedValue(mockPlan);
 
       const result = await service.getTravelPlanById(BigInt(1));
+
       expect(result).toEqual(mockPlan);
     });
 
-    it('should throw NotFoundException if not found', async () => {
+    it('존재하지 않는 ID인 경우 NotFoundException을 던져야 한다', async () => {
       (prisma.travelPlan.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(service.getTravelPlanById(BigInt(1))).rejects.toThrow(
+      await expect(service.getTravelPlanById(BigInt(999))).rejects.toThrow(
         NotFoundException,
       );
     });

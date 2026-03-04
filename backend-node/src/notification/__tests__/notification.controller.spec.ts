@@ -50,7 +50,11 @@ describe('NotificationController', () => {
     it('should call notificationService.getMyNotifications', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getMyNotifications(req, 0, 20);
-      expect(notificationService.getMyNotifications).toHaveBeenCalledWith('user-id', 0, 20);
+      expect(notificationService.getMyNotifications).toHaveBeenCalledWith(
+        'user-id',
+        0,
+        20,
+      );
     });
   });
 
@@ -58,7 +62,10 @@ describe('NotificationController', () => {
     it('should call notificationService.markAsRead', async () => {
       const req = { user: { id: 'user-id' } };
       const result = await controller.markAsRead('1', req);
-      expect(notificationService.markAsRead).toHaveBeenCalledWith(BigInt(1), 'user-id');
+      expect(notificationService.markAsRead).toHaveBeenCalledWith(
+        BigInt(1),
+        'user-id',
+      );
       expect(result).toEqual({ success: true });
     });
   });
@@ -67,7 +74,9 @@ describe('NotificationController', () => {
     it('should call notificationService.getUnreadCount', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getUnreadCount(req);
-      expect(notificationService.getUnreadCount).toHaveBeenCalledWith('user-id');
+      expect(notificationService.getUnreadCount).toHaveBeenCalledWith(
+        'user-id',
+      );
     });
   });
 
@@ -76,7 +85,10 @@ describe('NotificationController', () => {
       const req = { user: { id: 'user-id' } };
       const body = { token: 'fcm-token' };
       const result = await controller.registerFcmToken(req, body);
-      expect(fcmService.registerTokenById).toHaveBeenCalledWith('user-id', 'fcm-token');
+      expect(fcmService.registerTokenById).toHaveBeenCalledWith(
+        'user-id',
+        'fcm-token',
+      );
       expect(result).toEqual({ success: true });
     });
   });

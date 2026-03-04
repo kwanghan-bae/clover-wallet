@@ -51,14 +51,22 @@ describe('LottoController', () => {
     it('should call lottoService.getGamesByUserId', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getMyGames(req, 0, 20);
-      expect(lottoService.getGamesByUserId).toHaveBeenCalledWith('user-id', 0, 20);
+      expect(lottoService.getGamesByUserId).toHaveBeenCalledWith(
+        'user-id',
+        0,
+        20,
+      );
     });
   });
 
   describe('saveGame', () => {
     it('should call lottoService.saveGeneratedGame with userId from token', async () => {
       const req = { user: { id: 'user-id' } };
-      const dto: SaveGameDto = { userId: 'other', numbers: [1, 2, 3, 4, 5, 6], round: 1000 };
+      const dto: SaveGameDto = {
+        userId: 'other',
+        numbers: [1, 2, 3, 4, 5, 6],
+        round: 1000,
+      };
       await controller.saveGame(req, dto);
       expect(lottoService.saveGeneratedGame).toHaveBeenCalledWith({
         ...dto,
@@ -70,10 +78,12 @@ describe('LottoController', () => {
   describe('extractNumbers', () => {
     it('should call extractionService.extractLottoNumbers and return sorted unique numbers', async () => {
       const dto: ExtractNumbersDto = { type: 'dream', input: 'lucky dream' };
-      mockExtractionService.extractLottoNumbers.mockResolvedValue([10, 5, 5, 20, 1, 30]);
-      
+      mockExtractionService.extractLottoNumbers.mockResolvedValue([
+        10, 5, 5, 20, 1, 30,
+      ]);
+
       const result = await controller.extractNumbers(dto);
-      
+
       expect(extractionService.extractLottoNumbers).toHaveBeenCalledWith(dto);
       expect(result).toEqual([1, 5, 10, 20, 30]);
     });

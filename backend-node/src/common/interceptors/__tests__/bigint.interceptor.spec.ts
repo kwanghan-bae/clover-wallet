@@ -54,9 +54,9 @@ describe('BigIntInterceptor', () => {
   });
 
   it('should handle nested objects', (done) => {
-    const mockData = { 
+    const mockData = {
       user: { id: BigInt(123) },
-      scores: [BigInt(10), { point: BigInt(20) }]
+      scores: [BigInt(10), { point: BigInt(20) }],
     };
     const mockCallHandler: CallHandler = {
       handle: () => of(mockData),

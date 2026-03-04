@@ -51,7 +51,11 @@ export class LottoService {
    * @param page 페이지 번호
    * @param limit 페이지당 항목 수
    */
-  async getHistory(userId: string, page: number = 1, limit: number = 10): Promise<PageResponse<any>> {
+  async getHistory(
+    userId: string,
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PageResponse<any>> {
     const skip = (page - 1) * limit;
     const [items, total] = await Promise.all([
       this.prisma.lottoGame.findMany({
