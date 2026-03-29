@@ -14,7 +14,10 @@ const { width, height } = Dimensions.get('window');
  * 로또 용지 QR 코드 또는 번호 인식을 위한 스캔 화면 컴포넌트입니다.
  * 카메라 권한 확인 및 이미지 기반 OCR 기능을 처리합니다.
  */
-export default function ScanScreen() {
+/**
+ * @description 로또 티켓의 QR 코드를 스캔하여 번호를 자동으로 등록하는 화면입니다.
+ */
+const ScanScreen = () => {
   const router = useRouter();
   /** 카메라 접근 권한 및 요청 함수입니다. */
   const [permission, requestPermission] = useCameraPermissions();
@@ -155,7 +158,9 @@ export default function ScanScreen() {
       </View>
     </View>
   );
-}
+};
+
+export default ScanScreen;
 
 /** 스캔 화면의 레이아웃과 오버레이 스타일을 정의합니다. */
 const styles = StyleSheet.create({
