@@ -30,6 +30,10 @@ export class KeywordMappingExtractionStrategy implements ExtractionStrategy {
     ].includes(method);
   }
 
+  /**
+   * 자연 패턴, 점술, 색상/소리, 동물 징조 등 키워드 매핑 데이터를 기반으로 로또 번호를 추출합니다.
+   * 추출 컨텍스트(ExtractionContext)에 포함된 특정 키워드를 탐색하여 매핑된 번호 배열을 반환합니다.
+   */
   extract(context: ExtractionContext): number[] {
     // 키워드별 매핑 데이터를 반환합니다. 
     // 기존 로직의 복잡한 분기들을 공통 데이터 기반으로 단순화합니다.
