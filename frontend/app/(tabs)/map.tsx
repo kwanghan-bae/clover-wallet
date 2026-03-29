@@ -9,14 +9,12 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 import { SpotListItem } from '../../components/ui/SpotListItem';
 import { MapCalloutContent } from '../../components/ui/MapCalloutContent';
+import { REGIONS } from '../../constants/regions';
 
-/** @description 지역 필터링을 위한 대한민국 주요 지역 목록입니다. */
-const REGIONS = [
-  '전체', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종',
-  '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
-];
-
-export default function LuckySpotsScreen() {
+/**
+ * @description 전국의 로또 명당(1, 2등 다수 배출 판매점)을 지도와 리스트로 확인할 수 있는 화면입니다.
+ */
+const LuckySpotsScreen = () => {
   const router = useRouter();
   const [isMapView, setIsMapView] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState('전체');
@@ -125,5 +123,7 @@ export default function LuckySpotsScreen() {
         )}
       </View>
     </SafeAreaView>
-  );
-}
+    );
+    };
+
+    export default LuckySpotsScreen;
