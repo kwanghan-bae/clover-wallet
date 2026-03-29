@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 
 /**
  * 사용자의 활동 및 당첨 이력을 분석하여 뱃지를 자동으로 부여하는 서비스입니다.
- * Kotlin BadgeService 로직을 완벽히 이식함.
  */
 @Injectable()
 export class BadgeService {
@@ -20,6 +19,9 @@ export class BadgeService {
   static readonly BADGE_HOROSCOPE_BELIEVER = 'HOROSCOPE_BELIEVER';
   static readonly BADGE_NATURE_LOVER = 'NATURE_LOVER';
 
+  /**
+   * 서비스 생성자입니다. PrismaService를 주입받습니다.
+   */
   constructor(private readonly prisma: PrismaService) {}
 
   /**
@@ -30,58 +32,56 @@ export class BadgeService {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) return;
 
-    const currentBadges = new Set(
-      (user.badges?.split(',') || []).filter((b) => b.length > 0),
-    );
+    const currentBadges = new Set((user.badges?.split(',') || []).filter((b) => b.length > 0));
     const originalCount = currentBadges.size;
 
-    // 1. 기본 통계 조회
-    const totalGames = await this.prisma.lottoGame.count({ where: { userId } });
-    const winningGamesCount = await this.prisma.lottoGame.count({
-      where: {
-        userId,
-        status: { startsWith: 'WINNING' },
-      },
-    });
+    // 1. 활동 및 당첨 결과 기반 뱃지 체크
+    await this.checkActivityAndWinBadges(userId, currentBadges);
 
-    // 2. 뱃지 조건 확인
-    if (winningGamesCount > 0) currentBadges.add(BadgeService.BADGE_FIRST_WIN);
+    // 2. 추출 방법론별 전문 뱃지 체크
+    await this.checkMethodSpecialistBadges(userId, currentBadges);
 
-    const hasFirstPlace = await this.prisma.lottoGame.findFirst({
-      where: { userId, status: 'WINNING_1' },
-    });
-    if (hasFirstPlace) currentBadges.add(BadgeService.BADGE_LUCKY_1ST);
+    // 3. 변경 사항 반영
+    if (currentBadges.size !== originalCount) {
+      await this.saveUserBadges(userId, currentBadges);
+    }
+  }
 
-    if (totalGames >= 10) currentBadges.add(BadgeService.BADGE_FREQUENT_PLAYER);
-    if (totalGames >= 50) currentBadges.add(BadgeService.BADGE_VETERAN);
+  /**
+   * 게임 참여 횟수 및 당첨 등수와 같은 기본 활동 기반 뱃지를 검사합니다.
+   */
+  private async checkActivityAndWinBadges(userId: bigint, badges: Set<string>) {
+    const [totalGames, winningGamesCount, hasFirstPlace] = await Promise.all([
+      this.prisma.lottoGame.count({ where: { userId } }),
+      this.prisma.lottoGame.count({ where: { userId, status: { startsWith: 'WINNING' } } }),
+      this.prisma.lottoGame.findFirst({ where: { userId, status: 'WINNING_1' } }),
+    ]);
 
-    // 3. 추출 방식별 뱃지 확인
-    await this.checkAndAddExtractionBadge(
-      userId,
-      'DREAM',
-      BadgeService.BADGE_DREAM_MASTER,
-      currentBadges,
+    if (winningGamesCount > 0) badges.add(BadgeService.BADGE_FIRST_WIN);
+    if (hasFirstPlace) badges.add(BadgeService.BADGE_LUCKY_1ST);
+    if (totalGames >= 10) badges.add(BadgeService.BADGE_FREQUENT_PLAYER);
+    if (totalGames >= 50) badges.add(BadgeService.BADGE_VETERAN);
+  }
+
+  /**
+   * 특정 추출 방법론을 사용하여 당첨된 경우 부여되는 전문 뱃지들을 검사합니다.
+   */
+  private async checkMethodSpecialistBadges(userId: bigint, badges: Set<string>) {
+    const methodBadgeMap: { [key: string]: string } = {
+      'DREAM': BadgeService.BADGE_DREAM_MASTER,
+      'SAJU': BadgeService.BADGE_SAJU_EXPERT,
+      'HOROSCOPE': BadgeService.BADGE_HOROSCOPE_BELIEVER,
+      'NATURE_PATTERNS': BadgeService.BADGE_NATURE_LOVER,
+    };
+
+    // 일반 키워드 기반 추출 뱃지 체크
+    await Promise.all(
+      Object.entries(methodBadgeMap).map(([method, badge]) => 
+        this.checkAndAddExtractionBadge(userId, method, badge, badges)
+      )
     );
-    await this.checkAndAddExtractionBadge(
-      userId,
-      'SAJU',
-      BadgeService.BADGE_SAJU_EXPERT,
-      currentBadges,
-    );
-    await this.checkAndAddExtractionBadge(
-      userId,
-      'HOROSCOPE',
-      BadgeService.BADGE_HOROSCOPE_BELIEVER,
-      currentBadges,
-    );
-    await this.checkAndAddExtractionBadge(
-      userId,
-      'NATURE_PATTERNS',
-      BadgeService.BADGE_NATURE_LOVER,
-      currentBadges,
-    );
 
-    // 통계 뱃지는 HOT 또는 COLD 방식 당첨 시 부여
+    // 통계 기반 추출 뱃지 별도 체크
     const hasStatsWin = await this.prisma.lottoGame.findFirst({
       where: {
         userId,
@@ -89,45 +89,30 @@ export class BadgeService {
         status: { startsWith: 'WINNING' },
       },
     });
-    if (hasStatsWin) currentBadges.add(BadgeService.BADGE_STATS_GENIUS);
-
-    // 4. 변경 사항이 있는 경우에만 DB 업데이트
-    if (currentBadges.size !== originalCount) {
-      await this.prisma.user.update({
-        where: { id: userId },
-        data: { badges: Array.from(currentBadges).join(',') },
-      });
-      this.logger.log(
-        `사용자 ${userId}의 뱃지가 업데이트되었습니다. 개수: ${currentBadges.size}`,
-      );
-    }
+    if (hasStatsWin) badges.add(BadgeService.BADGE_STATS_GENIUS);
   }
 
   /**
    * 특정 번호 추출 방식을 사용하여 당첨된 경우 해당 분야의 뱃지를 부여합니다.
-   * @param userId 사용자 ID
-   * @param method 추출 방식 이름
-   * @param badgeName 부여할 뱃지 이름
-   * @param currentBadges 현재 사용자가 보유한 뱃지 셋
    */
-  private async checkAndAddExtractionBadge(
-    userId: bigint,
-    method: string,
-    badgeName: string,
-    currentBadges: Set<string>,
-  ) {
+  private async checkAndAddExtractionBadge(userId: bigint, method: string, badgeName: string, currentBadges: Set<string>) {
     if (currentBadges.has(badgeName)) return;
 
     const winWithMethod = await this.prisma.lottoGame.findFirst({
-      where: {
-        userId,
-        extractionMethod: method,
-        status: { startsWith: 'WINNING' },
-      },
+      where: { userId, extractionMethod: method, status: { startsWith: 'WINNING' } },
     });
 
-    if (winWithMethod) {
-      currentBadges.add(badgeName);
-    }
+    if (winWithMethod) currentBadges.add(badgeName);
+  }
+
+  /**
+   * 최종 확정된 뱃지 목록을 DB에 저장합니다.
+   */
+  private async saveUserBadges(userId: bigint, badges: Set<string>) {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { badges: Array.from(badges).join(',') },
+    });
+    this.logger.log(`사용자 ${userId}의 뱃지가 업데이트되었습니다. 개수: ${badges.size}`);
   }
 }
