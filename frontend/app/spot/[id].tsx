@@ -1,44 +1,20 @@
 import React from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { ChevronLeft, MapPin, Trophy } from 'lucide-react-native';
-import { spotsApi } from '../../api/spots';
 import { WinningHistory } from '../../api/types/spots';
 import GlassCard from '../../components/ui/GlassCard';
-import { useQuery } from '@tanstack/react-query';
 import { WinningHistoryItem } from '../../components/ui/WinningHistoryItem';
+import { useSpotDetail } from '../../hooks/useSpotDetail';
 
 /**
  * @description 특정 로또 판매점의 상세 정보와 과거 당첨 이력을 확인할 수 있는 화면입니다.
  */
 const SpotDetailScreen = () => {
-  const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const { history, isLoading, spotInfo, getWinCount } = useSpotDetail();
 
-  // In a real app, we might fetch the spot detail separately if needed, 
-  // but for now we'll assume we might need to fetch all spots or have it passed.
-  // Let's fetch the history first.
-  const { data: history, isLoading: isHistoryLoading } = useQuery({
-    queryKey: ['spotHistory', id],
-    queryFn: () => spotsApi.getSpotHistory(Number(id)),
-    enabled: !!id,
-  });
-
-  /**
-   * 당첨 내역 데이터에서 특정 등수의 당첨 횟수를 계산합니다.
-   */
-  const getWinCount = (rank: number) => {
-    return history?.filter((h: WinningHistory) => h.rank === rank).length || 0;
-  };
-
-  // We also need the spot info. Let's find it from the spots list for now or fetch if needed.
-  // For MVP, let's just use the history to show the name and address from the first item if available.
-  const spotInfo = history && history.length > 0 ? {
-    name: history[0].storeName,
-    address: history[0].address,
-  } : null;
-
-  if (isHistoryLoading) {
+  if (isLoading) {
     return (
       <View className="flex-1 bg-primary items-center justify-center">
         <ActivityIndicator size="large" color="#ffffff" />
