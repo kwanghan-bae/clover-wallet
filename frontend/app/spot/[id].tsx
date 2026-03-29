@@ -24,6 +24,13 @@ const SpotDetailScreen = () => {
     enabled: !!id,
   });
 
+  /**
+   * 당첨 내역 데이터에서 특정 등수의 당첨 횟수를 계산합니다.
+   */
+  const getWinCount = (rank: number) => {
+    return history?.filter((h: WinningHistory) => h.rank === rank).length || 0;
+  };
+
   // We also need the spot info. Let's find it from the spots list for now or fetch if needed.
   // For MVP, let's just use the history to show the name and address from the first item if available.
   const spotInfo = history && history.length > 0 ? {
@@ -71,14 +78,14 @@ const SpotDetailScreen = () => {
               <View className="items-center">
                 <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs mb-1">1등 배출</Text>
                 <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#FFC107] text-xl">
-                  {history?.filter((h: WinningHistory) => h.rank === 1).length || 0}회
+                  {getWinCount(1)}회
                 </Text>
               </View>
               <View className="w-[1] h-10 bg-gray-100" />
               <View className="items-center">
                 <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs mb-1">2등 배출</Text>
                 <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-xl">
-                  {history?.filter((h: WinningHistory) => h.rank === 2).length || 0}회
+                  {getWinCount(2)}회
                 </Text>
               </View>
             </View>
