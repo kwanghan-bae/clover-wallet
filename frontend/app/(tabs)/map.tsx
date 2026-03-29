@@ -1,54 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import CustomMapView from '../../components/ui/CustomMapView';
-import * as Location from 'expo-location';
 import { Map as MapIcon, List as ListIcon, MapPin, LocateFixed } from 'lucide-react-native';
-import { Region } from '../../api/types/spots';
-import { spotsApi } from '../../api/spots';
-import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
 import { SpotListItem } from '../../components/ui/SpotListItem';
 import { MapCalloutContent } from '../../components/ui/MapCalloutContent';
 import { REGIONS } from '../../constants/regions';
+import { useLuckySpots } from '../../hooks/useLuckySpots';
 
 /**
  * @description 전국의 로또 명당(1, 2등 다수 배출 판매점)을 지도와 리스트로 확인할 수 있는 화면입니다.
  */
 const LuckySpotsScreen = () => {
-  const router = useRouter();
-  const [isMapView, setIsMapView] = useState(false);
-  const [selectedRegion, setSelectedRegion] = useState('전체');
-  const [region, setRegion] = useState<Region>({
-    latitude: 37.5665,
-    longitude: 126.9780,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  });
-
-  const { data: spots = [], isLoading } = useQuery({
-    queryKey: ['spots'],
-    queryFn: () => spotsApi.getSpots(0, 500),
-  });
-
-  const filteredSpots = selectedRegion === '전체'
-    ? spots
-    : spots.filter(spot => spot.address.includes(selectedRegion));
-
-  const moveToCurrentLocation = async () => {
-    let { status } = await Location.requestForegroundPermissionsAsync();
-    if (status === 'granted') {
-      let location = await Location.getCurrentPositionAsync({});
-      setRegion(prev => ({
-        ...prev,
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-      }));
-    }
-  };
-
-  const handleSpotPress = (spotId: number) => {
-    router.push(`/spot/${spotId}`);
-  };
+  const {
+    isMapView,
+    selectedRegion,
+    region,
+    spots,
+    isLoading,
+    setSelectedRegion,
+    setRegion,
+    toggleViewMode,
+    moveToCurrentLocation,
+    handleSpotPress,
+  } = useLuckySpots();
 
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA]">
@@ -56,7 +30,7 @@ const LuckySpotsScreen = () => {
       <View className="flex-row justify-between items-center px-5 py-4 bg-white border-b border-gray-100 shadow-sm">
         <Text className="text-xl font-bold text-[#1A1A1A]">명당 찾기</Text>
         <View className="flex-row gap-4">
-          <TouchableOpacity onPress={() => setIsMapView(!isMapView)}>
+          <TouchableOpacity onPress={toggleViewMode}>
             {isMapView ? <ListIcon size={24} color="#1A1A1A" /> : <MapIcon size={24} color="#1A1A1A" />}
           </TouchableOpacity>
         </View>
@@ -91,7 +65,7 @@ const LuckySpotsScreen = () => {
             <CustomMapView
               region={region}
               onRegionChangeComplete={setRegion}
-              spots={filteredSpots}
+              spots={spots}
             >
               <MapCalloutContent />
             </CustomMapView>
@@ -105,7 +79,7 @@ const LuckySpotsScreen = () => {
           </View>
         ) : (
           <FlatList
-            data={filteredSpots}
+            data={spots}
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={{ padding: 20, gap: 12 }}
             renderItem={({ item }) => (
@@ -123,7 +97,7 @@ const LuckySpotsScreen = () => {
         )}
       </View>
     </SafeAreaView>
-    );
-    };
+  );
+};
 
-    export default LuckySpotsScreen;
+export default LuckySpotsScreen;
