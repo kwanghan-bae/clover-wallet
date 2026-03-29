@@ -12,7 +12,10 @@ import { GlassCard } from '../components/ui/GlassCard';
 import { Clover } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function LoginScreen() {
+/**
+ * @description 구글 로그인을 통한 사용자 인증 화면입니다.
+ */
+const LoginScreen = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,4 +78,6 @@ export default function LoginScreen() {
       </SafeAreaView>
     </LinearGradient>
   );
-}
+};
+
+export default LoginScreen;
