@@ -54,10 +54,13 @@ describe('notifications utility', () => {
     (Notifications.getPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'denied' });
     (Notifications.requestPermissionsAsync as jest.Mock).mockResolvedValue({ status: 'denied' });
     
+    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
     const token = await registerForPushNotificationsAsync();
 
     expect(token).toBeUndefined();
+    expect(consoleSpy).toHaveBeenCalledWith('푸시 알림 권한 획득 실패!');
     expect(Notifications.getExpoPushTokenAsync).not.toHaveBeenCalled();
+    consoleSpy.mockRestore();
   });
 
   test('should set notification channel on Android', async () => {
@@ -80,7 +83,7 @@ describe('notifications utility', () => {
     const token = await registerForPushNotificationsAsync();
 
     expect(token).toBeUndefined();
-    expect(consoleSpy).toHaveBeenCalledWith('Must use physical device for Push Notifications');
+    expect(consoleSpy).toHaveBeenCalledWith('푸시 알림을 위해 실제 기기를 사용해야 합니다.');
     
     consoleSpy.mockRestore();
   });

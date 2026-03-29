@@ -11,20 +11,26 @@ interface State {
   error: Error | null;
 }
 
+/**
+ * @description 애플리케이션 전체의 예기치 못한 오류를 포착하여 에러 화면을 표시하는 컴포넌트입니다.
+ */
 export class GlobalErrorBoundary extends Component<Props, State> {
   public state: State = {
     hasError: false,
     error: null
   };
 
+  /** @description 자식 컴포넌트에서 에러 발생 시 상태를 업데이트하여 에러 UI를 렌더링하도록 합니다. */
   public static getDerivedStateFromError(error: Error): State {
     return { hasError: true, error };
   }
 
+  /** @description 에러 정보를 로깅하거나 외부 서비스로 전송할 때 사용합니다. */
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
   }
 
+  /** @description 에러 상태를 초기화하고 자식 컴포넌트 재렌더링을 시도합니다. */
   private handleReset = () => {
     this.setState({ hasError: false, error: null });
   };
