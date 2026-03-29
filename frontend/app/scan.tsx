@@ -1,32 +1,28 @@
-import React, { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Dimensions, ActivityIndicator, Alert } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
+import React from 'react';
+import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
+import { CameraView } from 'expo-camera';
 import { useRouter, Stack } from 'expo-router';
 import { X, Camera as CameraIcon, RotateCw } from 'lucide-react-native';
-import TextRecognition from '@react-native-ml-kit/text-recognition';
-import { parseLottoNumbers, parseLottoRound } from '../utils/ocr';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { BallRow } from '../components/ui/BallRow';
+import { useScan } from '../hooks/useScan';
 
 const { width, height } = Dimensions.get('window');
 
-/**
- * 로또 용지 QR 코드 또는 번호 인식을 위한 스캔 화면 컴포넌트입니다.
- * 카메라 권한 확인 및 이미지 기반 OCR 기능을 처리합니다.
- */
 /**
  * @description 로또 티켓의 QR 코드를 스캔하여 번호를 자동으로 등록하는 화면입니다.
  */
 const ScanScreen = () => {
   const router = useRouter();
-  /** 카메라 접근 권한 및 요청 함수입니다. */
-  const [permission, requestPermission] = useCameraPermissions();
-  /** 카메라 뷰에 대한 참조입니다. */
-  const cameraRef = useRef<CameraView>(null);
-  /** 현재 OCR 스캔 프로세스가 진행 중인지 여부를 나타내는 상태입니다. */
-  const [isProcessing, setIsProcessing] = useState(false);
-  /** 인식된 로또 번호와 회차 정보 상태입니다. */
-  const [scanResult, setScanResult] = useState<{numbers: number[], round: number | null} | null>(null);
+  const {
+    permission,
+    requestPermission,
+    cameraRef,
+    isProcessing,
+    scanResult,
+    handleCapture,
+    resetScan,
+  } = useScan();
 
   if (!permission) {
     return <View className="flex-1 bg-black" />;
@@ -35,40 +31,11 @@ const ScanScreen = () => {
   if (!permission.granted) {
     return (
       <View className="flex-1 bg-black items-center justify-center p-6">
-        <Text className="text-white text-center text-lg mb-6">We need your permission to show the camera</Text>
-        <PrimaryButton label="Grant Permission" onPress={requestPermission} />
+        <Text className="text-white text-center text-lg mb-6">카메라 접근 권한이 필요합니다</Text>
+        <PrimaryButton label="권한 허용" onPress={requestPermission} />
       </View>
     );
   }
-
-  const handleCapture = async () => {
-    if (!cameraRef.current || isProcessing) return;
-
-    try {
-      setIsProcessing(true);
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 0.8,
-        base64: false,
-      });
-
-      if (photo) {
-        const result = await TextRecognition.recognize(photo.uri);
-        const numbers = parseLottoNumbers(result.text);
-        const round = parseLottoRound(result.text);
-
-        if (numbers.length === 6) {
-          setScanResult({ numbers, round });
-        } else {
-          Alert.alert('Detection Failed', 'Could not find 6 valid lotto numbers. Please try again.');
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert('Error', 'An error occurred during OCR processing.');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   return (
     <View className="flex-1 bg-black">
@@ -137,7 +104,7 @@ const ScanScreen = () => {
             
             <View className="flex-row gap-3">
               <TouchableOpacity 
-                onPress={() => setScanResult(null)}
+                onPress={resetScan}
                 className="flex-1 h-14 bg-gray-100 rounded-xl items-center justify-center flex-row"
               >
                 <RotateCw size={18} color="#757575" />
