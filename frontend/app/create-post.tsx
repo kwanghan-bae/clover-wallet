@@ -5,7 +5,10 @@ import { X } from 'lucide-react-native';
 import { Input } from '../components/ui/Input';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 
-export default function CreatePostScreen() {
+/**
+ * @description 커뮤니티에 새로운 게시물을 작성하고 등록하는 화면입니다.
+ */
+const CreatePostScreen = () => {
   const router = useRouter();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
@@ -69,4 +72,7 @@ export default function CreatePostScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default CreatePostScreen;
+
