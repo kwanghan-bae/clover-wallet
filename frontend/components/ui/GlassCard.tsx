@@ -9,6 +9,10 @@ interface GlassCardProps extends ViewProps {
   children: React.ReactNode;
 }
 
+/**
+ * @description 투명한 유리 재질 느낌(Glassmorphism)의 카드 컴포넌트입니다.
+ * 배경 블러 처리와 테두리 광택 효과를 통해 세련된 디자인을 제공합니다.
+ */
 export const GlassCard = ({ 
   children, 
   className = "", 
