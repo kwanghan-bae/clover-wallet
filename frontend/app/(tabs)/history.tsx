@@ -7,7 +7,10 @@ import { loadItem, StorageKeys, removeFromItemArray } from '../../utils/storage'
 import { QrCode, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function HistoryScreen() {
+/**
+ * @description 사용자가 생성하거나 스캔하여 저장한 로또 번호 내역을 확인할 수 있는 화면입니다.
+ */
+const HistoryScreen = () => {
   const router = useRouter();
   const [history, setHistory] = useState<LottoRecord[]>([]);
 
@@ -76,4 +79,6 @@ export default function HistoryScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default HistoryScreen;
