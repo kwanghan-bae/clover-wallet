@@ -6,41 +6,18 @@ import {
   SafeAreaView, 
   TouchableOpacity, 
   Animated,
-  Alert,
-  Modal,
-  TextInput
+  Alert
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { 
   Sparkles, 
-  Moon, 
-  Calendar, 
-  TrendingUp, 
-  TrendingDown, 
-  Star, 
-  Heart, 
-  Leaf, 
-  BookOpen, 
-  Palette, 
-  PawPrint,
   Save,
   ChevronLeft
 } from 'lucide-react-native';
 import { generateLottoNumbersWithSeed, getNumberColor } from '../utils/lotto';
-
-/** @description 로또 번호 생성을 위해 제공되는 다양한 분석 방법론 목록입니다. */
-const METHODS = [
-  { id: 'DREAM', title: '꿈 해몽', subtitle: '밤에 꾼 꿈을 분석해요', color: '#7E57C2', icon: <Moon size={28} color="white" /> },
-  { id: 'SAJU', title: '사주팔자', subtitle: '생년월일로 행운의 숫자를', color: '#D84315', icon: <Calendar size={28} color="white" /> },
-  { id: 'STATISTICS_HOT', title: '통계 (HOT)', subtitle: '자주 나온 번호', color: '#EF5350', icon: <TrendingUp size={28} color="white" /> },
-  { id: 'STATISTICS_COLD', title: '통계 (COLD)', subtitle: '안 나온 번호', color: '#42A5F5', icon: <TrendingDown size={28} color="white" /> },
-  { id: 'HOROSCOPE', title: '별자리 운세', subtitle: '오늘의 별자리 행운', color: '#FFA726', icon: <Star size={28} color="white" /> },
-  { id: 'PERSONAL_SIGNIFICANCE', title: '의미있는 숫자', subtitle: '기념일, 생일 등 특별한 날', color: '#EC407A', icon: <Heart size={28} color="white" /> },
-  { id: 'NATURE_PATTERNS', title: '자연의 패턴', subtitle: '피보나치, 계절의 리듬', color: '#66BB6A', icon: <Leaf size={28} color="white" /> },
-  { id: 'ANCIENT_DIVINATION', title: '고대 점술', subtitle: '주역, 룬 등의 신비', color: '#8D6E63', icon: <BookOpen size={28} color="white" /> },
-  { id: 'COLORS_SOUNDS', title: '색상 & 소리', subtitle: '색상 심리와 음악 주파수', color: '#26C6DA', icon: <Palette size={28} color="white" /> },
-  { id: 'ANIMAL_OMENS', title: '동물 징조', subtitle: '동물의 신비로운 힘', color: '#AB47BC', icon: <PawPrint size={28} color="white" /> },
-];
+import { METHODS } from '../constants/generation-methods';
+import { GenerationMethodCard } from '../components/ui/GenerationMethodCard';
+import { GenerationInputModal } from '../components/ui/GenerationInputModal';
 
 export default function NumberGenerationScreen() {
   const router = useRouter();
@@ -157,67 +134,25 @@ export default function NumberGenerationScreen() {
 
         <View className="gap-3">
           {METHODS.map((method) => (
-            <TouchableOpacity 
+            <GenerationMethodCard
               key={method.id}
+              method={method}
+              isSelected={selectedMethod === method.id}
               onPress={() => handleMethodSelect(method.id)}
-              className={`bg-white rounded-2xl p-4 flex-row items-center border ${selectedMethod === method.id ? 'border-primary shadow-md' : 'border-gray-50 shadow-sm'}`}
-            >
-              <View style={{ backgroundColor: method.color }} className="p-3 rounded-xl mr-4 shadow-sm">
-                {method.icon}
-              </View>
-              <View className="flex-1">
-                <Text className={`text-base font-bold ${selectedMethod === method.id ? 'text-primary' : 'text-[#1A1A1A]'}`}>
-                  {method.title}
-                </Text>
-                <Text className="text-gray-400 text-xs mt-1">{method.subtitle}</Text>
-              </View>
-              {selectedMethod === method.id && (
-                <View className="bg-primary/10 p-1 rounded-full">
-                  <Sparkles size={16} color="#4CAF50" />
-                </View>
-              )}
-            </TouchableOpacity>
+            />
           ))}
         </View>
 
         {/* Modal for Input */}
-        <Modal
-          visible={isModalVisible}
-          transparent
-          animationType="fade"
-        >
-          <View className="flex-1 bg-black/50 justify-center items-center px-10">
-            <View className="bg-white w-full rounded-3xl p-6 shadow-2xl">
-              <Text className="text-lg font-bold text-[#1A1A1A] mb-2 text-center">
-                {METHODS.find(m => m.id === selectedMethod)?.title}
-              </Text>
-              <Text className="text-gray-500 text-center text-xs mb-6">분석을 위해 필요한 정보를 입력해주세요.</Text>
-              
-              <TextInput
-                className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-base mb-6"
-                placeholder={selectedMethod === 'DREAM' ? '꿈의 키워드를 적어주세요 (예: 뱀, 금)' : '날짜나 숫자를 적어주세요'}
-                value={paramInput}
-                onChangeText={setParamInput}
-                autoFocus
-              />
-
-              <View className="flex-row gap-3">
-                <TouchableOpacity 
-                  onPress={() => setIsModalVisible(false)}
-                  className="flex-1 py-4 bg-gray-100 rounded-xl items-center"
-                >
-                  <Text className="text-gray-500 font-bold">취소</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                  onPress={() => generateNumbers(selectedMethod, paramInput)}
-                  className="flex-2 py-4 bg-primary rounded-xl items-center"
-                >
-                  <Text className="text-white font-bold">분석 및 생성</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </Modal>
+        <GenerationInputModal
+          isVisible={isModalVisible}
+          methodTitle={METHODS.find(m => m.id === selectedMethod)?.title}
+          selectedMethod={selectedMethod}
+          paramInput={paramInput}
+          setParamInput={setParamInput}
+          onCancel={() => setIsModalVisible(false)}
+          onConfirm={() => generateNumbers(selectedMethod, paramInput)}
+        />
 
         {/* Tip Section */}
         <View className="bg-amber-50 rounded-2xl p-4 border border-amber-100 mt-8 mb-10 flex-row">
