@@ -4,12 +4,13 @@ import { Clover, Bell, Dices, QrCode, BarChart3, Navigation, MapPin, ChevronRigh
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import LuckyHeroIllustration from '../../components/ui/LuckyHeroIllustration';
+import { QuickActionItem } from '../../components/ui/QuickActionItem';
 
 /**
- * 애플리케이션의 홈 화면 컴포넌트입니다.
+ * @description 애플리케이션의 홈 화면 컴포넌트입니다. 
  * 다음 회차 당첨 정보, 빠른 실행 메뉴, 최근 당첨 결과 등을 표시합니다.
  */
-export default function HomeScreen() {
+const HomeScreen = () => {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
   
@@ -195,16 +196,6 @@ export default function HomeScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
-/** @description 홈 화면의 하단 퀵 액션 섹션에서 개별 메뉴 아이템을 렌더링하는 컴포넌트입니다. */
-function QuickActionItem({ icon, label, bgColor, onPress }: { icon: React.ReactNode, label: string, bgColor: string, onPress: () => void }) {
-  return (
-    <TouchableOpacity onPress={onPress} className="items-center" activeOpacity={0.7}>
-      <View className={`${bgColor} p-4 rounded-[20px] mb-2`}>
-        {icon}
-      </View>
-      <Text style={{ fontFamily: 'NotoSansKR_600SemiBold' }} className="text-[13px] text-[#1A1A1A]">{label}</Text>
-    </TouchableOpacity>
-  );
-}
+export default HomeScreen;
