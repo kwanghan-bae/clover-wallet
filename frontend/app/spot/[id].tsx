@@ -14,6 +14,9 @@ const SpotDetailScreen = () => {
   const router = useRouter();
   const { history, isLoading, spotInfo, getWinCount } = useSpotDetail();
 
+  /** @description 특정 등수의 당첨 횟수를 렌더링합니다. */
+  const renderWinCount = (rank: number) => getWinCount(rank);
+
   if (isLoading) {
     return (
       <View className="flex-1 bg-primary items-center justify-center">
@@ -54,14 +57,14 @@ const SpotDetailScreen = () => {
               <View className="items-center">
                 <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs mb-1">1등 배출</Text>
                 <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#FFC107] text-xl">
-                  {getWinCount(1)}회
+                  {renderWinCount(1)}회
                 </Text>
               </View>
               <View className="w-[1] h-10 bg-gray-100" />
               <View className="items-center">
                 <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs mb-1">2등 배출</Text>
                 <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-xl">
-                  {getWinCount(2)}회
+                  {renderWinCount(2)}회
                 </Text>
               </View>
             </View>
