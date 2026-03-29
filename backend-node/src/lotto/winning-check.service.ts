@@ -81,13 +81,7 @@ export class WinningCheckService {
     let hasWinningGame = false;
     const updates = [];
 
-    const prizeAmounts = {
-      'WINNING_1': winningInfo.firstPrizeAmount,
-      'WINNING_2': winningInfo.secondPrizeAmount,
-      'WINNING_3': winningInfo.thirdPrizeAmount,
-      'WINNING_4': winningInfo.fourthPrizeAmount,
-      'WINNING_5': winningInfo.fifthPrizeAmount,
-    };
+    const prizeAmounts = this.getPrizeMap(winningInfo);
 
     for (const game of ticket.games) {
       const gameNumbers = [game.number1, game.number2, game.number3, game.number4, game.number5, game.number6];
@@ -148,14 +142,21 @@ export class WinningCheckService {
 
     if (!user?.fcmToken) return;
 
-    const prizeAmounts = {
-      'WINNING_1': winningInfo.firstPrizeAmount,
-      'WINNING_2': winningInfo.secondPrizeAmount,
-      'WINNING_3': winningInfo.thirdPrizeAmount,
-      'WINNING_4': winningInfo.fourthPrizeAmount,
-      'WINNING_5': winningInfo.fifthPrizeAmount,
-    };
+    const best = this.getBestWinningResult(ticket, winningInfo);
 
+    if (best) {
+      const rankName = LottoRankCalculator.getRankName(best.res.status);
+      const numbers = [best.game.number1, best.game.number2, best.game.number3, best.game.number4, best.game.number5, best.game.number6];
+
+      await this.fcmService.sendWinningNotification(user.fcmToken, rankName, numbers, best.res.prize);
+    }
+  }
+
+  /**
+   * 티켓 내 게임 중 가장 높은 순위의 당첨 결과를 반환합니다.
+   */
+  private getBestWinningResult(ticket: any, winningInfo: any) {
+    const prizeAmounts = this.getPrizeMap(winningInfo);
     const winNumbers = [winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6];
 
     const results = ticket.games.map((g: any) => ({
@@ -167,12 +168,19 @@ export class WinningCheckService {
     })).filter((r: any) => r.res.prize > BigInt(0))
        .sort((a: any, b: any) => (a.res.status < b.res.status ? -1 : 1));
 
-    if (results.length > 0) {
-      const best = results[0];
-      const rankName = LottoRankCalculator.getRankName(best.res.status);
-      const numbers = [best.game.number1, best.game.number2, best.game.number3, best.game.number4, best.game.number5, best.game.number6];
+    return results.length > 0 ? results[0] : null;
+  }
 
-      await this.fcmService.sendWinningNotification(user.fcmToken, rankName, numbers, best.res.prize);
-    }
+  /**
+   * 당첨 정보 객체로부터 등수별 당첨금 맵을 생성합니다.
+   */
+  private getPrizeMap(winningInfo: any) {
+    return {
+      'WINNING_1': winningInfo.firstPrizeAmount,
+      'WINNING_2': winningInfo.secondPrizeAmount,
+      'WINNING_3': winningInfo.thirdPrizeAmount,
+      'WINNING_4': winningInfo.fourthPrizeAmount,
+      'WINNING_5': winningInfo.fifthPrizeAmount,
+    };
   }
 }
