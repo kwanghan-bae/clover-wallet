@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+/** @description Tailwind CSS의 테마와 플러그인 설정을 정의하는 모듈입니다. */
 module.exports = {
   content: [
     "./App.{js,jsx,ts,tsx}", 

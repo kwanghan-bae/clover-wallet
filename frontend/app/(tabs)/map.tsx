@@ -8,6 +8,7 @@ import { spotsApi } from '../../api/spots';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
 
+/** @description 지역 필터링을 위한 대한민국 주요 지역 목록입니다. */
 const REGIONS = [
   '전체', '서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종',
   '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'
@@ -125,6 +126,7 @@ export default function LuckySpotsScreen() {
   );
 }
 
+/** @description 명당 찾기 화면의 리스트 뷰에서 개별 판매점의 정보를 표시하는 아이템 컴포넌트입니다. */
 function SpotListItem({ spot }: { spot: LottoSpot }) {
   return (
     <View
@@ -159,6 +161,7 @@ function SpotListItem({ spot }: { spot: LottoSpot }) {
   );
 }
 
+// MapCalloutContent 함수는 내부 로직을 처리합니다.
 function MapCalloutContent({ spot }: { spot?: LottoSpot }) {
   if (!spot) return null;
   return (

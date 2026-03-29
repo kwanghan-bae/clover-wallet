@@ -41,4 +41,7 @@ import { PrismaModule } from './prisma/prisma.module';
   controllers: [AppController],
   providers: [AppService],
 })
+/**
+ * @description 애플리케이션의 루트 모듈로, 공통 서비스와 컨트롤러를 통합합니다.
+ */
 export class AppModule {}

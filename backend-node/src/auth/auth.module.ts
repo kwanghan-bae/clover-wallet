@@ -32,4 +32,7 @@ import { PrismaModule } from '../prisma/prisma.module';
   providers: [AuthService, SupabaseStrategy, JwtStrategy],
   exports: [AuthService],
 })
+/**
+ * @description 사용자 인증 및 권한 부여를 담당하는 인증 모듈입니다.
+ */
 export class AuthModule {}

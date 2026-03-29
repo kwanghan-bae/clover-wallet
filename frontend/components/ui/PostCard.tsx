@@ -10,6 +10,7 @@ interface PostCardProps {
   onShare?: (id: number) => void;
 }
 
+/** @description 커뮤니티 피드에서 개별 게시글의 요약 정보를 표시하는 카드 컴포넌트입니다. */
 export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
   const nickname = post.user?.nickname || '익명';
   const initial = nickname[0];
@@ -111,6 +112,7 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
   );
 };
 
+// formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(dateString: string): string {
   try {
     const d = new Date(dateString);

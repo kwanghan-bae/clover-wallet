@@ -27,6 +27,7 @@ import {
   ChevronLeft
 } from 'lucide-react-native';
 
+/** @description 로또 번호 생성을 위해 제공되는 다양한 분석 방법론 목록입니다. */
 const METHODS = [
   { id: 'DREAM', title: '꿈 해몽', subtitle: '밤에 꾼 꿈을 분석해요', color: '#7E57C2', icon: <Moon size={28} color="white" /> },
   { id: 'SAJU', title: '사주팔자', subtitle: '생년월일로 행운의 숫자를', color: '#D84315', icon: <Calendar size={28} color="white" /> },
@@ -230,6 +231,7 @@ export default function NumberGenerationScreen() {
   );
 }
 
+// getNumberColor 함수는 내부 로직을 처리합니다.
 function getNumberColor(n: number) {
   if (n <= 10) return 'bg-[#FFA726]';
   if (n <= 20) return 'bg-[#42A5F5]';

@@ -22,6 +22,7 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 
+/** @description 사용자가 획득할 수 있는 뱃지 목록의 모킹 데이터입니다. */
 const MOCK_BADGES = [
   { id: '1', label: '첫 당첨', icon: <Trophy size={20} color="#FFC107" />, color: 'bg-amber-50' },
   { id: '2', label: '열정', icon: <Flame size={20} color="#FF5252" />, color: 'bg-red-50' },
@@ -121,6 +122,7 @@ export default function MyPageScreen() {
   );
 }
 
+// MenuItem 함수는 내부 로직을 처리합니다.
 function MenuItem({
   icon,
   label,
@@ -148,6 +150,7 @@ function MenuItem({
   );
 }
 
+// MenuDivider 함수는 내부 로직을 처리합니다.
 function MenuDivider() {
   return <View className="h-[1px] bg-gray-100 mx-5" />;
 }

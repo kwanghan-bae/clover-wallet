@@ -9,6 +9,7 @@ interface HistoryItemProps {
   onDelete: (id: string) => void;
 }
 
+/** @description 사용자의 과거 로또 구매 또는 번호 생성 내역을 표시하는 카드 컴포넌트입니다. */
 export const HistoryItem = ({ record, onDelete }: HistoryItemProps) => {
   const dateStr = formatDate(record.createdAt);
 
@@ -55,6 +56,7 @@ export const HistoryItem = ({ record, onDelete }: HistoryItemProps) => {
   );
 };
 
+// formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(date: string | Date): string {
   try {
     const d = new Date(date);

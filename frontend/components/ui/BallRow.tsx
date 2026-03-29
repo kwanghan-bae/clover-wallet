@@ -8,6 +8,7 @@ interface BallRowProps {
   className?: string;
 }
 
+/** @description 로또 번호 세트를 일렬로 정렬하여 애니메이션과 함께 표시하는 행 컴포넌트입니다. */
 export const BallRow = ({ numbers, className }: BallRowProps) => {
   return (
     <View className={cn("flex-row justify-between items-center", className)}>

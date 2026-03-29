@@ -8,6 +8,7 @@ interface InputProps extends TextInputProps {
   containerClassName?: string;
 }
 
+/** @description 라벨과 에러 메시지 기능을 포함한 공통 입력 필드 컴포넌트입니다. */
 export const Input = ({ label, error, containerClassName, className, ...props }: InputProps) => {
   return (
     <View className={cn("gap-2", containerClassName)}>

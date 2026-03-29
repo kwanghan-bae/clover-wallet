@@ -191,6 +191,7 @@ export default function HomeScreen() {
   );
 }
 
+/** @description 홈 화면의 하단 퀵 액션 섹션에서 개별 메뉴 아이템을 렌더링하는 컴포넌트입니다. */
 function QuickActionItem({ icon, label, bgColor, onPress }: { icon: React.ReactNode, label: string, bgColor: string, onPress: () => void }) {
   return (
     <TouchableOpacity onPress={onPress} className="items-center" activeOpacity={0.7}>

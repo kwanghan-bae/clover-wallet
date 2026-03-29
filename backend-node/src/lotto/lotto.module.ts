@@ -23,4 +23,7 @@ import { NotificationModule } from '../notification/notification.module';
   ],
   exports: [LottoService, WinningInfoCrawlerService, WinningCheckService],
 })
+/**
+ * @description 로또 번호 추출 및 당첨 정보 관리 등 로또 관련 핵심 로직을 포함하는 모듈입니다.
+ */
 export class LottoModule {}

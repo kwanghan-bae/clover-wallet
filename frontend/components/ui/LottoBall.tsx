@@ -10,6 +10,7 @@ interface LottoBallProps {
   className?: string;
 }
 
+/** @description 개별 로또 번호를 원형 공 모양으로 렌더링하며, 번호대에 따라 색상을 자동으로 설정하는 컴포넌트입니다. */
 export const LottoBall = ({ number, size = 'md', delay = 0, className }: LottoBallProps) => {
   const scale = useSharedValue(0);
 

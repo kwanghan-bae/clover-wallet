@@ -101,6 +101,7 @@ export default function SpotDetailScreen() {
   );
 }
 
+/** @description 판매점 상세 화면에서 회차별 당첨 이력을 표시하는 아이템 컴포넌트입니다. */
 function HistoryItem({ item }: { item: WinningHistory }) {
   const is1st = item.rank === 1;
   
