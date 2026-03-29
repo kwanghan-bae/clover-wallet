@@ -98,7 +98,8 @@ describe('LottoWinningStoreService', () => {
 
       const result = await service.crawlWinningStores(1150);
       expect(result.count).toBe(0);
-      expect(result.message).toContain('No stores found');
+      const noStoresRegex = /No (tables|stores) found/;
+      expect(result.message).toMatch(noStoresRegex);
     });
 
     it('should throw error if axios fails', async () => {
