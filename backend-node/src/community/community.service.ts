@@ -172,6 +172,9 @@ export class CommunityService {
 
   // Helper Methods
 
+  /**
+   * 특정 사용자가 좋아요를 누른 게시글 ID 목록을 조회하여 Set 형태로 반환합니다.
+   */
   private async getLikedPostIds(userId?: bigint, postIds: bigint[]): Promise<Set<string>> {
     if (!userId || postIds.length === 0) return new Set();
     const likes = await this.prisma.postLike.findMany({
@@ -181,6 +184,10 @@ export class CommunityService {
     return new Set(likes.map(l => l.postId.toString()));
   }
 
+  /**
+   * 원본 게시글 데이터를 API 응답용 데이터 형식으로 변환합니다.
+   * 좋아요 여부 및 사용자 요약 정보를 포함합니다.
+   */
   private transformPost(post: any, isLiked: boolean) {
     return {
       ...post,
@@ -189,6 +196,9 @@ export class CommunityService {
     };
   }
 
+  /**
+   * 사용자 엔티티로부터 닉네임, 뱃지 목록 등이 포함된 요약 정보를 생성합니다.
+   */
   private mapToUserSummary(user: any) {
     if (!user) return null;
     return {
@@ -198,6 +208,10 @@ export class CommunityService {
     };
   }
 
+  /**
+   * 특정 게시글의 소유권을 확인합니다.
+   * 작성자가 아닌 경우 ForbiddenException을 던집니다.
+   */
   private async validatePostOwnership(postId: bigint, userId: bigint) {
     const post = await this.prisma.post.findUnique({ where: { id: postId } });
     if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
