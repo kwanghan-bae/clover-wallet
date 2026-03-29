@@ -2,14 +2,14 @@ import React from 'react';
 import { render } from '@testing-library/react-native';
 import HomeScreen from '../../app/(tabs)/index';
 
-// Mock expo-router
+// expo-router 모킹
 jest.mock('expo-router', () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),
 }));
 
-// Mock lucide-react-native icons
+// lucide-react-native 아이콘 모킹
 jest.mock('lucide-react-native', () => ({
   Dices: 'Dices',
   QrCode: 'QrCode',
@@ -21,12 +21,18 @@ jest.mock('lucide-react-native', () => ({
   Filter: 'Filter',
 }));
 
+/**
+ * HomeScreen 컴포넌트에 대한 단위 테스트입니다.
+ * 화면 내 주요 텍스트 요소와 퀵 액션 버튼의 렌더링 상태를 검증합니다.
+ */
 describe('HomeScreen', () => {
+  /** 앱 제목과 환영 메시지가 정상적으로 표시되는지 확인합니다. */
   test('renders welcome text and app title', () => {
     const { getByText } = render(<HomeScreen />);
     expect(getByText('Clover Wallet')).toBeTruthy();
   });
 
+  /** 각 퀵 액션 버튼의 한글 라벨이 정확하게 표시되는지 확인합니다. */
   test('renders quick action buttons with correct Korean labels', () => {
     const { getByText } = render(<HomeScreen />);
     expect(getByText('번호 추첨')).toBeTruthy();
@@ -36,12 +42,14 @@ describe('HomeScreen', () => {
     expect(getByText('로또 명당')).toBeTruthy();
   });
 
+  /** 최근 당첨 결과 섹션의 초기 상태 렌더링을 확인합니다. */
   test('renders recent history section', () => {
     const { getByText } = render(<HomeScreen />);
     expect(getByText('최근 당첨 결과')).toBeTruthy();
     expect(getByText('아직 구매한 로또가 없습니다.')).toBeTruthy();
   });
 
+  /** 다음 회차 당첨 정보 카드가 표시되는지 확인합니다. */
   test('renders next draw info card', () => {
     const { getByText } = render(<HomeScreen />);
     expect(getByText('당첨 발표까지')).toBeTruthy();
