@@ -8,7 +8,10 @@ import GlassCard from '../../components/ui/GlassCard';
 import { useQuery } from '@tanstack/react-query';
 import { WinningHistoryItem } from '../../components/ui/WinningHistoryItem';
 
-export default function SpotDetailScreen() {
+/**
+ * @description 특정 로또 판매점의 상세 정보와 과거 당첨 이력을 확인할 수 있는 화면입니다.
+ */
+const SpotDetailScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
@@ -100,5 +103,8 @@ export default function SpotDetailScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
+
+export default SpotDetailScreen;
+
 
