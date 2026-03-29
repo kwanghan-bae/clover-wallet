@@ -1,11 +1,12 @@
 import React from 'react';
 import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { ChevronLeft, MapPin, Trophy, Calendar } from 'lucide-react-native';
+import { ChevronLeft, MapPin, Trophy } from 'lucide-react-native';
 import { spotsApi } from '../../api/spots';
 import { WinningHistory } from '../../api/types/spots';
 import GlassCard from '../../components/ui/GlassCard';
 import { useQuery } from '@tanstack/react-query';
+import { WinningHistoryItem } from '../../components/ui/WinningHistoryItem';
 
 export default function SpotDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -87,7 +88,7 @@ export default function SpotDetailScreen() {
           
           {history && history.length > 0 ? (
             history.map((item: WinningHistory, index: number) => (
-              <HistoryItem key={`${item.round}-${index}`} item={item} />
+              <WinningHistoryItem key={`${item.round}-${index}`} item={item} />
             ))
           ) : (
             <View className="bg-white rounded-2xl p-10 items-center justify-center border border-gray-100">
@@ -101,31 +102,3 @@ export default function SpotDetailScreen() {
   );
 }
 
-/** @description 판매점 상세 화면에서 회차별 당첨 이력을 표시하는 아이템 컴포넌트입니다. */
-function HistoryItem({ item }: { item: WinningHistory }) {
-  const is1st = item.rank === 1;
-  
-  return (
-    <View className="bg-white rounded-2xl p-5 mb-4 flex-row items-center border border-gray-50 shadow-sm">
-      <View className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${is1st ? 'bg-[#FFC107]/10' : 'bg-[#4CAF50]/10'}`}>
-        <Trophy size={20} color={is1st ? '#FFC107' : '#4CAF50'} />
-      </View>
-      <View className="flex-1">
-        <View className="flex-row items-center justify-between mb-1">
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-base text-[#1A1A1A]">
-            {item.round}회 당첨
-          </Text>
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className={`text-sm ${is1st ? 'text-[#FFC107]' : 'text-[#4CAF50]'}`}>
-            {item.rank}등
-          </Text>
-        </View>
-        <View className="flex-row items-center">
-          <Calendar size={12} color="#BDBDBD" />
-          <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs ml-1">
-            {item.method || "자동"}
-          </Text>
-        </View>
-      </View>
-    </View>
-  );
-}
