@@ -65,12 +65,19 @@ async function requestNotificationPermission(): Promise<boolean> {
 }
 
 /**
+ * @description Expo 프로젝트 ID를 설정값에서 가져옵니다.
+ */
+function getExpoProjectId(): string | undefined {
+  return Constants.expoConfig?.extra?.eas?.projectId ?? Constants.expoConfig?.owner;
+}
+
+/**
  * @description Expo 푸시 토큰을 서버에서 가져옵니다.
  * @returns {Promise<string | undefined>} 푸시 토큰
  */
 async function fetchExpoPushToken(): Promise<string | undefined> {
   try {
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.expoConfig?.owner;
+    const projectId = getExpoProjectId();
     const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
     console.log('획득한 푸시 토큰:', token);
     return token;
