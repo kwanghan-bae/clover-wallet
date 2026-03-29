@@ -21,6 +21,7 @@ import {
   CheckCircle2
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { MyPageMenuItem, MyPageMenuDivider } from '../../components/ui/MyPageMenuItem';
 
 /** @description 사용자가 획득할 수 있는 뱃지 목록의 모킹 데이터입니다. */
 const MOCK_BADGES = [
@@ -30,7 +31,10 @@ const MOCK_BADGES = [
   { id: '4', label: 'VIP', icon: <Star size={20} color="#9C27B0" />, color: 'bg-purple-50' },
 ];
 
-export default function MyPageScreen() {
+/**
+ * @description 사용자의 프로필, 뱃지, 앱 설정 등을 관리하는 마이페이지 화면입니다.
+ */
+const MyPageScreen = () => {
   const router = useRouter();
 
   const user = {
@@ -99,17 +103,17 @@ export default function MyPageScreen() {
         {/* Menu List */}
         <View className="px-5">
           <View className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-50">
-            <MenuItem icon={<Settings size={20} color="#1A1A1A" />} label="계정 설정" />
-            <MenuDivider />
-            <MenuItem icon={<Bell size={20} color="#1A1A1A" />} label="알림 설정" />
-            <MenuDivider />
-            <MenuItem icon={<ShieldCheck size={20} color="#1A1A1A" />} label="개인정보 처리방침" onPress={() => router.push('/privacy-policy')} />
-            <MenuDivider />
-            <MenuItem icon={<Info size={20} color="#1A1A1A" />} label="앱 정보" />
-            <MenuDivider />
-            <MenuItem icon={<LogOut size={20} color="#1A1A1A" />} label="로그아웃" onPress={() => Alert.alert("로그아웃", "정말로 로그아웃 하시겠습니까?")} />
-            <MenuDivider />
-            <MenuItem
+            <MyPageMenuItem icon={<Settings size={20} color="#1A1A1A" />} label="계정 설정" />
+            <MyPageMenuDivider />
+            <MyPageMenuItem icon={<Bell size={20} color="#1A1A1A" />} label="알림 설정" />
+            <MyPageMenuDivider />
+            <MyPageMenuItem icon={<ShieldCheck size={20} color="#1A1A1A" />} label="개인정보 처리방침" onPress={() => router.push('/privacy-policy')} />
+            <MyPageMenuDivider />
+            <MyPageMenuItem icon={<Info size={20} color="#1A1A1A" />} label="앱 정보" />
+            <MyPageMenuDivider />
+            <MyPageMenuItem icon={<LogOut size={20} color="#1A1A1A" />} label="로그아웃" onPress={() => Alert.alert("로그아웃", "정말로 로그아웃 하시겠습니까?")} />
+            <MyPageMenuDivider />
+            <MyPageMenuItem
               icon={<UserX size={20} color="#FF5252" />}
               label="회원 탈퇴"
               isDestructive
@@ -120,37 +124,6 @@ export default function MyPageScreen() {
       </ScrollView>
     </SafeAreaView>
   );
-}
+};
 
-// MenuItem 함수는 내부 로직을 처리합니다.
-function MenuItem({
-  icon,
-  label,
-  onPress,
-  isDestructive = false
-}: {
-  icon: React.ReactNode,
-  label: string,
-  onPress?: () => void,
-  isDestructive?: boolean
-}) {
-  return (
-    <TouchableOpacity
-      onPress={onPress}
-      className="flex-row items-center p-5 active:bg-gray-50"
-    >
-      <View className="mr-4">
-        {icon}
-      </View>
-      <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className={`flex-1 text-base ${isDestructive ? 'text-red-400' : 'text-[#1A1A1A]'}`}>
-        {label}
-      </Text>
-      <ChevronRight size={18} color="#E0E0E0" />
-    </TouchableOpacity>
-  );
-}
-
-// MenuDivider 함수는 내부 로직을 처리합니다.
-function MenuDivider() {
-  return <View className="h-[1px] bg-gray-100 mx-5" />;
-}
+export default MyPageScreen;
