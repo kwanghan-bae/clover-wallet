@@ -5,9 +5,15 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import LuckyHeroIllustration from '../../components/ui/LuckyHeroIllustration';
 
+/**
+ * 애플리케이션의 홈 화면 컴포넌트입니다.
+ * 다음 회차 당첨 정보, 빠른 실행 메뉴, 최근 당첨 결과 등을 표시합니다.
+ */
 export default function HomeScreen() {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
+  
+  /** 현재 회차 정보와 남은 시간 데이터를 관리하는 상태입니다. */
   const [drawInfo] = useState({
     currentRound: 1103,
     daysLeft: 3,

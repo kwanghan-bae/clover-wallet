@@ -166,11 +166,12 @@ export class LottoNumberExtractor {
 
   /**
    * @description 월과 일을 바탕으로 별자리를 판별합니다.
-   * @param month 월
-   * @param day 일
+   * @param month 월 (1-12)
+   * @param day 일 (1-31)
    * @returns 별자리 (ZodiacSign)
    */
   private getZodiacSign(month: number, day: number): ZodiacSign {
+    /** 별자리별 종료 일자 기준 정보입니다. */
     const zodiacDates = [
       { sign: ZodiacSign.CAPRICORN, month: 1, day: 20 },
       { sign: ZodiacSign.AQUARIUS, month: 2, day: 18 },
@@ -187,13 +188,14 @@ export class LottoNumberExtractor {
       { sign: ZodiacSign.CAPRICORN, month: 12, day: 31 },
     ];
 
+    /** 현재 월과 일에 해당하는 별자리를 선형 탐색하여 반환합니다. */
     for (const item of zodiacDates) {
       if (month < item.month || (month === item.month && day <= item.day)) {
         return item.sign;
       }
     }
 
-    return ZodiacSign.ARIES; // 기본값
+    return ZodiacSign.ARIES; // 매칭되지 않을 경우의 기본값입니다.
   }
 
   /**

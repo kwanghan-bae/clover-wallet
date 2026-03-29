@@ -59,3 +59,36 @@ export const compareNumbers = (
 export const sortLottoNumbers = (numbers: number[]): number[] => {
   return [...numbers].sort((a, b) => a - b);
 };
+
+/**
+ * 특정 시드와 방법론을 사용하여 로또 번호를 생성합니다.
+ * @param methodId 생성 방법론 ID
+ * @param param 시드 생성을 위한 추가 파라미터
+ * @returns 1~45 사이의 고유한 숫자 6개 (정렬됨)
+ */
+export const generateLottoNumbersWithSeed = (methodId: string, param?: string): number[] => {
+  const numbers: Set<number> = new Set();
+  const seed = param ? param.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : Math.random();
+  
+  // 프리미엄 느낌을 위한 결정론적 난수 생성 (Simple LCG)
+  let currentSeed = seed;
+  while (numbers.size < 6) {
+    currentSeed = (currentSeed * 9301 + 49297) % 233280;
+    const num = Math.floor((currentSeed / 233280) * 45) + 1;
+    if (num > 0) numbers.add(num);
+  }
+  
+  return sortLottoNumbers(Array.from(numbers));
+};
+
+/**
+ * 로또 번호의 범위에 따른 UI 표시 색상 클래스를 반환합니다.
+ * @param n 로또 번호 (1~45)
+ */
+export const getNumberColor = (n: number): string => {
+  if (n <= 10) return 'bg-[#FFA726]'; // 노란색 (1~10)
+  if (n <= 20) return 'bg-[#42A5F5]'; // 파란색 (11~20)
+  if (n <= 30) return 'bg-[#EF5350]'; // 빨간색 (21~30)
+  if (n <= 40) return 'bg-[#9E9E9E]'; // 회색 (31~40)
+  return 'bg-[#66BB6A]'; // 초록색 (41~45)
+};

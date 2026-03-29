@@ -26,6 +26,7 @@ import {
   Save,
   ChevronLeft
 } from 'lucide-react-native';
+import { generateLottoNumbersWithSeed, getNumberColor } from '../utils/lotto';
 
 /** @description 로또 번호 생성을 위해 제공되는 다양한 분석 방법론 목록입니다. */
 const METHODS = [
@@ -43,15 +44,25 @@ const METHODS = [
 
 export default function NumberGenerationScreen() {
   const router = useRouter();
+  /** 생성된 로또 번호 배열 상태입니다. */
   const [generatedNumbers, setGeneratedNumbers] = useState<number[]>([]);
+  /** 사용자가 선택한 추출 방법론의 ID입니다. */
   const [selectedMethod, setSelectedMethod] = useState('');
+  /** 번호 저장 프로세스 진행 여부입니다. */
   const [isSaving, setIsSaving] = useState(false);
+  /** 파라미터 입력 모달의 표시 여부입니다. */
   const [isModalVisible, setIsModalVisible] = useState(false);
+  /** 꿈 키워드나 기념일 등 사용자가 입력한 파라미터 값입니다. */
   const [paramInput, setParamInput] = useState('');
   
   // Animation
+  /** 번호가 나타날 때의 스케일 애니메이션 값입니다. */
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
+  /**
+   * 사용자가 추출 방식을 선택했을 때 호출됩니다.
+   * 추가 정보가 필요한 방식이면 모달을 띄우고, 아니면 바로 번호를 생성합니다.
+   */
   const handleMethodSelect = (methodId: string) => {
     setSelectedMethod(methodId);
     if (['DREAM', 'SAJU', 'PERSONAL_SIGNIFICANCE'].includes(methodId)) {
@@ -62,20 +73,11 @@ export default function NumberGenerationScreen() {
     }
   };
 
+  /**
+   * 유틸리티를 사용하여 로또 번호를 생성하고 애니메이션을 실행합니다.
+   */
   const generateNumbers = (methodId: string, param?: string) => {
-    // Simulated algorithm logic based on method
-    const numbers: Set<number> = new Set();
-    const seed = param ? param.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : Math.random();
-    
-    // Simple deterministic random for "Premium" feel
-    let currentSeed = seed;
-    while (numbers.size < 6) {
-      currentSeed = (currentSeed * 9301 + 49297) % 233280;
-      const num = Math.floor((currentSeed / 233280) * 45) + 1;
-      if (num > 0) numbers.add(num);
-    }
-    
-    const sorted = Array.from(numbers).sort((a, b) => a - b);
+    const sorted = generateLottoNumbersWithSeed(methodId, param);
     setGeneratedNumbers(sorted);
     setIsModalVisible(false);
     
@@ -231,11 +233,3 @@ export default function NumberGenerationScreen() {
   );
 }
 
-// getNumberColor 함수는 내부 로직을 처리합니다.
-function getNumberColor(n: number) {
-  if (n <= 10) return 'bg-[#FFA726]';
-  if (n <= 20) return 'bg-[#42A5F5]';
-  if (n <= 30) return 'bg-[#EF5350]';
-  if (n <= 40) return 'bg-[#9E9E9E]';
-  return 'bg-[#66BB6A]';
-}
