@@ -7,7 +7,10 @@ import { useRouter } from 'expo-router';
 import { PostCard } from '../../components/ui/PostCard';
 import { Post } from '../../api/types/community';
 
-export default function CommunityScreen() {
+/**
+ * @description 사용자들 간의 로또 관련 정보 공유 및 소통을 위한 커뮤니티 화면입니다.
+ */
+const CommunityScreen = () => {
   const router = useRouter();
   const [posts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -123,4 +126,6 @@ export default function CommunityScreen() {
       </View>
     </SafeAreaView>
   );
-}
+};
+
+export default CommunityScreen;
