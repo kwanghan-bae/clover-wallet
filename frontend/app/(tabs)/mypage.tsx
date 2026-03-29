@@ -15,7 +15,6 @@ import {
   Info,
   LogOut,
   UserX,
-  ChevronRight,
   Star,
   Flame,
   CheckCircle2
