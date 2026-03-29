@@ -5,7 +5,7 @@ import * as cheerio from 'cheerio';
  * 파싱된 티켓 정보 인터페이스
  */
 export interface ParsedTicket {
-  ordinal: Int;
+  ordinal: number;
   status: string;
   games: ParsedGame[];
 }
@@ -23,17 +23,14 @@ export interface ParsedGame {
   number6: number;
 }
 
-type Int = number;
-
 /**
  * 동행복권 HTML 문서를 파싱하여 로또 데이터를 추출하는 클래스입니다.
- * Kotlin JsoupTicketParser 로직을 이식함.
  */
 @Injectable()
 export class JsoupTicketParser {
   private readonly logger = new Logger(JsoupTicketParser.name);
 
-  // 셀렉터 정의 (Kotlin LottoScrapingProperties 기반)
+  // 셀렉터 정의
   private readonly selectors = {
     ordinalSelector: 'h3 > span.key_clr1',
     ticketStatusSelector: 'div.bx_notice.winner strong',
@@ -44,7 +41,6 @@ export class JsoupTicketParser {
 
   /**
    * HTML 문자열을 파싱하여 티켓 정보를 추출합니다.
-   * @param html HTML 소스
    */
   parse(html: string): ParsedTicket {
     const $ = cheerio.load(html);
@@ -57,8 +53,7 @@ export class JsoupTicketParser {
   }
 
   /**
-   * HTML 데이터에서 로또 회차(ordinal) 정보를 추출합니다.
-   * @param $ Cheerio 인스턴스
+   * HTML 데이터에서 로또 회차 정보를 추출합니다.
    */
   private getOrdinal($: cheerio.CheerioAPI): number {
     const text = $(this.selectors.ordinalSelector).first().text() || '0';
@@ -67,7 +62,6 @@ export class JsoupTicketParser {
 
   /**
    * HTML 데이터에서 티켓의 전체 당첨 상태를 추출합니다.
-   * @param $ Cheerio 인스턴스
    */
   private getTicketStatus($: cheerio.CheerioAPI): string {
     const text = $(this.selectors.ticketStatusSelector).first().text() || '';
@@ -82,49 +76,58 @@ export class JsoupTicketParser {
 
   /**
    * HTML 데이터에서 각 게임별 번호와 당첨 여부 목록을 추출합니다.
-   * @param $ Cheerio 인스턴스
    */
   private getGames($: cheerio.CheerioAPI): ParsedGame[] {
     const games: ParsedGame[] = [];
     const rows = $(this.selectors.gameRowsSelector);
 
     rows.each((_, element) => {
-      const row = $(element);
-      const resultText = row
-        .find(this.selectors.gameResultSelector)
-        .text()
-        .trim();
-      const numbers = row
-        .find(this.selectors.gameNumbersSelector)
-        .map((_, el) => parseInt($(el).text(), 10))
-        .get();
-
-      if (numbers.length === 6) {
-        games.push({
-          status: this.parseGameStatus(resultText),
-          number1: numbers[0],
-          number2: numbers[1],
-          number3: numbers[2],
-          number4: numbers[3],
-          number5: numbers[4],
-          number6: numbers[5],
-        });
-      }
+      const game = this.parseGameRow($, element);
+      if (game) games.push(game);
     });
 
     return games;
   }
 
   /**
+   * 개별 게임 행(row)을 파싱하여 게임 정보를 반환합니다.
+   */
+  private parseGameRow($: cheerio.CheerioAPI, element: any): ParsedGame | null {
+    const row = $(element);
+    const resultText = row.find(this.selectors.gameResultSelector).text().trim();
+    const numbers = row.find(this.selectors.gameNumbersSelector)
+      .map((_, el) => parseInt($(el).text(), 10))
+      .get();
+
+    if (numbers.length !== 6) return null;
+
+    return {
+      status: this.parseGameStatus(resultText),
+      number1: numbers[0],
+      number2: numbers[1],
+      number3: numbers[2],
+      number4: numbers[3],
+      number5: numbers[4],
+      number6: numbers[5],
+    };
+  }
+
+  /**
    * 게임 결과 텍스트를 분석하여 내부 상태 코드로 변환합니다.
-   * @param text 결과 텍스트 (예: '1등당첨')
    */
   private parseGameStatus(text: string): string {
-    if (text.includes('1등당첨')) return 'WINNING_1';
-    if (text.includes('2등당첨')) return 'WINNING_2';
-    if (text.includes('3등당첨')) return 'WINNING_3';
-    if (text.includes('4등당첨')) return 'WINNING_4';
-    if (text.includes('5등당첨')) return 'WINNING_5';
+    const statusMap: { [key: string]: string } = {
+      '1등당첨': 'WINNING_1',
+      '2등당첨': 'WINNING_2',
+      '3등당첨': 'WINNING_3',
+      '4등당첨': 'WINNING_4',
+      '5등당첨': 'WINNING_5',
+    };
+
+    for (const [key, value] of Object.entries(statusMap)) {
+      if (text.includes(key)) return value;
+    }
+    
     return 'LOSING';
   }
 }
