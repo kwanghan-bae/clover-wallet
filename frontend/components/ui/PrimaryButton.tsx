@@ -13,6 +13,10 @@ interface PrimaryButtonProps extends PressableProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
+/**
+ * @description 애플리케이션 전반에서 사용되는 주요 액션 버튼 컴포넌트입니다.
+ * 애니메이션 피드백(Scale 효과)과 그라데이션 스타일을 제공합니다.
+ */
 export const PrimaryButton = ({ 
   label, 
   isLoading = false, 
