@@ -92,7 +92,8 @@
       ".module.ts",
       ".dto.ts",
       ".strategy.ts",
-      "src/common/types"
+      "src/common/types",
+      "src/prisma/prisma.service.ts"
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
