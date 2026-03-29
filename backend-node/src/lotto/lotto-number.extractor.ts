@@ -171,31 +171,29 @@ export class LottoNumberExtractor {
    * @returns 별자리 (ZodiacSign)
    */
   private getZodiacSign(month: number, day: number): ZodiacSign {
-    if ((month == 1 && day <= 20) || (month == 12 && day >= 22))
-      return ZodiacSign.CAPRICORN;
-    if ((month == 1 && day >= 21) || (month == 2 && day <= 18))
-      return ZodiacSign.AQUARIUS;
-    if ((month == 2 && day >= 19) || (month == 3 && day <= 20))
-      return ZodiacSign.PISCES;
-    if ((month == 3 && day >= 21) || (month == 4 && day <= 20))
-      return ZodiacSign.ARIES;
-    if ((month == 4 && day >= 21) || (month == 5 && day <= 20))
-      return ZodiacSign.TAURUS;
-    if ((month == 5 && day >= 21) || (month == 6 && day <= 21))
-      return ZodiacSign.GEMINI;
-    if ((month == 6 && day >= 22) || (month == 7 && day <= 22))
-      return ZodiacSign.CANCER;
-    if ((month == 7 && day >= 23) || (month == 8 && day <= 23))
-      return ZodiacSign.LEO;
-    if ((month == 8 && day >= 24) || (month == 9 && day <= 23))
-      return ZodiacSign.VIRGO;
-    if ((month == 9 && day >= 24) || (month == 10 && day <= 23))
-      return ZodiacSign.LIBRA;
-    if ((month == 10 && day >= 24) || (month == 11 && day <= 22))
-      return ZodiacSign.SCORPIO;
-    if ((month == 11 && day >= 23) || (month == 12 && day <= 21))
-      return ZodiacSign.SAGITTARIUS;
-    return ZodiacSign.ARIES; // Default
+    const zodiacDates = [
+      { sign: ZodiacSign.CAPRICORN, month: 1, day: 20 },
+      { sign: ZodiacSign.AQUARIUS, month: 2, day: 18 },
+      { sign: ZodiacSign.PISCES, month: 3, day: 20 },
+      { sign: ZodiacSign.ARIES, month: 4, day: 20 },
+      { sign: ZodiacSign.TAURUS, month: 5, day: 20 },
+      { sign: ZodiacSign.GEMINI, month: 6, day: 21 },
+      { sign: ZodiacSign.CANCER, month: 7, day: 22 },
+      { sign: ZodiacSign.LEO, month: 8, day: 23 },
+      { sign: ZodiacSign.VIRGO, month: 9, day: 23 },
+      { sign: ZodiacSign.LIBRA, month: 10, day: 23 },
+      { sign: ZodiacSign.SCORPIO, month: 11, day: 22 },
+      { sign: ZodiacSign.SAGITTARIUS, month: 12, day: 21 },
+      { sign: ZodiacSign.CAPRICORN, month: 12, day: 31 },
+    ];
+
+    for (const item of zodiacDates) {
+      if (month < item.month || (month === item.month && day <= item.day)) {
+        return item.sign;
+      }
+    }
+
+    return ZodiacSign.ARIES; // 기본값
   }
 
   /**
