@@ -9,8 +9,10 @@ import { useScan } from '../hooks/useScan';
 
 const { width, height } = Dimensions.get('window');
 
+const PRIMARY_COLOR = '#22C55E';
+
 /**
- * @description 로또 티켓의 QR 코드를 스캔하여 번호를 자동으로 등록하는 화면입니다.
+ * @description 로또 티켓의 QR 코드를 스캔하거나 번호를 OCR로 인식하여 자동으로 등록하는 화면입니다.
  */
 const ScanScreen = () => {
   const router = useRouter();
@@ -20,7 +22,10 @@ const ScanScreen = () => {
     cameraRef,
     isProcessing,
     scanResult,
+    scanMode,
+    setScanMode,
     handleCapture,
+    handleBarCodeScanned,
     resetScan,
   } = useScan();
 
@@ -40,11 +45,13 @@ const ScanScreen = () => {
   return (
     <View className="flex-1 bg-black">
       <Stack.Screen options={{ headerShown: false }} />
-      
-      <CameraView 
+
+      <CameraView
         ref={cameraRef}
         style={StyleSheet.absoluteFill}
         facing="back"
+        onBarcodeScanned={scanMode === 'qr' ? handleBarCodeScanned : undefined}
+        barcodeScannerSettings={scanMode === 'qr' ? { barcodeTypes: ['qr'] } : undefined}
       >
         {/* Full Screen Overlay with centered hole */}
         <View style={styles.overlay}>
@@ -62,7 +69,9 @@ const ScanScreen = () => {
           </View>
           <View style={styles.unfocusedContainer}>
             <Text className="text-white text-center mt-8 px-10 text-sm leading-5">
-              로또 티켓의 번호 부분을 가이드에 맞춰주세요
+              {scanMode === 'qr'
+                ? '로또 티켓의 QR 코드를 가이드에 맞춰주세요'
+                : '로또 티켓의 번호 부분을 가이드에 맞춰주세요'}
             </Text>
           </View>
         </View>
@@ -75,25 +84,43 @@ const ScanScreen = () => {
             <X size={24} color="white" />
           </TouchableOpacity>
         </View>
+
+        {/* Mode Toggle Tabs */}
+        <View style={styles.modeToggleContainer}>
+          <TouchableOpacity
+            style={[styles.modeTab, scanMode === 'qr' && { backgroundColor: PRIMARY_COLOR }]}
+            onPress={() => setScanMode('qr')}
+          >
+            <Text style={[styles.modeTabText, scanMode === 'qr' && styles.modeTabTextActive]}>QR 스캔</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.modeTab, scanMode === 'ocr' && { backgroundColor: PRIMARY_COLOR }]}
+            onPress={() => setScanMode('ocr')}
+          >
+            <Text style={[styles.modeTabText, scanMode === 'ocr' && styles.modeTabTextActive]}>번호 촬영</Text>
+          </TouchableOpacity>
+        </View>
       </SafeAreaView>
 
       {/* Bottom Controls */}
       <View className="absolute bottom-16 left-0 right-0 items-center">
         {!scanResult ? (
-          <TouchableOpacity 
-            onPress={handleCapture}
-            disabled={isProcessing}
-            className="bg-primary px-10 py-4 rounded-full flex-row items-center shadow-2xl"
-          >
-            {isProcessing ? (
-              <ActivityIndicator color="white" size="small" />
-            ) : (
-              <>
-                <CameraIcon size={20} color="white" />
-                <Text className="text-white font-black text-lg ml-3">촬영</Text>
-              </>
-            )}
-          </TouchableOpacity>
+          scanMode === 'ocr' && (
+            <TouchableOpacity
+              onPress={handleCapture}
+              disabled={isProcessing}
+              className="bg-primary px-10 py-4 rounded-full flex-row items-center shadow-2xl"
+            >
+              {isProcessing ? (
+                <ActivityIndicator color="white" size="small" />
+              ) : (
+                <>
+                  <CameraIcon size={20} color="white" />
+                  <Text className="text-white font-black text-lg ml-3">촬영</Text>
+                </>
+              )}
+            </TouchableOpacity>
+          )
         ) : (
           <View className="bg-white rounded-3xl p-6 w-[90%] shadow-2xl">
             <Text className="text-xl font-bold text-text-dark mb-2 text-center">인식된 번호 확인</Text>
@@ -101,16 +128,16 @@ const ScanScreen = () => {
             <View className="items-center mb-6">
               <BallRow numbers={scanResult.numbers} />
             </View>
-            
+
             <View className="flex-row gap-3">
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={resetScan}
                 className="flex-1 h-14 bg-gray-100 rounded-xl items-center justify-center flex-row"
               >
                 <RotateCw size={18} color="#757575" />
                 <Text className="text-text-light font-bold ml-2">다시 촬영</Text>
               </TouchableOpacity>
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => {
                   router.back();
                 }}
@@ -121,6 +148,9 @@ const ScanScreen = () => {
             </View>
             <Text className="text-gray-400 text-[10px] text-center mt-4">※ 인식된 번호가 정확한지 확인해주세요.</Text>
           </View>
+        )}
+        {scanMode === 'qr' && isProcessing && !scanResult && (
+          <ActivityIndicator color="white" size="large" />
         )}
       </View>
     </View>
@@ -155,4 +185,27 @@ const styles = StyleSheet.create({
   topRight: { top: -2, right: -2 },
   bottomLeft: { bottom: -2, left: -2 },
   bottomRight: { bottom: -2, right: -2 },
+  modeToggleContainer: {
+    flexDirection: 'row',
+    marginHorizontal: 16,
+    marginTop: 8,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 12,
+    padding: 4,
+  },
+  modeTab: {
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modeTabText: {
+    color: 'rgba(255,255,255,0.6)',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  modeTabTextActive: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+  },
 });
