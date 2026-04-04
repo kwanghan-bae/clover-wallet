@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { LottoController } from './lotto.controller';
 import { LottoService } from './lotto.service';
 import { ExtractionService } from './extraction.service';
+import { LottoInfoService } from './lotto-info.service';
 import { LottoNumberExtractor } from './lotto-number.extractor';
 import { WinningInfoCrawlerService } from './winning-info-crawler.service';
 import { WinningCheckService } from './winning-check.service';
@@ -17,6 +18,7 @@ import { NotificationModule } from '../notification/notification.module';
   providers: [
     LottoService,
     ExtractionService,
+    LottoInfoService,
     LottoNumberExtractor,
     WinningInfoCrawlerService,
     WinningCheckService,

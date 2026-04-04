@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LottoController } from '../lotto.controller';
 import { LottoService } from '../lotto.service';
 import { ExtractionService } from '../extraction.service';
+import { LottoInfoService } from '../lotto-info.service';
 import { SaveGameDto } from '../dto/save-game.dto';
 import { ExtractNumbersDto } from '../dto/extract-numbers.dto';
 
@@ -23,6 +24,11 @@ describe('LottoController', () => {
     extractLottoNumbers: jest.fn(),
   };
 
+  const mockLottoInfoService = {
+    getNextDrawInfo: jest.fn(),
+    getDrawResult: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LottoController],
@@ -34,6 +40,10 @@ describe('LottoController', () => {
         {
           provide: ExtractionService,
           useValue: mockExtractionService,
+        },
+        {
+          provide: LottoInfoService,
+          useValue: mockLottoInfoService,
         },
       ],
     }).compile();

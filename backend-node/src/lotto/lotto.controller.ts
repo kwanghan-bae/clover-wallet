@@ -4,11 +4,14 @@ import {
   Post,
   Body,
   Query,
+  Param,
+  ParseIntPipe,
   UseGuards,
   Request,
 } from '@nestjs/common';
 import { LottoService } from './lotto.service';
 import { ExtractionService } from './extraction.service';
+import { LottoInfoService } from './lotto-info.service';
 import { SaveGameDto } from './dto/save-game.dto';
 import { ExtractNumbersDto } from './dto/extract-numbers.dto';
 import { AuthGuard } from '@nestjs/passport';
@@ -22,6 +25,7 @@ export class LottoController {
   constructor(
     private readonly lottoService: LottoService,
     private readonly extractionService: ExtractionService,
+    private readonly lottoInfoService: LottoInfoService,
   ) {}
 
   /**
@@ -55,5 +59,21 @@ export class LottoController {
   async extractNumbers(@Body() dto: ExtractNumbersDto) {
     const numbers = await this.extractionService.extractLottoNumbers(dto);
     return Array.from(new Set(numbers)).sort((a, b) => a - b);
+  }
+
+  /**
+   * 다음 추첨 정보를 반환합니다. (현재 회차, 추첨일, 남은 시간 등)
+   */
+  @Get('next-draw')
+  async getNextDraw() {
+    return this.lottoInfoService.getNextDrawInfo();
+  }
+
+  /**
+   * 특정 회차의 당첨 결과를 조회합니다. DB에 없으면 외부 API에서 가져옵니다.
+   */
+  @Get('draw-result/:round')
+  async getDrawResult(@Param('round', ParseIntPipe) round: number) {
+    return this.lottoInfoService.getDrawResult(round);
   }
 }
