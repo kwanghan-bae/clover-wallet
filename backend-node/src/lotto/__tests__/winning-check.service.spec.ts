@@ -31,11 +31,11 @@ describe('WinningCheckService', () => {
   };
 
   const prizeAmounts = {
-    'WINNING_1': mockWinning.firstPrizeAmount,
-    'WINNING_2': mockWinning.secondPrizeAmount,
-    'WINNING_3': mockWinning.thirdPrizeAmount,
-    'WINNING_4': mockWinning.fourthPrizeAmount,
-    'WINNING_5': mockWinning.fifthPrizeAmount,
+    WINNING_1: mockWinning.firstPrizeAmount,
+    WINNING_2: mockWinning.secondPrizeAmount,
+    WINNING_3: mockWinning.thirdPrizeAmount,
+    WINNING_4: mockWinning.fourthPrizeAmount,
+    WINNING_5: mockWinning.fifthPrizeAmount,
   };
 
   beforeEach(async () => {
@@ -75,7 +75,10 @@ describe('WinningCheckService', () => {
   describe('LottoRankCalculator', () => {
     it('6개 번호가 일치하면 1등이어야 한다', () => {
       const result = LottoRankCalculator.calculateRank(
-        [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], 7, prizeAmounts
+        [1, 2, 3, 4, 5, 6],
+        [1, 2, 3, 4, 5, 6],
+        7,
+        prizeAmounts,
       );
       expect(result.status).toBe('WINNING_1');
       expect(result.prize).toBe(mockWinning.firstPrizeAmount);
@@ -83,7 +86,10 @@ describe('WinningCheckService', () => {
 
     it('5개 번호와 보너스 번호가 일치하면 2등이어야 한다', () => {
       const result = LottoRankCalculator.calculateRank(
-        [1, 2, 3, 4, 5, 7], [1, 2, 3, 4, 5, 6], 7, prizeAmounts
+        [1, 2, 3, 4, 5, 7],
+        [1, 2, 3, 4, 5, 6],
+        7,
+        prizeAmounts,
       );
       expect(result.status).toBe('WINNING_2');
       expect(result.prize).toBe(mockWinning.secondPrizeAmount);
@@ -91,7 +97,10 @@ describe('WinningCheckService', () => {
 
     it('2개 이하 번호가 일치하면 낙첨이어야 한다', () => {
       const result = LottoRankCalculator.calculateRank(
-        [1, 2, 40, 41, 42, 43], [1, 2, 3, 4, 5, 6], 7, prizeAmounts
+        [1, 2, 40, 41, 42, 43],
+        [1, 2, 3, 4, 5, 6],
+        7,
+        prizeAmounts,
       );
       expect(result.status).toBe('LOSING');
       expect(result.prize).toBe(BigInt(0));
@@ -100,18 +109,32 @@ describe('WinningCheckService', () => {
 
   describe('checkWinning', () => {
     it('티켓의 당첨 여부에 따라 상태를 업데이트하고 알림을 보내야 한다', async () => {
-      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue(mockWinning);
+      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue(
+        mockWinning,
+      );
       (prisma.lottoTicket.findMany as jest.Mock).mockResolvedValue([
         {
           id: 1,
           userId: 10,
           status: 'STASHED',
           games: [
-            { id: 101, number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 6, status: 'STASHED', prizeAmount: BigInt(0) },
+            {
+              id: 101,
+              number1: 1,
+              number2: 2,
+              number3: 3,
+              number4: 4,
+              number5: 5,
+              number6: 6,
+              status: 'STASHED',
+              prizeAmount: BigInt(0),
+            },
           ],
         },
       ]);
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue({ fcmToken: 'token123' });
+      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
+        fcmToken: 'token123',
+      });
 
       await service.checkWinning(1000);
 

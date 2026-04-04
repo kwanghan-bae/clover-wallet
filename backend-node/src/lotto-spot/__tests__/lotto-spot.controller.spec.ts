@@ -120,9 +120,13 @@ describe('LottoSpotController', () => {
 
   describe('triggerCrawl', () => {
     it('should call winningInfoCrawlerService.crawlWinningInfo and return message', async () => {
-      mockWinningInfoCrawlerService.crawlWinningInfo.mockResolvedValue(undefined);
+      mockWinningInfoCrawlerService.crawlWinningInfo.mockResolvedValue(
+        undefined,
+      );
       const result = await controller.triggerCrawl(1000);
-      expect(winningInfoCrawlerService.crawlWinningInfo).toHaveBeenCalledWith(1000);
+      expect(winningInfoCrawlerService.crawlWinningInfo).toHaveBeenCalledWith(
+        1000,
+      );
       expect(result).toEqual({ message: 'Crawl triggered for round 1000' });
     });
   });
@@ -132,7 +136,9 @@ describe('LottoSpotController', () => {
       mockWinningCheckService.checkWinning.mockResolvedValue(undefined);
       const result = await controller.triggerCheck(1000);
       expect(winningCheckService.checkWinning).toHaveBeenCalledWith(1000);
-      expect(result).toEqual({ message: 'Winning check triggered for round 1000' });
+      expect(result).toEqual({
+        message: 'Winning check triggered for round 1000',
+      });
     });
   });
 

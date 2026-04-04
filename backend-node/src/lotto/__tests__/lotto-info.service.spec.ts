@@ -47,7 +47,12 @@ describe('LottoInfoService', () => {
       const mockInfo = {
         round: 1100,
         drawDate: new Date('2024-01-01'),
-        number1: 1, number2: 2, number3: 3, number4: 4, number5: 5, number6: 6,
+        number1: 1,
+        number2: 2,
+        number3: 3,
+        number4: 4,
+        number5: 5,
+        number6: 6,
         bonusNumber: 7,
         firstPrizeAmount: BigInt(1000000000),
       };

@@ -44,8 +44,7 @@ export class AppController {
 
     const needsUpdate =
       compare(clientVersion, AppController.MIN_SUPPORTED_VERSION) < 0;
-    const hasUpdate =
-      compare(clientVersion, AppController.CURRENT_VERSION) < 0;
+    const hasUpdate = compare(clientVersion, AppController.CURRENT_VERSION) < 0;
 
     return {
       currentVersion: AppController.CURRENT_VERSION,

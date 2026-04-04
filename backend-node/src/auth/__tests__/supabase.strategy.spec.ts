@@ -33,9 +33,13 @@ describe('SupabaseStrategy', () => {
 
   describe('validate', () => {
     it('should return mapped user info from payload', async () => {
-      const payload = { sub: 'user-uuid', email: 'test@example.com', role: 'authenticated' };
-      const result = await strategy.validate(payload);
-      
+      const payload = {
+        sub: 'user-uuid',
+        email: 'test@example.com',
+        role: 'authenticated',
+      };
+      const result = strategy.validate(payload);
+
       expect(result).toEqual({
         userId: 'user-uuid',
         email: 'test@example.com',

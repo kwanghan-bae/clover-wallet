@@ -1,6 +1,6 @@
 import { TransformInterceptor } from '../transform.interceptor';
 import { of } from 'rxjs';
-import { ExecutionContext, CallHandler } from '@nestjs/common';
+import { CallHandler } from '@nestjs/common';
 
 /**
  * TransformInterceptor에 대한 단위 테스트입니다.

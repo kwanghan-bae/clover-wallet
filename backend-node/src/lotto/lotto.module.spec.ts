@@ -13,10 +13,7 @@ describe('LottoModule', () => {
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      imports: [
-        LottoModule,
-        EventEmitterModule.forRoot(),
-      ],
+      imports: [LottoModule, EventEmitterModule.forRoot()],
     })
       .overrideProvider(PrismaService)
       .useValue({})

@@ -25,7 +25,10 @@ describe('AdminService', () => {
       providers: [
         AdminService,
         { provide: PrismaService, useValue: mockPrisma },
-        { provide: 'ConfigService', useValue: { get: jest.fn().mockReturnValue('test-key') } },
+        {
+          provide: 'ConfigService',
+          useValue: { get: jest.fn().mockReturnValue('test-key') },
+        },
       ],
     }).compile();
 
@@ -35,12 +38,20 @@ describe('AdminService', () => {
 
   describe('initializeWinningInfo', () => {
     it('should skip rounds that already exist', async () => {
-      mockPrisma.winningInfo.findMany.mockResolvedValue([{ round: 1 }, { round: 2 }]);
+      mockPrisma.winningInfo.findMany.mockResolvedValue([
+        { round: 1 },
+        { round: 2 },
+      ]);
       mockedAxios.get.mockResolvedValue({
         data: {
           returnValue: 'success',
           drwNoDate: '2024-01-01',
-          drwtNo1: 1, drwtNo2: 2, drwtNo3: 3, drwtNo4: 4, drwtNo5: 5, drwtNo6: 6,
+          drwtNo1: 1,
+          drwtNo2: 2,
+          drwtNo3: 3,
+          drwtNo4: 4,
+          drwtNo5: 5,
+          drwtNo6: 6,
           bnusNo: 7,
           firstWinamnt: 1000000000,
         },

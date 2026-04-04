@@ -1,4 +1,7 @@
-import { ExtractionMethod, LottoExtractionData } from '../constants/lotto-extraction-data';
+import {
+  ExtractionMethod,
+  LottoExtractionData,
+} from '../constants/lotto-extraction-data';
 import { ExtractionContext } from '../lotto-number.extractor';
 import { ExtractionStrategy } from './extraction-strategy.interface';
 
@@ -42,7 +45,7 @@ export class SajuExtractionStrategy implements ExtractionStrategy {
   }
 
   /**
-   * 숫자의 각 자릿수를 합산하여 결과값을 반환합니다. 
+   * 숫자의 각 자릿수를 합산하여 결과값을 반환합니다.
    * 사주팔자 기반 번호 추출 시 생년월일 각 항목의 합계를 구하는 데 사용됩니다.
    */
   private sumDigits(num: number): number {

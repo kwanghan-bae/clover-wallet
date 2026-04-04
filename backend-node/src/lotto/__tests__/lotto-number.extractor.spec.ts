@@ -1,8 +1,5 @@
 import { LottoNumberExtractor } from '../lotto-number.extractor';
-import {
-  ExtractionMethod,
-  ZodiacSign,
-} from '../constants/lotto-extraction-data';
+import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
 /**
  * LottoNumberExtractor에 대한 단위 테스트입니다.
@@ -75,7 +72,7 @@ describe('LottoNumberExtractor', () => {
       });
       expect(numbers).toHaveLength(6);
       // CAPRICORN 번호 [3, 5, 7, 8, 18, 28] 중 일부 포함 여부 확인 (시드에 따라 다를 수 있음)
-      expect(numbers.some(n => [3, 5, 7, 8, 18, 28].includes(n))).toBe(true);
+      expect(numbers.some((n) => [3, 5, 7, 8, 18, 28].includes(n))).toBe(true);
     });
   });
 

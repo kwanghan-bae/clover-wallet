@@ -10,7 +10,10 @@ export class AdminController {
     @Query('start', new ParseIntPipe({ optional: true })) start?: number,
     @Query('end', new ParseIntPipe({ optional: true })) end?: number,
   ) {
-    const message = await this.adminService.initializeWinningInfo(start ?? 1, end);
+    const message = await this.adminService.initializeWinningInfo(
+      start ?? 1,
+      end,
+    );
     return { message };
   }
 
@@ -19,7 +22,10 @@ export class AdminController {
     @Query('start', new ParseIntPipe({ optional: true })) start?: number,
     @Query('end', new ParseIntPipe({ optional: true })) end?: number,
   ) {
-    const message = await this.adminService.initializeWinningStores(start ?? 1, end);
+    const message = await this.adminService.initializeWinningStores(
+      start ?? 1,
+      end,
+    );
     return { message };
   }
 }

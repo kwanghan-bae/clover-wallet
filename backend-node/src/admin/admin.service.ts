@@ -16,7 +16,10 @@ export class AdminService {
     return weeks + 1;
   }
 
-  async initializeWinningInfo(start: number = 1, end?: number): Promise<string> {
+  async initializeWinningInfo(
+    start: number = 1,
+    end?: number,
+  ): Promise<string> {
     const targetEnd = end ?? this.calculateCurrentRound();
     const existing = await this.prisma.winningInfo.findMany({
       select: { round: true },
@@ -59,7 +62,10 @@ export class AdminService {
     return `Initialized ${count} winning info records (rounds ${start}-${targetEnd})`;
   }
 
-  async initializeWinningStores(start: number = 1, end?: number): Promise<string> {
+  async initializeWinningStores(
+    start: number = 1,
+    end?: number,
+  ): Promise<string> {
     const targetEnd = end ?? this.calculateCurrentRound();
     const existing = await this.prisma.lottoWinningStore.findMany({
       select: { round: true },

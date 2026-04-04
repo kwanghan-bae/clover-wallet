@@ -94,8 +94,12 @@ export class JsoupTicketParser {
    */
   private parseGameRow($: cheerio.CheerioAPI, element: any): ParsedGame | null {
     const row = $(element);
-    const resultText = row.find(this.selectors.gameResultSelector).text().trim();
-    const numbers = row.find(this.selectors.gameNumbersSelector)
+    const resultText = row
+      .find(this.selectors.gameResultSelector)
+      .text()
+      .trim();
+    const numbers = row
+      .find(this.selectors.gameNumbersSelector)
       .map((_, el) => parseInt($(el).text(), 10))
       .get();
 
@@ -127,7 +131,7 @@ export class JsoupTicketParser {
     for (const [key, value] of Object.entries(statusMap)) {
       if (text.includes(key)) return value;
     }
-    
+
     return 'LOSING';
   }
 }

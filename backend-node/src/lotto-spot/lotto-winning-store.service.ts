@@ -10,16 +10,21 @@ import * as iconv from 'iconv-lite';
 @Injectable()
 export class LottoWinningStoreService {
   private readonly logger = new Logger(LottoWinningStoreService.name);
-  private readonly winningStoreUrl = 'https://www.dhlottery.co.kr/store.do?method=topStore&drwNo=';
+  private readonly winningStoreUrl =
+    'https://www.dhlottery.co.kr/store.do?method=topStore&drwNo=';
 
   constructor(private readonly prisma: PrismaService) {}
 
   /**
    * 특정 회차의 당첨 판매점 정보를 사이트에서 크롤링하여 DB에 저장합니다.
    */
-  async crawlWinningStores(round: number): Promise<{ count: number; message: string }> {
+  async crawlWinningStores(
+    round: number,
+  ): Promise<{ count: number; message: string }> {
     if (await this.isAlreadyCrawled(round)) {
-      this.logger.log(`${round} 회차 당첨 판매점 데이터가 이미 존재합니다. 건너뜁니다.`);
+      this.logger.log(
+        `${round} 회차 당첨 판매점 데이터가 이미 존재합니다. 건너뜁니다.`,
+      );
       return { count: 0, message: 'Already exists' };
     }
 
@@ -31,7 +36,9 @@ export class LottoWinningStoreService {
 
       if (storesToSave.length > 0) {
         await this.saveStoresToDb(storesToSave);
-        this.logger.log(`${round} 회차 당첨 판매점 ${storesToSave.length}개 저장 성공`);
+        this.logger.log(
+          `${round} 회차 당첨 판매점 ${storesToSave.length}개 저장 성공`,
+        );
         return { count: storesToSave.length, message: 'Saved' };
       }
 
@@ -47,7 +54,9 @@ export class LottoWinningStoreService {
    * 이미 해당 회차의 데이터가 크롤링되었는지 확인합니다.
    */
   private async isAlreadyCrawled(round: number): Promise<boolean> {
-    const existing = await this.prisma.lottoWinningStore.findFirst({ where: { round } });
+    const existing = await this.prisma.lottoWinningStore.findFirst({
+      where: { round },
+    });
     return !!existing;
   }
 
@@ -68,8 +77,10 @@ export class LottoWinningStoreService {
     const tables = $('table.tbl_data');
     const stores: any[] = [];
 
-    if (tables.length >= 1) stores.push(...this.parseRank1Stores($, tables[0], round));
-    if (tables.length >= 2) stores.push(...this.parseRank2Stores($, tables[1], round));
+    if (tables.length >= 1)
+      stores.push(...this.parseRank1Stores($, tables[0], round));
+    if (tables.length >= 2)
+      stores.push(...this.parseRank2Stores($, tables[1], round));
 
     return stores;
   }
@@ -77,40 +88,58 @@ export class LottoWinningStoreService {
   /**
    * 1등 당첨 판매점 테이블을 파싱합니다.
    */
-  private parseRank1Stores($: cheerio.CheerioAPI, table: any, round: number): any[] {
+  private parseRank1Stores(
+    $: cheerio.CheerioAPI,
+    table: any,
+    round: number,
+  ): any[] {
     const stores: any[] = [];
-    $(table).find('tbody tr').each((_, element) => {
-      const tds = $(element).find('td');
-      if (tds.length >= 4 && !$(tds[0]).text().includes('조회 결과가 없습니다')) {
-        stores.push({
-          round,
-          rank: 1,
-          storeName: $(tds[1]).text().trim(),
-          method: $(tds[2]).text().trim(),
-          address: $(tds[3]).text().trim(),
-        });
-      }
-    });
+    $(table)
+      .find('tbody tr')
+      .each((_, element) => {
+        const tds = $(element).find('td');
+        if (
+          tds.length >= 4 &&
+          !$(tds[0]).text().includes('조회 결과가 없습니다')
+        ) {
+          stores.push({
+            round,
+            rank: 1,
+            storeName: $(tds[1]).text().trim(),
+            method: $(tds[2]).text().trim(),
+            address: $(tds[3]).text().trim(),
+          });
+        }
+      });
     return stores;
   }
 
   /**
    * 2등 당첨 판매점 테이블을 파싱합니다.
    */
-  private parseRank2Stores($: cheerio.CheerioAPI, table: any, round: number): any[] {
+  private parseRank2Stores(
+    $: cheerio.CheerioAPI,
+    table: any,
+    round: number,
+  ): any[] {
     const stores: any[] = [];
-    $(table).find('tbody tr').each((_, element) => {
-      const tds = $(element).find('td');
-      if (tds.length >= 3 && !$(tds[0]).text().includes('조회 결과가 없습니다')) {
-        stores.push({
-          round,
-          rank: 2,
-          storeName: $(tds[1]).text().trim(),
-          address: $(tds[2]).text().trim(),
-          method: null,
-        });
-      }
-    });
+    $(table)
+      .find('tbody tr')
+      .each((_, element) => {
+        const tds = $(element).find('td');
+        if (
+          tds.length >= 3 &&
+          !$(tds[0]).text().includes('조회 결과가 없습니다')
+        ) {
+          stores.push({
+            round,
+            rank: 2,
+            storeName: $(tds[1]).text().trim(),
+            address: $(tds[2]).text().trim(),
+            method: null,
+          });
+        }
+      });
     return stores;
   }
 

@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { BadgeService } from '../users/badge.service';
 import { FcmService } from '../notification/fcm.service';
 import { OnEvent } from '@nestjs/event-emitter';
-import { LottoRankCalculator, LottoRankStatus } from './utils/lotto-rank.calculator';
+import { LottoRankCalculator } from './utils/lotto-rank.calculator';
 
 /**
  * 사용자의 로또 게임 결과와 당첨 번호를 대조하여 등수를 계산하고 상태를 업데이트하는 서비스입니다.
@@ -59,10 +59,13 @@ export class WinningCheckService {
    */
   private async processTicket(ticket: any, winningInfo: any) {
     try {
-      const { hasWinningGame, updates } = this.calculateTicketResults(ticket, winningInfo);
+      const { hasWinningGame, updates } = this.calculateTicketResults(
+        ticket,
+        winningInfo,
+      );
 
       if (updates.length > 0) {
-        await Promise.all(updates.map(u => this.prisma.lottoGame.update(u)));
+        await Promise.all(updates.map((u) => this.prisma.lottoGame.update(u)));
       }
 
       const newStatus = hasWinningGame ? 'WINNING' : 'LOSING';
@@ -84,11 +87,28 @@ export class WinningCheckService {
     const prizeAmounts = this.getPrizeMap(winningInfo);
 
     for (const game of ticket.games) {
-      const gameNumbers = [game.number1, game.number2, game.number3, game.number4, game.number5, game.number6];
-      const winNumbers = [winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6];
-      
+      const gameNumbers = [
+        game.number1,
+        game.number2,
+        game.number3,
+        game.number4,
+        game.number5,
+        game.number6,
+      ];
+      const winNumbers = [
+        winningInfo.number1,
+        winningInfo.number2,
+        winningInfo.number3,
+        winningInfo.number4,
+        winningInfo.number5,
+        winningInfo.number6,
+      ];
+
       const { status, prize } = LottoRankCalculator.calculateRank(
-        gameNumbers, winNumbers, winningInfo.bonusNumber, prizeAmounts
+        gameNumbers,
+        winNumbers,
+        winningInfo.bonusNumber,
+        prizeAmounts,
       );
 
       if (game.status !== status || game.prizeAmount !== prize) {
@@ -107,7 +127,11 @@ export class WinningCheckService {
   /**
    * 티켓의 최종 상태를 업데이트하고 당첨 시 후속 작업을 수행합니다.
    */
-  private async updateTicketStatus(ticket: any, status: string, winningInfo: any) {
+  private async updateTicketStatus(
+    ticket: any,
+    status: string,
+    winningInfo: any,
+  ) {
     await this.prisma.lottoTicket.update({
       where: { id: ticket.id },
       data: { status },
@@ -124,10 +148,12 @@ export class WinningCheckService {
   private handleWinnerActions(ticket: any, winningInfo: any) {
     this.badgeService
       .updateUserBadges(ticket.userId)
-      .catch((e) => this.logger.error(`뱃지 업데이트 실패: ${ticket.userId}`, e.stack));
+      .catch((e) =>
+        this.logger.error(`뱃지 업데이트 실패: ${ticket.userId}`, e.stack),
+      );
 
     this.notifyWinner(ticket, winningInfo).catch((e) =>
-      this.logger.error(`당첨 알림 발송 실패: ${ticket.userId}`, e.stack)
+      this.logger.error(`당첨 알림 발송 실패: ${ticket.userId}`, e.stack),
     );
   }
 
@@ -146,9 +172,21 @@ export class WinningCheckService {
 
     if (best) {
       const rankName = LottoRankCalculator.getRankName(best.res.status);
-      const numbers = [best.game.number1, best.game.number2, best.game.number3, best.game.number4, best.game.number5, best.game.number6];
+      const numbers = [
+        best.game.number1,
+        best.game.number2,
+        best.game.number3,
+        best.game.number4,
+        best.game.number5,
+        best.game.number6,
+      ];
 
-      await this.fcmService.sendWinningNotification(user.fcmToken, rankName, numbers, best.res.prize);
+      await this.fcmService.sendWinningNotification(
+        user.fcmToken,
+        rankName,
+        numbers,
+        best.res.prize,
+      );
     }
   }
 
@@ -157,16 +195,27 @@ export class WinningCheckService {
    */
   private getBestWinningResult(ticket: any, winningInfo: any) {
     const prizeAmounts = this.getPrizeMap(winningInfo);
-    const winNumbers = [winningInfo.number1, winningInfo.number2, winningInfo.number3, winningInfo.number4, winningInfo.number5, winningInfo.number6];
+    const winNumbers = [
+      winningInfo.number1,
+      winningInfo.number2,
+      winningInfo.number3,
+      winningInfo.number4,
+      winningInfo.number5,
+      winningInfo.number6,
+    ];
 
-    const results = ticket.games.map((g: any) => ({
-      game: g,
-      res: LottoRankCalculator.calculateRank(
-        [g.number1, g.number2, g.number3, g.number4, g.number5, g.number6],
-        winNumbers, winningInfo.bonusNumber, prizeAmounts
-      )
-    })).filter((r: any) => r.res.prize > BigInt(0))
-       .sort((a: any, b: any) => (a.res.status < b.res.status ? -1 : 1));
+    const results = ticket.games
+      .map((g: any) => ({
+        game: g,
+        res: LottoRankCalculator.calculateRank(
+          [g.number1, g.number2, g.number3, g.number4, g.number5, g.number6],
+          winNumbers,
+          winningInfo.bonusNumber,
+          prizeAmounts,
+        ),
+      }))
+      .filter((r: any) => r.res.prize > BigInt(0))
+      .sort((a: any, b: any) => (a.res.status < b.res.status ? -1 : 1));
 
     return results.length > 0 ? results[0] : null;
   }
@@ -176,11 +225,11 @@ export class WinningCheckService {
    */
   private getPrizeMap(winningInfo: any) {
     return {
-      'WINNING_1': winningInfo.firstPrizeAmount,
-      'WINNING_2': winningInfo.secondPrizeAmount,
-      'WINNING_3': winningInfo.thirdPrizeAmount,
-      'WINNING_4': winningInfo.fourthPrizeAmount,
-      'WINNING_5': winningInfo.fifthPrizeAmount,
+      WINNING_1: winningInfo.firstPrizeAmount,
+      WINNING_2: winningInfo.secondPrizeAmount,
+      WINNING_3: winningInfo.thirdPrizeAmount,
+      WINNING_4: winningInfo.fourthPrizeAmount,
+      WINNING_5: winningInfo.fifthPrizeAmount,
     };
   }
 }

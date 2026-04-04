@@ -89,7 +89,11 @@ export class LottoService {
   /**
    * 컨트롤러용 별칭: 사용자 ID로 게임 목록을 페이징 조회합니다.
    */
-  async getGamesByUserId(userId: string | bigint, page: number = 0, size: number = 20): Promise<PageResponse<any>> {
+  async getGamesByUserId(
+    userId: string | bigint,
+    page: number = 0,
+    size: number = 20,
+  ): Promise<PageResponse<any>> {
     return this.getHistory(String(userId), page + 1, size);
   }
 

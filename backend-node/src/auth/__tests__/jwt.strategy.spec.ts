@@ -31,8 +31,8 @@ describe('JwtStrategy', () => {
   describe('validate', () => {
     it('should return user id from sub claim', async () => {
       const payload = { sub: '1', email: 'test@example.com' };
-      const result = await strategy.validate(payload);
-      
+      const result = strategy.validate(payload);
+
       expect(result).toEqual({ id: BigInt(1) });
     });
   });

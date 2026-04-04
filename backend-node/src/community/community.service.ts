@@ -32,15 +32,22 @@ export class CommunityService {
         take: size,
         orderBy: { createdAt: 'desc' },
         include: {
-          user: { select: { id: true, ssoQualifier: true, email: true, badges: true } },
+          user: {
+            select: { id: true, ssoQualifier: true, email: true, badges: true },
+          },
           _count: { select: { comments: true } },
         },
       }),
       this.prisma.post.count(),
     ]);
 
-    const likedPostIds = await this.getLikedPostIds(posts.map(p => p.id), currentUserId);
-    const content = posts.map(p => this.transformPost(p, likedPostIds.has(p.id.toString())));
+    const likedPostIds = await this.getLikedPostIds(
+      posts.map((p) => p.id),
+      currentUserId,
+    );
+    const content = posts.map((p) =>
+      this.transformPost(p, likedPostIds.has(p.id.toString())),
+    );
 
     return {
       content,
@@ -58,15 +65,20 @@ export class CommunityService {
     const post = await this.prisma.post.findUnique({
       where: { id: postId },
       include: {
-        user: { select: { id: true, ssoQualifier: true, email: true, badges: true } },
+        user: {
+          select: { id: true, ssoQualifier: true, email: true, badges: true },
+        },
       },
     });
 
-    if (!post) throw new NotFoundException(`게시글을 찾을 수 없습니다: ${postId}`);
+    if (!post)
+      throw new NotFoundException(`게시글을 찾을 수 없습니다: ${postId}`);
 
-    const isLiked = currentUserId ? !!(await this.prisma.postLike.findUnique({
-      where: { postId_userId: { postId, userId: currentUserId } },
-    })) : false;
+    const isLiked = currentUserId
+      ? !!(await this.prisma.postLike.findUnique({
+          where: { postId_userId: { postId, userId: currentUserId } },
+        }))
+      : false;
 
     return this.transformPost(post, isLiked);
   }
@@ -84,7 +96,7 @@ export class CommunityService {
    * 게시글을 수정합니다.
    */
   async updatePost(postId: bigint, userId: bigint, dto: UpdatePostDto) {
-    const post = await this.validatePostOwnership(postId, userId);
+    await this.validatePostOwnership(postId, userId);
     return this.prisma.post.update({
       where: { id: postId },
       data: { ...dto, updatedAt: new Date() },
@@ -101,13 +113,21 @@ export class CommunityService {
 
     if (existing) {
       await this.prisma.$transaction([
-        this.prisma.postLike.delete({ where: { postId_userId: { postId, userId } } }),
-        this.prisma.post.update({ where: { id: postId }, data: { likes: { decrement: 1 } } }),
+        this.prisma.postLike.delete({
+          where: { postId_userId: { postId, userId } },
+        }),
+        this.prisma.post.update({
+          where: { id: postId },
+          data: { likes: { decrement: 1 } },
+        }),
       ]);
     } else {
       await this.prisma.$transaction([
         this.prisma.postLike.create({ data: { postId, userId } }),
-        this.prisma.post.update({ where: { id: postId }, data: { likes: { increment: 1 } } }),
+        this.prisma.post.update({
+          where: { id: postId },
+          data: { likes: { increment: 1 } },
+        }),
       ]);
     }
 
@@ -125,12 +145,14 @@ export class CommunityService {
         skip,
         take: size,
         orderBy: { createdAt: 'asc' },
-        include: { user: { select: { id: true, ssoQualifier: true, badges: true } } },
+        include: {
+          user: { select: { id: true, ssoQualifier: true, badges: true } },
+        },
       }),
       this.prisma.comment.count({ where: { postId } }),
     ]);
 
-    const content = comments.map(c => ({
+    const content = comments.map((c) => ({
       ...c,
       userSummary: this.mapToUserSummary(c.user),
     }));
@@ -148,21 +170,35 @@ export class CommunityService {
    * 새 댓글을 작성합니다.
    */
   async createComment(userId: bigint, dto: CreateCommentDto) {
-    const post = await this.prisma.post.findUnique({ where: { id: BigInt(dto.postId) } });
+    const post = await this.prisma.post.findUnique({
+      where: { id: BigInt(dto.postId) },
+    });
     if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
 
     return this.prisma.comment.create({
-      data: { userId, postId: BigInt(dto.postId), content: dto.content, likes: 0 },
+      data: {
+        userId,
+        postId: BigInt(dto.postId),
+        content: dto.content,
+        likes: 0,
+      },
     });
   }
 
   /**
    * 댓글을 수정합니다.
    */
-  async updateComment(commentId: bigint, userId: bigint, dto: UpdateCommentDto) {
-    const comment = await this.prisma.comment.findUnique({ where: { id: commentId } });
+  async updateComment(
+    commentId: bigint,
+    userId: bigint,
+    dto: UpdateCommentDto,
+  ) {
+    const comment = await this.prisma.comment.findUnique({
+      where: { id: commentId },
+    });
     if (!comment) throw new NotFoundException('댓글을 찾을 수 없습니다.');
-    if (comment.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+    if (comment.userId !== userId)
+      throw new ForbiddenException('수정 권한이 없습니다.');
 
     return this.prisma.comment.update({
       where: { id: commentId },
@@ -175,13 +211,16 @@ export class CommunityService {
   /**
    * 특정 사용자가 좋아요를 누른 게시글 ID 목록을 조회하여 Set 형태로 반환합니다.
    */
-  private async getLikedPostIds(postIds: bigint[], userId?: bigint): Promise<Set<string>> {
+  private async getLikedPostIds(
+    postIds: bigint[],
+    userId?: bigint,
+  ): Promise<Set<string>> {
     if (!userId || postIds.length === 0) return new Set();
     const likes = await this.prisma.postLike.findMany({
       where: { userId, postId: { in: postIds } },
       select: { postId: true },
     });
-    return new Set(likes.map(l => l.postId.toString()));
+    return new Set(likes.map((l) => l.postId.toString()));
   }
 
   /**
@@ -215,7 +254,8 @@ export class CommunityService {
   private async validatePostOwnership(postId: bigint, userId: bigint) {
     const post = await this.prisma.post.findUnique({ where: { id: postId } });
     if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
-    if (post.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+    if (post.userId !== userId)
+      throw new ForbiddenException('수정 권한이 없습니다.');
     return post;
   }
 }

@@ -35,7 +35,9 @@ export class LottoInfoService {
     const now = new Date();
     const diffMs = nextDrawDate.getTime() - now.getTime();
     const daysLeft = Math.floor(diffMs / (24 * 60 * 60 * 1000));
-    const hoursLeft = Math.floor((diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000));
+    const hoursLeft = Math.floor(
+      (diffMs % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000),
+    );
     const minutesLeft = Math.floor((diffMs % (60 * 60 * 1000)) / (60 * 1000));
 
     const lastWinning = await this.prisma.winningInfo.findFirst({
@@ -43,7 +45,8 @@ export class LottoInfoService {
       select: { firstPrizeAmount: true },
     });
 
-    const estimatedJackpot = lastWinning?.firstPrizeAmount ?? BigInt(3000000000);
+    const estimatedJackpot =
+      lastWinning?.firstPrizeAmount ?? BigInt(3000000000);
 
     return {
       currentRound,
@@ -86,7 +89,9 @@ export class LottoInfoService {
       });
       return info;
     } catch (error) {
-      this.logger.warn(`Failed to fetch draw result for round ${round}: ${error}`);
+      this.logger.warn(
+        `Failed to fetch draw result for round ${round}: ${error}`,
+      );
       return null;
     }
   }

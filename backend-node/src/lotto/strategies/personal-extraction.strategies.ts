@@ -1,4 +1,8 @@
-import { ExtractionMethod, LottoExtractionData, ZodiacSign } from '../constants/lotto-extraction-data';
+import {
+  ExtractionMethod,
+  LottoExtractionData,
+  ZodiacSign,
+} from '../constants/lotto-extraction-data';
 import { ExtractionContext } from '../lotto-number.extractor';
 import { ExtractionStrategy } from './extraction-strategy.interface';
 
