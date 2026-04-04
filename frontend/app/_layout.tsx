@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import { View } from 'react-native';
 import { GlobalErrorBoundary } from '../components/ErrorBoundary';
 import * as SplashScreen from 'expo-splash-screen';
@@ -11,6 +11,7 @@ import {
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useAuth } from '../hooks/useAuth';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -30,6 +31,20 @@ export default function RootLayout() {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
+
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authLoading) return;
+    const inAuthGroup = segments[0] === 'login';
+    if (!isAuthenticated && !inAuthGroup) {
+      router.replace('/login');
+    } else if (isAuthenticated && inAuthGroup) {
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated, authLoading, segments]);
 
   if (!loaded && !error) {
     return null;

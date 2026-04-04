@@ -1,30 +1,33 @@
-import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  SafeAreaView, 
-  TouchableOpacity, 
-  Image, 
+import React, { useEffect } from 'react';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
   ActivityIndicator
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { GlassCard } from '../components/ui/GlassCard';
 import { Clover } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useAuth } from '../hooks/useAuth';
 
 /**
  * @description 구글 로그인을 통한 사용자 인증 화면입니다.
  */
 const LoginScreen = () => {
+  const { signInWithGoogle, isLoading, isAuthenticated } = useAuth();
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/(tabs)');
+    }
+  }, [isAuthenticated]);
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      router.replace('/(tabs)');
-    }, 1500);
+    await signInWithGoogle();
   };
 
   return (
