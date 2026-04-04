@@ -8,6 +8,7 @@ import {
   Query,
   UseGuards,
   Request,
+  Req,
 } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { FcmService } from './fcm.service';
@@ -58,6 +59,24 @@ export class NotificationController {
   @Get('unread-count')
   async getUnreadCount(@Request() req: any) {
     return this.notificationService.getUnreadCount(req.user.id);
+  }
+
+  /**
+   * 알림 생성
+   */
+  @Post()
+  @UseGuards(AuthGuard('jwt'))
+  async createNotification(
+    @Req() req: any,
+    @Body() body: { title: string; message: string; type?: string },
+  ) {
+    const userId = req.user.id;
+    return this.notificationService.createNotification(
+      userId,
+      body.title,
+      body.message,
+      body.type || 'INFO',
+    );
   }
 
   /**

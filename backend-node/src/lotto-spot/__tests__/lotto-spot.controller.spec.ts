@@ -3,6 +3,7 @@ import { LottoSpotController } from '../lotto-spot.controller';
 import { LottoSpotService } from '../lotto-spot.service';
 import { LottoWinningStoreService } from '../lotto-winning-store.service';
 import { WinningInfoCrawlerService } from '../../lotto/winning-info-crawler.service';
+import { WinningCheckService } from '../../lotto/winning-check.service';
 import { NotFoundException } from '@nestjs/common';
 
 /**
@@ -14,6 +15,7 @@ describe('LottoSpotController', () => {
   let lottoSpotService: LottoSpotService;
   let lottoWinningStoreService: LottoWinningStoreService;
   let winningInfoCrawlerService: WinningInfoCrawlerService;
+  let winningCheckService: WinningCheckService;
 
   const mockLottoSpotService = {
     getAllLottoSpots: jest.fn(),
@@ -32,6 +34,10 @@ describe('LottoSpotController', () => {
     getWinningInfo: jest.fn(),
   };
 
+  const mockWinningCheckService = {
+    checkWinning: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LottoSpotController],
@@ -48,6 +54,10 @@ describe('LottoSpotController', () => {
           provide: WinningInfoCrawlerService,
           useValue: mockWinningInfoCrawlerService,
         },
+        {
+          provide: WinningCheckService,
+          useValue: mockWinningCheckService,
+        },
       ],
     }).compile();
 
@@ -59,6 +69,7 @@ describe('LottoSpotController', () => {
     winningInfoCrawlerService = module.get<WinningInfoCrawlerService>(
       WinningInfoCrawlerService,
     );
+    winningCheckService = module.get<WinningCheckService>(WinningCheckService);
   });
 
   it('should be defined', () => {
@@ -104,6 +115,24 @@ describe('LottoSpotController', () => {
       expect(result).toEqual({
         message: 'Winning Info Crawling started for round 1000',
       });
+    });
+  });
+
+  describe('triggerCrawl', () => {
+    it('should call winningInfoCrawlerService.crawlWinningInfo and return message', async () => {
+      mockWinningInfoCrawlerService.crawlWinningInfo.mockResolvedValue(undefined);
+      const result = await controller.triggerCrawl(1000);
+      expect(winningInfoCrawlerService.crawlWinningInfo).toHaveBeenCalledWith(1000);
+      expect(result).toEqual({ message: 'Crawl triggered for round 1000' });
+    });
+  });
+
+  describe('triggerCheck', () => {
+    it('should call winningCheckService.checkWinning and return message', async () => {
+      mockWinningCheckService.checkWinning.mockResolvedValue(undefined);
+      const result = await controller.triggerCheck(1000);
+      expect(winningCheckService.checkWinning).toHaveBeenCalledWith(1000);
+      expect(result).toEqual({ message: 'Winning check triggered for round 1000' });
     });
   });
 

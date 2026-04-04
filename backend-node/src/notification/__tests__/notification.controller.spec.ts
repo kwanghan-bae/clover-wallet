@@ -16,6 +16,7 @@ describe('NotificationController', () => {
     getMyNotifications: jest.fn(),
     markAsRead: jest.fn(),
     getUnreadCount: jest.fn(),
+    createNotification: jest.fn(),
   };
 
   const mockFcmService = {
@@ -76,6 +77,36 @@ describe('NotificationController', () => {
       await controller.getUnreadCount(req);
       expect(notificationService.getUnreadCount).toHaveBeenCalledWith(
         'user-id',
+      );
+    });
+  });
+
+  describe('createNotification', () => {
+    it('should call notificationService.createNotification with user id and body', async () => {
+      const req = { user: { id: 'user-id' } };
+      const body = { title: 'Test', message: 'Hello', type: 'INFO' };
+      const created = { id: BigInt(1), ...body };
+      mockNotificationService.createNotification.mockResolvedValue(created);
+      const result = await controller.createNotification(req, body);
+      expect(notificationService.createNotification).toHaveBeenCalledWith(
+        'user-id',
+        'Test',
+        'Hello',
+        'INFO',
+      );
+      expect(result).toEqual(created);
+    });
+
+    it('should default type to INFO when not provided', async () => {
+      const req = { user: { id: 'user-id' } };
+      const body = { title: 'Test', message: 'Hello' };
+      mockNotificationService.createNotification.mockResolvedValue({});
+      await controller.createNotification(req, body);
+      expect(notificationService.createNotification).toHaveBeenCalledWith(
+        'user-id',
+        'Test',
+        'Hello',
+        'INFO',
       );
     });
   });

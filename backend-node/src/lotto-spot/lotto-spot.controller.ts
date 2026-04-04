@@ -3,12 +3,14 @@ import {
   Get,
   Post,
   Param,
+  ParseIntPipe,
   Query,
   NotFoundException,
 } from '@nestjs/common';
 import { LottoSpotService } from './lotto-spot.service';
 import { LottoWinningStoreService } from './lotto-winning-store.service';
 import { WinningInfoCrawlerService } from '../lotto/winning-info-crawler.service';
+import { WinningCheckService } from '../lotto/winning-check.service';
 
 /**
  * 로또 판매점 정보 및 당첨 판매점 크롤링을 담당하는 컨트롤러입니다.
@@ -20,6 +22,7 @@ export class LottoSpotController {
     private readonly lottoSpotService: LottoSpotService,
     private readonly lottoWinningStoreService: LottoWinningStoreService,
     private readonly winningInfoCrawlerService: WinningInfoCrawlerService,
+    private readonly winningCheckService: WinningCheckService,
   ) {}
 
   /**
@@ -55,6 +58,24 @@ export class LottoSpotController {
   async crawlWinningInfo(@Param('round') round: string) {
     await this.winningInfoCrawlerService.crawlWinningInfo(+round);
     return { message: `Winning Info Crawling started for round ${round}` };
+  }
+
+  /**
+   * 수동으로 특정 회차의 당첨 정보 크롤링을 트리거합니다.
+   */
+  @Post('trigger/crawl/:round')
+  async triggerCrawl(@Param('round', ParseIntPipe) round: number) {
+    await this.winningInfoCrawlerService.crawlWinningInfo(round);
+    return { message: `Crawl triggered for round ${round}` };
+  }
+
+  /**
+   * 수동으로 특정 회차의 당첨 확인을 트리거합니다.
+   */
+  @Post('trigger/check/:round')
+  async triggerCheck(@Param('round', ParseIntPipe) round: number) {
+    await this.winningCheckService.checkWinning(round);
+    return { message: `Winning check triggered for round ${round}` };
   }
 
   /**
