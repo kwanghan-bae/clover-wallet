@@ -1,29 +1,39 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Share } from 'react-native';
+import React from 'react';
+import { View, Text, SafeAreaView, TouchableOpacity, Share, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FlashList } from '@shopify/flash-list';
 import { Edit3, Search, MessageSquare } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { PostCard } from '../../components/ui/PostCard';
-import { Post } from '../../api/types/community';
+import { communityApi, Post } from '../../api/community';
 
 /**
  * @description 사용자들 간의 로또 관련 정보 공유 및 소통을 위한 커뮤니티 화면입니다.
  */
 const CommunityScreen = () => {
   const router = useRouter();
-  const [posts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const fetchPosts = async () => {
-    setIsLoading(true);
-    // Real API call should be here
-    setTimeout(() => setIsLoading(false), 1000);
-  };
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['communityPosts'],
+    queryFn: () => communityApi.getPosts(0, 20),
+  });
+
+  const posts: Post[] = data?.content ?? [];
+
+  const likeMutation = useMutation({
+    mutationFn: (id: number) => communityApi.likePost(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
+    },
+    onError: () => {
+      Alert.alert('오류', '좋아요 처리 중 오류가 발생했습니다.');
+    },
+  });
 
   const handleLike = (id: number) => {
-    // Implement like logic
-    console.log('Like post:', id);
+    likeMutation.mutate(id);
   };
 
   const handleShare = async (id: number) => {
@@ -31,7 +41,7 @@ const CommunityScreen = () => {
     if (post) {
       try {
         await Share.share({
-          message: `${post.user?.nickname}님의 게시물: ${post.content}`,
+          message: `${post.userSummary?.nickname}님의 게시물: ${post.content}`,
         });
       } catch (error) {
         console.error(error);
@@ -66,7 +76,7 @@ const CommunityScreen = () => {
           )}
           estimatedItemSize={200}
           showsVerticalScrollIndicator={false}
-          onRefresh={fetchPosts}
+          onRefresh={refetch}
           refreshing={isLoading}
           contentContainerStyle={{ padding: 20 }}
           ListEmptyComponent={

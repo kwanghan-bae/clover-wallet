@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Heart, MessageCircle, Eye, Share2, MoreHorizontal } from 'lucide-react-native';
-import { Post } from '../../api/types/community';
+import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react-native';
+import { Post } from '../../api/community';
 
 interface PostCardProps {
   post: Post;
@@ -12,9 +12,10 @@ interface PostCardProps {
 
 /** @description 커뮤니티 피드에서 개별 게시글의 요약 정보를 표시하는 카드 컴포넌트입니다. */
 export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
-  const nickname = post.user?.nickname || '익명';
+  const nickname = post.userSummary?.nickname || '익명';
   const initial = nickname[0];
   const dateStr = formatDate(post.createdAt);
+  const commentCount = post._count?.comments ?? 0;
 
   return (
     <TouchableOpacity
@@ -44,7 +45,6 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
             <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A] text-[15px]">
               {nickname}
             </Text>
-            {/* Badges could be added here if available in type */}
           </View>
           <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[12px] mt-0.5">
             {dateStr}
@@ -55,6 +55,17 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
           <MoreHorizontal size={20} color="#E0E0E0" />
         </TouchableOpacity>
       </View>
+
+      {/* Title */}
+      {post.title ? (
+        <Text
+          style={{ fontFamily: 'NotoSansKR_700Bold' }}
+          className="text-[#1A1A1A] text-[16px] mb-1"
+          numberOfLines={1}
+        >
+          {post.title}
+        </Text>
+      ) : null}
 
       {/* Content */}
       <Text
@@ -84,21 +95,14 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
             style={{ fontFamily: 'NotoSansKR_500Medium' }}
             className={`ml-1.5 text-[13px] ${post.isLiked ? 'text-[#EF5350]' : 'text-[#757575]'}`}
           >
-            {post.likeCount}
+            {post.likes}
           </Text>
         </TouchableOpacity>
 
         <View className="flex-row items-center mr-5">
           <MessageCircle size={18} color="#9E9E9E" />
           <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="ml-1.5 text-[13px] text-[#757575]">
-            0
-          </Text>
-        </View>
-
-        <View className="flex-row items-center">
-          <Eye size={18} color="#BDBDBD" />
-          <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="ml-1.5 text-[13px] text-[#BDBDBD]">
-            {post.viewCount}
+            {commentCount}
           </Text>
         </View>
 
