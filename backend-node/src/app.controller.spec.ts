@@ -23,4 +23,25 @@ describe('AppController', () => {
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
+
+  describe('checkVersion', () => {
+    it('should return needsUpdate false for current version', () => {
+      const result = appController.checkVersion('1.0.0');
+      expect(result).toEqual(
+        expect.objectContaining({
+          currentVersion: '1.0.0',
+          needsUpdate: false,
+        }),
+      );
+    });
+
+    it('should return needsUpdate true for old version', () => {
+      const result = appController.checkVersion('0.9.0');
+      expect(result).toEqual(
+        expect.objectContaining({
+          needsUpdate: true,
+        }),
+      );
+    });
+  });
 });
