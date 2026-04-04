@@ -4,7 +4,8 @@ import {
   Text,
   ScrollView,
   SafeAreaView,
-  Alert
+  Alert,
+  TouchableOpacity
 } from 'react-native';
 import {
   Settings,
@@ -16,11 +17,15 @@ import {
   UserX,
   Star,
   Flame,
-  CheckCircle2
+  CheckCircle2,
+  Sun,
+  Moon,
+  Smartphone
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { MyPageMenuItem, MyPageMenuDivider } from '../../components/ui/MyPageMenuItem';
 import { useNotifications } from '../../hooks/useNotifications';
+import { useTheme, ThemePreference } from '../../hooks/useTheme';
 
 /** @description 사용자가 획득할 수 있는 뱃지 목록의 모킹 데이터입니다. */
 const MOCK_BADGES = [
@@ -36,6 +41,7 @@ const MOCK_BADGES = [
 const MyPageScreen = () => {
   const router = useRouter();
   const { unreadCount } = useNotifications();
+  const { themePreference, setThemePreference } = useTheme();
 
   const user = {
     name: '클로버님',
@@ -43,7 +49,7 @@ const MyPageScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 40 }}
@@ -97,6 +103,44 @@ const MyPageScreen = () => {
                 <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-xs text-[#757575]">{badge.label}</Text>
               </View>
             ))}
+          </View>
+        </View>
+
+        {/* Theme Settings */}
+        <View className="px-5 mb-6">
+          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mb-4">테마 설정</Text>
+          <View
+            className="bg-white dark:bg-dark-card rounded-[24px] p-4"
+            style={{
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.04,
+              shadowRadius: 16,
+              elevation: 2
+            }}
+          >
+            <View className="flex-row justify-between">
+              {([
+                { key: 'system' as ThemePreference, label: '시스템', icon: <Smartphone size={18} color={themePreference === 'system' ? '#fff' : '#757575'} /> },
+                { key: 'light' as ThemePreference, label: '라이트', icon: <Sun size={18} color={themePreference === 'light' ? '#fff' : '#757575'} /> },
+                { key: 'dark' as ThemePreference, label: '다크', icon: <Moon size={18} color={themePreference === 'dark' ? '#fff' : '#757575'} /> },
+              ]).map(({ key, label, icon }) => (
+                <TouchableOpacity
+                  key={key}
+                  onPress={() => setThemePreference(key)}
+                  className={`flex-1 flex-row items-center justify-center py-3 rounded-2xl mx-1 ${themePreference === key ? 'bg-primary' : 'bg-gray-100 dark:bg-dark-surface'}`}
+                  style={{ gap: 6 }}
+                >
+                  {icon}
+                  <Text
+                    style={{ fontFamily: 'NotoSansKR_500Medium' }}
+                    className={`text-sm ${themePreference === key ? 'text-white' : 'text-[#757575] dark:text-dark-text-secondary'}`}
+                  >
+                    {label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
         </View>
 

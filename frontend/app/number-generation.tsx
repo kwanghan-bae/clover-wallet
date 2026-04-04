@@ -9,10 +9,11 @@ import {
   Alert
 } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { 
-  Sparkles, 
+import {
+  Sparkles,
   Save,
-  ChevronLeft
+  ChevronLeft,
+  Share2
 } from 'lucide-react-native';
 import { generateLottoNumbersWithSeed, getNumberColor } from '../utils/lotto';
 import { METHODS } from '../constants/generation-methods';
@@ -67,6 +68,17 @@ export default function NumberGenerationScreen() {
     }).start();
   };
 
+  const handleShare = () => {
+    const numbersStr = generatedNumbers.join(', ');
+    router.push({
+      pathname: '/create-post',
+      params: {
+        prefillTitle: '🍀 오늘의 로또 번호',
+        prefillContent: `추천 번호: ${numbersStr}\n\n${METHODS.find(m => m.id === selectedMethod)?.title ?? ''} 방식으로 생성했습니다!`,
+      },
+    });
+  };
+
   const handleSave = async () => {
     if (generatedNumbers.length === 0) return;
     setIsSaving(true);
@@ -118,14 +130,23 @@ export default function NumberGenerationScreen() {
           )}
 
           {generatedNumbers.length > 0 && (
-            <TouchableOpacity 
-              onPress={handleSave}
-              disabled={isSaving}
-              className="bg-white px-10 py-3 rounded-full mt-8 shadow-sm flex-row items-center"
-            >
-              <Save size={18} color="#4CAF50" />
-              <Text className="text-primary font-bold ml-2">{isSaving ? "저장 중" : "번호 저장하기"}</Text>
-            </TouchableOpacity>
+            <View className="flex-row mt-8 gap-3">
+              <TouchableOpacity
+                onPress={handleSave}
+                disabled={isSaving}
+                className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+              >
+                <Save size={18} color="#4CAF50" />
+                <Text className="text-primary font-bold ml-2">{isSaving ? "저장 중" : "번호 저장하기"}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleShare}
+                className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+              >
+                <Share2 size={18} color="#4CAF50" />
+                <Text className="text-primary font-bold ml-2">커뮤니티에 공유</Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
 

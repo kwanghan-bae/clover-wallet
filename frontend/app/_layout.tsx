@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
+import { useTheme } from '../hooks/useTheme';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +38,7 @@ export default function RootLayout() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { registerToken } = useNotifications();
   const { isOffline } = useOffline();
+  const { isDark } = useTheme();
   const segments = useSegments();
   const router = useRouter();
 
@@ -65,8 +67,9 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <View style={{ flex: 1, backgroundColor: '#111827', alignItems: 'center' }}>
           <View
-            className="flex-1 w-full bg-[#F5F7FA]"
+            className={`flex-1 w-full${isDark ? ' dark' : ''}`}
             style={{
+              backgroundColor: isDark ? '#121212' : '#F5F7FA',
               maxWidth: 500, // Slightly wider for better desktop experience
               width: '100%',
               shadowColor: '#000',
@@ -79,13 +82,13 @@ export default function RootLayout() {
             {isOffline && (
               <View style={{ backgroundColor: '#F59E0B', paddingHorizontal: 16, paddingVertical: 8 }}>
                 <Text style={{ color: '#fff', textAlign: 'center', fontSize: 13, fontWeight: '600' }}>
-                  📡 오프라인 모드 — 캐시된 데이터를 표시합니다
+                  오프라인 모드 — 캐시된 데이터를 표시합니다
                 </Text>
               </View>
             )}
             <Stack screenOptions={{
               headerShown: false,
-              contentStyle: { backgroundColor: '#F5F7FA' }
+              contentStyle: { backgroundColor: isDark ? '#121212' : '#F5F7FA' }
             }}>
               <Stack.Screen name="login" />
               <Stack.Screen name="(tabs)" />

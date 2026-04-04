@@ -28,14 +28,14 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       {/* AppBar Style Header */}
       <View className="flex-row justify-between items-center px-5 h-14 bg-transparent" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
         <View className="flex-row items-center" style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Clover size={24} color="#4CAF50" fill="#4CAF50" />
           <Text
             style={{ fontFamily: 'NotoSansKR_900Black' }}
-            className="ml-2 text-xl text-[#1A1A1A] tracking-tight"
+            className="ml-2 text-xl text-[#1A1A1A] dark:text-dark-text tracking-tight"
           >
             Clover Wallet
           </Text>
@@ -127,7 +127,7 @@ const HomeScreen = () => {
         </LinearGradient>
 
         {/* Quick Actions */}
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mt-8 mb-4">
+        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
           빠른 실행
         </Text>
         <View className="flex-row justify-between w-full" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -164,12 +164,12 @@ const HomeScreen = () => {
         </View>
 
         {/* Recent History Preview */}
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mt-8 mb-4">
+        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
           최근 당첨 결과
         </Text>
         <TouchableOpacity onPress={() => router.push('/history')} activeOpacity={0.8}>
           <View
-            className="flex-row items-center p-6 bg-white rounded-[24px]"
+            className="flex-row items-center p-6 bg-white dark:bg-dark-surface rounded-[24px]"
             style={{
               flexDirection: 'row',
               alignItems: 'center',
@@ -184,8 +184,8 @@ const HomeScreen = () => {
               <Receipt size={24} color="#9E9E9E" />
             </View>
             <View className="flex-1">
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-base text-[#1A1A1A]">최근 구매 내역</Text>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-sm text-gray-500 mt-1">아직 구매한 로또가 없습니다.</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-base text-[#1A1A1A] dark:text-dark-text">최근 구매 내역</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-sm text-gray-500 dark:text-dark-text-secondary mt-1">아직 구매한 로또가 없습니다.</Text>
             </View>
             <ChevronRight size={24} color="#9E9E9E" />
           </View>

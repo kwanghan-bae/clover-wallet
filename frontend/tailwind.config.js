@@ -27,6 +27,12 @@ module.exports = {
         "text-dark": "#1A1A1A",
         "text-grey": "#757575",
         error: "#E53935",
+        // Dark mode palette
+        "dark-bg": "#121212",
+        "dark-surface": "#1E1E1E",
+        "dark-card": "#2C2C2C",
+        "dark-text": "#E0E0E0",
+        "dark-text-secondary": "#A0A0A0",
       },
     },
   },

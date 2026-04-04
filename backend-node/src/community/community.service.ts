@@ -212,6 +212,36 @@ export class CommunityService {
   }
 
   /**
+   * 팔로잉한 사용자들의 게시글을 최신순으로 조회합니다. (피드)
+   */
+  async getFollowingFeed(userId: bigint, page: number, size: number) {
+    const followingIds = await this.getFollowingUserIds(userId);
+    if (followingIds.length === 0) {
+      return { content: [], pageNumber: page, pageSize: size, totalElements: 0, totalPages: 0 };
+    }
+
+    const [posts, total] = await Promise.all([
+      this.prisma.post.findMany({
+        where: { userId: { in: followingIds } },
+        skip: page * size,
+        take: size,
+        orderBy: { createdAt: 'desc' },
+        include: { user: true, _count: { select: { comments: true } } },
+      }),
+      this.prisma.post.count({ where: { userId: { in: followingIds } } }),
+    ]);
+
+    const likedIds = await this.getLikedPostIds(posts.map((p) => p.id), userId);
+    return {
+      content: posts.map((p) => this.transformPost(p, likedIds.has(p.id.toString()))),
+      pageNumber: page,
+      pageSize: size,
+      totalElements: total,
+      totalPages: Math.ceil(total / size),
+    };
+  }
+
+  /**
    * 새 댓글을 작성합니다.
    */
   async createComment(userId: bigint, dto: CreateCommentDto) {
@@ -252,6 +282,17 @@ export class CommunityService {
   }
 
   // Helper Methods
+
+  /**
+   * 특정 사용자가 팔로우하는 사용자 ID 목록을 조회합니다.
+   */
+  private async getFollowingUserIds(userId: bigint): Promise<bigint[]> {
+    const follows = await this.prisma.follow.findMany({
+      where: { followerId: userId },
+      select: { followingId: true },
+    });
+    return follows.map((f) => f.followingId);
+  }
 
   /**
    * 특정 사용자가 좋아요를 누른 게시글 ID 목록을 조회하여 Set 형태로 반환합니다.

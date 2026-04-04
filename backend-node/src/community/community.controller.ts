@@ -44,6 +44,19 @@ export class CommunityController {
   }
 
   /**
+   * 팔로잉 사용자들의 게시글을 최신순으로 조회합니다. (피드)
+   */
+  @Get('posts/feed')
+  @UseGuards(AuthGuard('jwt'))
+  async getFeed(
+    @Req() req,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('size', new ParseIntPipe({ optional: true })) size?: number,
+  ) {
+    return this.communityService.getFollowingFeed(req.user.id, page ?? 0, size ?? 10);
+  }
+
+  /**
    * 특정 ID의 게시글 상세 정보를 조회합니다.
    */
   @Get('posts/:id')
