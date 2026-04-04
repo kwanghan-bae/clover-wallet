@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import { GlobalErrorBoundary } from '../components/ErrorBoundary';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -13,6 +13,7 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
 import { useNotifications } from '../hooks/useNotifications';
+import { useOffline } from '../hooks/useOffline';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -35,6 +36,7 @@ export default function RootLayout() {
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { registerToken } = useNotifications();
+  const { isOffline } = useOffline();
   const segments = useSegments();
   const router = useRouter();
 
@@ -74,6 +76,13 @@ export default function RootLayout() {
               elevation: 10,
             }}
           >
+            {isOffline && (
+              <View style={{ backgroundColor: '#F59E0B', paddingHorizontal: 16, paddingVertical: 8 }}>
+                <Text style={{ color: '#fff', textAlign: 'center', fontSize: 13, fontWeight: '600' }}>
+                  📡 오프라인 모드 — 캐시된 데이터를 표시합니다
+                </Text>
+              </View>
+            )}
             <Stack screenOptions={{
               headerShown: false,
               contentStyle: { backgroundColor: '#F5F7FA' }
