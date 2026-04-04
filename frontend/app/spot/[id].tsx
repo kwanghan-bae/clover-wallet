@@ -3,6 +3,7 @@ import { View, Text, SafeAreaView, ScrollView, TouchableOpacity, ActivityIndicat
 import { useRouter } from 'expo-router';
 import { ChevronLeft, MapPin, Trophy } from 'lucide-react-native';
 import { WinningHistory } from '../../api/types/spots';
+import { TravelPlan } from '../../api/travel';
 import GlassCard from '../../components/ui/GlassCard';
 import { WinningHistoryItem } from '../../components/ui/WinningHistoryItem';
 import { useSpotDetail } from '../../hooks/useSpotDetail';
@@ -12,7 +13,7 @@ import { useSpotDetail } from '../../hooks/useSpotDetail';
  */
 const SpotDetailScreen = () => {
   const router = useRouter();
-  const { history, isLoading, spotInfo, getWinCount } = useSpotDetail();
+  const { history, isLoading, spotInfo, getWinCount, travelPlans } = useSpotDetail();
 
   /** @description 특정 등수의 당첨 횟수를 렌더링합니다. */
   const renderWinCount = (rank: number) => getWinCount(rank);
@@ -74,7 +75,7 @@ const SpotDetailScreen = () => {
         {/* Winning History Section */}
         <View className="px-5 mt-8">
           <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mb-4">당첨 내역</Text>
-          
+
           {history && history.length > 0 ? (
             history.map((item: WinningHistory, index: number) => (
               <WinningHistoryItem key={`${item.round}-${index}`} item={item} />
@@ -86,6 +87,37 @@ const SpotDetailScreen = () => {
             </View>
           )}
         </View>
+
+        {/* Travel Plan Section */}
+        {travelPlans && travelPlans.length > 0 && (
+          <View className="px-5 mt-8">
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mb-4">🗺️ 주변 여행 코스</Text>
+            {travelPlans.map((plan: TravelPlan) => (
+              <View
+                key={plan.id}
+                className="bg-white rounded-2xl p-5 mb-3 border border-gray-100"
+                style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 6, elevation: 2 }}
+              >
+                <View className="flex-row items-center justify-between mb-2">
+                  <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A] text-base flex-1 mr-2" numberOfLines={1}>
+                    {plan.title}
+                  </Text>
+                  <View className="bg-[#E8F5E9] px-3 py-1 rounded-full">
+                    <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#4CAF50] text-xs">
+                      {plan.theme}
+                    </Text>
+                  </View>
+                </View>
+                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#757575] text-sm mb-3" numberOfLines={2}>
+                  {plan.description}
+                </Text>
+                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs">
+                  예상 소요 시간: {plan.estimatedHours}시간
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -2,6 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { spotsApi } from '../api/spots';
 import { WinningHistory } from '../api/types/spots';
+import { travelApi, TravelPlan } from '../api/travel';
 
 /**
  * @description 판매점 상세 화면에서 필요한 데이터와 로직을 관리하는 커스텀 훅입니다.
@@ -12,6 +13,12 @@ export function useSpotDetail() {
   const { data: history, isLoading: isHistoryLoading } = useQuery({
     queryKey: ['spotHistory', id],
     queryFn: () => spotsApi.getSpotHistory(Number(id)),
+    enabled: !!id,
+  });
+
+  const { data: travelPlans, isLoading: isTravelLoading } = useQuery({
+    queryKey: ['travelPlans', id],
+    queryFn: () => travelApi.getBySpot(Number(id)),
     enabled: !!id,
   });
 
@@ -30,8 +37,9 @@ export function useSpotDetail() {
   return {
     id,
     history,
-    isLoading: isHistoryLoading,
+    isLoading: isHistoryLoading || isTravelLoading,
     spotInfo,
     getWinCount,
+    travelPlans: travelPlans as TravelPlan[] | undefined,
   };
 }
