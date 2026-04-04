@@ -15,10 +15,9 @@ jest.mock('../../api/auth', () => ({
   },
 }));
 
-import { renderHook, act, waitFor } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react-native';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../utils/supabase';
-import { loadItem, saveItem, removeItem } from '../../utils/storage';
 
 describe('useAuth', () => {
   beforeEach(() => {
