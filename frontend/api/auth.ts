@@ -1,27 +1,29 @@
+// frontend/api/auth.ts
 import { apiClient } from './client';
 
 export interface LoginResponse {
   accessToken: string;
+  refreshToken?: string;
   user: {
     id: number;
     email: string;
-    nickname: string;
+    nickname: string | null;
   };
 }
 
 export const authApi = {
-  /**
-   * 로그인 (Supabase 토큰 전달 방식)
-   */
-  login: async (supabaseToken: string): Promise<LoginResponse> => {
-    return await apiClient.post('auth/login', {
-      json: { supabaseToken }
-    }).json();
-  },
-  
-  signup: async (data: any): Promise<void> => {
-    await apiClient.post('auth/signup', {
-      json: data
-    });
-  }
+  login: (supabaseToken: string) =>
+    apiClient
+      .post('auth/login', { json: { token: supabaseToken } })
+      .json<LoginResponse>(),
+
+  refresh: (refreshToken: string) =>
+    apiClient
+      .post('auth/refresh', { json: { refreshToken } })
+      .json<{ accessToken: string }>(),
+
+  logout: (accessToken: string) =>
+    apiClient.post('auth/logout', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    }),
 };

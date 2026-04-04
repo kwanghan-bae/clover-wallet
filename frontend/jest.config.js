@@ -7,8 +7,15 @@ module.exports = {
       tsconfig: 'tsconfig.json',
       isolatedModules: true,
     }],
+    '^.+\\.js$': ['ts-jest', {
+      tsconfig: 'tsconfig.json',
+      isolatedModules: true,
+    }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(ky)/)',
+  ],
   moduleNameMapper: {
     '^react-native$': '<rootDir>/node_modules/react-native-web',
     '^expo-router$': '<rootDir>/__tests__/mocks/expo-router.js',
