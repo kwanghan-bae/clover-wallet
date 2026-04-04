@@ -20,12 +20,32 @@ export class TravelService {
   }
 
   /**
-   * 사용자 맞춤형 여행 플랜 추천 (현재는 빈 목록 반환 - Kotlin 사양)
-   * @param _userId 사용자 ID
+   * 위치 기반 10km 반경 내 명당과 연결된 여행 플랜을 추천합니다.
+   * @param latitude 위도
+   * @param longitude 경도
    */
-  getRecommendedTravelPlans(_userId: bigint) {
-    // Kotlin DefaultTravelRecommendationService 로직 이식
-    return [];
+  async getRecommendedTravelPlans(latitude?: number, longitude?: number) {
+    if (!latitude || !longitude) return [];
+
+    const deltaLat = 0.09; // ~10km
+    const deltaLng = 0.11; // ~10km at 37°N
+    const nearbySpots = await this.prisma.lottoSpot.findMany({
+      where: {
+        latitude: { gte: latitude - deltaLat, lte: latitude + deltaLat },
+        longitude: { gte: longitude - deltaLng, lte: longitude + deltaLng },
+      },
+      select: { id: true },
+    });
+
+    if (nearbySpots.length === 0) return [];
+
+    const spotIds = nearbySpots.map((s) => s.id);
+    return this.prisma.travelPlan.findMany({
+      where: { spotId: { in: spotIds } },
+      include: { spot: true },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+    });
   }
 
   /**

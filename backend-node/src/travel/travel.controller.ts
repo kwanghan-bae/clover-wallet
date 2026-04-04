@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { TravelService } from './travel.service';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -19,12 +19,18 @@ export class TravelController {
   }
 
   /**
-   * 사용자 맞춤 추천 여행 플랜 조회 (인증 필요)
+   * 위치 기반 추천 여행 플랜 조회 (인증 필요)
    */
-  @UseGuards(AuthGuard('jwt'))
   @Get('recommended')
-  async getRecommendedTravelPlans(@Request() req: any) {
-    return this.travelService.getRecommendedTravelPlans(req.user.id);
+  @UseGuards(AuthGuard('jwt'))
+  async getRecommendedTravelPlans(
+    @Query('latitude') latitude?: string,
+    @Query('longitude') longitude?: string,
+  ) {
+    return this.travelService.getRecommendedTravelPlans(
+      latitude ? parseFloat(latitude) : undefined,
+      longitude ? parseFloat(longitude) : undefined,
+    );
   }
 
   /**
