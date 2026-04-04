@@ -39,7 +39,7 @@ export class CommunityService {
       this.prisma.post.count(),
     ]);
 
-    const likedPostIds = await this.getLikedPostIds(currentUserId, posts.map(p => p.id));
+    const likedPostIds = await this.getLikedPostIds(posts.map(p => p.id), currentUserId);
     const content = posts.map(p => this.transformPost(p, likedPostIds.has(p.id.toString())));
 
     return {
@@ -175,7 +175,7 @@ export class CommunityService {
   /**
    * 특정 사용자가 좋아요를 누른 게시글 ID 목록을 조회하여 Set 형태로 반환합니다.
    */
-  private async getLikedPostIds(userId?: bigint, postIds: bigint[]): Promise<Set<string>> {
+  private async getLikedPostIds(postIds: bigint[], userId?: bigint): Promise<Set<string>> {
     if (!userId || postIds.length === 0) return new Set();
     const likes = await this.prisma.postLike.findMany({
       where: { userId, postId: { in: postIds } },

@@ -45,7 +45,8 @@ describe('LottoService', () => {
 
   describe('saveGame', () => {
     it('로또 번호를 저장하고 사용자의 뱃지를 업데이트해야 한다', async () => {
-      const userId = 'user-1';
+      const userId = '1';
+      const userIdBig = BigInt(1);
       const dto = {
         numbers: [1, 10, 20, 30, 40, 45],
         extractionMethod: 'RANDOM',
@@ -56,8 +57,8 @@ describe('LottoService', () => {
       const result = await service.saveGame(userId, dto);
 
       expect(prisma.lottoGame.create).toHaveBeenCalledWith({
-        data: {
-          userId,
+        data: expect.objectContaining({
+          userId: userIdBig,
           number1: 1,
           number2: 10,
           number3: 20,
@@ -65,26 +66,26 @@ describe('LottoService', () => {
           number5: 40,
           number6: 45,
           extractionMethod: 'RANDOM',
-        },
+        }),
       });
-      expect(badgeService.updateUserBadges).toHaveBeenCalledWith(userId);
+      expect(badgeService.updateUserBadges).toHaveBeenCalledWith(userIdBig);
       expect(result).toEqual(mockGame);
     });
   });
 
   describe('getHistory', () => {
     it('사용자의 게임 내역을 페이징하여 반환해야 한다', async () => {
-      const userId = 'user-1';
+      const userId = '1';
       const mockItems = [{ id: BigInt(1) }, { id: BigInt(2) }];
       (prisma.lottoGame.findMany as jest.Mock).mockResolvedValue(mockItems);
       (prisma.lottoGame.count as jest.Mock).mockResolvedValue(25);
 
       const result = await service.getHistory(userId, 2, 10);
 
-      expect(result.items).toEqual(mockItems);
-      expect(result.total).toBe(25);
-      expect(result.page).toBe(2);
-      expect(result.lastPage).toBe(3);
+      expect(result.content).toEqual(mockItems);
+      expect(result.totalElements).toBe(25);
+      expect(result.pageNumber).toBe(2);
+      expect(result.totalPages).toBe(3);
       expect(prisma.lottoGame.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 10,
@@ -94,7 +95,9 @@ describe('LottoService', () => {
     });
 
     it('기본 인자값(1페이지, 10개)으로 내역을 조회해야 한다', async () => {
-      await service.getHistory('user-1');
+      (prisma.lottoGame.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.lottoGame.count as jest.Mock).mockResolvedValue(0);
+      await service.getHistory('1');
       expect(prisma.lottoGame.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           skip: 0,
@@ -106,7 +109,8 @@ describe('LottoService', () => {
 
   describe('getStatistics', () => {
     it('사용자의 당첨 및 낙첨 횟수를 정확히 집계해야 한다', async () => {
-      const userId = 'user-1';
+      const userId = '1';
+      const userIdBig = BigInt(1);
       const mockGames = [
         { status: 'WINNING_1' },
         { status: 'WINNING_5' },
@@ -122,7 +126,7 @@ describe('LottoService', () => {
       expect(stats.winCount).toBe(2); // WINNING_1, WINNING_5
       expect(stats.loseCount).toBe(2); // LOSING
       expect(prisma.lottoGame.findMany).toHaveBeenCalledWith({
-        where: { userId },
+        where: { userId: userIdBig },
         select: { status: true },
       });
     });

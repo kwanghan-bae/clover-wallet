@@ -1,5 +1,5 @@
-import { ExtractionMethod } from './constants/lotto-extraction-data';
-import { ExtractionContext } from './lotto-number.extractor';
+import { ExtractionMethod } from '../constants/lotto-extraction-data';
+import { ExtractionContext } from '../lotto-number.extractor';
 
 /**
  * @description 로또 번호 추출 전략을 위한 인터페이스입니다.

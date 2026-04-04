@@ -26,9 +26,11 @@ export class LottoService {
    * @param dto 저장할 게임 정보
    */
   async saveGame(userId: string, dto: SaveGameDto) {
+    const userIdBig = BigInt(userId);
     const game = await this.prisma.lottoGame.create({
       data: {
-        userId,
+        userId: userIdBig,
+        status: 'STASHED',
         number1: dto.numbers[0],
         number2: dto.numbers[1],
         number3: dto.numbers[2],
@@ -36,13 +38,20 @@ export class LottoService {
         number5: dto.numbers[4],
         number6: dto.numbers[5],
         extractionMethod: dto.extractionMethod,
-      },
+      } as any,
     });
 
     // 번호 생성 뱃지 체크
-    await this.badgeService.updateUserBadges(userId);
+    await this.badgeService.updateUserBadges(userIdBig);
 
     return game;
+  }
+
+  /**
+   * 컨트롤러용 별칭: 생성된 게임을 저장합니다.
+   */
+  async saveGeneratedGame(dto: SaveGameDto) {
+    return this.saveGame(String(dto.userId), dto);
   }
 
   /**
@@ -56,23 +65,32 @@ export class LottoService {
     page: number = 1,
     limit: number = 10,
   ): Promise<PageResponse<any>> {
+    const userIdBig = BigInt(userId);
     const skip = (page - 1) * limit;
-    const [items, total] = await Promise.all([
+    const [content, totalElements] = await Promise.all([
       this.prisma.lottoGame.findMany({
-        where: { userId },
+        where: { userId: userIdBig },
         orderBy: { createdAt: 'desc' },
         skip,
         take: limit,
       }),
-      this.prisma.lottoGame.count({ where: { userId } }),
+      this.prisma.lottoGame.count({ where: { userId: userIdBig } }),
     ]);
 
     return {
-      items,
-      total,
-      page,
-      lastPage: Math.ceil(total / limit),
+      content,
+      pageNumber: page,
+      pageSize: limit,
+      totalElements,
+      totalPages: Math.ceil(totalElements / limit),
     };
+  }
+
+  /**
+   * 컨트롤러용 별칭: 사용자 ID로 게임 목록을 페이징 조회합니다.
+   */
+  async getGamesByUserId(userId: string | bigint, page: number = 0, size: number = 20): Promise<PageResponse<any>> {
+    return this.getHistory(String(userId), page + 1, size);
   }
 
   /**
@@ -80,8 +98,9 @@ export class LottoService {
    * @param userId 사용자 ID
    */
   async getStatistics(userId: string) {
+    const userIdBig = BigInt(userId);
     const games = await this.prisma.lottoGame.findMany({
-      where: { userId },
+      where: { userId: userIdBig },
       select: { status: true },
     });
 
