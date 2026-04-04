@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
+import { FollowService } from '../follow.service';
 import { AuthGuard } from '@nestjs/passport';
 
 /**
@@ -22,6 +23,15 @@ describe('UsersController', () => {
             updateUser: jest.fn(),
             deleteUserAccount: jest.fn(),
             getUserStats: jest.fn(),
+          },
+        },
+        {
+          provide: FollowService,
+          useValue: {
+            toggleFollow: jest.fn(),
+            getFollowers: jest.fn(),
+            getFollowing: jest.fn(),
+            getCounts: jest.fn(),
           },
         },
       ],

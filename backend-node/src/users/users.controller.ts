@@ -2,13 +2,18 @@ import {
   Controller,
   Get,
   Put,
+  Post,
   Delete,
   Body,
   Param,
+  Query,
   UseGuards,
   Request,
+  Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
+import { FollowService } from './follow.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -18,7 +23,10 @@ import { AuthGuard } from '@nestjs/passport';
  */
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly followService: FollowService,
+  ) {}
 
   /**
    * 내 프로필 정보 조회 (JWT 인증 필요)
@@ -69,5 +77,50 @@ export class UsersController {
   @Get(':id/stats')
   async getUserStats(@Param('id') id: string) {
     return this.usersService.getUserStats(id);
+  }
+
+  /**
+   * 팔로우/언팔로우 토글 (JWT 인증 필요)
+   * @param id 대상 사용자 ID
+   */
+  @Post(':id/follow')
+  @UseGuards(AuthGuard('jwt'))
+  async toggleFollow(@Param('id', ParseIntPipe) id: number, @Req() req) {
+    return this.followService.toggleFollow(req.user.id, BigInt(id));
+  }
+
+  /**
+   * 특정 사용자의 팔로워 목록 조회
+   * @param id 사용자 ID
+   */
+  @Get(':id/followers')
+  async getFollowers(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('size', new ParseIntPipe({ optional: true })) size?: number,
+  ) {
+    return this.followService.getFollowers(BigInt(id), page ?? 0, size ?? 20);
+  }
+
+  /**
+   * 특정 사용자가 팔로잉하는 목록 조회
+   * @param id 사용자 ID
+   */
+  @Get(':id/following')
+  async getFollowing(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('size', new ParseIntPipe({ optional: true })) size?: number,
+  ) {
+    return this.followService.getFollowing(BigInt(id), page ?? 0, size ?? 20);
+  }
+
+  /**
+   * 특정 사용자의 팔로워/팔로잉 카운트 조회
+   * @param id 사용자 ID
+   */
+  @Get(':id/follow-counts')
+  async getFollowCounts(@Param('id', ParseIntPipe) id: number) {
+    return this.followService.getCounts(BigInt(id));
   }
 }

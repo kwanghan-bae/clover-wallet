@@ -52,6 +52,10 @@ model User {
   notifications  Notification[]
   /// 사용자의 리프레시 토큰 목록
   refreshTokens  RefreshToken[]
+  /// 이 사용자를 팔로우하는 사람들
+  followers      Follow[] @relation("Following")
+  /// 이 사용자가 팔로우하는 사람들
+  following      Follow[] @relation("Followers")
 
   @@map("users")
   @@index([ssoQualifier], map: "idx_users_sso_qualifier")
@@ -391,7 +395,35 @@ model PostLike {
 }
 
 // ------------------------------------------------------
-// 4. 알림 (Notification)
+// 4. 팔로우 (Follow)
+// ------------------------------------------------------
+
+/**
+ * 사용자 간 팔로우 관계를 저장하는 모델입니다.
+ */
+model Follow {
+  /// 고유 식별자 (PK)
+  id          BigInt   @id @default(autoincrement())
+  /// 팔로워 사용자 ID (FK)
+  followerId  BigInt   @map("follower_id")
+  /// 팔로잉 대상 사용자 ID (FK)
+  followingId BigInt   @map("following_id")
+  /// 팔로우 일시
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  /// 팔로워 사용자 정보
+  follower    User @relation("Followers", fields: [followerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  /// 팔로잉 대상 사용자 정보
+  following   User @relation("Following", fields: [followingId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+  @@map("follow")
+}
+
+// ------------------------------------------------------
+// 5. 알림 (Notification)
 // ------------------------------------------------------
 
 /**
