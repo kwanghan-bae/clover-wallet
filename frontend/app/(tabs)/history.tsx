@@ -1,11 +1,21 @@
 import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 import { HistoryItem } from '../../components/ui/HistoryItem';
 import { LottoRecord } from '../../api/types/lotto';
+import { ticketsApi, LottoTicket } from '../../api/tickets';
 import { loadItem, StorageKeys, removeFromItemArray } from '../../utils/storage';
 import { QrCode, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const getStatusBadge = (status: string) => {
+  switch (status) {
+    case 'WINNING': return { label: '당첨', color: '#4CAF50', bg: '#E8F5E9' };
+    case 'LOSING': return { label: '미당첨', color: '#757575', bg: '#F5F5F5' };
+    default: return { label: '확인중', color: '#FFC107', bg: '#FFF8E1' };
+  }
+};
 
 /**
  * @description 사용자가 생성하거나 스캔하여 저장한 로또 번호 내역을 확인할 수 있는 화면입니다.
@@ -13,6 +23,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 const HistoryScreen = () => {
   const router = useRouter();
   const [history, setHistory] = useState<LottoRecord[]>([]);
+
+  const { data: ticketData } = useQuery({
+    queryKey: ['myTickets'],
+    queryFn: () => ticketsApi.getMyTickets(0, 100),
+  });
 
   const loadHistory = useCallback(() => {
     const data = loadItem<LottoRecord[]>(StorageKeys.SAVED_NUMBERS) || [];
@@ -31,6 +46,22 @@ const HistoryScreen = () => {
     loadHistory();
   };
 
+  // 백엔드 티켓을 LottoRecord 형태로 변환
+  const backendRecords: LottoRecord[] = (ticketData?.content ?? []).flatMap((ticket: LottoTicket) =>
+    (ticket.games ?? []).map((game) => ({
+      id: game.id,
+      status: game.status as LottoRecord['status'],
+      numbers: [game.number1, game.number2, game.number3, game.number4, game.number5, game.number6],
+      createdAt: ticket.createdAt,
+      round: ticket.ordinal,
+      prizeAmount: game.prizeAmount,
+      _ticketStatus: ticket.status,
+    }))
+  );
+
+  // 로컬 기록과 백엔드 기록 합산 (백엔드를 먼저 표시)
+  const combinedHistory = [...backendRecords, ...history];
+
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA]">
       {/* Header */}
@@ -43,12 +74,30 @@ const HistoryScreen = () => {
 
       <View className="flex-1">
         <FlatList
-          data={history}
-          keyExtractor={(item) => item.id}
+          data={combinedHistory}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           contentContainerStyle={{ padding: 20 }}
-          renderItem={({ item }) => (
-            <HistoryItem record={item} onDelete={handleDelete} />
-          )}
+          renderItem={({ item }) => {
+            const ticketStatus = (item as LottoRecord & { _ticketStatus?: string })._ticketStatus;
+            const badge = ticketStatus ? getStatusBadge(ticketStatus) : null;
+            return (
+              <View>
+                {badge && (
+                  <View
+                    className="self-start mb-1 px-3 py-1 rounded-full"
+                    style={{ backgroundColor: badge.bg }}
+                  >
+                    <Text
+                      style={{ fontFamily: 'NotoSansKR_700Bold', color: badge.color, fontSize: 12 }}
+                    >
+                      {badge.label}
+                    </Text>
+                  </View>
+                )}
+                <HistoryItem record={item} onDelete={handleDelete} />
+              </View>
+            );
+          }}
           ListEmptyComponent={
             <View className="items-center justify-center py-32" style={{ alignItems: 'center', justifyContent: 'center' }}>
               <View className="w-24 h-24 bg-[#BDBDBD]/10 rounded-full items-center justify-center mb-8">
