@@ -135,30 +135,75 @@ export class CommunityService {
   }
 
   /**
-   * 특정 게시글의 댓글 목록을 조회합니다.
+   * 특정 게시글의 댓글 목록을 조회합니다. (최상위 댓글만, 대댓글 포함)
    */
   async getCommentsByPostId(postId: bigint, page: number, size: number) {
     const skip = page * size;
     const [comments, total] = await Promise.all([
       this.prisma.comment.findMany({
-        where: { postId },
+        where: { postId, parentId: null },
         skip,
         take: size,
         orderBy: { createdAt: 'asc' },
         include: {
           user: { select: { id: true, ssoQualifier: true, badges: true } },
+          replies: {
+            orderBy: { createdAt: 'asc' },
+            include: {
+              user: { select: { id: true, ssoQualifier: true, badges: true } },
+            },
+          },
         },
       }),
-      this.prisma.comment.count({ where: { postId } }),
+      this.prisma.comment.count({ where: { postId, parentId: null } }),
     ]);
 
     const content = comments.map((c) => ({
       ...c,
       userSummary: this.mapToUserSummary(c.user),
+      replies: c.replies.map((r) => ({
+        ...r,
+        userSummary: this.mapToUserSummary(r.user),
+      })),
     }));
 
     return {
       content,
+      pageNumber: page,
+      pageSize: size,
+      totalElements: total,
+      totalPages: Math.ceil(total / size),
+    };
+  }
+
+  /**
+   * 게시글을 삭제합니다. (작성자만 가능)
+   */
+  async deletePost(postId: bigint, userId: bigint): Promise<void> {
+    await this.validatePostOwnership(postId, userId);
+    await this.prisma.post.delete({ where: { id: postId } });
+  }
+
+  /**
+   * 특정 사용자가 작성한 게시글 목록을 페이지네이션하여 조회합니다.
+   */
+  async getUserPosts(userId: bigint, page: number, size: number) {
+    const [posts, total] = await Promise.all([
+      this.prisma.post.findMany({
+        where: { userId },
+        skip: page * size,
+        take: size,
+        orderBy: { createdAt: 'desc' },
+        include: {
+          user: { select: { id: true, ssoQualifier: true, email: true, badges: true } },
+          _count: { select: { comments: true } },
+        },
+      }),
+      this.prisma.post.count({ where: { userId } }),
+    ]);
+
+    return {
+      content: posts.map((p) => this.transformPost(p, false)),
       pageNumber: page,
       pageSize: size,
       totalElements: total,

@@ -3,11 +3,14 @@ import {
   Get,
   Post,
   Put,
+  Delete,
   Body,
   Param,
   Query,
   UseGuards,
   Request,
+  Req,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CommunityService } from './community.service';
 import { CreatePostDto } from './dto/create-post.dto';
@@ -112,5 +115,27 @@ export class CommunityController {
     @Body() dto: UpdateCommentDto,
   ) {
     return this.communityService.updateComment(BigInt(id), req.user.id, dto);
+  }
+
+  /**
+   * 게시글을 삭제합니다. (작성자만 가능)
+   */
+  @Delete('posts/:id')
+  @UseGuards(AuthGuard('jwt'))
+  async deletePost(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
+    await this.communityService.deletePost(BigInt(id), req.user.id);
+    return { message: 'Post deleted' };
+  }
+
+  /**
+   * 특정 사용자가 작성한 게시글 목록을 조회합니다.
+   */
+  @Get('users/:userId/posts')
+  async getUserPosts(
+    @Param('userId', ParseIntPipe) userId: number,
+    @Query('page', new ParseIntPipe({ optional: true })) page?: number,
+    @Query('size', new ParseIntPipe({ optional: true })) size?: number,
+  ) {
+    return this.communityService.getUserPosts(BigInt(userId), page ?? 0, size ?? 10);
   }
 }
