@@ -1,9 +1,0 @@
-.gradle
-build
-out
-bin
-.idea
-*.log
-.DS_Store
-Dockerfile
-render.yaml
