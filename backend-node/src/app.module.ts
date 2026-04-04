@@ -13,6 +13,7 @@ import { TicketModule } from './ticket/ticket.module';
 import { TravelModule } from './travel/travel.module';
 import { NotificationModule } from './notification/notification.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AdminModule } from './admin/admin.module';
 
 /**
  * 애플리케이션의 루트 모듈입니다.
@@ -37,6 +38,7 @@ import { PrismaModule } from './prisma/prisma.module';
     TravelModule,
     NotificationModule,
     PrismaModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],
