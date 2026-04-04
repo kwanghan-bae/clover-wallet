@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WinningInfoCrawlerService } from '../winning-info-crawler.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { FcmService } from '../../notification/fcm.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import axios from 'axios';
 
@@ -28,12 +29,21 @@ describe('WinningInfoCrawlerService', () => {
               findUnique: jest.fn(),
               create: jest.fn(),
             },
+            user: {
+              findMany: jest.fn().mockResolvedValue([]),
+            },
           },
         },
         {
           provide: EventEmitter2,
           useValue: {
             emit: jest.fn(),
+          },
+        },
+        {
+          provide: FcmService,
+          useValue: {
+            sendBroadcastNotification: jest.fn(),
           },
         },
       ],

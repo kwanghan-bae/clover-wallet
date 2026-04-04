@@ -20,6 +20,7 @@ import {
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { MyPageMenuItem, MyPageMenuDivider } from '../../components/ui/MyPageMenuItem';
+import { useNotifications } from '../../hooks/useNotifications';
 
 /** @description 사용자가 획득할 수 있는 뱃지 목록의 모킹 데이터입니다. */
 const MOCK_BADGES = [
@@ -34,6 +35,7 @@ const MOCK_BADGES = [
  */
 const MyPageScreen = () => {
   const router = useRouter();
+  const { unreadCount } = useNotifications();
 
   const user = {
     name: '클로버님',
@@ -101,6 +103,13 @@ const MyPageScreen = () => {
         {/* Menu List */}
         <View className="px-5">
           <View className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-50">
+            <MyPageMenuItem
+              icon={<Bell size={20} color="#1A1A1A" />}
+              label="알림"
+              onPress={() => router.push('/notifications')}
+              badge={unreadCount > 0 ? unreadCount : undefined}
+            />
+            <MyPageMenuDivider />
             <MyPageMenuItem icon={<Settings size={20} color="#1A1A1A" />} label="계정 설정" />
             <MyPageMenuDivider />
             <MyPageMenuItem icon={<Bell size={20} color="#1A1A1A" />} label="알림 설정" />

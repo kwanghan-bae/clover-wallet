@@ -12,6 +12,7 @@ import {
 } from '@expo-google-fonts/noto-sans-kr';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useAuth } from '../hooks/useAuth';
+import { useNotifications } from '../hooks/useNotifications';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
@@ -33,6 +34,7 @@ export default function RootLayout() {
   }, [loaded, error]);
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { registerToken } = useNotifications();
   const segments = useSegments();
   const router = useRouter();
 
@@ -45,6 +47,12 @@ export default function RootLayout() {
       router.replace('/(tabs)');
     }
   }, [isAuthenticated, authLoading, segments]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      registerToken();
+    }
+  }, [isAuthenticated]);
 
   if (!loaded && !error) {
     return null;

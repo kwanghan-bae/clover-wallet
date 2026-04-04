@@ -7,6 +7,7 @@ interface MenuItemProps {
   label: string;
   onPress?: () => void;
   isDestructive?: boolean;
+  badge?: number;
 }
 
 /** 
@@ -16,7 +17,8 @@ export function MyPageMenuItem({
   icon,
   label,
   onPress,
-  isDestructive = false
+  isDestructive = false,
+  badge,
 }: MenuItemProps) {
   return (
     <TouchableOpacity
@@ -29,6 +31,13 @@ export function MyPageMenuItem({
       <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className={`flex-1 text-base ${isDestructive ? 'text-red-400' : 'text-[#1A1A1A]'}`}>
         {label}
       </Text>
+      {badge !== undefined && (
+        <View className="bg-[#4CAF50] rounded-full min-w-[20px] h-5 items-center justify-center px-1 mr-2">
+          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-xs">
+            {badge > 99 ? '99+' : badge}
+          </Text>
+        </View>
+      )}
       <ChevronRight size={18} color="#E0E0E0" />
     </TouchableOpacity>
   );

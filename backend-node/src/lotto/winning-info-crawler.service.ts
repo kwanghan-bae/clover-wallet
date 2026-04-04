@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import axios from 'axios';
 import { Cron } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { FcmService } from '../notification/fcm.service';
 
 /**
  * 당첨 정보 수집 및 정기 작업을 담당하는 서비스입니다.
@@ -20,6 +21,7 @@ export class WinningInfoCrawlerService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
+    private readonly fcmService: FcmService,
   ) {}
 
   /**
@@ -40,6 +42,40 @@ export class WinningInfoCrawlerService {
       this.logger.log(`${round} 회차 정기 작업 완료 및 이벤트 발행`);
     } catch (error) {
       this.logger.error(`${round} 회차 정기 작업 실패`, error.stack);
+    }
+  }
+
+  /**
+   * 매주 토요일 오전 10시에 실행 — 추첨일 알림을 FCM 토큰이 등록된 사용자에게 발송합니다.
+   */
+  @Cron('0 10 * * 6') // 매주 토요일 10:00 AM
+  async handleDrawDayReminder() {
+    this.logger.log('추첨일 알림 발송 시작');
+
+    try {
+      const users = await this.prisma.user.findMany({
+        where: { fcmToken: { not: null } },
+        select: { fcmToken: true },
+      });
+
+      const tokens = users
+        .map((u) => u.fcmToken)
+        .filter((t): t is string => t !== null);
+
+      if (tokens.length === 0) {
+        this.logger.log('FCM 토큰이 등록된 사용자가 없습니다.');
+        return;
+      }
+
+      await this.fcmService.sendBroadcastNotification(
+        tokens,
+        '🍀 오늘은 추첨일!',
+        '오늘 저녁 로또 추첨이 있습니다. 번호를 확인해보세요!',
+      );
+
+      this.logger.log(`추첨일 알림 발송 완료: ${tokens.length}명`);
+    } catch (error) {
+      this.logger.error('추첨일 알림 발송 실패', error.stack);
     }
   }
 
