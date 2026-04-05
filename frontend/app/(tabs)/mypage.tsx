@@ -23,17 +23,20 @@ import {
   Smartphone
 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 import { MyPageMenuItem, MyPageMenuDivider } from '../../components/ui/MyPageMenuItem';
 import { useNotifications } from '../../hooks/useNotifications';
 import { useTheme, ThemePreference } from '../../hooks/useTheme';
+import { useAuth } from '../../hooks/useAuth';
+import { usersApi } from '../../api/users';
 
-/** @description 사용자가 획득할 수 있는 뱃지 목록의 모킹 데이터입니다. */
-const MOCK_BADGES = [
-  { id: '1', label: '첫 당첨', icon: <Trophy size={20} color="#FFC107" />, color: 'bg-amber-50' },
-  { id: '2', label: '열정', icon: <Flame size={20} color="#FF5252" />, color: 'bg-red-50' },
-  { id: '3', label: '인증됨', icon: <CheckCircle2 size={20} color="#2196F3" />, color: 'bg-blue-50' },
-  { id: '4', label: 'VIP', icon: <Star size={20} color="#9C27B0" />, color: 'bg-purple-50' },
-];
+/** @description 뱃지 키에 따른 아이콘/색상 매핑 */
+const BADGE_CONFIG: Record<string, { label: string; icon: React.ReactElement; color: string }> = {
+  first_win: { label: '첫 당첨', icon: <Trophy size={20} color="#FFC107" />, color: 'bg-amber-50' },
+  passion: { label: '열정', icon: <Flame size={20} color="#FF5252" />, color: 'bg-red-50' },
+  verified: { label: '인증됨', icon: <CheckCircle2 size={20} color="#2196F3" />, color: 'bg-blue-50' },
+  vip: { label: 'VIP', icon: <Star size={20} color="#9C27B0" />, color: 'bg-purple-50' },
+};
 
 /**
  * @description 사용자의 프로필, 뱃지, 앱 설정 등을 관리하는 마이페이지 화면입니다.
@@ -42,11 +45,38 @@ const MyPageScreen = () => {
   const router = useRouter();
   const { unreadCount } = useNotifications();
   const { themePreference, setThemePreference } = useTheme();
+  const { user, logout } = useAuth();
 
-  const user = {
-    name: '클로버님',
-    email: 'clover@example.com'
-  };
+  const { data: stats } = useQuery({
+    queryKey: ['myStats'],
+    queryFn: () => usersApi.getMyStats(),
+    enabled: !!user,
+  });
+
+  const { data: profile } = useQuery({
+    queryKey: ['myProfile'],
+    queryFn: () => usersApi.getMe(),
+    enabled: !!user,
+  });
+
+  const displayName = user?.nickname ?? user?.email?.split('@')[0] ?? '사용자';
+  const displayEmail = user?.email ?? '';
+
+  const winningsDisplay = stats?.totalWinnings != null
+    ? stats.totalWinnings.toLocaleString('ko-KR') + '원'
+    : '-';
+
+  const roiDisplay = stats?.roi != null
+    ? (stats.roi >= 0 ? '+' : '') + stats.roi.toFixed(1) + '%'
+    : '-';
+
+  const roiColor = stats?.roi != null && stats.roi < 0 ? '#FF5252' : '#4CAF50';
+
+  const badges = profile?.badges
+    ? profile.badges.split(',').map(key => key.trim()).filter(Boolean)
+    : [];
+
+  const avatarLetter = displayName.charAt(0).toUpperCase();
 
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
@@ -69,42 +99,48 @@ const MyPageScreen = () => {
           >
             <View className="flex-row items-center mb-6">
               <View className="w-16 h-16 rounded-full bg-[#4CAF50]/10 items-center justify-center mr-4">
-                <Text className="text-[#4CAF50] text-xl font-bold">C</Text>
+                <Text className="text-[#4CAF50] text-xl font-bold">{avatarLetter}</Text>
               </View>
               <View>
-                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">{user.name}</Text>
-                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-sm">{user.email}</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">{displayName}</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-sm">{displayEmail}</Text>
               </View>
             </View>
 
             <View className="flex-row justify-between bg-gray-50 rounded-2xl p-4">
               <View className="items-center flex-1">
                 <Text className="text-[#BDBDBD] text-xs mb-1">총 당첨금</Text>
-                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A]">1,250,000원</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A]">{winningsDisplay}</Text>
               </View>
               <View className="w-[1px] bg-gray-200" />
               <View className="items-center flex-1">
                 <Text className="text-[#BDBDBD] text-xs mb-1">수익률</Text>
-                <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50]">+15.4%</Text>
+                <Text style={{ fontFamily: 'NotoSansKR_700Bold', color: roiColor }}>{roiDisplay}</Text>
               </View>
             </View>
           </View>
         </View>
 
         {/* Badges */}
-        <View className="px-5 mb-8">
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mb-4">내 뱃지</Text>
-          <View className="flex-row justify-between">
-            {MOCK_BADGES.map(badge => (
-              <View key={badge.id} className="items-center">
-                <View className={`${badge.color} w-14 h-14 rounded-2xl items-center justify-center mb-2 shadow-sm`}>
-                  {badge.icon}
-                </View>
-                <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-xs text-[#757575]">{badge.label}</Text>
-              </View>
-            ))}
+        {badges.length > 0 && (
+          <View className="px-5 mb-8">
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mb-4">내 뱃지</Text>
+            <View className="flex-row flex-wrap gap-4">
+              {badges.map(key => {
+                const config = BADGE_CONFIG[key];
+                if (!config) return null;
+                return (
+                  <View key={key} className="items-center">
+                    <View className={`${config.color} w-14 h-14 rounded-2xl items-center justify-center mb-2 shadow-sm`}>
+                      {config.icon}
+                    </View>
+                    <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-xs text-[#757575]">{config.label}</Text>
+                  </View>
+                );
+              })}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Theme Settings */}
         <View className="px-5 mb-6">
@@ -162,7 +198,18 @@ const MyPageScreen = () => {
             <MyPageMenuDivider />
             <MyPageMenuItem icon={<Info size={20} color="#1A1A1A" />} label="앱 정보" />
             <MyPageMenuDivider />
-            <MyPageMenuItem icon={<LogOut size={20} color="#1A1A1A" />} label="로그아웃" onPress={() => Alert.alert("로그아웃", "정말로 로그아웃 하시겠습니까?")} />
+            <MyPageMenuItem
+              icon={<LogOut size={20} color="#1A1A1A" />}
+              label="로그아웃"
+              onPress={() => Alert.alert(
+                "로그아웃",
+                "정말로 로그아웃 하시겠습니까?",
+                [
+                  { text: "취소", style: "cancel" },
+                  { text: "로그아웃", style: "destructive", onPress: logout },
+                ]
+              )}
+            />
             <MyPageMenuDivider />
             <MyPageMenuItem
               icon={<UserX size={20} color="#FF5252" />}
