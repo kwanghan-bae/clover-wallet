@@ -40,7 +40,11 @@ const HomeScreen = () => {
             Clover Wallet
           </Text>
         </View>
-        <TouchableOpacity onPress={() => router.push('/notification')}>
+        <TouchableOpacity
+          onPress={() => router.push('/notification')}
+          accessibilityLabel="알림"
+          accessibilityRole="button"
+        >
           <Bell size={24} color="#1A1A1A" />
         </TouchableOpacity>
       </View>
@@ -107,6 +111,9 @@ const HomeScreen = () => {
           <TouchableOpacity
             onPress={() => router.push('/number-generation')}
             activeOpacity={0.9}
+            accessibilityLabel="번호 생성하기"
+            accessibilityRole="button"
+            testID="btn-generate"
             style={{
               backgroundColor: 'white',
               paddingHorizontal: 48,

@@ -24,6 +24,8 @@ export function MyPageMenuItem({
     <TouchableOpacity
       onPress={onPress}
       className="flex-row items-center p-5 active:bg-gray-50"
+      accessibilityLabel={label}
+      accessibilityRole="button"
     >
       <View className="mr-4">
         {icon}

@@ -80,7 +80,12 @@ const ScanScreen = () => {
       {/* Top Header */}
       <SafeAreaView className="absolute top-0 left-0 right-0">
         <View className="flex-row justify-between p-4">
-          <TouchableOpacity onPress={() => router.back()} className="w-10 h-10 rounded-full bg-black/40 items-center justify-center">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="w-10 h-10 rounded-full bg-black/40 items-center justify-center"
+            accessibilityLabel="스캔 화면 닫기"
+            accessibilityRole="button"
+          >
             <X size={24} color="white" />
           </TouchableOpacity>
         </View>
@@ -90,12 +95,18 @@ const ScanScreen = () => {
           <TouchableOpacity
             style={[styles.modeTab, scanMode === 'qr' && { backgroundColor: PRIMARY_COLOR }]}
             onPress={() => setScanMode('qr')}
+            accessibilityRole="tab"
+            accessibilityLabel="QR 스캔"
+            accessibilityState={{ selected: scanMode === 'qr' }}
           >
             <Text style={[styles.modeTabText, scanMode === 'qr' && styles.modeTabTextActive]}>QR 스캔</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.modeTab, scanMode === 'ocr' && { backgroundColor: PRIMARY_COLOR }]}
             onPress={() => setScanMode('ocr')}
+            accessibilityRole="tab"
+            accessibilityLabel="번호 촬영"
+            accessibilityState={{ selected: scanMode === 'ocr' }}
           >
             <Text style={[styles.modeTabText, scanMode === 'ocr' && styles.modeTabTextActive]}>번호 촬영</Text>
           </TouchableOpacity>
@@ -110,6 +121,8 @@ const ScanScreen = () => {
               onPress={handleCapture}
               disabled={isProcessing}
               className="bg-primary px-10 py-4 rounded-full flex-row items-center shadow-2xl"
+              accessibilityLabel="사진 촬영"
+              accessibilityRole="button"
             >
               {isProcessing ? (
                 <ActivityIndicator color="white" size="small" />

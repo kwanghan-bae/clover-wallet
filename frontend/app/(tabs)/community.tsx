@@ -68,6 +68,9 @@ const CommunityScreen = () => {
         <TouchableOpacity
           onPress={() => setFeedType('all')}
           activeOpacity={0.8}
+          accessibilityRole="tab"
+          accessibilityLabel="전체"
+          accessibilityState={{ selected: feedType === 'all' }}
           className={`flex-1 py-2 rounded-full items-center ${feedType === 'all' ? 'bg-white dark:bg-dark-card' : ''}`}
           style={feedType === 'all' ? { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 2 } : undefined}
         >
@@ -81,6 +84,9 @@ const CommunityScreen = () => {
         <TouchableOpacity
           onPress={() => setFeedType('following')}
           activeOpacity={0.8}
+          accessibilityRole="tab"
+          accessibilityLabel="팔로잉"
+          accessibilityState={{ selected: feedType === 'following' }}
           className={`flex-1 py-2 rounded-full items-center ${feedType === 'following' ? 'bg-white dark:bg-dark-card' : ''}`}
           style={feedType === 'following' ? { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 2 } : undefined}
         >
@@ -154,6 +160,9 @@ const CommunityScreen = () => {
           activeOpacity={0.8}
           onPress={() => router.push('/create-post')}
           style={{ borderRadius: 28, overflow: 'hidden' }}
+          accessibilityLabel="새 게시글 작성"
+          accessibilityRole="button"
+          testID="fab-create-post"
         >
           <LinearGradient
             colors={['#4CAF50', '#388E3C']}

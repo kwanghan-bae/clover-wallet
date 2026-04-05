@@ -166,6 +166,9 @@ const MyPageScreen = () => {
                   onPress={() => setThemePreference(key)}
                   className={`flex-1 flex-row items-center justify-center py-3 rounded-2xl mx-1 ${themePreference === key ? 'bg-primary' : 'bg-gray-100 dark:bg-dark-surface'}`}
                   style={{ gap: 6 }}
+                  accessibilityRole="radio"
+                  accessibilityLabel={label}
+                  accessibilityState={{ selected: themePreference === key }}
                 >
                   {icon}
                   <Text

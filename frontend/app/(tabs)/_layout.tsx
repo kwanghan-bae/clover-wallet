@@ -101,6 +101,9 @@ const TabLayout = () => {
         <TouchableOpacity
           onPress={() => router.push('/scan')}
           activeOpacity={0.9}
+          accessibilityLabel="QR 스캔"
+          accessibilityRole="button"
+          testID="tab-scan"
           style={{
             width: 60,
             height: 60,
