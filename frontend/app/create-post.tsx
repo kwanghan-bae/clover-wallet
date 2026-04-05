@@ -38,7 +38,7 @@ const CreatePostScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-dark-bg">
       <Stack.Screen options={{
         headerShown: true,
         title: 'Create Post',
@@ -59,7 +59,7 @@ const CreatePostScreen = () => {
           placeholder="Title"
           value={title}
           onChangeText={setTitle}
-          className="border-0 border-b border-gray-100 px-0 text-xl font-bold"
+          className="border-0 border-b border-gray-100 dark:border-dark-card px-0 text-xl font-bold"
         />
         <Input
           placeholder="What's on your mind?"
@@ -72,7 +72,7 @@ const CreatePostScreen = () => {
         />
       </ScrollView>
 
-      <View className="p-4 border-t border-gray-50">
+      <View className="p-4 border-t border-gray-50 dark:border-dark-card">
         <PrimaryButton
           label="Post Story"
           onPress={handleSubmit}

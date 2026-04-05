@@ -34,7 +34,7 @@ function NotificationItem({
   return (
     <TouchableOpacity
       onPress={() => onPress(item.id)}
-      className={`flex-row items-start p-4 mx-4 mb-2 rounded-2xl ${item.isRead ? 'bg-white' : 'bg-green-50'}`}
+      className={`flex-row items-start p-4 mx-4 mb-2 rounded-2xl ${item.isRead ? 'bg-white dark:bg-dark-surface' : 'bg-green-50 dark:bg-green-900/20'}`}
       style={{
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
@@ -43,14 +43,14 @@ function NotificationItem({
         elevation: 1,
       }}
     >
-      <View className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center mr-3">
+      <View className="w-10 h-10 rounded-full bg-gray-100 dark:bg-dark-card items-center justify-center mr-3">
         <NotificationIcon type={item.type} />
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
           <Text
             style={{ fontFamily: 'NotoSansKR_700Bold' }}
-            className="text-[#1A1A1A] text-sm flex-1 mr-2"
+            className="text-[#1A1A1A] dark:text-dark-text text-sm flex-1 mr-2"
             numberOfLines={1}
           >
             {item.title}
@@ -61,7 +61,7 @@ function NotificationItem({
         </View>
         <Text
           style={{ fontFamily: 'NotoSansKR_400Regular' }}
-          className="text-[#757575] text-xs leading-4"
+          className="text-[#757575] dark:text-dark-text-secondary text-xs leading-4"
           numberOfLines={2}
         >
           {item.message}
@@ -88,7 +88,7 @@ function NotificationItem({
 function EmptyState() {
   return (
     <View className="flex-1 items-center justify-center py-24">
-      <View className="w-16 h-16 rounded-full bg-gray-100 items-center justify-center mb-4">
+      <View className="w-16 h-16 rounded-full bg-gray-100 dark:bg-dark-card items-center justify-center mb-4">
         <Bell size={28} color="#BDBDBD" />
       </View>
       <Text
@@ -119,7 +119,7 @@ export default function NotificationsScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       <Stack.Screen options={{ title: '알림', headerShown: true }} />
       {!isLoading && notifications.length === 0 ? (
         <EmptyState />

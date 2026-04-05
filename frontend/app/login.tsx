@@ -72,7 +72,7 @@ const LoginScreen = () => {
                 source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/240px-Google_%22G%22_logo.svg.png' }}
                 className="w-6 h-6 mr-3"
               />
-              <Text className="text-[#1A1A1A] text-base font-bold">
+              <Text className="text-[#1A1A1A] dark:text-dark-text text-base font-bold">
                 Google 계정으로 계속하기
               </Text>
             </TouchableOpacity>

@@ -122,8 +122,8 @@ const ScanScreen = () => {
             </TouchableOpacity>
           )
         ) : (
-          <View className="bg-white rounded-3xl p-6 w-[90%] shadow-2xl">
-            <Text className="text-xl font-bold text-text-dark mb-2 text-center">인식된 번호 확인</Text>
+          <View className="bg-white dark:bg-dark-surface rounded-3xl p-6 w-[90%] shadow-2xl">
+            <Text className="text-xl font-bold text-text-dark dark:text-dark-text mb-2 text-center">인식된 번호 확인</Text>
             {scanResult.round && <Text className="text-primary font-bold text-center mb-4">{scanResult.round}회차</Text>}
             <View className="items-center mb-6">
               <BallRow numbers={scanResult.numbers} />
@@ -132,10 +132,10 @@ const ScanScreen = () => {
             <View className="flex-row gap-3">
               <TouchableOpacity
                 onPress={resetScan}
-                className="flex-1 h-14 bg-gray-100 rounded-xl items-center justify-center flex-row"
+                className="flex-1 h-14 bg-gray-100 dark:bg-dark-card rounded-xl items-center justify-center flex-row"
               >
                 <RotateCw size={18} color="#757575" />
-                <Text className="text-text-light font-bold ml-2">다시 촬영</Text>
+                <Text className="text-text-light dark:text-dark-text-secondary font-bold ml-2">다시 촬영</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {

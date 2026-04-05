@@ -89,7 +89,7 @@ export default function NumberGenerationScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       <Stack.Screen options={{ 
         title: '행운의 번호 추첨',
         headerLeft: () => (
@@ -150,8 +150,8 @@ export default function NumberGenerationScreen() {
           )}
         </View>
 
-        <Text className="text-xl font-bold text-[#1A1A1A] mt-10 mb-2">추첨 방식 선택</Text>
-        <Text className="text-gray-500 text-[13px] mb-6">다양한 방법으로 행운의 번호를 찾아보세요!</Text>
+        <Text className="text-xl font-bold text-[#1A1A1A] dark:text-dark-text mt-10 mb-2">추첨 방식 선택</Text>
+        <Text className="text-gray-500 dark:text-dark-text-secondary text-[13px] mb-6">다양한 방법으로 행운의 번호를 찾아보세요!</Text>
 
         <View className="gap-3">
           {METHODS.map((method) => (
@@ -176,10 +176,10 @@ export default function NumberGenerationScreen() {
         />
 
         {/* Tip Section */}
-        <View className="bg-amber-50 rounded-2xl p-4 border border-amber-100 mt-8 mb-10 flex-row">
+        <View className="bg-amber-50 dark:bg-dark-card rounded-2xl p-4 border border-amber-100 dark:border-dark-card mt-8 mb-10 flex-row">
           <Sparkles size={24} color="#D84315" />
           <View className="flex-1 ml-3">
-            <Text className="text-[#5D4037] text-[13px] leading-5">
+            <Text className="text-[#5D4037] dark:text-dark-text-secondary text-[13px] leading-5">
               각 방식마다 고유한 알고리즘으로 번호를 생성합니다. 마음에 드는 방법을 선택해보세요!
             </Text>
           </View>
