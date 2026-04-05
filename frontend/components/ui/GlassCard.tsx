@@ -4,9 +4,10 @@ import { BlurView } from 'expo-blur';
 import { useTheme } from '../../hooks/useTheme';
 
 interface GlassCardProps extends ViewProps {
-  intensity?: number;
+  opacity?: number;
+  blur?: number;
+  borderRadius?: number;
   className?: string;
-  delay?: number;
   children: React.ReactNode;
 }
 
