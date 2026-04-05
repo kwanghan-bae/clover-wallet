@@ -16,7 +16,6 @@ export class WinningInfoCrawlerService {
   private readonly jsonApiUrl =
     'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
 
-
   constructor(
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
@@ -140,9 +139,6 @@ export class WinningInfoCrawlerService {
    * 현재 날짜를 기준으로 현재 로또 회차를 계산합니다.
    */
   calculateCurrentRound(): number {
-    const now = new Date();
-    const diffMs = now.getTime() - this.FIRST_DRAW_DATE.getTime();
-    const diffWeeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
-    return diffWeeks + 1;
+    return calculateCurrentRound();
   }
 }

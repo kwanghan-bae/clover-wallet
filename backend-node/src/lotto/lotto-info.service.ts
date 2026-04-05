@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { calculateCurrentRound } from '../common/utils/lotto-round.util';
 import axios from 'axios';
 
 @Injectable()
@@ -7,14 +8,6 @@ export class LottoInfoService {
   private readonly logger = new Logger(LottoInfoService.name);
 
   constructor(private readonly prisma: PrismaService) {}
-
-  calculateCurrentRound(): number {
-    const baseDate = new Date('2002-12-07');
-    const now = new Date();
-    const diffMs = now.getTime() - baseDate.getTime();
-    const weeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
-    return weeks + 1;
-  }
 
   private getNextSaturday(): Date {
     const now = new Date();
@@ -30,7 +23,7 @@ export class LottoInfoService {
   }
 
   async getNextDrawInfo(): Promise<Record<string, unknown>> {
-    const currentRound = this.calculateCurrentRound();
+    const currentRound = calculateCurrentRound();
     const nextDrawDate = this.getNextSaturday();
     const now = new Date();
     const diffMs = nextDrawDate.getTime() - now.getTime();
@@ -64,7 +57,7 @@ export class LottoInfoService {
 
     try {
       const { data } = await axios.get(
-        `https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=${round}`,
+        'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=' + round,
         { timeout: 5000 },
       );
       if (data.returnValue !== 'success') return null;
@@ -90,7 +83,7 @@ export class LottoInfoService {
       return info;
     } catch (error) {
       this.logger.warn(
-        `Failed to fetch draw result for round ${round}: ${error}`,
+        'Failed to fetch draw result for round ' + round + ': ' + error,
       );
       return null;
     }

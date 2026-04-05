@@ -49,7 +49,7 @@ export class CommunityController {
   @Get('posts/feed')
   @UseGuards(AuthGuard('jwt'))
   async getFeed(
-    @Req() req,
+    @Req() req: any,
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('size', new ParseIntPipe({ optional: true })) size?: number,
   ) {

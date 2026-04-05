@@ -85,7 +85,7 @@ export class UsersController {
    */
   @Post(':id/follow')
   @UseGuards(AuthGuard('jwt'))
-  async toggleFollow(@Param('id', ParseIntPipe) id: number, @Req() req) {
+  async toggleFollow(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
     return this.followService.toggleFollow(req.user.id, BigInt(id));
   }
 

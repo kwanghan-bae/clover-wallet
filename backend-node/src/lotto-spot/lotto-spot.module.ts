@@ -11,5 +11,6 @@ import { LottoModule } from '../lotto/lotto.module';
   imports: [LottoModule],
   controllers: [LottoSpotController],
   providers: [LottoSpotService, LottoWinningStoreService],
+  exports: [LottoWinningStoreService],
 })
 export class LottoSpotModule {}

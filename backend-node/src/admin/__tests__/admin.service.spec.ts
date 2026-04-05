@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AdminService } from '../admin.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { LottoWinningStoreService } from '../../lotto-spot/lotto-winning-store.service';
 import axios from 'axios';
 
 jest.mock('axios');
@@ -20,11 +21,19 @@ describe('AdminService', () => {
     },
   };
 
+  const mockLottoWinningStoreService = {
+    crawlWinningStores: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AdminService,
         { provide: PrismaService, useValue: mockPrisma },
+        {
+          provide: LottoWinningStoreService,
+          useValue: mockLottoWinningStoreService,
+        },
         {
           provide: 'ConfigService',
           useValue: { get: jest.fn().mockReturnValue('test-key') },

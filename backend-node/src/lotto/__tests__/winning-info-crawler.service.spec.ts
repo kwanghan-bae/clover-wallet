@@ -17,6 +17,7 @@ describe('WinningInfoCrawlerService', () => {
   let service: WinningInfoCrawlerService;
   let prisma: PrismaService;
   let eventEmitter: EventEmitter2;
+  let fcmService: FcmService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,6 +53,7 @@ describe('WinningInfoCrawlerService', () => {
     service = module.get<WinningInfoCrawlerService>(WinningInfoCrawlerService);
     prisma = module.get<PrismaService>(PrismaService);
     eventEmitter = module.get<EventEmitter2>(EventEmitter2);
+    fcmService = module.get<FcmService>(FcmService);
   });
 
   it('should be defined', () => {
@@ -114,6 +116,38 @@ describe('WinningInfoCrawlerService', () => {
         'lotto.winning-info.created',
         expect.any(Object),
       );
+    });
+  });
+
+  describe('handleDrawDayReminder', () => {
+    it('should send broadcast notification to users with FCM tokens', async () => {
+      (prisma.user.findMany as jest.Mock).mockResolvedValue([
+        { fcmToken: 'token1' },
+        { fcmToken: 'token2' },
+      ]);
+      (fcmService.sendBroadcastNotification as jest.Mock).mockResolvedValue(
+        undefined,
+      );
+
+      await service.handleDrawDayReminder();
+
+      expect(prisma.user.findMany).toHaveBeenCalledWith({
+        where: { fcmToken: { not: null } },
+        select: { fcmToken: true },
+      });
+      expect(fcmService.sendBroadcastNotification).toHaveBeenCalledWith(
+        ['token1', 'token2'],
+        expect.stringContaining('추첨일'),
+        expect.any(String),
+      );
+    });
+
+    it('should not send if no users have FCM tokens', async () => {
+      (prisma.user.findMany as jest.Mock).mockResolvedValue([]);
+
+      await service.handleDrawDayReminder();
+
+      expect(fcmService.sendBroadcastNotification).not.toHaveBeenCalled();
     });
   });
 });

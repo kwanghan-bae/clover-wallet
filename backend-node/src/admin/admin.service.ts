@@ -1,26 +1,27 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { LottoWinningStoreService } from '../lotto-spot/lotto-winning-store.service';
+import { calculateCurrentRound } from '../common/utils/lotto-round.util';
 import axios from 'axios';
 
 @Injectable()
 export class AdminService {
   private readonly logger = new Logger(AdminService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly lottoWinningStoreService: LottoWinningStoreService,
+  ) {}
 
   calculateCurrentRound(): number {
-    const baseDate = new Date('2002-12-07');
-    const now = new Date();
-    const diffMs = now.getTime() - baseDate.getTime();
-    const weeks = Math.floor(diffMs / (7 * 24 * 60 * 60 * 1000));
-    return weeks + 1;
+    return calculateCurrentRound();
   }
 
   async initializeWinningInfo(
     start: number = 1,
     end?: number,
   ): Promise<string> {
-    const targetEnd = end ?? this.calculateCurrentRound();
+    const targetEnd = end ?? calculateCurrentRound();
     const existing = await this.prisma.winningInfo.findMany({
       select: { round: true },
     });
@@ -66,7 +67,7 @@ export class AdminService {
     start: number = 1,
     end?: number,
   ): Promise<string> {
-    const targetEnd = end ?? this.calculateCurrentRound();
+    const targetEnd = end ?? calculateCurrentRound();
     const existing = await this.prisma.lottoWinningStore.findMany({
       select: { round: true },
       distinct: ['round'],
@@ -78,7 +79,9 @@ export class AdminService {
       if (existingRounds.has(round)) continue;
       try {
         this.logger.log(`Crawling stores for round ${round}...`);
-        count++;
+        const result =
+          await this.lottoWinningStoreService.crawlWinningStores(round);
+        count += result.count;
         await new Promise((r) => setTimeout(r, 200));
       } catch (error) {
         this.logger.warn(`Failed to crawl stores for round ${round}: ${error}`);
