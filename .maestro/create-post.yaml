@@ -1,0 +1,24 @@
+appId: com.clover.wallet
+name: Create Community Post
+---
+- launchApp
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+- tapOn:
+    id: "tab-community"
+- assertVisible: "커뮤니티"
+- tapOn:
+    id: "fab-create-post"
+- assertVisible: "게시글 작성"
+- tapOn:
+    id: "input-title"
+- inputText: "E2E 테스트 게시글"
+- tapOn:
+    id: "input-content"
+- inputText: "이것은 자동화 테스트로 작성된 게시글입니다."
+- tapOn: "게시하기"
+- assertVisible:
+    text: "E2E 테스트 게시글"
+    timeout: 5000

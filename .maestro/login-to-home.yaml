@@ -1,0 +1,11 @@
+appId: com.clover.wallet
+name: Login to Home
+---
+- launchApp
+- assertVisible: "Google 계정으로 계속하기"
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+- assertVisible: "번호 생성"
+- assertVisible: "QR 스캔"

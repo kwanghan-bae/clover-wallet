@@ -1,0 +1,20 @@
+appId: com.clover.wallet
+name: Generate and Save Numbers
+---
+- launchApp
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+- tapOn: "번호 생성"
+- assertVisible: "생성 방법 선택"
+- tapOn: "꿈 해몽"
+- assertVisible:
+    text: "꿈 내용"
+    timeout: 5000
+- inputText: "용꿈"
+- tapOn: "생성하기"
+- assertVisible:
+    text: "저장"
+    timeout: 5000
+- tapOn: "저장"
