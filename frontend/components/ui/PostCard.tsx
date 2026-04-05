@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import { Heart, MessageCircle, Share2, MoreHorizontal } from 'lucide-react-native';
-import { Post } from '../../api/community';
+import { View, Text, TouchableOpacity, Alert } from 'react-native';
+import { Heart, MessageCircle, Share2, MoreHorizontal, Trash2 } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useQueryClient } from '@tanstack/react-query';
+import { Post, communityApi } from '../../api/community';
+import { useAuth } from '../../hooks/useAuth';
 
 interface PostCardProps {
   post: Post;
@@ -16,6 +19,36 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
   const initial = nickname[0];
   const dateStr = formatDate(post.createdAt);
   const commentCount = post._count?.comments ?? 0;
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { user: currentUser } = useAuth();
+  const isOwner = currentUser != null && currentUser.id === post.userSummary?.id;
+
+  const handleDeletePress = () => {
+    Alert.alert(
+      '게시글 삭제',
+      '이 게시글을 삭제하시겠습니까?',
+      [
+        { text: '취소', style: 'cancel' },
+        {
+          text: '삭제',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await communityApi.deletePost(post.id);
+              queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
+            } catch {
+              Alert.alert('오류', '게시글 삭제에 실패했습니다.');
+            }
+          },
+        },
+      ],
+    );
+  };
+
+  const handleUserProfilePress = () => {
+    router.push(`/user/${post.userSummary.id}`);
+  };
 
   return (
     <TouchableOpacity
@@ -32,28 +65,38 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
     >
       {/* Header */}
       <View className="flex-row items-start mb-4">
-        {/* Avatar */}
-        <View className="w-10 h-10 rounded-full bg-[#4CAF50]/10 items-center justify-center mr-3">
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-base">
-            {initial}
-          </Text>
-        </View>
+        {/* Avatar (pressable → user profile) */}
+        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3">
+          <View className="w-10 h-10 rounded-full bg-[#4CAF50]/10 items-center justify-center">
+            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-base">
+              {initial}
+            </Text>
+          </View>
+        </TouchableOpacity>
 
         {/* Author & Info */}
         <View className="flex-1">
           <View className="flex-row items-center">
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A] text-[15px]">
-              {nickname}
-            </Text>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress}>
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A] text-[15px]">
+                {nickname}
+              </Text>
+            </TouchableOpacity>
           </View>
           <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[12px] mt-0.5">
             {dateStr}
           </Text>
         </View>
 
-        <TouchableOpacity className="p-1">
-          <MoreHorizontal size={20} color="#E0E0E0" />
-        </TouchableOpacity>
+        {isOwner ? (
+          <TouchableOpacity className="p-1" onPress={handleDeletePress}>
+            <Trash2 size={20} color="#EF5350" />
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity className="p-1">
+            <MoreHorizontal size={20} color="#E0E0E0" />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Title */}
