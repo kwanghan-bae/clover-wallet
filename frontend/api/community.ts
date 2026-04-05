@@ -23,6 +23,9 @@ export const communityApi = {
   getPosts: (page = 0, size = 10) =>
     apiClient.get(`community/posts?page=${page}&size=${size}`).json<PageResponse<Post>>(),
 
+  getFeed: (page = 0, size = 10) =>
+    apiClient.get(`community/posts/feed?page=${page}&size=${size}`).json<PageResponse<Post>>(),
+
   getPostById: (id: number) =>
     apiClient.get(`community/posts/${id}`).json<Post>(),
 

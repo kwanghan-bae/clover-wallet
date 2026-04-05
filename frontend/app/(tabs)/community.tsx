@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, Share, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FlashList } from '@shopify/flash-list';
@@ -14,10 +14,11 @@ import { communityApi, Post } from '../../api/community';
 const CommunityScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const [feedType, setFeedType] = useState<'all' | 'following'>('all');
 
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ['communityPosts'],
-    queryFn: () => communityApi.getPosts(0, 20),
+    queryKey: ['communityPosts', feedType],
+    queryFn: () => feedType === 'all' ? communityApi.getPosts(0, 20) : communityApi.getFeed(0, 20),
   });
 
   const posts: Post[] = data?.content ?? [];
@@ -25,7 +26,7 @@ const CommunityScreen = () => {
   const likeMutation = useMutation({
     mutationFn: (id: number) => communityApi.likePost(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
+      queryClient.invalidateQueries({ queryKey: ['communityPosts', feedType] });
     },
     onError: () => {
       Alert.alert('오류', '좋아요 처리 중 오류가 발생했습니다.');
@@ -59,6 +60,36 @@ const CommunityScreen = () => {
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">커뮤니티</Text>
         <TouchableOpacity>
           <Search size={24} color="#1A1A1A" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Feed Type Segment Control */}
+      <View className="flex-row mx-5 mt-3 mb-1 bg-[#F0F0F0] dark:bg-dark-surface rounded-full p-1">
+        <TouchableOpacity
+          onPress={() => setFeedType('all')}
+          activeOpacity={0.8}
+          className={`flex-1 py-2 rounded-full items-center ${feedType === 'all' ? 'bg-white dark:bg-dark-card' : ''}`}
+          style={feedType === 'all' ? { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 2 } : undefined}
+        >
+          <Text
+            style={{ fontFamily: 'NotoSansKR_700Bold' }}
+            className={`text-sm ${feedType === 'all' ? 'text-[#1A1A1A] dark:text-dark-text' : 'text-[#9E9E9E] dark:text-dark-text-secondary'}`}
+          >
+            전체
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => setFeedType('following')}
+          activeOpacity={0.8}
+          className={`flex-1 py-2 rounded-full items-center ${feedType === 'following' ? 'bg-white dark:bg-dark-card' : ''}`}
+          style={feedType === 'following' ? { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 2 } : undefined}
+        >
+          <Text
+            style={{ fontFamily: 'NotoSansKR_700Bold' }}
+            className={`text-sm ${feedType === 'following' ? 'text-[#1A1A1A] dark:text-dark-text' : 'text-[#9E9E9E] dark:text-dark-text-secondary'}`}
+          >
+            팔로잉
+          </Text>
         </TouchableOpacity>
       </View>
 
