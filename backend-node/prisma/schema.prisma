@@ -412,9 +412,9 @@ model Follow {
   createdAt   DateTime @default(now()) @map("created_at")
 
   /// 팔로워 사용자 정보
-  follower    User @relation("Followers", fields: [followerId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  follower    User @relation("Followers", fields: [followerId], references: [id], onDelete: Cascade)
   /// 팔로잉 대상 사용자 정보
-  following   User @relation("Following", fields: [followingId], references: [id], onDelete: Restrict, onUpdate: Restrict)
+  following   User @relation("Following", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
   @@index([followerId])

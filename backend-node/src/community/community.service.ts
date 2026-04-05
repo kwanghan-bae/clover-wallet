@@ -256,6 +256,7 @@ export class CommunityService {
         postId: BigInt(dto.postId),
         content: dto.content,
         likes: 0,
+        parentId: dto.parentId ? BigInt(dto.parentId) : undefined,
       },
     });
   }
