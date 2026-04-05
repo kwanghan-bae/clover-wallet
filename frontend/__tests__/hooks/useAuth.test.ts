@@ -50,4 +50,8 @@ describe('useAuth', () => {
     });
     expect(supabase.auth.signOut).toHaveBeenCalled();
   });
+
+  it('should throw when used outside AuthProvider', () => {
+    expect(() => renderHook(() => useAuth())).toThrow('useAuth must be used within AuthProvider');
+  });
 });

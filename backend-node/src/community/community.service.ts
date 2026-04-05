@@ -9,13 +9,17 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { PageResponse } from '../common/types/page-response';
+import { FollowService } from '../users/follow.service';
 
 /**
  * 커뮤니티 게시글 및 댓글 로직을 처리하는 서비스입니다.
  */
 @Injectable()
 export class CommunityService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly followService: FollowService,
+  ) {}
 
   /**
    * 모든 게시글을 최신순으로 조회합니다.
@@ -215,7 +219,7 @@ export class CommunityService {
    * 팔로잉한 사용자들의 게시글을 최신순으로 조회합니다. (피드)
    */
   async getFollowingFeed(userId: bigint, page: number, size: number) {
-    const followingIds = await this.getFollowingUserIds(userId);
+    const followingIds = await this.followService.getFollowingIds(userId);
     if (followingIds.length === 0) {
       return { content: [], pageNumber: page, pageSize: size, totalElements: 0, totalPages: 0 };
     }
@@ -284,16 +288,6 @@ export class CommunityService {
 
   // Helper Methods
 
-  /**
-   * 특정 사용자가 팔로우하는 사용자 ID 목록을 조회합니다.
-   */
-  private async getFollowingUserIds(userId: bigint): Promise<bigint[]> {
-    const follows = await this.prisma.follow.findMany({
-      where: { followerId: userId },
-      select: { followingId: true },
-    });
-    return follows.map((f) => f.followingId);
-  }
 
   /**
    * 특정 사용자가 좋아요를 누른 게시글 ID 목록을 조회하여 Set 형태로 반환합니다.

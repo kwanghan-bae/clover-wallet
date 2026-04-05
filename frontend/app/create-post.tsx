@@ -4,6 +4,7 @@ import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { Input } from '../components/ui/Input';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
+import { useQueryClient } from '@tanstack/react-query';
 import { communityApi } from '../api/community';
 
 /**
@@ -11,6 +12,7 @@ import { communityApi } from '../api/community';
  */
 const CreatePostScreen = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { prefillTitle, prefillContent } = useLocalSearchParams<{ prefillTitle?: string; prefillContent?: string }>();
   const [title, setTitle] = useState(prefillTitle ?? '');
   const [content, setContent] = useState(prefillContent ?? '');
@@ -25,6 +27,7 @@ const CreatePostScreen = () => {
     setIsLoading(true);
     try {
       await communityApi.createPost(title.trim(), content.trim());
+      queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
       router.back();
     } catch (error) {
       Alert.alert('오류', '게시물 등록 중 오류가 발생했습니다. 다시 시도해주세요.');

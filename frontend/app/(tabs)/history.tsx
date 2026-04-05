@@ -63,10 +63,10 @@ const HistoryScreen = () => {
   const combinedHistory = [...backendRecords, ...history];
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       {/* Header */}
-      <View className="flex-row justify-between items-center px-5 py-4 bg-transparent">
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">내 로또 내역</Text>
+      <View className="flex-row justify-between items-center px-5 py-4 bg-transparent dark:bg-dark-bg">
+        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">내 로또 내역</Text>
         <TouchableOpacity onPress={() => router.push('/scan')}>
           <QrCode size={24} color="#1A1A1A" />
         </TouchableOpacity>
@@ -103,8 +103,8 @@ const HistoryScreen = () => {
               <View className="w-24 h-24 bg-[#BDBDBD]/10 rounded-full items-center justify-center mb-8">
                 <Plus size={48} color="rgba(189, 189, 189, 0.4)" />
               </View>
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A]">저장된 로또 내역이 없습니다</Text>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] mt-2 text-center">번호를 생성하고 저장해보세요!</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text">저장된 로또 내역이 없습니다</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] dark:text-dark-text-secondary mt-2 text-center">번호를 생성하고 저장해보세요!</Text>
 
               <TouchableOpacity
                 onPress={() => router.push('/number-generation')}

@@ -84,8 +84,8 @@ const CommunityScreen = () => {
               <View className="w-24 h-24 bg-[#4CAF50]/5 rounded-full items-center justify-center mb-8" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <MessageSquare size={48} color="rgba(76, 175, 80, 0.4)" />
               </View>
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A]">아직 게시물이 없습니다</Text>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] mt-2 text-center">첫 번째 게시물의 주인공이 되어보세요!</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text">아직 게시물이 없습니다</Text>
+              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] dark:text-dark-text-secondary mt-2 text-center">첫 번째 게시물의 주인공이 되어보세요!</Text>
 
               <TouchableOpacity
                 onPress={() => router.push('/create-post')}

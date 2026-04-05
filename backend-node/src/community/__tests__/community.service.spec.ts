@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommunityService } from '../community.service';
 import { PrismaService } from '../../prisma/prisma.service';
+import { FollowService } from '../../users/follow.service';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
 /**
@@ -15,6 +16,12 @@ describe('CommunityService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CommunityService,
+        {
+          provide: FollowService,
+          useValue: {
+            getFollowingIds: jest.fn().mockResolvedValue([]),
+          },
+        },
         {
           provide: PrismaService,
           useValue: {

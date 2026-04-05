@@ -11,7 +11,7 @@ import {
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth, AuthProvider } from '../hooks/useAuth';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
 import { useTheme } from '../hooks/useTheme';
@@ -21,11 +21,6 @@ SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
-/**
- * QueryClientProvider 내부에서 렌더링되는 컴포넌트.
- * useAuth, useNotifications, useOffline 등 React Query 훅은
- * QueryClientProvider 하위에서만 호출해야 합니다.
- */
 function AppContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { registerToken } = useNotifications();
@@ -46,7 +41,7 @@ function AppContent() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      registerToken().catch(console.error);
+      registerToken();
     }
   }, [isAuthenticated]);
 
@@ -105,7 +100,9 @@ export default function RootLayout() {
   return (
     <GlobalErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AppContent />
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
       </QueryClientProvider>
     </GlobalErrorBoundary>
   );

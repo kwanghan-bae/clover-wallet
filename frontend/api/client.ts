@@ -20,7 +20,7 @@ export async function handleTokenRefresh(
   _options: unknown,
   response: Response,
 ): Promise<Response> {
-  if (response.status === 401) {
+  if (response.status === 401 && !request.headers.get('X-Retry-After-Refresh')) {
     const refreshToken = loadItem<string>('auth.refresh_token');
     if (refreshToken) {
       try {
@@ -30,8 +30,10 @@ export async function handleTokenRefresh(
           })
           .json<{ accessToken: string }>();
         saveItem('auth.access_token', refreshResponse.accessToken);
-        request.headers.set('Authorization', `Bearer ${refreshResponse.accessToken}`);
-        return ky(request);
+        const retryRequest = new Request(request, { headers: new Headers(request.headers) });
+        retryRequest.headers.set('Authorization', `Bearer ${refreshResponse.accessToken}`);
+        retryRequest.headers.set('X-Retry-After-Refresh', 'true');
+        return ky(retryRequest);
       } catch {
         removeItem('auth.access_token');
         removeItem('auth.refresh_token');

@@ -25,10 +25,10 @@ const LuckySpotsScreen = () => {
   } = useLuckySpots();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       {/* Header */}
-      <View className="flex-row justify-between items-center px-5 py-4 bg-white border-b border-gray-100 shadow-sm">
-        <Text className="text-xl font-bold text-[#1A1A1A]">명당 찾기</Text>
+      <View className="flex-row justify-between items-center px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-100 shadow-sm">
+        <Text className="text-xl font-bold text-[#1A1A1A] dark:text-dark-text">명당 찾기</Text>
         <View className="flex-row gap-4">
           <TouchableOpacity onPress={toggleViewMode}>
             {isMapView ? <ListIcon size={24} color="#1A1A1A" /> : <MapIcon size={24} color="#1A1A1A" />}
@@ -37,7 +37,7 @@ const LuckySpotsScreen = () => {
       </View>
 
       {/* Region Filter - Horizontal Scroll */}
-      <View className="bg-white py-3">
+      <View className="bg-white dark:bg-dark-surface py-3">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -90,7 +90,7 @@ const LuckySpotsScreen = () => {
             ListEmptyComponent={
               <View className="items-center justify-center py-20" style={{ alignItems: 'center', justifyContent: 'center' }}>
                 <MapPin size={64} color="#BDBDBD" />
-                <Text className="text-gray-400 mt-4 font-semibold">{selectedRegion} 지역의 명당이 없습니다.</Text>
+                <Text className="text-gray-400 dark:text-dark-text-secondary mt-4 font-semibold">{selectedRegion} 지역의 명당이 없습니다.</Text>
               </View>
             }
           />
