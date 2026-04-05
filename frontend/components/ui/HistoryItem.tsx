@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Trash2, Calendar } from 'lucide-react-native';
 import { LottoBall } from './LottoBall';
@@ -10,7 +10,7 @@ interface HistoryItemProps {
 }
 
 /** @description 사용자의 과거 로또 구매 또는 번호 생성 내역을 표시하는 카드 컴포넌트입니다. */
-export const HistoryItem = ({ record, onDelete }: HistoryItemProps) => {
+const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
   const dateStr = formatDate(record.createdAt);
 
   return (
@@ -55,6 +55,8 @@ export const HistoryItem = ({ record, onDelete }: HistoryItemProps) => {
     </View>
   );
 };
+
+export const HistoryItem = memo(HistoryItemComponent);
 
 // formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(date: string | Date): string {

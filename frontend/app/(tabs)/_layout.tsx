@@ -34,6 +34,7 @@ const TabLayout = () => {
           options={{
             title: '홈',
             tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+            tabBarAccessibilityLabel: '홈 탭',
           }}
         />
         <Tabs.Screen
@@ -41,6 +42,7 @@ const TabLayout = () => {
           options={{
             title: '내 로또',
             tabBarIcon: ({ color }) => <ReceiptText size={24} color={color} />,
+            tabBarAccessibilityLabel: '내 로또 기록 탭',
           }}
         />
 
@@ -58,6 +60,8 @@ const TabLayout = () => {
           options={{
             title: '커뮤니티',
             tabBarIcon: ({ color }) => <Users size={24} color={color} />,
+            tabBarAccessibilityLabel: '커뮤니티 탭',
+            tabBarButtonTestID: 'tab-community',
           }}
         />
         <Tabs.Screen
@@ -65,6 +69,8 @@ const TabLayout = () => {
           options={{
             title: '명당',
             tabBarIcon: ({ color }) => <MapPin size={24} color={color} />,
+            tabBarAccessibilityLabel: '명당 지도 탭',
+            tabBarButtonTestID: 'tab-map',
           }}
         />
         <Tabs.Screen
@@ -72,6 +78,8 @@ const TabLayout = () => {
           options={{
             title: '마이',
             tabBarIcon: ({ color }) => <User size={24} color={color} />,
+            tabBarAccessibilityLabel: '마이페이지 탭',
+            tabBarButtonTestID: 'tab-mypage',
           }}
         />
       </Tabs>

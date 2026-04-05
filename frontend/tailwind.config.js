@@ -21,6 +21,7 @@ module.exports = {
         primary: "#4CAF50", // Clover Green
         "primary-dark": "#388E3C",
         "primary-light": "#C8E6C9",
+        "primary-text": "#2E7D32", // 5.3:1 contrast on white — WCAG AA pass
         secondary: "#FFC107", // Gold
         accent: "#2196F3", // Blue
         background: "#F5F7FA", // Light Grey-Blue

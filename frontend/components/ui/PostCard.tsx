@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
 import { Heart, MessageCircle, Share2, MoreHorizontal, Trash2 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
@@ -14,7 +14,7 @@ interface PostCardProps {
 }
 
 /** @description 커뮤니티 피드에서 개별 게시글의 요약 정보를 표시하는 카드 컴포넌트입니다. */
-export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
+const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) => {
   const nickname = post.userSummary?.nickname || '익명';
   const initial = nickname[0];
   const dateStr = formatDate(post.createdAt);
@@ -158,6 +158,8 @@ export const PostCard = ({ post, onPress, onLike, onShare }: PostCardProps) => {
     </TouchableOpacity>
   );
 };
+
+export const PostCard = memo(PostCardComponent);
 
 // formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(dateString: string): string {

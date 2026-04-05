@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text } from 'react-native';
 import { MapPin, ChevronRight } from 'lucide-react-native';
 import { LottoSpot } from '../../api/types/spots';
@@ -7,10 +7,10 @@ interface SpotListItemProps {
   spot: LottoSpot;
 }
 
-/** 
- * @description 명당 찾기 화면의 리스트 뷰에서 개별 판매점의 정보를 표시하는 아이템 컴포넌트입니다. 
+/**
+ * @description 명당 찾기 화면의 리스트 뷰에서 개별 판매점의 정보를 표시하는 아이템 컴포넌트입니다.
  */
-export function SpotListItem({ spot }: SpotListItemProps) {
+function SpotListItemComponent({ spot }: SpotListItemProps) {
   return (
     <View
       className="bg-white rounded-[24px] p-5 mb-1 flex-row items-center"
@@ -43,3 +43,5 @@ export function SpotListItem({ spot }: SpotListItemProps) {
     </View>
   );
 }
+
+export const SpotListItem = memo(SpotListItemComponent);
