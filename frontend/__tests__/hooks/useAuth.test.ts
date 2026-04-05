@@ -15,9 +15,13 @@ jest.mock('../../api/auth', () => ({
   },
 }));
 
+import React from 'react';
 import { renderHook, act } from '@testing-library/react-native';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth, AuthProvider } from '../../hooks/useAuth';
 import { supabase } from '../../utils/supabase';
+
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(AuthProvider, null, children);
 
 describe('useAuth', () => {
   beforeEach(() => {
@@ -25,12 +29,12 @@ describe('useAuth', () => {
   });
 
   it('should initialize with loading true and no user', () => {
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
     expect(result.current.user).toBeNull();
   });
 
   it('should call supabase signInWithOAuth on login', async () => {
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
     await act(async () => {
       await result.current.signInWithGoogle();
     });
@@ -40,7 +44,7 @@ describe('useAuth', () => {
   });
 
   it('should clear storage on logout', async () => {
-    const { result } = renderHook(() => useAuth());
+    const { result } = renderHook(() => useAuth(), { wrapper });
     await act(async () => {
       await result.current.logout();
     });

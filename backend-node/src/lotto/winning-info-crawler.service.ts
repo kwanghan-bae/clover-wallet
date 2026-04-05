@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { calculateCurrentRound } from '../common/utils/lotto-round.util';
 import axios from 'axios';
 import { Cron } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -15,8 +16,6 @@ export class WinningInfoCrawlerService {
   private readonly jsonApiUrl =
     'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=';
 
-  // 1회차 추첨일: 2002-12-07 20:40
-  private readonly FIRST_DRAW_DATE = new Date('2002-12-07T20:40:00');
 
   constructor(
     private readonly prisma: PrismaService,

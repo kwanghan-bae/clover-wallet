@@ -50,13 +50,13 @@ const CommunityScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA]">
+    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       {/* Header */}
       <View
-        className="flex-row justify-between items-center px-5 py-4 bg-white/80"
+        className="flex-row justify-between items-center px-5 py-4 bg-white/80 dark:bg-dark-surface"
         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
       >
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A]">커뮤니티</Text>
+        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">커뮤니티</Text>
         <TouchableOpacity>
           <Search size={24} color="#1A1A1A" />
         </TouchableOpacity>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, createElement, ReactNode } from 'react';
 import { supabase } from '../utils/supabase';
 import { authApi } from '../api/auth';
 import { saveItem, loadItem, removeItem } from '../utils/storage';
@@ -17,7 +17,9 @@ interface AuthState {
   logout: () => Promise<void>;
 }
 
-export function useAuth(): AuthState {
+export const AuthContext = createContext<AuthState | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,6 +37,9 @@ export function useAuth(): AuthState {
           try {
             const response = await authApi.login(session.access_token);
             saveItem('auth.access_token', response.accessToken);
+            if (response.refreshToken) {
+              saveItem('auth.refresh_token', response.refreshToken);
+            }
             saveItem('user.profile', response.user);
             setUser(response.user);
           } catch (error) {
@@ -43,6 +48,7 @@ export function useAuth(): AuthState {
         }
         if (event === 'SIGNED_OUT') {
           removeItem('auth.access_token');
+          removeItem('auth.refresh_token');
           removeItem('user.profile');
           setUser(null);
         }
@@ -74,6 +80,7 @@ export function useAuth(): AuthState {
       }
       await supabase.auth.signOut();
       removeItem('auth.access_token');
+      removeItem('auth.refresh_token');
       removeItem('user.profile');
       setUser(null);
     } finally {
@@ -81,11 +88,15 @@ export function useAuth(): AuthState {
     }
   }, []);
 
-  return {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
-    signInWithGoogle,
-    logout,
-  };
+  return createElement(
+    AuthContext.Provider,
+    { value: { user, isLoading, isAuthenticated: !!user, signInWithGoogle, logout } },
+    children,
+  );
+}
+
+export function useAuth(): AuthState {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
 }

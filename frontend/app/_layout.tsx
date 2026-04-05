@@ -21,20 +21,12 @@ SplashScreen.preventAutoHideAsync();
 
 const queryClient = new QueryClient();
 
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    NotoSansKR_400Regular,
-    NotoSansKR_500Medium,
-    NotoSansKR_700Bold,
-    NotoSansKR_900Black,
-  });
-
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
-
+/**
+ * QueryClientProvider 내부에서 렌더링되는 컴포넌트.
+ * useAuth, useNotifications, useOffline 등 React Query 훅은
+ * QueryClientProvider 하위에서만 호출해야 합니다.
+ */
+function AppContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { registerToken } = useNotifications();
   const { isOffline } = useOffline();
@@ -54,9 +46,57 @@ export default function RootLayout() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      registerToken();
+      registerToken().catch(console.error);
     }
   }, [isAuthenticated]);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: '#111827', alignItems: 'center' }}>
+      <View
+        className={`flex-1 w-full${isDark ? ' dark' : ''}`}
+        style={{
+          backgroundColor: isDark ? '#121212' : '#F5F7FA',
+          maxWidth: 500, // Slightly wider for better desktop experience
+          width: '100%',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.1,
+          shadowRadius: 50,
+          elevation: 10,
+        }}
+      >
+        {isOffline && (
+          <View style={{ backgroundColor: '#F59E0B', paddingHorizontal: 16, paddingVertical: 8 }}>
+            <Text style={{ color: '#fff', textAlign: 'center', fontSize: 13, fontWeight: '600' }}>
+              오프라인 모드 — 캐시된 데이터를 표시합니다
+            </Text>
+          </View>
+        )}
+        <Stack screenOptions={{
+          headerShown: false,
+          contentStyle: { backgroundColor: isDark ? '#121212' : '#F5F7FA' }
+        }}>
+          <Stack.Screen name="login" />
+          <Stack.Screen name="(tabs)" />
+        </Stack>
+      </View>
+    </View>
+  );
+}
+
+export default function RootLayout() {
+  const [loaded, error] = useFonts({
+    NotoSansKR_400Regular,
+    NotoSansKR_500Medium,
+    NotoSansKR_700Bold,
+    NotoSansKR_900Black,
+  });
+
+  useEffect(() => {
+    if (loaded || error) {
+      SplashScreen.hideAsync();
+    }
+  }, [loaded, error]);
 
   if (!loaded && !error) {
     return null;
@@ -65,36 +105,7 @@ export default function RootLayout() {
   return (
     <GlobalErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <View style={{ flex: 1, backgroundColor: '#111827', alignItems: 'center' }}>
-          <View
-            className={`flex-1 w-full${isDark ? ' dark' : ''}`}
-            style={{
-              backgroundColor: isDark ? '#121212' : '#F5F7FA',
-              maxWidth: 500, // Slightly wider for better desktop experience
-              width: '100%',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.1,
-              shadowRadius: 50,
-              elevation: 10,
-            }}
-          >
-            {isOffline && (
-              <View style={{ backgroundColor: '#F59E0B', paddingHorizontal: 16, paddingVertical: 8 }}>
-                <Text style={{ color: '#fff', textAlign: 'center', fontSize: 13, fontWeight: '600' }}>
-                  오프라인 모드 — 캐시된 데이터를 표시합니다
-                </Text>
-              </View>
-            )}
-            <Stack screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: isDark ? '#121212' : '#F5F7FA' }
-            }}>
-              <Stack.Screen name="login" />
-              <Stack.Screen name="(tabs)" />
-            </Stack>
-          </View>
-        </View>
+        <AppContent />
       </QueryClientProvider>
     </GlobalErrorBoundary>
   );
