@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { View, Text, FlatList, SafeAreaView, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -59,8 +59,16 @@ const HistoryScreen = () => {
     }))
   );
 
-  // 로컬 기록과 백엔드 기록 합산 (백엔드를 먼저 표시)
-  const combinedHistory = [...backendRecords, ...history];
+  // 로컬 기록과 백엔드 기록 합산 (백엔드를 먼저 표시, 중복 제거)
+  const combinedHistory = useMemo(() => {
+    const backendSet = new Set(
+      backendRecords.map((r) => `${r.round}-${[...r.numbers].sort((a, b) => a - b).join(',')}`),
+    );
+    const uniqueLocal = history.filter(
+      (r) => !backendSet.has(`${r.round}-${[...r.numbers].sort((a, b) => a - b).join(',')}`),
+    );
+    return [...backendRecords, ...uniqueLocal];
+  }, [backendRecords, history]);
 
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">

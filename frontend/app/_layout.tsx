@@ -10,7 +10,9 @@ import {
   NotoSansKR_700Bold,
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { MMKV } from 'react-native-mmkv';
 import { useAuth, AuthProvider } from '../hooks/useAuth';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
@@ -19,7 +21,26 @@ import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const queryStorage = new MMKV({ id: 'query-cache' });
+
+const persister = {
+  persistClient: (client: unknown) => {
+    queryStorage.set('react-query-cache', JSON.stringify(client));
+  },
+  restoreClient: () => {
+    const cache = queryStorage.getString('react-query-cache');
+    return cache ? JSON.parse(cache) : undefined;
+  },
+  removeClient: () => {
+    queryStorage.delete('react-query-cache');
+  },
+};
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { gcTime: 1000 * 60 * 60 * 24 }, // 24h cache retention
+  },
+});
 
 function AppContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -99,11 +120,11 @@ export default function RootLayout() {
 
   return (
     <GlobalErrorBoundary>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
         <AuthProvider>
           <AppContent />
         </AuthProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </GlobalErrorBoundary>
   );
 }
