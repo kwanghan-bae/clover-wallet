@@ -68,8 +68,8 @@ const LoginScreen = () => {
               activeOpacity={0.8}
               className="bg-white w-full py-4 rounded-full flex-row justify-center items-center shadow-md"
             >
-              <Image 
-                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/240px-Google_%22G%22_logo.svg.png' }}
+              <Image
+                source={require('../assets/images/google-logo.png')}
                 className="w-6 h-6 mr-3"
               />
               <Text className="text-[#1A1A1A] dark:text-dark-text text-base font-bold">
