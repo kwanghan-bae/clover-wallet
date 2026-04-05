@@ -30,7 +30,17 @@ export class AppController {
    * @returns 버전 정보 및 업데이트 필요 여부
    */
   @Get('app/version')
-  checkVersion(@Query('currentVersion') clientVersion: string) {
+  checkVersion(@Query('currentVersion') clientVersion?: string) {
+    if (!clientVersion) {
+      return {
+        currentVersion: AppController.CURRENT_VERSION,
+        minSupportedVersion: AppController.MIN_SUPPORTED_VERSION,
+        needsUpdate: false,
+        hasUpdate: false,
+        updateMessage: 'currentVersion 파라미터가 필요합니다.',
+      };
+    }
+
     const compare = (a: string, b: string): number => {
       const pa = a.split('.').map(Number);
       const pb = b.split('.').map(Number);

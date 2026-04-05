@@ -43,5 +43,16 @@ describe('AppController', () => {
         }),
       );
     });
+
+    it('should return error message when clientVersion is undefined', () => {
+      const result = appController.checkVersion(undefined);
+      expect(result).toEqual(
+        expect.objectContaining({
+          needsUpdate: false,
+          hasUpdate: false,
+          updateMessage: 'currentVersion 파라미터가 필요합니다.',
+        }),
+      );
+    });
   });
 });

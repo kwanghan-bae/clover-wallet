@@ -6,7 +6,9 @@ import {
   ParseIntPipe,
   Query,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { LottoSpotService } from './lotto-spot.service';
 import { LottoWinningStoreService } from './lotto-winning-store.service';
 import { WinningInfoCrawlerService } from '../lotto/winning-info-crawler.service';
@@ -63,6 +65,7 @@ export class LottoSpotController {
   /**
    * 수동으로 특정 회차의 당첨 정보 크롤링을 트리거합니다.
    */
+  @UseGuards(AuthGuard('jwt'))
   @Post('trigger/crawl/:round')
   async triggerCrawl(@Param('round', ParseIntPipe) round: number) {
     await this.winningInfoCrawlerService.crawlWinningInfo(round);
@@ -72,6 +75,7 @@ export class LottoSpotController {
   /**
    * 수동으로 특정 회차의 당첨 확인을 트리거합니다.
    */
+  @UseGuards(AuthGuard('jwt'))
   @Post('trigger/check/:round')
   async triggerCheck(@Param('round', ParseIntPipe) round: number) {
     await this.winningCheckService.checkWinning(round);

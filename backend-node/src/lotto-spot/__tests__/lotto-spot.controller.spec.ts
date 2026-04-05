@@ -5,6 +5,7 @@ import { LottoWinningStoreService } from '../lotto-winning-store.service';
 import { WinningInfoCrawlerService } from '../../lotto/winning-info-crawler.service';
 import { WinningCheckService } from '../../lotto/winning-check.service';
 import { NotFoundException } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * LottoSpotController에 대한 단위 테스트입니다.
@@ -59,7 +60,10 @@ describe('LottoSpotController', () => {
           useValue: mockWinningCheckService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(AuthGuard('jwt'))
+      .useValue({ canActivate: () => true })
+      .compile();
 
     controller = module.get<LottoSpotController>(LottoSpotController);
     lottoSpotService = module.get<LottoSpotService>(LottoSpotService);
