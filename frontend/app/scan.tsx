@@ -146,6 +146,8 @@ const ScanScreen = () => {
               <TouchableOpacity
                 onPress={resetScan}
                 className="flex-1 h-14 bg-gray-100 dark:bg-dark-card rounded-xl items-center justify-center flex-row"
+                accessibilityLabel="다시 촬영"
+                accessibilityRole="button"
               >
                 <RotateCw size={18} color="#757575" />
                 <Text className="text-text-light dark:text-dark-text-secondary font-bold ml-2">다시 촬영</Text>
@@ -155,6 +157,8 @@ const ScanScreen = () => {
                   router.back();
                 }}
                 className="flex-2 h-14 bg-primary rounded-xl items-center justify-center"
+                accessibilityLabel="확인"
+                accessibilityRole="button"
               >
                 <Text className="text-white font-bold text-lg px-8">확인</Text>
               </TouchableOpacity>

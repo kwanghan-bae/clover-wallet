@@ -93,7 +93,7 @@ export default function NumberGenerationScreen() {
       <Stack.Screen options={{ 
         title: '행운의 번호 추첨',
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.back()} accessibilityLabel="뒤로 가기" accessibilityRole="button">
             <ChevronLeft size={24} color="#1A1A1A" />
           </TouchableOpacity>
         )
@@ -135,6 +135,8 @@ export default function NumberGenerationScreen() {
                 onPress={handleSave}
                 disabled={isSaving}
                 className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+                accessibilityLabel={isSaving ? "저장 중" : "번호 저장하기"}
+                accessibilityRole="button"
               >
                 <Save size={18} color="#4CAF50" />
                 <Text className="text-primary font-bold ml-2">{isSaving ? "저장 중" : "번호 저장하기"}</Text>
@@ -142,6 +144,8 @@ export default function NumberGenerationScreen() {
               <TouchableOpacity
                 onPress={handleShare}
                 className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+                accessibilityLabel="커뮤니티에 공유"
+                accessibilityRole="button"
               >
                 <Share2 size={18} color="#4CAF50" />
                 <Text className="text-primary font-bold ml-2">커뮤니티에 공유</Text>

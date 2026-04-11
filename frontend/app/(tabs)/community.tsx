@@ -58,7 +58,7 @@ const CommunityScreen = () => {
         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
       >
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">커뮤니티</Text>
-        <TouchableOpacity>
+        <TouchableOpacity accessibilityLabel="검색" accessibilityRole="button">
           <Search size={24} color="#1A1A1A" />
         </TouchableOpacity>
       </View>
@@ -128,6 +128,8 @@ const CommunityScreen = () => {
                 onPress={() => router.push('/create-post')}
                 activeOpacity={0.8}
                 className="mt-10 items-center justify-center"
+                accessibilityLabel="게시물 작성하기"
+                accessibilityRole="button"
               >
                 <LinearGradient
                   colors={['#4CAF50', '#388E3C']}

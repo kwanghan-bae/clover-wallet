@@ -19,9 +19,12 @@ interface GenerationMethodCardProps {
  */
 const GenerationMethodCardComponent = ({ method, isSelected, onPress }: GenerationMethodCardProps) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={onPress}
       className={`bg-white rounded-2xl p-4 flex-row items-center border ${isSelected ? 'border-primary shadow-md' : 'border-gray-50 shadow-sm'}`}
+      accessibilityLabel={`${method.title}: ${method.subtitle}`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: isSelected }}
     >
       <View style={{ backgroundColor: method.color }} className="p-3 rounded-xl mr-4 shadow-sm">
         {method.icon}

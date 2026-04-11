@@ -112,6 +112,8 @@ export default function UserProfileScreen() {
           disabled={followMutation.isPending}
           className="py-2.5 rounded-full items-center border border-[#4CAF50]"
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+          accessibilityLabel="팔로우"
+          accessibilityRole="button"
         >
           <Text
             style={{ fontFamily: 'NotoSansKR_700Bold' }}

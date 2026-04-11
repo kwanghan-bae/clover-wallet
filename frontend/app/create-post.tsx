@@ -43,12 +43,12 @@ const CreatePostScreen = () => {
         headerShown: true,
         title: 'Create Post',
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.back()} accessibilityLabel="닫기" accessibilityRole="button">
             <X size={24} color="#212121" />
           </TouchableOpacity>
         ),
         headerRight: () => (
-          <TouchableOpacity onPress={handleSubmit}>
+          <TouchableOpacity onPress={handleSubmit} accessibilityLabel="게시하기" accessibilityRole="button">
             <Text className="text-primary font-bold text-lg">Post</Text>
           </TouchableOpacity>
         )

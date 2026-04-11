@@ -63,14 +63,17 @@ const LoginScreen = () => {
           {isLoading ? (
             <ActivityIndicator color="white" size="large" />
           ) : (
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={handleGoogleSignIn}
               activeOpacity={0.8}
               className="bg-white w-full py-4 rounded-full flex-row justify-center items-center shadow-md"
+              accessibilityLabel="Google 계정으로 계속하기"
+              accessibilityRole="button"
             >
               <Image
                 source={require('../assets/images/google-logo.png')}
                 className="w-6 h-6 mr-3"
+                accessible={false}
               />
               <Text className="text-[#1A1A1A] dark:text-dark-text text-base font-bold">
                 Google 계정으로 계속하기

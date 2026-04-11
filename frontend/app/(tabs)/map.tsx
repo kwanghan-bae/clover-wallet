@@ -30,7 +30,7 @@ const LuckySpotsScreen = () => {
       <View className="flex-row justify-between items-center px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-100 shadow-sm">
         <Text className="text-xl font-bold text-[#1A1A1A] dark:text-dark-text">명당 찾기</Text>
         <View className="flex-row gap-4">
-          <TouchableOpacity onPress={toggleViewMode}>
+          <TouchableOpacity onPress={toggleViewMode} accessibilityLabel={isMapView ? '리스트 보기로 전환' : '지도 보기로 전환'} accessibilityRole="button">
             {isMapView ? <ListIcon size={24} color="#1A1A1A" /> : <MapIcon size={24} color="#1A1A1A" />}
           </TouchableOpacity>
         </View>
@@ -48,6 +48,9 @@ const LuckySpotsScreen = () => {
               key={r}
               onPress={() => setSelectedRegion(r)}
               className={`px-4 py-2 rounded-full ${selectedRegion === r ? 'bg-primary' : 'bg-gray-100 border border-gray-200'}`}
+              accessibilityLabel={`${r} 지역 필터`}
+              accessibilityRole="button"
+              accessibilityState={{ selected: selectedRegion === r }}
             >
               <Text className={`text-[13px] font-semibold ${selectedRegion === r ? 'text-white' : 'text-gray-600'}`}>{r}</Text>
             </TouchableOpacity>
@@ -73,6 +76,8 @@ const LuckySpotsScreen = () => {
               activeOpacity={0.8}
               onPress={moveToCurrentLocation}
               className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-white items-center justify-center shadow-lg border border-gray-100"
+              accessibilityLabel="현재 위치로 이동"
+              accessibilityRole="button"
             >
               <LocateFixed size={24} color="#4CAF50" />
             </TouchableOpacity>
@@ -83,7 +88,7 @@ const LuckySpotsScreen = () => {
             keyExtractor={item => item.id.toString()}
             contentContainerStyle={{ padding: 20, gap: 12 }}
             renderItem={({ item }) => (
-              <TouchableOpacity onPress={() => handleSpotPress(item.id)}>
+              <TouchableOpacity onPress={() => handleSpotPress(item.id)} accessibilityLabel={`${item.name} 판매점 상세 보기`} accessibilityRole="button">
                 <SpotListItem spot={item} />
               </TouchableOpacity>
             )}

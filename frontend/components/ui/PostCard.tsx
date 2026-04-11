@@ -55,6 +55,8 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
       activeOpacity={0.8}
       onPress={() => onPress?.(post.id)}
       className="bg-white rounded-[24px] p-5 mb-5"
+      accessibilityLabel={`게시글: ${post.title || post.content?.substring(0, 30)}`}
+      accessibilityRole="button"
       style={{
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
@@ -66,7 +68,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
       {/* Header */}
       <View className="flex-row items-start mb-4">
         {/* Avatar (pressable → user profile) */}
-        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3">
+        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3" accessibilityLabel={`${nickname} 프로필 보기`} accessibilityRole="button">
           <View className="w-10 h-10 rounded-full bg-[#4CAF50]/10 items-center justify-center">
             <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-base">
               {initial}
@@ -77,7 +79,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
         {/* Author & Info */}
         <View className="flex-1">
           <View className="flex-row items-center">
-            <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress}>
+            <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} accessibilityLabel={`${nickname} 프로필 보기`} accessibilityRole="link">
               <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A] text-[15px]">
                 {nickname}
               </Text>
@@ -89,11 +91,11 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
         </View>
 
         {isOwner ? (
-          <TouchableOpacity className="p-1" onPress={handleDeletePress}>
+          <TouchableOpacity className="p-1" onPress={handleDeletePress} accessibilityLabel="게시글 삭제" accessibilityRole="button">
             <Trash2 size={20} color="#EF5350" />
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity className="p-1">
+          <TouchableOpacity className="p-1" accessibilityLabel="더 보기" accessibilityRole="button">
             <MoreHorizontal size={20} color="#E0E0E0" />
           </TouchableOpacity>
         )}
@@ -128,6 +130,8 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
           onPress={() => onLike?.(post.id)}
           className="flex-row items-center mr-5"
           activeOpacity={0.6}
+          accessibilityLabel={`좋아요 ${post.likes}개`}
+          accessibilityRole="button"
         >
           <Heart
             size={18}
@@ -151,7 +155,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
 
         <View className="flex-1" />
 
-        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1">
+        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" accessibilityLabel="공유하기" accessibilityRole="button">
           <Share2 size={18} color="#BDBDBD" />
         </TouchableOpacity>
       </View>

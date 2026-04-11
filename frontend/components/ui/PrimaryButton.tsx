@@ -40,12 +40,15 @@ export const PrimaryButton = ({
   };
 
   return (
-    <AnimatedPressable 
+    <AnimatedPressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={isLoading || disabled}
       className={cn("rounded-xl overflow-hidden shadow-md", className)}
       style={animatedStyle}
+      accessibilityLabel={label}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!(isLoading || disabled) }}
       {...props}
     >
       <LinearGradient
