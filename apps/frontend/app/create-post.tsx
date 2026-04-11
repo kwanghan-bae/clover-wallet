@@ -6,6 +6,7 @@ import { Input } from '../components/ui/Input';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { useQueryClient } from '@tanstack/react-query';
 import { communityApi } from '../api/community';
+import { Logger } from '../utils/logger';
 
 /**
  * @description 커뮤니티에 새로운 게시물을 작성하고 등록하는 화면입니다.
@@ -31,7 +32,7 @@ const CreatePostScreen = () => {
       router.back();
     } catch (error) {
       Alert.alert('오류', '게시물 등록 중 오류가 발생했습니다. 다시 시도해주세요.');
-      console.error(error);
+      Logger.error('CreatePost', '게시물 등록 중 오류가 발생했습니다.', error);
     } finally {
       setIsLoading(false);
     }

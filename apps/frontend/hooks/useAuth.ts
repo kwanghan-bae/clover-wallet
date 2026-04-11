@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, useCallback, createElem
 import { supabase } from '../utils/supabase';
 import { authApi } from '../api/auth';
 import { saveItem, loadItem, removeItem } from '../utils/storage';
+import { Logger } from '../utils/logger';
 
 interface User {
   id: number;
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             saveItem('user.profile', response.user);
             setUser(response.user);
           } catch (error) {
-            console.error('Backend login failed:', error);
+            Logger.error('useAuth', 'Backend login failed:', error);
           }
         }
         if (event === 'SIGNED_OUT') {
@@ -73,7 +74,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const token = loadItem<string>('auth.access_token');
       if (token) {
         try {
-          await (authApi as any).logout?.(token);
+          await authApi.logout(token);
         } catch {
           // Backend logout failure is non-critical
         }

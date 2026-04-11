@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { LottoSpot } from './types/spots';
+import { LottoSpot, WinningHistory } from './types/spots';
 
 export const spotsApi = {
   getSpots: async (page = 0, size = 100): Promise<LottoSpot[]> => {
@@ -15,7 +15,7 @@ export const spotsApi = {
     }).json();
   },
 
-  getSpotHistory: async (spotId: number): Promise<any[]> => {
+  getSpotHistory: async (spotId: number): Promise<WinningHistory[]> => {
     return await apiClient.get(`lotto-spots/${spotId}/history`).json();
   }
 };

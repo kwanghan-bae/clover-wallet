@@ -18,11 +18,11 @@ export const StorageKeys = {
  * 주어진 키로 데이터를 로컬 저장소에 저장합니다.
  * 객체 타입인 경우 JSON 문자열로 변환하여 저장합니다.
  */
-export const saveItem = (key: string, value: any) => {
+export const saveItem = (key: string, value: unknown) => {
   if (typeof value === 'object') {
     storage.set(key, JSON.stringify(value));
   } else {
-    storage.set(key, value);
+    storage.set(key, value as string | number | boolean);
   }
 };
 

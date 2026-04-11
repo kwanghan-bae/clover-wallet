@@ -56,7 +56,7 @@ describe('notifications utility', () => {
     const token = await registerForPushNotificationsAsync();
 
     expect(token).toBeUndefined();
-    expect(consoleSpy).toHaveBeenCalledWith('푸시 알림 권한 획득 실패!');
+    expect(consoleSpy).toHaveBeenCalledWith('[notifications]', '푸시 알림 권한 획득 실패!');
     expect(Notifications.getExpoPushTokenAsync).not.toHaveBeenCalled();
     consoleSpy.mockRestore();
   });
@@ -81,7 +81,7 @@ describe('notifications utility', () => {
     const token = await registerForPushNotificationsAsync();
 
     expect(token).toBeUndefined();
-    expect(consoleSpy).toHaveBeenCalledWith('푸시 알림을 위해 실제 기기를 사용해야 합니다.');
+    expect(consoleSpy).toHaveBeenCalledWith('[notifications]', '푸시 알림을 위해 실제 기기를 사용해야 합니다.');
     
     consoleSpy.mockRestore();
   });

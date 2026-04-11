@@ -4,6 +4,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
 import { parseLottoNumbers, parseLottoRound } from '../utils/ocr';
 import { ticketsApi } from '../api/tickets';
+import { Logger } from '../utils/logger';
 
 /**
  * @description 로또 티켓 스캔 화면에서 필요한 카메라 권한, 촬영 및 OCR 인식 로직을 관리하는 커스텀 훅입니다.
@@ -37,7 +38,7 @@ export function useScan() {
         }
       }
     } catch (error) {
-      console.error(error);
+      Logger.error('useScan', 'OCR 처리 중 오류가 발생했습니다.', error);
       Alert.alert('오류', 'OCR 처리 중 오류가 발생했습니다.');
     } finally {
       setIsProcessing(false);
@@ -62,7 +63,7 @@ export function useScan() {
         Alert.alert('인식 실패', 'QR 코드에서 로또 번호를 찾을 수 없습니다. 다시 시도해주세요.');
       }
     } catch (error) {
-      console.error(error);
+      Logger.error('useScan', 'QR 스캔 처리 중 오류가 발생했습니다.', error);
       Alert.alert('오류', 'QR 스캔 처리 중 오류가 발생했습니다.');
     } finally {
       setIsProcessing(false);

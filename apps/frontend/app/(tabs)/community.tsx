@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { communityApi, Post } from '../../api/community';
 import { FeedTabSelector, FeedType } from '../../components/community/FeedTabSelector';
 import { FeedList } from '../../components/community/FeedList';
+import { Logger } from '../../utils/logger';
 
 /**
  * @description 사용자들 간의 로또 관련 정보 공유 및 소통을 위한 커뮤니티 화면입니다.
@@ -37,7 +38,7 @@ const CommunityScreen = () => {
       try {
         await Share.share({ message: `${post.userSummary?.nickname}님의 게시물: ${post.content}` });
       } catch (error) {
-        console.error(error);
+        Logger.error('Community', '게시글 공유 중 오류가 발생했습니다.', error);
       }
     }
   };

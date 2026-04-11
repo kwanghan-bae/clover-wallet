@@ -2,6 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { Platform } from 'react-native';
+import { Logger } from './logger';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -23,13 +24,13 @@ export async function registerForPushNotificationsAsync(): Promise<string | unde
   }
 
   if (!Device.isDevice) {
-    console.warn('푸시 알림을 위해 실제 기기를 사용해야 합니다.');
+    Logger.warn('notifications', '푸시 알림을 위해 실제 기기를 사용해야 합니다.');
     return undefined;
   }
 
   const hasPermission = await requestNotificationPermission();
   if (!hasPermission) {
-    console.warn('푸시 알림 권한 획득 실패!');
+    Logger.warn('notifications', '푸시 알림 권한 획득 실패!');
     return undefined;
   }
 
@@ -79,10 +80,10 @@ async function fetchExpoPushToken(): Promise<string | undefined> {
   try {
     const projectId = getExpoProjectId();
     const token = (await Notifications.getExpoPushTokenAsync({ projectId })).data;
-    console.log('획득한 푸시 토큰:', token);
+    Logger.info('notifications', `획득한 푸시 토큰: ${token}`);
     return token;
   } catch (e) {
-    console.error('푸시 토큰 획득 중 오류 발생:', e);
+    Logger.error('notifications', '푸시 토큰 획득 중 오류 발생:', e);
     return undefined;
   }
 }

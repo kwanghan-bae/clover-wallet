@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { View, Text, TouchableOpacity, SafeAreaView } from 'react-native';
 import { AlertTriangle, RefreshCcw } from 'lucide-react-native';
+import { Logger } from '../utils/logger';
 
 interface Props {
   children?: ReactNode;
@@ -27,7 +28,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
 
   /** @description 에러 정보를 로깅하거나 외부 서비스로 전송할 때 사용합니다. */
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Uncaught error:', error, errorInfo);
+    Logger.error('ErrorBoundary', 'Uncaught error:', { error, errorInfo });
   }
 
   /** @description 에러 상태를 초기화하고 자식 컴포넌트 재렌더링을 시도합니다. */
