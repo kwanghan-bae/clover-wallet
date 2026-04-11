@@ -1,3 +1,5 @@
+> **ARCHIVED** — 이 기획서는 초기 프로젝트 설계 시점에 작성되었습니다. Kotlin 백엔드는 NestJS로 마이그레이션됨. 현재 기술 스택은 `TECHNICAL_SPEC.md` 참조.
+
 # Clover Lotto 통합 앱 기획서
 
 ### 0. 프로젝트 경로

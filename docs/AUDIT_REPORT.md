@@ -1,7 +1,7 @@
 # 📋 API Consistency Audit Report (v1.0)
 
 - **Audit Date**: 2025-12-24
-- **Target**: Kotlin Backend ↔ React Native Frontend
+- **Target**: Backend API ↔ React Native Frontend (이전 Kotlin 백엔드 기준, 현재 NestJS로 마이그레이션 완료됨)
 
 ---
 

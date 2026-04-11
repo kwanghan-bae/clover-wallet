@@ -26,7 +26,7 @@ This document outlines the discrepancies between the initial planning documents 
 -   **Notification Scheduling**:
     -   **Status**: Missing.
     -   **Gap**: "Notification before draw" (Saturday 8:00 PM) is planned but not implemented.
-    -   **Action**: Implement a scheduled task (`@Scheduled`) in Spring Boot to send broadcast push notifications at specific times.
+    -   **Action**: Implement a scheduled task (`@nestjs/schedule` Cron) in NestJS to send broadcast push notifications at specific times.
 
 ## 2. Feature Enhancements (Medium Priority)
 
@@ -58,9 +58,9 @@ This document outlines the discrepancies between the initial planning documents 
 | :--- | :--- | :--- |
 | `ScanScreen.dart` | ❌ Missing | Camera & OCR UI |
 | `TravelScreen.dart` | ❌ Missing | Travel recommendation UI |
-| `LikeController.kt` | ❌ Missing | Backend API for post likes |
-| `NotificationScheduler.kt` | ❌ Missing | Scheduled push notifications |
-| `RefreshTokenRepository` | ❌ Missing | For secure token management |
+| `like.controller.ts` | ❌ Missing | Backend API for post likes |
+| `notification.scheduler.ts` | ❌ Missing | Scheduled push notifications |
+| `refresh-token.service.ts` | ❌ Missing | For secure token management |
 
 ---
 

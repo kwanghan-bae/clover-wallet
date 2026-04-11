@@ -43,8 +43,8 @@
 ## 3. 기술 스택 및 아키텍처 요약
 
 *   **Frontend**: React Native (TypeScript) - Premium Aesthetics & Glassmorphism.
-*   **Backend**: Kotlin with Spring Boot - Multi-module Architecture.
-*   **Database**: PostgreSQL (Production) / H2 (Dev).
+*   **Backend**: NestJS 11 (TypeScript) + Prisma 7 - 모듈 기반 아키텍처.
+*   **Database**: PostgreSQL (Supabase).
 *   **Infrastructure**: Render (Server), Supabase (DB), Firebase (FCM/Auth).
 
 ---

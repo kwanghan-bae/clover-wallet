@@ -30,7 +30,7 @@
 ### 1.2 언어별 표준 린트 및 포맷 테이블
 | 스택 (Category) | 도구 (Linter/Formatter) | 검증 명령어 |
 | :--- | :--- | :--- |
-| **Spring (Kotlin)** | `ktlint` | `./gradlew ktlintCheck test` |
+| **NestJS (TypeScript)** | `ESLint` / `Prettier` | `cd backend-node && npm run lint && npm test` |
 | **React/RN (TS)** | `ESLint` / `TSC` | `npm run lint && npx tsc` |
 | **Flutter (Dart)** | `Analyze` | `flutter analyze` |
 | **Unity (C#)** | `dotnet format` | `dotnet format --verify-no-changes` |
@@ -42,8 +42,8 @@
 - **Unity (C#)**:
     - `Update`, `FixedUpdate` 내에서의 `GameObject.Find`, `GetComponent`, `new` 호출 금지.
     - 시리얼라이즈 필드는 `[SerializeField] private` 스타일 준수.
-- **Kotlin/Spring**:
-    - **Coroutine over Flow**: 단순 요청/응답은 `suspend` 함수 우선. `!!` 사용 금지.
+- **NestJS (TypeScript)**:
+    - `any` 타입 사용 금지, strict mode 준수. Prisma ORM 사용, raw SQL 금지.
 - **React Native**:
     - 웹 호환성을 위해 `Platform.OS` 분기 혹은 `.web.tsx` 확장자 필수 활용.
 

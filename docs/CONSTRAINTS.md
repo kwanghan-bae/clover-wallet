@@ -9,7 +9,7 @@
     - `Update()`, `FixedUpdate()` 내에서 `new` 키워드를 통한 객체 생성(Allocation) 금지. (가비지 컬렉션 부하 방지)
     - 매 프레임 실행되는 루프 내에서 `GameObject.Find()`, `GetComponent()` 사용 금지. (Caching 권장)
     - `OnGUI` 메서드 사용 지양.
-- **Kotlin**: `!!` (Non-null assertion) 사용 금지.
+- **TypeScript**: `any` 타입 사용 금지. strict mode 준수.
 
 ## 2. 금지된 소통 패턴 (Communication Taboos)
 - **추측 금지**: 모르는 내용이 나오면 추측하지 말고 사용자에게 질문하십시오.
