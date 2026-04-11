@@ -51,7 +51,6 @@ export const PrimaryButton = ({
       accessibilityRole="button"
       accessibilityState={{ disabled: !!(isLoading || disabled) }}
       {...props}
-      onPress={isLoading || disabled ? undefined : props.onPress}
     >
       <LinearGradient
         colors={disabled ? ['#E0E0E0', '#BDBDBD'] : ['#4CAF50', '#388E3C']}

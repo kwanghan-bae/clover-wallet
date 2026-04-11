@@ -1,3 +1,5 @@
+jest.unmock('../../hooks/useNotifications');
+
 jest.mock('../../api/notifications', () => ({
   notificationsApi: {
     getMyNotifications: jest.fn().mockResolvedValue({ content: [], totalElements: 0 }),
