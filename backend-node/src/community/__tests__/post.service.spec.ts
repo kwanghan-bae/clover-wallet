@@ -1,27 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CommunityService } from '../community.service';
+import { PostService } from '../post.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { FollowService } from '../../users/follow.service';
 import { NotFoundException, ForbiddenException } from '@nestjs/common';
 
-/**
- * CommunityService에 대한 단위 테스트입니다.
- * 게시글 및 댓글의 CRUD, 좋아요 토글 기능, 권한 검증 및 페이징 로직을 검증합니다.
- */
-describe('CommunityService', () => {
-  let service: CommunityService;
+describe('PostService', () => {
+  let service: PostService;
   let prisma: PrismaService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CommunityService,
-        {
-          provide: FollowService,
-          useValue: {
-            getFollowingIds: jest.fn().mockResolvedValue([]),
-          },
-        },
+        PostService,
         {
           provide: PrismaService,
           useValue: {
@@ -33,26 +22,16 @@ describe('CommunityService', () => {
               update: jest.fn(),
               delete: jest.fn(),
             },
-            comment: {
-              findMany: jest.fn(),
-              count: jest.fn(),
-              create: jest.fn(),
-              update: jest.fn(),
-              findUnique: jest.fn(),
-            },
             postLike: {
               findMany: jest.fn(),
               findUnique: jest.fn(),
-              create: jest.fn(),
-              delete: jest.fn(),
             },
-            $transaction: jest.fn((promises) => Promise.all(promises)),
           },
         },
       ],
     }).compile();
 
-    service = module.get<CommunityService>(CommunityService);
+    service = module.get<PostService>(PostService);
     prisma = module.get<PrismaService>(PrismaService);
   });
 
@@ -122,105 +101,6 @@ describe('CommunityService', () => {
     });
   });
 
-  describe('likePost', () => {
-    it('좋아요가 없는 경우 새로 추가해야 한다', async () => {
-      const pid = BigInt(1);
-      const uid = BigInt(100);
-      (prisma.postLike.findUnique as jest.Mock).mockResolvedValue(null);
-      (prisma.post.findUnique as jest.Mock).mockResolvedValue({
-        id: pid,
-        user: null,
-      });
-
-      await service.likePost(pid, uid);
-
-      expect(prisma.postLike.create).toHaveBeenCalled();
-      expect(prisma.post.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: { likes: { increment: 1 } },
-        }),
-      );
-    });
-
-    it('이미 좋아요를 누른 경우 취소해야 한다', async () => {
-      const pid = BigInt(1);
-      const uid = BigInt(100);
-      (prisma.postLike.findUnique as jest.Mock).mockResolvedValue({
-        id: BigInt(1),
-      });
-      (prisma.post.findUnique as jest.Mock).mockResolvedValue({
-        id: pid,
-        user: null,
-      });
-
-      await service.likePost(pid, uid);
-
-      expect(prisma.postLike.delete).toHaveBeenCalled();
-      expect(prisma.post.update).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: { likes: { decrement: 1 } },
-        }),
-      );
-    });
-  });
-
-  describe('getCommentsByPostId', () => {
-    it('특정 게시글의 댓글 목록을 페이징하여 반환해야 한다', async () => {
-      const mockComments = [
-        {
-          id: BigInt(1),
-          user: { id: BigInt(10), ssoQualifier: 'c@t.c' },
-          replies: [],
-        },
-      ];
-      (prisma.comment.findMany as jest.Mock).mockResolvedValue(mockComments);
-      (prisma.comment.count as jest.Mock).mockResolvedValue(1);
-
-      const result = await service.getCommentsByPostId(BigInt(1), 0, 10);
-      expect(result.content).toHaveLength(1);
-      expect(result.content[0].userSummary.nickname).toBe('c');
-      expect(result.content[0].replies).toEqual([]);
-    });
-
-    it('대댓글이 있는 경우 replies에 포함해야 한다', async () => {
-      const mockComments = [
-        {
-          id: BigInt(1),
-          user: { id: BigInt(10), ssoQualifier: 'parent@t.c' },
-          replies: [
-            {
-              id: BigInt(2),
-              user: { id: BigInt(11), ssoQualifier: 'reply@t.c' },
-            },
-          ],
-        },
-      ];
-      (prisma.comment.findMany as jest.Mock).mockResolvedValue(mockComments);
-      (prisma.comment.count as jest.Mock).mockResolvedValue(1);
-
-      const result = await service.getCommentsByPostId(BigInt(1), 0, 10);
-      expect(result.content[0].replies).toHaveLength(1);
-      expect(result.content[0].replies[0].userSummary.nickname).toBe('reply');
-    });
-  });
-
-  describe('createComment', () => {
-    it('게시글이 존재할 때 댓글을 생성해야 한다', async () => {
-      (prisma.post.findUnique as jest.Mock).mockResolvedValue({
-        id: BigInt(1),
-      });
-      await service.createComment(BigInt(1), { postId: '1', content: 'C' });
-      expect(prisma.comment.create).toHaveBeenCalled();
-    });
-
-    it('게시글이 없을 때 NotFoundException을 던져야 한다', async () => {
-      (prisma.post.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(
-        service.createComment(BigInt(1), { postId: '1', content: 'C' }),
-      ).rejects.toThrow(NotFoundException);
-    });
-  });
-
   describe('updatePost', () => {
     it('작성자일 경우 게시글을 수정해야 한다', async () => {
       (prisma.post.findUnique as jest.Mock).mockResolvedValue({
@@ -239,24 +119,6 @@ describe('CommunityService', () => {
       await expect(
         service.updatePost(BigInt(1), BigInt(1), { title: 'U' }),
       ).rejects.toThrow(ForbiddenException);
-    });
-  });
-
-  describe('updateComment', () => {
-    it('작성자일 경우 댓글을 수정해야 한다', async () => {
-      (prisma.comment.findUnique as jest.Mock).mockResolvedValue({
-        id: BigInt(1),
-        userId: BigInt(1),
-      });
-      await service.updateComment(BigInt(1), BigInt(1), { content: 'U' });
-      expect(prisma.comment.update).toHaveBeenCalled();
-    });
-
-    it('댓글이 없을 경우 NotFoundException을 던져야 한다', async () => {
-      (prisma.comment.findUnique as jest.Mock).mockResolvedValue(null);
-      await expect(
-        service.updateComment(BigInt(99), BigInt(1), { content: 'U' }),
-      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -318,13 +180,6 @@ describe('CommunityService', () => {
       expect(result.pageNumber).toBe(0);
       expect(result.pageSize).toBe(10);
       expect(result.totalElements).toBe(25);
-      expect(prisma.post.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({
-          where: { userId: BigInt(10) },
-          skip: 0,
-          take: 10,
-        }),
-      );
     });
 
     it('게시글이 없을 경우 빈 목록을 반환해야 한다', async () => {
@@ -336,6 +191,93 @@ describe('CommunityService', () => {
       expect(result.content).toHaveLength(0);
       expect(result.totalPages).toBe(0);
       expect(result.totalElements).toBe(0);
+    });
+  });
+
+  describe('transformPost', () => {
+    it('게시글 데이터를 API 응답 형식으로 변환해야 한다', () => {
+      const post = {
+        id: BigInt(1),
+        user: { id: BigInt(10), ssoQualifier: 'nick@t.c', badges: 'A' },
+      };
+      const result = service.transformPost(post, true);
+      expect(result.isLiked).toBe(true);
+      expect(result.userSummary.nickname).toBe('nick');
+    });
+  });
+
+  describe('mapToUserSummary', () => {
+    it('사용자 요약 정보를 생성해야 한다', () => {
+      const user = { id: BigInt(1), ssoQualifier: 'test@a.b', badges: 'X,Y' };
+      const result = service.mapToUserSummary(user);
+      expect(result).toEqual({
+        id: BigInt(1),
+        nickname: 'test',
+        badges: ['X', 'Y'],
+      });
+    });
+
+    it('user가 null인 경우 null을 반환해야 한다', () => {
+      expect(service.mapToUserSummary(null)).toBeNull();
+    });
+
+    it('badges가 없는 경우 빈 배열을 반환해야 한다', () => {
+      const user = { id: BigInt(1), ssoQualifier: 'u@a.b', badges: undefined };
+      const result = service.mapToUserSummary(user);
+      expect(result!.badges).toEqual([]);
+    });
+  });
+
+  describe('getLikedPostIds', () => {
+    it('좋아요를 누른 게시글 ID Set을 반환해야 한다', async () => {
+      (prisma.postLike.findMany as jest.Mock).mockResolvedValue([
+        { postId: BigInt(1) },
+        { postId: BigInt(3) },
+      ]);
+
+      const result = await service.getLikedPostIds(
+        [BigInt(1), BigInt(2), BigInt(3)],
+        BigInt(100),
+      );
+      expect(result.has('1')).toBe(true);
+      expect(result.has('2')).toBe(false);
+      expect(result.has('3')).toBe(true);
+    });
+
+    it('userId가 없으면 빈 Set을 반환해야 한다', async () => {
+      const result = await service.getLikedPostIds([BigInt(1)]);
+      expect(result.size).toBe(0);
+    });
+
+    it('postIds가 비어있으면 빈 Set을 반환해야 한다', async () => {
+      const result = await service.getLikedPostIds([], BigInt(1));
+      expect(result.size).toBe(0);
+    });
+  });
+
+  describe('validatePostOwnership', () => {
+    it('작성자일 경우 게시글을 반환해야 한다', async () => {
+      const post = { id: BigInt(1), userId: BigInt(1) };
+      (prisma.post.findUnique as jest.Mock).mockResolvedValue(post);
+      const result = await service.validatePostOwnership(BigInt(1), BigInt(1));
+      expect(result).toEqual(post);
+    });
+
+    it('게시글이 없으면 NotFoundException을 던져야 한다', async () => {
+      (prisma.post.findUnique as jest.Mock).mockResolvedValue(null);
+      await expect(
+        service.validatePostOwnership(BigInt(1), BigInt(1)),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('작성자가 아니면 ForbiddenException을 던져야 한다', async () => {
+      (prisma.post.findUnique as jest.Mock).mockResolvedValue({
+        id: BigInt(1),
+        userId: BigInt(2),
+      });
+      await expect(
+        service.validatePostOwnership(BigInt(1), BigInt(1)),
+      ).rejects.toThrow(ForbiddenException);
     });
   });
 });

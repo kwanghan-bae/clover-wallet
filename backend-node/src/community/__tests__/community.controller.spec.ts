@@ -1,6 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CommunityController } from '../community.controller';
-import { CommunityService } from '../community.service';
+import { PostService } from '../post.service';
+import { CommentService } from '../comment.service';
+import { LikeService } from '../like.service';
+import { FeedService } from '../feed.service';
 import { CreatePostDto } from '../dto/create-post.dto';
 import { UpdatePostDto } from '../dto/update-post.dto';
 import { CreateCommentDto } from '../dto/create-comment.dto';
@@ -12,32 +15,50 @@ import { UpdateCommentDto } from '../dto/update-comment.dto';
  */
 describe('CommunityController', () => {
   let controller: CommunityController;
-  let service: CommunityService;
+  let postService: PostService;
+  let commentService: CommentService;
+  let likeService: LikeService;
+  let feedService: FeedService;
 
-  const mockCommunityService = {
+  const mockPostService = {
     getAllPosts: jest.fn(),
     getPostById: jest.fn(),
     createPost: jest.fn(),
     updatePost: jest.fn(),
-    likePost: jest.fn(),
+    deletePost: jest.fn(),
+    getUserPosts: jest.fn(),
+  };
+
+  const mockCommentService = {
     getCommentsByPostId: jest.fn(),
     createComment: jest.fn(),
     updateComment: jest.fn(),
+  };
+
+  const mockLikeService = {
+    likePost: jest.fn(),
+  };
+
+  const mockFeedService = {
+    getFollowingFeed: jest.fn(),
   };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CommunityController],
       providers: [
-        {
-          provide: CommunityService,
-          useValue: mockCommunityService,
-        },
+        { provide: PostService, useValue: mockPostService },
+        { provide: CommentService, useValue: mockCommentService },
+        { provide: LikeService, useValue: mockLikeService },
+        { provide: FeedService, useValue: mockFeedService },
       ],
     }).compile();
 
     controller = module.get<CommunityController>(CommunityController);
-    service = module.get<CommunityService>(CommunityService);
+    postService = module.get<PostService>(PostService);
+    commentService = module.get<CommentService>(CommentService);
+    likeService = module.get<LikeService>(LikeService);
+    feedService = module.get<FeedService>(FeedService);
   });
 
   it('should be defined', () => {
@@ -45,42 +66,45 @@ describe('CommunityController', () => {
   });
 
   describe('getAllPosts', () => {
-    it('should call service.getAllPosts', async () => {
+    it('should call postService.getAllPosts', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getAllPosts(0, 10, req);
-      expect(service.getAllPosts).toHaveBeenCalledWith(0, 10, 'user-id');
+      expect(postService.getAllPosts).toHaveBeenCalledWith(0, 10, 'user-id');
     });
 
     it('should handle undefined user', async () => {
       const req = {};
       await controller.getAllPosts(1, 20, req);
-      expect(service.getAllPosts).toHaveBeenCalledWith(1, 20, undefined);
+      expect(postService.getAllPosts).toHaveBeenCalledWith(1, 20, undefined);
     });
   });
 
   describe('getPost', () => {
-    it('should call service.getPostById', async () => {
+    it('should call postService.getPostById', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getPost('1', req);
-      expect(service.getPostById).toHaveBeenCalledWith(BigInt(1), 'user-id');
+      expect(postService.getPostById).toHaveBeenCalledWith(
+        BigInt(1),
+        'user-id',
+      );
     });
   });
 
   describe('createPost', () => {
-    it('should call service.createPost', async () => {
+    it('should call postService.createPost', async () => {
       const req = { user: { id: 'user-id' } };
       const dto: CreatePostDto = { title: 'title', content: 'content' };
       await controller.createPost(req, dto);
-      expect(service.createPost).toHaveBeenCalledWith('user-id', dto);
+      expect(postService.createPost).toHaveBeenCalledWith('user-id', dto);
     });
   });
 
   describe('updatePost', () => {
-    it('should call service.updatePost', async () => {
+    it('should call postService.updatePost', async () => {
       const req = { user: { id: 'user-id' } };
       const dto: UpdatePostDto = { title: 'updated', content: 'updated' };
       await controller.updatePost(req, '1', dto);
-      expect(service.updatePost).toHaveBeenCalledWith(
+      expect(postService.updatePost).toHaveBeenCalledWith(
         BigInt(1),
         'user-id',
         dto,
@@ -89,17 +113,20 @@ describe('CommunityController', () => {
   });
 
   describe('likePost', () => {
-    it('should call service.likePost', async () => {
+    it('should call likeService.likePost', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.likePost(req, '1');
-      expect(service.likePost).toHaveBeenCalledWith(BigInt(1), 'user-id');
+      expect(likeService.likePost).toHaveBeenCalledWith(
+        BigInt(1),
+        'user-id',
+      );
     });
   });
 
   describe('getComments', () => {
-    it('should call service.getCommentsByPostId', async () => {
+    it('should call commentService.getCommentsByPostId', async () => {
       await controller.getComments('1', 0, 20);
-      expect(service.getCommentsByPostId).toHaveBeenCalledWith(
+      expect(commentService.getCommentsByPostId).toHaveBeenCalledWith(
         BigInt(1),
         0,
         20,
@@ -108,23 +135,81 @@ describe('CommunityController', () => {
   });
 
   describe('createComment', () => {
-    it('should call service.createComment', async () => {
+    it('should call commentService.createComment', async () => {
       const req = { user: { id: 'user-id' } };
       const dto: CreateCommentDto = { postId: '1', content: 'comment' };
       await controller.createComment(req, dto);
-      expect(service.createComment).toHaveBeenCalledWith('user-id', dto);
+      expect(commentService.createComment).toHaveBeenCalledWith(
+        'user-id',
+        dto,
+      );
     });
   });
 
   describe('updateComment', () => {
-    it('should call service.updateComment', async () => {
+    it('should call commentService.updateComment', async () => {
       const req = { user: { id: 'user-id' } };
       const dto: UpdateCommentDto = { content: 'updated comment' };
       await controller.updateComment(req, '1', dto);
-      expect(service.updateComment).toHaveBeenCalledWith(
+      expect(commentService.updateComment).toHaveBeenCalledWith(
         BigInt(1),
         'user-id',
         dto,
+      );
+    });
+  });
+
+  describe('getFeed', () => {
+    it('should call feedService.getFollowingFeed', async () => {
+      const req = { user: { id: BigInt(1) } };
+      await controller.getFeed(req, 0, 10);
+      expect(feedService.getFollowingFeed).toHaveBeenCalledWith(
+        BigInt(1),
+        0,
+        10,
+      );
+    });
+
+    it('should use defaults when page/size are undefined', async () => {
+      const req = { user: { id: BigInt(1) } };
+      await controller.getFeed(req, undefined, undefined);
+      expect(feedService.getFollowingFeed).toHaveBeenCalledWith(
+        BigInt(1),
+        0,
+        10,
+      );
+    });
+  });
+
+  describe('deletePost', () => {
+    it('should call postService.deletePost', async () => {
+      mockPostService.deletePost.mockResolvedValue(undefined);
+      const req = { user: { id: BigInt(1) } };
+      const result = await controller.deletePost(1, req);
+      expect(postService.deletePost).toHaveBeenCalledWith(
+        BigInt(1),
+        BigInt(1),
+      );
+      expect(result).toEqual({ message: 'Post deleted' });
+    });
+  });
+
+  describe('getUserPosts', () => {
+    it('should call postService.getUserPosts', async () => {
+      await controller.getUserPosts(10, 0, 10);
+      expect(postService.getUserPosts).toHaveBeenCalledWith(
+        BigInt(10),
+        0,
+        10,
+      );
+    });
+
+    it('should use defaults when page/size are undefined', async () => {
+      await controller.getUserPosts(10, undefined, undefined);
+      expect(postService.getUserPosts).toHaveBeenCalledWith(
+        BigInt(10),
+        0,
+        10,
       );
     });
   });
