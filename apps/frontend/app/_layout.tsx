@@ -10,9 +10,9 @@ import {
   NotoSansKR_700Bold,
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
+import { Platform } from 'react-native';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { createMMKV } from 'react-native-mmkv';
 import { useAuth, AuthProvider } from '../hooks/useAuth';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
@@ -21,7 +21,19 @@ import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
 
-const queryStorage = createMMKV({ id: 'query-cache' });
+function createStorage() {
+  if (Platform.OS === 'web') {
+    return {
+      set: (key: string, value: string) => localStorage.setItem(key, value),
+      getString: (key: string) => localStorage.getItem(key) ?? undefined,
+      remove: (key: string) => localStorage.removeItem(key),
+    };
+  }
+  const { MMKV } = require('react-native-mmkv');
+  return new MMKV({ id: 'query-cache' });
+}
+
+const queryStorage = createStorage();
 
 const persister = {
   persistClient: (client: unknown) => {

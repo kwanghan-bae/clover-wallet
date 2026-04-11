@@ -4,6 +4,10 @@
 .DS_Store
 *.swp
 
+# Secrets
+.env
+.env.*
+
 # Turborepo
 .turbo
 node_modules/
