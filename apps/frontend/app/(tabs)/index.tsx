@@ -39,7 +39,7 @@ const HomeScreen = () => {
           </Text>
         </View>
         <TouchableOpacity
-          onPress={() => router.push('/notification')}
+          onPress={() => router.push('/notifications')}
           accessibilityLabel="알림"
           accessibilityRole="button"
         >

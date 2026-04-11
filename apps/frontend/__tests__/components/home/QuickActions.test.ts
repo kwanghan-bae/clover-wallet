@@ -22,7 +22,7 @@ describe('QuickActions', () => {
     expect(hasText(tree, '번호 추첨')).toBe(true);
     expect(hasText(tree, 'QR 스캔')).toBe(true);
     expect(hasText(tree, '번호 분석')).toBe(true);
-    expect(hasText(tree, '여행 플랜')).toBe(true);
+    expect(hasText(tree, '명당 지도')).toBe(true);
     expect(hasText(tree, '로또 명당')).toBe(true);
   });
 

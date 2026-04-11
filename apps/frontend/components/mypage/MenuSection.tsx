@@ -13,7 +13,6 @@ import { MyPageMenuItem, MyPageMenuDivider } from '../ui/MyPageMenuItem';
 export interface MenuSectionProps {
   unreadCount: number;
   onNavigateNotifications: () => void;
-  onNavigatePrivacy: () => void;
   onLogout: () => void;
 }
 
@@ -21,7 +20,6 @@ export interface MenuSectionProps {
 const MenuSectionComponent = ({
   unreadCount,
   onNavigateNotifications,
-  onNavigatePrivacy,
   onLogout,
 }: MenuSectionProps) => (
   <View className="px-5" testID="menu-section">
@@ -37,7 +35,7 @@ const MenuSectionComponent = ({
       <MyPageMenuDivider />
       <MyPageMenuItem icon={<Bell size={20} color="#1A1A1A" />} label="알림 설정" />
       <MyPageMenuDivider />
-      <MyPageMenuItem icon={<ShieldCheck size={20} color="#1A1A1A" />} label="개인정보 처리방침" onPress={onNavigatePrivacy} />
+      <MyPageMenuItem icon={<ShieldCheck size={20} color="#1A1A1A" />} label="개인정보 처리방침" onPress={() => Alert.alert('개인정보 처리방침', '준비 중입니다.')} />
       <MyPageMenuDivider />
       <MyPageMenuItem icon={<Info size={20} color="#1A1A1A" />} label="앱 정보" />
       <MyPageMenuDivider />

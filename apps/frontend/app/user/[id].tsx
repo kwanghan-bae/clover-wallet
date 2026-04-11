@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useLocalSearchParams } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi } from '../../api/users';
 import { useAuth } from '../../hooks/useAuth';
@@ -17,8 +17,6 @@ export default function UserProfileScreen() {
   const { user: currentUser } = useAuth();
   const isMe = currentUser?.id === userId;
   const queryClient = useQueryClient();
-  const router = useRouter();
-
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['userProfile', userId],
     queryFn: () => usersApi.getUserById(userId),
@@ -60,7 +58,7 @@ export default function UserProfileScreen() {
         data={posts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <PostCard post={item} onPress={(postId) => router.push(`/community/${postId}` as any)} />
+          <PostCard post={item} onPress={() => {}} />
         )}
         ListHeaderComponent={
           <ProfileHeader

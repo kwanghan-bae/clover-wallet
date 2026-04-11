@@ -34,9 +34,9 @@ const QuickActionsComponent = ({ onNavigate }: QuickActionsProps) => (
       />
       <QuickActionItem
         icon={<Navigation size={32} color="#00BCD4" />}
-        label="여행 플랜"
+        label="명당 지도"
         bgColor="bg-[#00BCD4]/10"
-        onPress={() => onNavigate('/travel')}
+        onPress={() => onNavigate('/(tabs)/map')}
       />
       <QuickActionItem
         icon={<MapPin size={32} color="#4CAF50" />}

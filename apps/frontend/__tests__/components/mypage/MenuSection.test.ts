@@ -10,7 +10,6 @@ describe('MenuSection', () => {
   const defaultProps = {
     unreadCount: 0,
     onNavigateNotifications: jest.fn(),
-    onNavigatePrivacy: jest.fn(),
     onLogout: jest.fn(),
   };
 
@@ -41,12 +40,15 @@ describe('MenuSection', () => {
     expect(defaultProps.onNavigateNotifications).toHaveBeenCalled();
   });
 
-  /** 개인정보 처리방침을 누르면 네비게이션 콜백이 호출됩니다 */
-  test('개인정보 처리방침을 누르면 onNavigatePrivacy가 호출된다', () => {
+  /** 개인정보 처리방침을 누르면 Alert가 표시됩니다 */
+  test('개인정보 처리방침을 누르면 Alert가 표시된다', () => {
+    const { Alert } = require('react-native');
+    const mockAlert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
     const { getByLabelText } = render(
       React.createElement(MenuSection, defaultProps)
     );
     fireEvent.press(getByLabelText('개인정보 처리방침'));
-    expect(defaultProps.onNavigatePrivacy).toHaveBeenCalled();
+    expect(mockAlert).toHaveBeenCalledWith('개인정보 처리방침', '준비 중입니다.');
+    mockAlert.mockRestore();
   });
 });

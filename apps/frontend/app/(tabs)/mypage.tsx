@@ -80,7 +80,6 @@ const MyPageScreen = () => {
         <MenuSection
           unreadCount={unreadCount}
           onNavigateNotifications={() => router.push('/notifications')}
-          onNavigatePrivacy={() => router.push('/privacy-policy')}
           onLogout={logout}
         />
       </ScrollView>
