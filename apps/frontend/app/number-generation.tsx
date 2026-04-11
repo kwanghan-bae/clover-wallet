@@ -7,6 +7,7 @@ import { METHODS } from '../constants/generation-methods';
 import { GenerationInputModal } from '../components/ui/GenerationInputModal';
 import { GenerationResult } from '../components/generation/GenerationResult';
 import { MethodSelector } from '../components/generation/MethodSelector';
+import { appendToItemArray } from '../utils/storage';
 
 export default function NumberGenerationScreen() {
   const router = useRouter();
@@ -49,10 +50,18 @@ export default function NumberGenerationScreen() {
   const handleSave = async () => {
     if (generatedNumbers.length === 0) return;
     setIsSaving(true);
-    setTimeout(() => {
+    try {
+      const record = {
+        id: Date.now(),
+        numbers: generatedNumbers,
+        method: selectedMethod,
+        createdAt: new Date().toISOString(),
+      };
+      appendToItemArray('saved-numbers', record);
+      Alert.alert('성공', '번호가 저장되었습니다! 내역 탭에서 확인하세요.');
+    } finally {
       setIsSaving(false);
-      Alert.alert("성공", "번호가 저장되었습니다! 내 로또 탭에서 확인하세요.");
-    }, 1000);
+    }
   };
 
   const methodTitle = METHODS.find(m => m.id === selectedMethod)?.title;
