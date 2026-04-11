@@ -25,7 +25,7 @@ const PostCardMenuComponent = ({ postId, isOwner }: PostCardMenuProps) => {
           onPress: async () => {
             try {
               await communityApi.deletePost(postId);
-              queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
+              queryClient.invalidateQueries({ queryKey: ['communityPosts'], exact: false });
             } catch {
               Alert.alert('오류', '게시글 삭제에 실패했습니다.');
             }

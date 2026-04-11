@@ -49,17 +49,19 @@ const HistoryScreen = () => {
   };
 
   // 백엔드 티켓을 LottoRecord 형태로 변환
-  const backendRecords: LottoRecord[] = (ticketData?.content ?? []).flatMap((ticket: LottoTicket) =>
-    (ticket.games ?? []).map((game) => ({
-      id: game.id,
-      status: game.status as LottoRecord['status'],
-      numbers: [game.number1, game.number2, game.number3, game.number4, game.number5, game.number6],
-      createdAt: ticket.createdAt,
-      round: ticket.ordinal,
-      prizeAmount: game.prizeAmount,
-      _ticketStatus: ticket.status,
-    }))
-  );
+  const backendRecords = useMemo(() => {
+    return (ticketData?.content ?? []).flatMap((ticket: LottoTicket) =>
+      (ticket.games ?? []).map((game) => ({
+        id: game.id,
+        status: game.status as LottoRecord['status'],
+        numbers: [game.number1, game.number2, game.number3, game.number4, game.number5, game.number6],
+        createdAt: ticket.createdAt,
+        round: ticket.ordinal,
+        prizeAmount: game.prizeAmount,
+        _ticketStatus: ticket.status,
+      }))
+    );
+  }, [ticketData]);
 
   // 로컬 기록과 백엔드 기록 합산 (백엔드를 먼저 표시, 중복 제거)
   const combinedHistory = useMemo(() => {
