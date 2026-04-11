@@ -1,3 +1,5 @@
+> **ARCHIVED** — 이 세션은 이전 Kotlin/Spring Boot 백엔드 기준으로 작성되었습니다. 백엔드가 NestJS로 마이그레이션됨.
+
 # Session 0001: API Consistency Audit & Documentation Sync
 
 ## 📅 Date
