@@ -16,6 +16,7 @@ jest.mock('react-native-reanimated', () => {
     useAnimatedProps: (cb) => cb(),
     withTiming: (v) => v,
     withSpring: (v) => v,
+    withDelay: (_delay, v) => v,
     runOnJS: (fn) => fn,
     makeMutable: (v) => ({ value: v }),
     createAnimatedComponent: (c) => c,
@@ -133,15 +134,26 @@ jest.mock('expo-camera', () => {
   };
 });
 
-// Mock @shopify/flash-list
+// Mock @shopify/flash-list - renders items directly for testability
 jest.mock('@shopify/flash-list', () => {
   const React = require('react');
-  const { FlatList } = require('react-native');
-  return {
-    FlashList: React.forwardRef((props, ref) =>
-      React.createElement(FlatList, { ...props, ref })
-    ),
-  };
+  const { View } = require('react-native');
+  const FlashList = React.forwardRef((props, ref) => {
+    const items = props.data || [];
+    return React.createElement(
+      View,
+      { ref },
+      items.map((item, index) =>
+        props.renderItem ? props.renderItem({ item, index }) : null
+      ),
+      !items.length && props.ListEmptyComponent
+        ? (typeof props.ListEmptyComponent === 'function'
+          ? React.createElement(props.ListEmptyComponent)
+          : props.ListEmptyComponent)
+        : null
+    );
+  });
+  return { FlashList };
 });
 
 // Mock @tanstack/react-query

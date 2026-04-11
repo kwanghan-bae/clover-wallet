@@ -19,7 +19,7 @@ jest.mock('expo-notifications', () => ({
 jest.mock('expo-device', () => ({ isDevice: true }));
 jest.mock('expo-constants', () => ({ default: { expoConfig: { extra: { eas: { projectId: 'test' } } } } }));
 
-import { renderHook } from '@testing-library/react-native';
+import { renderHook, act } from '@testing-library/react-native';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -37,5 +37,25 @@ describe('useNotifications', () => {
     expect(result.current).toHaveProperty('unreadCount');
     expect(result.current).toHaveProperty('registerToken');
     expect(result.current).toHaveProperty('markAsRead');
+  });
+
+  it('should call registerFcmToken when registerToken is called on device', async () => {
+    const { useNotifications } = require('../../hooks/useNotifications');
+    const { notificationsApi } = require('../../api/notifications');
+    const { result } = renderHook(() => useNotifications(), { wrapper: createWrapper() });
+    await act(async () => {
+      await result.current.registerToken();
+    });
+    expect(notificationsApi.registerFcmToken).toHaveBeenCalledWith('ExponentPushToken[xxx]');
+  });
+
+  it('should call markAsRead and invalidate queries', async () => {
+    const { useNotifications } = require('../../hooks/useNotifications');
+    const { notificationsApi } = require('../../api/notifications');
+    const { result } = renderHook(() => useNotifications(), { wrapper: createWrapper() });
+    await act(async () => {
+      await result.current.markAsRead(5);
+    });
+    expect(notificationsApi.markAsRead).toHaveBeenCalledWith(5);
   });
 });

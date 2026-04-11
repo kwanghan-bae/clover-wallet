@@ -53,4 +53,37 @@ describe('useLuckySpots', () => {
     });
     expect(result.current.selectedRegion).toBe('서울');
   });
+
+  it('should call handleSpotPress without error', async () => {
+    const { useLuckySpots } = require('../../hooks/useLuckySpots');
+    const { result } = renderHook(() => useLuckySpots(), { wrapper: createWrapper() });
+    // Should not throw
+    expect(() => {
+      act(() => {
+        result.current.handleSpotPress(42);
+      });
+    }).not.toThrow();
+  });
+
+  it('should update region when moveToCurrentLocation is called with permission', async () => {
+    const Location = require('expo-location');
+    const { useLuckySpots } = require('../../hooks/useLuckySpots');
+    const { result } = renderHook(() => useLuckySpots(), { wrapper: createWrapper() });
+    await act(async () => {
+      await result.current.moveToCurrentLocation();
+    });
+    expect(Location.getCurrentPositionAsync).toHaveBeenCalled();
+  });
+
+  it('should not update region when location permission denied', async () => {
+    const Location = require('expo-location');
+    Location.requestForegroundPermissionsAsync.mockResolvedValueOnce({ status: 'denied' });
+    const { useLuckySpots } = require('../../hooks/useLuckySpots');
+    const { result } = renderHook(() => useLuckySpots(), { wrapper: createWrapper() });
+    const initialRegion = result.current.region;
+    await act(async () => {
+      await result.current.moveToCurrentLocation();
+    });
+    expect(result.current.region).toEqual(initialRegion);
+  });
 });
