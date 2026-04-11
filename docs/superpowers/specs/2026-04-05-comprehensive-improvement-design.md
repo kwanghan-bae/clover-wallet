@@ -1,3 +1,5 @@
+> **NOTE**: 이 설계서의 Kotlin → NestJS 마이그레이션 내용은 이미 완료됨. 현재 기술 스택은 `TECHNICAL_SPEC.md` 참조.
+
 # Clover Wallet 종합 개선 설계서
 
 ## 개요

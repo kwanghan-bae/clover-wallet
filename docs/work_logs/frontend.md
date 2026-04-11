@@ -1,3 +1,5 @@
+> **ARCHIVED** — 이 작업 일지는 초기 개발 단계 기준으로 작성되었습니다. 빌드 환경 관련 Gradle/Kotlin 언급은 이전 Android 설정이며, 백엔드가 NestJS로 마이그레이션됨.
+
 # Clover Lotto 앱 (Frontend) 개발 작업 일지
 
 ## 1. 작업 개요

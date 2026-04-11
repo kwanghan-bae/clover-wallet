@@ -1,3 +1,5 @@
+> **NOTE**: 이 계획서의 Kotlin 레거시 삭제 태스크는 이전 백엔드 마이그레이션 과정에서 작성됨. 백엔드가 NestJS로 마이그레이션 완료됨.
+
 # Phase 1: 기반 안정화 (Foundation) Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

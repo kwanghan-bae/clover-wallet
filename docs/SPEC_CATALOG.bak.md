@@ -1,4 +1,6 @@
-# 📘 CLOVER WALLET — 캐노니컬 카탈로그 스펙
+> **ARCHIVED** — 이것은 백업 파일입니다. 최신 버전은 `SPEC_CATALOG.md`를 참조하세요. Kotlin 참조는 이전 백엔드 기준이며, 현재 NestJS로 마이그레이션됨.
+
+# CLOVER WALLET — 캐노니컬 카탈로그 스펙
 
 **Document Role**
 이 문서는 **Clover Wallet(Lotto 통합 앱)이 무엇인지, 왜 존재하는지, 무엇을 제공하는지**를 정의하는 **최상위 기준 스펙 문서**입니다.
