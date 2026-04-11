@@ -7,6 +7,7 @@ export interface ProfileHeaderProps {
   email?: string | null;
   followCounts?: FollowCounts | null;
   isMe: boolean;
+  isFollowing?: boolean;
   isFollowPending: boolean;
   onFollowToggle: () => void;
 }
@@ -17,6 +18,7 @@ const ProfileHeaderComponent = ({
   email,
   followCounts,
   isMe,
+  isFollowing,
   isFollowPending,
   onFollowToggle,
 }: ProfileHeaderProps) => {
@@ -47,11 +49,11 @@ const ProfileHeaderComponent = ({
         <Pressable
           onPress={onFollowToggle}
           disabled={isFollowPending}
-          className="py-2.5 rounded-full items-center border border-[#4CAF50]"
+          className={`py-2.5 rounded-full items-center border ${isFollowing ? 'border-gray-300' : 'border-[#4CAF50]'}`}
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
         >
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-sm">
-            {isFollowPending ? '처리 중...' : '팔로우'}
+          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className={`text-sm ${isFollowing ? 'text-gray-500' : 'text-[#4CAF50]'}`}>
+            {isFollowPending ? '처리 중...' : isFollowing ? '팔로우 취소' : '팔로우'}
           </Text>
         </Pressable>
       )}

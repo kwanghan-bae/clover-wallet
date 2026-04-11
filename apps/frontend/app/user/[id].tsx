@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -17,6 +17,7 @@ export default function UserProfileScreen() {
   const { user: currentUser } = useAuth();
   const isMe = currentUser?.id === userId;
   const queryClient = useQueryClient();
+  const [isFollowing, setIsFollowing] = useState(false);
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['userProfile', userId],
     queryFn: () => usersApi.getUserById(userId),
@@ -37,10 +38,13 @@ export default function UserProfileScreen() {
 
   const followMutation = useMutation({
     mutationFn: () => usersApi.toggleFollow(userId),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['followCounts', userId] }),
+    onSuccess: (data: { following: boolean }) => {
+      setIsFollowing(data.following);
+      queryClient.invalidateQueries({ queryKey: ['followCounts', userId] });
+    },
   });
 
-  const posts: Post[] = (postsData as any)?.content ?? [];
+  const posts: Post[] = (postsData as { content?: Post[] })?.content ?? [];
 
   if (profileLoading) {
     return (
@@ -66,6 +70,7 @@ export default function UserProfileScreen() {
             email={profile?.email}
             followCounts={followCounts}
             isMe={isMe}
+            isFollowing={isFollowing}
             isFollowPending={followMutation.isPending}
             onFollowToggle={() => followMutation.mutate()}
           />
