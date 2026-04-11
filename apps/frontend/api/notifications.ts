@@ -1,21 +1,7 @@
 import { apiClient } from './client';
+import type { Notification, PageResponse } from '@clover/shared';
 
-export interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  type: 'INFO' | 'WINNING' | 'SYSTEM';
-  isRead: boolean;
-  createdAt: string;
-}
-
-interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-}
+export type { Notification };
 
 export const notificationsApi = {
   getMyNotifications: (page = 0, size = 20) =>

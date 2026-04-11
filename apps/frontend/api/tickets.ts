@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import type { PageResponse } from '@clover/shared';
 
 export interface LottoTicket {
   id: number;
@@ -19,14 +20,6 @@ export interface LottoGame {
   number6: number;
   status: string;
   prizeAmount: number;
-}
-
-interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
 }
 
 export const ticketsApi = {

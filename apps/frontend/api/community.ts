@@ -1,4 +1,5 @@
 import { apiClient } from './client';
+import type { PageResponse } from '@clover/shared';
 
 export interface Post {
   id: number;
@@ -9,14 +10,6 @@ export interface Post {
   createdAt: string;
   userSummary: { id: number; nickname: string; badges: string[] };
   _count?: { comments: number };
-}
-
-interface PageResponse<T> {
-  content: T[];
-  totalElements: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
 }
 
 export const communityApi = {
