@@ -5,16 +5,6 @@ import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { notificationsApi } from '../api/notifications';
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
 export function useNotifications() {
   const queryClient = useQueryClient();
 
