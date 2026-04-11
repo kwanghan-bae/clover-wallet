@@ -1,0 +1,19 @@
+{
+  "name": "clover-wallet",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "dev:backend": "turbo run dev --filter=@clover/backend",
+    "dev:frontend": "turbo run dev --filter=@clover/frontend"
+  },
+  "devDependencies": {
+    "turbo": "^2.5.0"
+  }
+}

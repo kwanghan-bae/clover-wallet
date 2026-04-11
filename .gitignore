@@ -4,6 +4,10 @@
 .DS_Store
 *.swp
 
+# Turborepo
+.turbo
+node_modules/
+
 # Backend (Kotlin/Gradle)
 backend/.gradle
 backend/build
