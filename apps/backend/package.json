@@ -43,8 +43,7 @@
     "passport-jwt": "^4.0.1",
     "pg": "^8.17.2",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
-    "@clover/shared": "*"
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
