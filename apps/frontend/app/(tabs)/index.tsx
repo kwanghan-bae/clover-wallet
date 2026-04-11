@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
 import { Clover, Bell, ChevronRight, Receipt } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { HeroSection } from '../../components/home/HeroSection';
 import { QuickActions } from '../../components/home/QuickActions';
 import { useTheme } from '../../hooks/useTheme';
+import { apiClient } from '../../api/client';
 
 /**
  * @description 애플리케이션의 홈 화면 컴포넌트입니다.
@@ -13,19 +15,27 @@ import { useTheme } from '../../hooks/useTheme';
 const HomeScreen = () => {
   const router = useRouter();
   const { isDark } = useTheme();
+  const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
 
-  const [drawInfo] = useState({
-    currentRound: 1103,
-    daysLeft: 3,
-    hoursLeft: 4,
-    minutesLeft: 20,
+  const { data: drawInfo } = useQuery({
+    queryKey: ['nextDraw'],
+    queryFn: () => apiClient.get('lotto/next-draw').json<{
+      currentRound: number;
+      nextDrawDate: string;
+      daysLeft: number;
+      hoursLeft: number;
+      minutesLeft: number;
+      estimatedJackpot: string;
+    }>(),
+    staleTime: 5 * 60 * 1000,
   });
 
-  const onRefresh = React.useCallback(() => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000);
-  }, []);
+    await queryClient.invalidateQueries({ queryKey: ['nextDraw'] });
+    setRefreshing(false);
+  }, [queryClient]);
 
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
@@ -54,7 +64,15 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#4CAF50']} />}
       >
-        <HeroSection drawInfo={drawInfo} onGenerate={() => router.push('/number-generation')} />
+        <HeroSection
+          drawInfo={{
+            currentRound: drawInfo?.currentRound ?? 0,
+            daysLeft: drawInfo?.daysLeft ?? 0,
+            hoursLeft: drawInfo?.hoursLeft ?? 0,
+            minutesLeft: drawInfo?.minutesLeft ?? 0,
+          }}
+          onGenerate={() => router.push('/number-generation')}
+        />
         <QuickActions onNavigate={(path) => router.push(path as any)} />
 
         {/* Recent History Preview */}
