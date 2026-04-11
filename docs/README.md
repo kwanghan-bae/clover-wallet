@@ -1,70 +1,99 @@
-# 🍀 Clover Wallet API
+# Clover Wallet API (NestJS)
 
-Clover Wallet의 백엔드 API 서버입니다. 최신 Reactive 기술 스택을 기반으로 현대화되었으며, 고성능 비동기 처리를 지원합니다.
+Clover Wallet의 백엔드 API 서버입니다. NestJS 11 + Prisma 7 기반으로 구현되었습니다.
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **Language**: Kotlin 1.9
-- **Framework**: Spring Boot 3.2 (WebFlux)
-- **Database**: PostgreSQL
-- **Persistence**: Spring Data R2DBC (Reactive Relational Database Connectivity)
-- **Concurrency**: Kotlin Coroutines (Suspend Functions, Flow)
-- **Auth**: Supabase Auth Integration (JWT)
-- **Build Tool**: Gradle (Kotlin DSL)
+- **Runtime**: Node.js 20+
+- **Framework**: NestJS 11
+- **ORM**: Prisma 7 (PostgreSQL)
+- **Auth**: Supabase Auth (JWT)
+- **Validation**: class-validator + class-transformer
+- **Scheduler**: @nestjs/schedule (Cron Job)
+- **Testing**: Jest + Supertest
 
-## 🏗 Architecture
+## Architecture
 
-기존의 멀티 모듈 구조를 **단일 모듈(`app:api`)**로 통합하여 복잡도를 낮추고 개발 생산성을 높였습니다.
+모듈 기반 구조로, 각 도메인이 독립적인 NestJS 모듈로 분리되어 있습니다.
 
-- **Package Structure**: `com.wallet.clover.api.*`
-- **Layers**:
-  - `controller`: REST API 엔드포인트 (WebFlux)
-  - `service`: 비즈니스 로직 (Coroutines)
-  - `repository`: 데이터 액세스 (R2DBC CoroutineCrudRepository)
-  - `entity`: 데이터베이스 테이블 매핑
-  - `dto`: 데이터 전송 객체
+- **Package Structure**: `backend-node/src/{domain}/`
+- **Modules**:
+  - `auth/`: 인증 (Supabase JWT Guard)
+  - `lotto/`: 로또 번호 생성/조회
+  - `lotto-spot/`: 명당 판매점 관리
+  - `community/`: 커뮤니티 게시판
+  - `ticket/`: 티켓 스캔 및 저장
+  - `travel/`: 여행 플랜
+  - `users/`: 사용자 프로필
+  - `admin/`: 데이터 초기화 (크롤링)
+  - `notification/`: 알림
+  - `prisma/`: Prisma 서비스
 
-## 🛠 Setup & Run
+## Setup & Run
 
 ### Prerequisites
-- JDK 21 이상
+- Node.js 20 이상
 - Docker (선택 사항, 로컬 DB 실행 시 필요)
 
 ### 1. 환경 변수 설정
-`application-prod.yml` 또는 환경 변수를 통해 데이터베이스 연결 정보를 설정해야 합니다.
+
+`.env` 파일을 `backend-node/` 디렉토리에 생성합니다.
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `DB_URL` | R2DBC Connection URL | `r2dbc:postgresql://host:5432/db` |
-| `DB_USERNAME` | Database Username | `postgres` |
-| `DB_PASSWORD` | Database Password | `password` |
-| `SUPABASE_JWT_SECRET` | Supabase JWT Secret | `your-secret` |
+| `DATABASE_URL` | PostgreSQL Connection URL | `postgresql://user:pass@host:5432/db` |
+| `JWT_SECRET` | JWT Secret Key | `your-secret` |
+| `SUPABASE_JWT_SECRET` | Supabase JWT Secret | `your-supabase-secret` |
 
 ### 2. 실행 (Local)
 ```bash
-# 의존성 설치 및 실행
-./gradlew bootRun
+cd backend-node
+
+# 의존성 설치
+npm install
+
+# Prisma 클라이언트 생성
+npx prisma generate
+
+# 개발 서버 실행
+npm run start:dev
 ```
 
-### 3. 실행 (Docker)
+### 3. 테스트
 ```bash
+cd backend-node
+
+# 단위 테스트
+npm test
+
+# 커버리지 리포트
+npm run test:cov
+
+# E2E 테스트
+npm run test:e2e
+```
+
+### 4. 실행 (Docker)
+```bash
+cd backend-node
+
 # Docker 이미지 빌드
-docker build -t backend-api .
+docker build -t clover-wallet-api .
 
 # 컨테이너 실행
-docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... backend-api
+docker run -p 3000:3000 -e DATABASE_URL=... clover-wallet-api
 ```
 
-## ☁️ Deployment (Render)
+## Deployment (Render)
 
-이 프로젝트는 `Dockerfile`을 포함하고 있어 Render, Fly.io 등 컨테이너 기반 호스팅 서비스에 쉽게 배포할 수 있습니다.
+`render.yaml`에 정의된 설정으로 Render에 자동 배포됩니다.
 
-**Render 배포 시 주의사항:**
-1. **Environment Variables**: 대시보드에서 위의 환경 변수들을 반드시 설정해야 합니다.
-2. **Health Check**: `/actuator/health` 엔드포인트를 사용할 수 있습니다.
-3. **Database**: `schema.sql`이 시작 시 자동으로 실행되어 테이블을 생성합니다 (R2DBC 설정).
+**배포 시 주의사항:**
+1. **Environment Variables**: Render 대시보드에서 `DATABASE_URL`, `JWT_SECRET` 등을 설정해야 합니다.
+2. **Health Check**: `/api/v1` 엔드포인트를 사용합니다.
+3. **Database**: Prisma 마이그레이션으로 스키마를 관리합니다.
 
-## 📝 API Endpoints
+## API Endpoints
 
 - **Auth**: `POST /api/v1/auth/login` (Google SSO)
 - **User**: `GET /api/v1/users/{id}`
@@ -79,20 +108,16 @@ docker run -p 8080:8080 -e DB_URL=... -e DB_USERNAME=... backend-api
   - `GET /api/v1/community/posts`
   - `POST /api/v1/community/posts`
 
-## 🔄 Recent Changes (Modernization)
-- **JPA -> R2DBC**: 완전한 Non-blocking I/O 전환
-- **Reactor -> Coroutines**: `Mono`/`Flux` 대신 `suspend`/`Flow` 사용하여 가독성 향상
-- **Single Module**: 불필요한 레이어 제거 및 구조 단순화
+## Data Initialization (Admin)
 
-## 🛠️ Data Initialization (Admin)
-서버 초기 세팅을 위한 데이터 적재 API입니다. (인증 불필요 - 임시 개방)
+서버 초기 세팅을 위한 데이터 적재 API입니다.
 
-**1. 당첨 번호 초기화 (JSON API 사용 - 고속)**
+**1. 당첨 번호 초기화**
 ```bash
-curl -X POST "https://backend-api.onrender.com/api/v1/admin/init/history"
+curl -X POST "https://clover-wallet-api.onrender.com/api/v1/admin/init/history"
 ```
 
-**2. 명당 정보 초기화 (HTML 파싱 - 저속)**
+**2. 명당 정보 초기화**
 ```bash
-curl -X POST "https://backend-api.onrender.com/api/v1/admin/init/spots"
+curl -X POST "https://clover-wallet-api.onrender.com/api/v1/admin/init/spots"
 ```
