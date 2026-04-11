@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -23,19 +27,29 @@ export class PostService {
     const skip = page * size;
     const [posts, total] = await Promise.all([
       this.prisma.post.findMany({
-        skip, take: size, orderBy: { createdAt: 'desc' }, include: POST_INCLUDE,
+        skip,
+        take: size,
+        orderBy: { createdAt: 'desc' },
+        include: POST_INCLUDE,
       }),
       this.prisma.post.count(),
     ]);
 
     const likedPostIds = await this.getLikedPostIds(
-      posts.map((p) => p.id), currentUserId,
+      posts.map((p) => p.id),
+      currentUserId,
     );
     const content = posts.map((p) =>
       this.transformPost(p, likedPostIds.has(p.id.toString())),
     );
 
-    return { content, pageNumber: page, pageSize: size, totalElements: total, totalPages: Math.ceil(total / size) };
+    return {
+      content,
+      pageNumber: page,
+      pageSize: size,
+      totalElements: total,
+      totalPages: Math.ceil(total / size),
+    };
   }
 
   async getPostById(postId: bigint, currentUserId?: bigint) {
@@ -44,7 +58,8 @@ export class PostService {
       include: { user: { select: USER_SELECT } },
     });
 
-    if (!post) throw new NotFoundException(`게시글을 찾을 수 없습니다: ${postId}`);
+    if (!post)
+      throw new NotFoundException(`게시글을 찾을 수 없습니다: ${postId}`);
 
     const isLiked = currentUserId
       ? !!(await this.prisma.postLike.findUnique({
@@ -88,8 +103,10 @@ export class PostService {
 
     return {
       content: posts.map((p) => this.transformPost(p, false)),
-      pageNumber: page, pageSize: size,
-      totalElements: total, totalPages: Math.ceil(total / size),
+      pageNumber: page,
+      pageSize: size,
+      totalElements: total,
+      totalPages: Math.ceil(total / size),
     };
   }
 
@@ -106,7 +123,10 @@ export class PostService {
     };
   }
 
-  async getLikedPostIds(postIds: bigint[], userId?: bigint): Promise<Set<string>> {
+  async getLikedPostIds(
+    postIds: bigint[],
+    userId?: bigint,
+  ): Promise<Set<string>> {
     if (!userId || postIds.length === 0) return new Set();
     const likes = await this.prisma.postLike.findMany({
       where: { userId, postId: { in: postIds } },
@@ -118,7 +138,8 @@ export class PostService {
   async validatePostOwnership(postId: bigint, userId: bigint) {
     const post = await this.prisma.post.findUnique({ where: { id: postId } });
     if (!post) throw new NotFoundException('게시글을 찾을 수 없습니다.');
-    if (post.userId !== userId) throw new ForbiddenException('수정 권한이 없습니다.');
+    if (post.userId !== userId)
+      throw new ForbiddenException('수정 권한이 없습니다.');
     return post;
   }
 }

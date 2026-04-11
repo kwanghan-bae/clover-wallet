@@ -21,17 +21,11 @@ export class WinnerNotificationService {
     this.badgeService
       .updateUserBadges(ticket.userId)
       .catch((e) =>
-        this.logger.error(
-          `뱃지 업데이트 실패: ${ticket.userId}`,
-          e.stack,
-        ),
+        this.logger.error(`뱃지 업데이트 실패: ${ticket.userId}`, e.stack),
       );
 
     this.notifyWinner(ticket, winningInfo).catch((e) =>
-      this.logger.error(
-        `당첨 알림 발송 실패: ${ticket.userId}`,
-        e.stack,
-      ),
+      this.logger.error(`당첨 알림 발송 실패: ${ticket.userId}`, e.stack),
     );
   }
 

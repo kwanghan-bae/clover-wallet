@@ -51,9 +51,7 @@ describe('WinnerNotificationService', () => {
       ],
     }).compile();
 
-    service = module.get<WinnerNotificationService>(
-      WinnerNotificationService,
-    );
+    service = module.get<WinnerNotificationService>(WinnerNotificationService);
     prisma = module.get<PrismaService>(PrismaService);
     badgeService = module.get<BadgeService>(BadgeService);
     fcmService = module.get<FcmService>(FcmService);
@@ -66,8 +64,12 @@ describe('WinnerNotificationService', () => {
         userId: 10,
         games: [
           {
-            number1: 1, number2: 2, number3: 3,
-            number4: 4, number5: 5, number6: 6,
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 4,
+            number5: 5,
+            number6: 6,
           },
         ],
       };
@@ -115,8 +117,12 @@ describe('WinnerNotificationService', () => {
         userId: 10,
         games: [
           {
-            number1: 1, number2: 2, number3: 3,
-            number4: 4, number5: 5, number6: 6,
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 4,
+            number5: 5,
+            number6: 6,
           },
         ],
       };
@@ -137,12 +143,20 @@ describe('WinnerNotificationService', () => {
       const ticket = {
         games: [
           {
-            number1: 1, number2: 2, number3: 3,
-            number4: 4, number5: 5, number6: 45,
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 4,
+            number5: 5,
+            number6: 45,
           },
           {
-            number1: 1, number2: 2, number3: 3,
-            number4: 4, number5: 5, number6: 6,
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 4,
+            number5: 5,
+            number6: 6,
           },
         ],
       };
@@ -156,8 +170,12 @@ describe('WinnerNotificationService', () => {
       const ticket = {
         games: [
           {
-            number1: 40, number2: 41, number3: 42,
-            number4: 43, number5: 44, number6: 45,
+            number1: 40,
+            number2: 41,
+            number3: 42,
+            number4: 43,
+            number5: 44,
+            number6: 45,
           },
         ],
       };
@@ -170,12 +188,20 @@ describe('WinnerNotificationService', () => {
       const ticket = {
         games: [
           {
-            number1: 1, number2: 2, number3: 3,
-            number4: 40, number5: 41, number6: 42,
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 40,
+            number5: 41,
+            number6: 42,
           },
           {
-            number1: 1, number2: 2, number3: 3,
-            number4: 4, number5: 40, number6: 41,
+            number1: 1,
+            number2: 2,
+            number3: 3,
+            number4: 4,
+            number5: 40,
+            number6: 41,
           },
         ],
       };

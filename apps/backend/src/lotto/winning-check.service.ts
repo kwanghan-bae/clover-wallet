@@ -79,12 +79,20 @@ export class WinningCheckService {
 
     for (const game of ticket.games) {
       const gameNumbers = [
-        game.number1, game.number2, game.number3,
-        game.number4, game.number5, game.number6,
+        game.number1,
+        game.number2,
+        game.number3,
+        game.number4,
+        game.number5,
+        game.number6,
       ];
       const winNumbers = [
-        winningInfo.number1, winningInfo.number2, winningInfo.number3,
-        winningInfo.number4, winningInfo.number5, winningInfo.number6,
+        winningInfo.number1,
+        winningInfo.number2,
+        winningInfo.number3,
+        winningInfo.number4,
+        winningInfo.number5,
+        winningInfo.number6,
       ];
 
       const { status, prize } = LottoRankCalculator.calculateRank(

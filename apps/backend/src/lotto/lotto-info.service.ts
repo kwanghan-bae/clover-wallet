@@ -57,7 +57,8 @@ export class LottoInfoService {
 
     try {
       const { data } = await axios.get(
-        'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=' + round,
+        'https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=' +
+          round,
         { timeout: 5000 },
       );
       if (data.returnValue !== 'success') return null;

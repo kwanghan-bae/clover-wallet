@@ -116,10 +116,7 @@ describe('CommunityController', () => {
     it('should call likeService.likePost', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.likePost(req, '1');
-      expect(likeService.likePost).toHaveBeenCalledWith(
-        BigInt(1),
-        'user-id',
-      );
+      expect(likeService.likePost).toHaveBeenCalledWith(BigInt(1), 'user-id');
     });
   });
 
@@ -139,10 +136,7 @@ describe('CommunityController', () => {
       const req = { user: { id: 'user-id' } };
       const dto: CreateCommentDto = { postId: '1', content: 'comment' };
       await controller.createComment(req, dto);
-      expect(commentService.createComment).toHaveBeenCalledWith(
-        'user-id',
-        dto,
-      );
+      expect(commentService.createComment).toHaveBeenCalledWith('user-id', dto);
     });
   });
 
@@ -186,10 +180,7 @@ describe('CommunityController', () => {
       mockPostService.deletePost.mockResolvedValue(undefined);
       const req = { user: { id: BigInt(1) } };
       const result = await controller.deletePost(1, req);
-      expect(postService.deletePost).toHaveBeenCalledWith(
-        BigInt(1),
-        BigInt(1),
-      );
+      expect(postService.deletePost).toHaveBeenCalledWith(BigInt(1), BigInt(1));
       expect(result).toEqual({ message: 'Post deleted' });
     });
   });
@@ -197,20 +188,12 @@ describe('CommunityController', () => {
   describe('getUserPosts', () => {
     it('should call postService.getUserPosts', async () => {
       await controller.getUserPosts(10, 0, 10);
-      expect(postService.getUserPosts).toHaveBeenCalledWith(
-        BigInt(10),
-        0,
-        10,
-      );
+      expect(postService.getUserPosts).toHaveBeenCalledWith(BigInt(10), 0, 10);
     });
 
     it('should use defaults when page/size are undefined', async () => {
       await controller.getUserPosts(10, undefined, undefined);
-      expect(postService.getUserPosts).toHaveBeenCalledWith(
-        BigInt(10),
-        0,
-        10,
-      );
+      expect(postService.getUserPosts).toHaveBeenCalledWith(BigInt(10), 0, 10);
     });
   });
 });

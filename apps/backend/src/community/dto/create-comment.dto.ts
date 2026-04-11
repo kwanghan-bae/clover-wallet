@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsInt, IsOptional, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsInt,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 
 /**
  * 게시글 댓글 생성을 위한 데이터 전송 객체(DTO)입니다.

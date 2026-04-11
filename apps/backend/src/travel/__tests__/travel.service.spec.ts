@@ -27,7 +27,12 @@ describe('TravelService', () => {
         { id: BigInt(1), latitude: 37.5, longitude: 127.0, name: 'Spot A' },
       ]);
       mockPrisma.travelPlan.findMany.mockResolvedValue([
-        { id: BigInt(1), spotId: BigInt(1), title: 'Plan A', spot: { name: 'Spot A' } },
+        {
+          id: BigInt(1),
+          spotId: BigInt(1),
+          title: 'Plan A',
+          spot: { name: 'Spot A' },
+        },
       ]);
       const result = await service.getRecommendedTravelPlans(37.5665, 126.978);
       expect(result).toHaveLength(1);

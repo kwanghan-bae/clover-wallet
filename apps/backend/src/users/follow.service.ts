@@ -6,7 +6,8 @@ export class FollowService {
   constructor(private readonly prisma: PrismaService) {}
 
   async toggleFollow(followerId: bigint, followingId: bigint) {
-    if (followerId === followingId) throw new BadRequestException('Cannot follow yourself');
+    if (followerId === followingId)
+      throw new BadRequestException('Cannot follow yourself');
     const existing = await this.prisma.follow.findUnique({
       where: { followerId_followingId: { followerId, followingId } },
     });
@@ -31,7 +32,9 @@ export class FollowService {
       where: { followingId: userId },
       skip: page * size,
       take: size,
-      include: { follower: { select: { id: true, ssoQualifier: true, badges: true } } },
+      include: {
+        follower: { select: { id: true, ssoQualifier: true, badges: true } },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }
@@ -41,7 +44,9 @@ export class FollowService {
       where: { followerId: userId },
       skip: page * size,
       take: size,
-      include: { following: { select: { id: true, ssoQualifier: true, badges: true } } },
+      include: {
+        following: { select: { id: true, ssoQualifier: true, badges: true } },
+      },
       orderBy: { createdAt: 'desc' },
     });
   }

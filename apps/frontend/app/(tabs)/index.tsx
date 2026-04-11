@@ -1,25 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
-import { Clover, Bell, Dices, QrCode, BarChart3, Navigation, MapPin, ChevronRight, Receipt } from 'lucide-react-native';
+import { Clover, Bell, ChevronRight, Receipt } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
-import LuckyHeroIllustration from '../../components/ui/LuckyHeroIllustration';
-import { QuickActionItem } from '../../components/ui/QuickActionItem';
+import { HeroSection } from '../../components/home/HeroSection';
+import { QuickActions } from '../../components/home/QuickActions';
 
 /**
- * @description 애플리케이션의 홈 화면 컴포넌트입니다. 
+ * @description 애플리케이션의 홈 화면 컴포넌트입니다.
  * 다음 회차 당첨 정보, 빠른 실행 메뉴, 최근 당첨 결과 등을 표시합니다.
  */
 const HomeScreen = () => {
   const router = useRouter();
   const [refreshing, setRefreshing] = useState(false);
-  
-  /** 현재 회차 정보와 남은 시간 데이터를 관리하는 상태입니다. */
+
   const [drawInfo] = useState({
     currentRound: 1103,
     daysLeft: 3,
     hoursLeft: 4,
-    minutesLeft: 20
+    minutesLeft: 20,
   });
 
   const onRefresh = React.useCallback(() => {
@@ -54,121 +52,8 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} color="#4CAF50" />}
       >
-        {/* Next Draw Info Card - Hero Section (Gradient) */}
-        <LinearGradient
-          colors={['#4CAF50', '#388E3C']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={{
-            borderRadius: 24,
-            paddingHorizontal: 24,
-            paddingVertical: 32,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.05,
-            shadowRadius: 10,
-            elevation: 5,
-            width: '100%',
-            alignItems: 'center'
-          }}
-        >
-          <LuckyHeroIllustration />
-          {/* Round Badge */}
-          <View
-            style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              borderColor: 'rgba(255, 255, 255, 0.3)',
-              borderWidth: 1,
-              paddingHorizontal: 16,
-              paddingVertical: 8,
-              borderRadius: 20
-            }}
-          >
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-white text-xs">
-              제 {drawInfo.currentRound} 회
-            </Text>
-          </View>
-
-          <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="text-white/80 text-base mt-6">
-            당첨 발표까지
-          </Text>
-
-          <Text
-            style={{
-              fontFamily: 'NotoSansKR_900Black',
-              textShadowColor: 'rgba(0, 0, 0, 0.26)',
-              textShadowOffset: { width: 0, height: 2 },
-              textShadowRadius: 4,
-              fontSize: 42,
-              letterSpacing: -1.0,
-              marginTop: 4,
-              color: 'white'
-            }}
-          >
-            {drawInfo.daysLeft}일 {drawInfo.hoursLeft}시간 {drawInfo.minutesLeft}분
-          </Text>
-
-          <TouchableOpacity
-            onPress={() => router.push('/number-generation')}
-            activeOpacity={0.9}
-            accessibilityLabel="번호 생성하기"
-            accessibilityRole="button"
-            testID="btn-generate"
-            style={{
-              backgroundColor: 'white',
-              paddingHorizontal: 48,
-              paddingVertical: 18,
-              borderRadius: 30,
-              marginTop: 32,
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.25,
-              shadowRadius: 8,
-              elevation: 5,
-            }}
-          >
-            <Text style={{ fontFamily: 'NotoSansKR_900Black' }} className="text-[#4CAF50] text-lg">
-              번호 생성하기
-            </Text>
-          </TouchableOpacity>
-        </LinearGradient>
-
-        {/* Quick Actions */}
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
-          빠른 실행
-        </Text>
-        <View className="flex-row justify-between w-full" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-          <QuickActionItem
-            icon={<Dices size={32} color="#9C27B0" />}
-            label="번호 추첨"
-            bgColor="bg-[#9C27B0]/10"
-            onPress={() => router.push('/number-generation')}
-          />
-          <QuickActionItem
-            icon={<QrCode size={32} color="#2196F3" />}
-            label="QR 스캔"
-            bgColor="bg-[#2196F3]/10"
-            onPress={() => router.push('/scan')}
-          />
-          <QuickActionItem
-            icon={<BarChart3 size={32} color="#FF9800" />}
-            label="번호 분석"
-            bgColor="bg-[#FF9800]/10"
-            onPress={() => router.push('/statistics')}
-          />
-          <QuickActionItem
-            icon={<Navigation size={32} color="#00BCD4" />}
-            label="여행 플랜"
-            bgColor="bg-[#00BCD4]/10"
-            onPress={() => router.push('/travel')}
-          />
-          <QuickActionItem
-            icon={<MapPin size={32} color="#4CAF50" />}
-            label="로또 명당"
-            bgColor="bg-[#4CAF50]/10"
-            onPress={() => router.push('/map')}
-          />
-        </View>
+        <HeroSection drawInfo={drawInfo} onGenerate={() => router.push('/number-generation')} />
+        <QuickActions onNavigate={(path) => router.push(path as any)} />
 
         {/* Recent History Preview */}
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
@@ -184,7 +69,7 @@ const HomeScreen = () => {
               shadowOffset: { width: 0, height: 4 },
               shadowOpacity: 0.05,
               shadowRadius: 10,
-              elevation: 2
+              elevation: 2,
             }}
           >
             <View className="bg-gray-100 p-3 rounded-2xl mr-5">
@@ -198,7 +83,6 @@ const HomeScreen = () => {
           </View>
         </TouchableOpacity>
 
-        {/* Bottom Spacing */}
         <View className="h-24" />
       </ScrollView>
     </SafeAreaView>
