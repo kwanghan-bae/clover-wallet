@@ -6,6 +6,7 @@ import { LottoInfoService } from './lotto-info.service';
 import { LottoNumberExtractor } from './lotto-number.extractor';
 import { WinningInfoCrawlerService } from './winning-info-crawler.service';
 import { WinningCheckService } from './winning-check.service';
+import { WinnerNotificationService } from './winner-notification.service';
 import { UsersModule } from '../users/users.module';
 import { NotificationModule } from '../notification/notification.module';
 
@@ -22,6 +23,7 @@ import { NotificationModule } from '../notification/notification.module';
     LottoNumberExtractor,
     WinningInfoCrawlerService,
     WinningCheckService,
+    WinnerNotificationService,
   ],
   exports: [LottoService, WinningInfoCrawlerService, WinningCheckService],
 })
