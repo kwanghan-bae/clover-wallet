@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 interface QuickActionItemProps {
@@ -12,7 +12,7 @@ interface QuickActionItemProps {
 /**
  * @description 홈 화면의 하단 퀵 액션 섹션에서 개별 메뉴 아이템을 렌더링하는 컴포넌트입니다.
  */
-export function QuickActionItem({ icon, label, bgColor, onPress, accessibilityLabel }: QuickActionItemProps) {
+const QuickActionItemComponent = ({ icon, label, bgColor, onPress, accessibilityLabel }: QuickActionItemProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -27,4 +27,7 @@ export function QuickActionItem({ icon, label, bgColor, onPress, accessibilityLa
       <Text style={{ fontFamily: 'NotoSansKR_600SemiBold' }} className="text-[13px] text-[#1A1A1A]">{label}</Text>
     </TouchableOpacity>
   );
-}
+};
+
+export const QuickActionItem = memo(QuickActionItemComponent);
+QuickActionItem.displayName = 'QuickActionItem';

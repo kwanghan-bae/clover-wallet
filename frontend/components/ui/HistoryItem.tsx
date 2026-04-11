@@ -57,6 +57,7 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
 };
 
 export const HistoryItem = memo(HistoryItemComponent);
+HistoryItem.displayName = 'HistoryItem';
 
 // formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(date: string | Date): string {

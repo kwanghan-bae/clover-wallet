@@ -1,4 +1,5 @@
 // frontend/components/ui/CommentItem.tsx
+import React, { memo } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Reply } from 'lucide-react-native';
 
@@ -18,7 +19,7 @@ interface CommentItemProps {
   onUserPress: (userId: number) => void;
 }
 
-export function CommentItem({ comment, isReply = false, onReply, onUserPress }: CommentItemProps) {
+const CommentItemComponent = ({ comment, isReply = false, onReply, onUserPress }: CommentItemProps) => {
   const nickname = comment.user?.ssoQualifier?.split('@')[0] ?? '익명';
   const date = new Date(comment.createdAt).toLocaleDateString('ko-KR');
 
@@ -53,4 +54,7 @@ export function CommentItem({ comment, isReply = false, onReply, onUserPress }: 
       ))}
     </View>
   );
-}
+};
+
+export const CommentItem = memo(CommentItemComponent);
+CommentItem.displayName = 'CommentItem';

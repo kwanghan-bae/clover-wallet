@@ -160,6 +160,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
 };
 
 export const PostCard = memo(PostCardComponent);
+PostCard.displayName = 'PostCard';
 
 // formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(dateString: string): string {

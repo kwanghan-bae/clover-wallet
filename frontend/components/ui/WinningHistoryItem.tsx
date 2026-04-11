@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text } from 'react-native';
 import { Trophy, Calendar } from 'lucide-react-native';
 import { WinningHistory } from '../../api/types/spots';
@@ -7,10 +7,10 @@ interface WinningHistoryItemProps {
   item: WinningHistory;
 }
 
-/** 
- * @description 판매점 상세 화면에서 회차별 당첨 이력을 표시하는 아이템 컴포넌트입니다. 
+/**
+ * @description 판매점 상세 화면에서 회차별 당첨 이력을 표시하는 아이템 컴포넌트입니다.
  */
-export function WinningHistoryItem({ item }: WinningHistoryItemProps) {
+const WinningHistoryItemComponent = ({ item }: WinningHistoryItemProps) => {
   const is1st = item.rank === 1;
   
   return (
@@ -36,4 +36,7 @@ export function WinningHistoryItem({ item }: WinningHistoryItemProps) {
       </View>
     </View>
   );
-}
+};
+
+export const WinningHistoryItem = memo(WinningHistoryItemComponent);
+WinningHistoryItem.displayName = 'WinningHistoryItem';
