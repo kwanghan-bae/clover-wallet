@@ -50,7 +50,7 @@ const HomeScreen = () => {
       <ScrollView
         contentContainerStyle={{ padding: 20 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} color="#4CAF50" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#4CAF50']} />}
       >
         <HeroSection drawInfo={drawInfo} onGenerate={() => router.push('/number-generation')} />
         <QuickActions onNavigate={(path) => router.push(path as any)} />

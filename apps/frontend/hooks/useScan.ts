@@ -12,7 +12,7 @@ export function useScan() {
   const [permission, requestPermission] = useCameraPermissions();
   const cameraRef = useRef<CameraView>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [scanResult, setScanResult] = useState<{numbers: number[], round: number | null} | null>(null);
+  const [scanResult, setScanResult] = useState<{numbers: number[], round?: number} | null>(null);
   const [scanMode, setScanMode] = useState<'ocr' | 'qr'>('qr');
 
   const handleCapture = async () => {
@@ -31,7 +31,7 @@ export function useScan() {
         const round = parseLottoRound(result.text);
 
         if (numbers.length === 6) {
-          setScanResult({ numbers, round });
+          setScanResult({ numbers, round: round ?? undefined });
         } else {
           Alert.alert('인식 실패', '6개의 로또 번호를 찾을 수 없습니다. 다시 시도해주세요.');
         }
@@ -54,7 +54,7 @@ export function useScan() {
       const numbers = games.length > 0
         ? [games[0].number1, games[0].number2, games[0].number3, games[0].number4, games[0].number5, games[0].number6]
         : [];
-      const round = ticket.ordinal ?? null;
+      const round = ticket.ordinal ?? undefined;
 
       if (numbers.length === 6) {
         setScanResult({ numbers, round });

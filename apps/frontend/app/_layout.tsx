@@ -12,7 +12,7 @@ import {
 } from '@expo-google-fonts/noto-sans-kr';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { MMKV } from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 import { useAuth, AuthProvider } from '../hooks/useAuth';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
@@ -21,7 +21,7 @@ import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
 
-const queryStorage = new MMKV({ id: 'query-cache' });
+const queryStorage = createMMKV({ id: 'query-cache' });
 
 const persister = {
   persistClient: (client: unknown) => {
@@ -32,7 +32,7 @@ const persister = {
     return cache ? JSON.parse(cache) : undefined;
   },
   removeClient: () => {
-    queryStorage.delete('react-query-cache');
+    queryStorage.remove('react-query-cache');
   },
 };
 

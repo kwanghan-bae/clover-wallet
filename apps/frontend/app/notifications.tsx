@@ -73,7 +73,7 @@ function NotificationItem({
           style={{ fontFamily: 'NotoSansKR_400Regular' }}
           className="text-[#BDBDBD] text-xs mt-1"
         >
-          {new Date(item.createdAt).toLocaleDateString('ko-KR', {
+          {new Date(item.createdAt ?? '').toLocaleDateString('ko-KR', {
             month: 'long',
             day: 'numeric',
             hour: '2-digit',

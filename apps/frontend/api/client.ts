@@ -1,5 +1,5 @@
 // frontend/api/client.ts
-import ky from 'ky';
+import ky, { type AfterResponseHook } from 'ky';
 import { loadItem, saveItem, removeItem } from '../utils/storage';
 import { unwrapCommonResponse } from '../utils/api';
 
@@ -15,11 +15,11 @@ export function addAuthHeader(request: Request): Request {
   return request;
 }
 
-export async function handleTokenRefresh(
-  request: Request,
-  _options: unknown,
-  response: Response,
-): Promise<Response> {
+export const handleTokenRefresh: AfterResponseHook = async (
+  request,
+  _options,
+  response,
+): Promise<Response> => {
   if (response.status === 401 && !request.headers.get('X-Retry-After-Refresh')) {
     const refreshToken = loadItem<string>('auth.refresh_token');
     if (refreshToken) {
@@ -54,6 +54,9 @@ export const apiClient = ky.create({
   },
   hooks: {
     beforeRequest: [(request) => addAuthHeader(request)],
-    afterResponse: [handleTokenRefresh, unwrapCommonResponse],
+    afterResponse: [
+      handleTokenRefresh,
+      ((_req, _opts, response) => unwrapCommonResponse(response)) satisfies AfterResponseHook,
+    ],
   },
 });

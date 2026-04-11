@@ -41,7 +41,7 @@ const HistoryScreen = () => {
     }, [loadHistory])
   );
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (id: number) => {
     removeFromItemArray<LottoRecord>(StorageKeys.SAVED_NUMBERS, (item) => item.id === id);
     loadHistory();
   };

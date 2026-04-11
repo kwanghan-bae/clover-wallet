@@ -6,7 +6,7 @@ interface CustomMapViewProps {
   region: Region;
   onRegionChangeComplete: (region: Region) => void;
   spots: LottoSpot[];
-  children?: React.ReactNode;
+  children?: React.ReactElement<{ spot?: LottoSpot }>;
 }
 
 export default function CustomMapView({ region, onRegionChangeComplete, spots, children }: CustomMapViewProps) {
@@ -24,9 +24,7 @@ export default function CustomMapView({ region, onRegionChangeComplete, spots, c
           pinColor="#4CAF50"
         >
           <Callout tooltip>
-            {children ? (
-               React.cloneElement(children as React.ReactElement, { spot })
-            ) : null}
+            {children ? React.cloneElement(children, { spot }) : null}
           </Callout>
         </Marker>
       ))}

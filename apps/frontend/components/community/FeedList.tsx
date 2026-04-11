@@ -31,7 +31,6 @@ const FeedListComponent = ({
       renderItem={({ item }) => (
         <PostCard post={item} onPress={() => {}} onLike={onLike} onShare={onShare} />
       )}
-      estimatedItemSize={200}
       showsVerticalScrollIndicator={false}
       onRefresh={onRefresh}
       refreshing={isLoading}

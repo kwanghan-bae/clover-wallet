@@ -6,7 +6,7 @@ import { LottoRecord } from '../../api/types/lotto';
 
 interface HistoryItemProps {
   record: LottoRecord;
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }
 
 /** @description 사용자의 과거 로또 구매 또는 번호 생성 내역을 표시하는 카드 컴포넌트입니다. */
