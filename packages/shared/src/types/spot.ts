@@ -1,5 +1,5 @@
 export interface LottoSpot {
-  id: bigint;
+  id: number;
   name: string;
   address: string;
   latitude: number;

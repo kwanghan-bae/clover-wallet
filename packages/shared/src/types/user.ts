@@ -1,5 +1,5 @@
 export interface UserSummary {
-  id: bigint;
+  id: number;
   nickname: string;
   badges: string[];
 }

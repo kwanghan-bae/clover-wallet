@@ -1,8 +1,8 @@
 import type { UserSummary } from './user.js';
 
 export interface Post {
-  id: bigint;
-  userId: bigint;
+  id: number;
+  userId: number;
   title: string;
   content: string;
   likes: number;
@@ -14,12 +14,12 @@ export interface Post {
 }
 
 export interface Comment {
-  id: bigint;
-  postId: bigint;
-  userId: bigint;
+  id: number;
+  postId: number;
+  userId: number;
   content: string;
   likes: number;
-  parentId?: bigint;
+  parentId?: number;
   userSummary: UserSummary | null;
   replies?: Comment[];
   createdAt?: string;
@@ -37,7 +37,7 @@ export interface UpdatePostRequest {
 }
 
 export interface CreateCommentRequest {
-  postId: string;
+  postId: number;
   content: string;
-  parentId?: string;
+  parentId?: number;
 }

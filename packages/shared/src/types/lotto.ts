@@ -10,7 +10,7 @@ export type LottoGameStatus =
   | 'WINNING';
 
 export interface LottoGame {
-  id: bigint;
+  id: number;
   status: LottoGameStatus;
   number1: number;
   number2: number;
@@ -19,12 +19,13 @@ export interface LottoGame {
   number5: number;
   number6: number;
   extractionMethod?: string;
-  prizeAmount?: bigint;
+  prizeAmount?: number;
+  createdAt?: string;
 }
 
 export interface LottoTicket {
-  id: bigint;
-  userId: bigint;
+  id: number;
+  userId: number;
   ordinal: number;
   status: string;
   games: LottoGame[];
@@ -41,17 +42,17 @@ export interface WinningInfo {
   number5: number;
   number6: number;
   bonusNumber: number;
-  firstPrizeAmount: bigint;
-  secondPrizeAmount: bigint;
-  thirdPrizeAmount: bigint;
-  fourthPrizeAmount: bigint;
-  fifthPrizeAmount: bigint;
+  firstPrizeAmount: number;
+  secondPrizeAmount: number;
+  thirdPrizeAmount: number;
+  fourthPrizeAmount: number;
+  fifthPrizeAmount: number;
 }
 
 export interface PrizeAmountMap {
-  WINNING_1: bigint;
-  WINNING_2: bigint;
-  WINNING_3: bigint;
-  WINNING_4: bigint;
-  WINNING_5: bigint;
+  WINNING_1: number;
+  WINNING_2: number;
+  WINNING_3: number;
+  WINNING_4: number;
+  WINNING_5: number;
 }
