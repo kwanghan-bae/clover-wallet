@@ -1,8 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WinningCheckService } from '../winning-check.service';
+import { WinnerNotificationService } from '../winner-notification.service';
 import { PrismaService } from '../../prisma/prisma.service';
-import { BadgeService } from '../../users/badge.service';
-import { FcmService } from '../../notification/fcm.service';
 import { LottoRankCalculator } from '../utils/lotto-rank.calculator';
 
 /**
@@ -11,8 +10,7 @@ import { LottoRankCalculator } from '../utils/lotto-rank.calculator';
 describe('WinningCheckService', () => {
   let service: WinningCheckService;
   let prisma: PrismaService;
-  let badgeService: BadgeService;
-  let fcmService: FcmService;
+  let winnerNotification: WinnerNotificationService;
 
   const mockWinning = {
     round: 1000,
@@ -48,19 +46,12 @@ describe('WinningCheckService', () => {
             winningInfo: { findUnique: jest.fn() },
             lottoTicket: { findMany: jest.fn(), update: jest.fn() },
             lottoGame: { update: jest.fn() },
-            user: { findUnique: jest.fn() },
           },
         },
         {
-          provide: BadgeService,
+          provide: WinnerNotificationService,
           useValue: {
-            updateUserBadges: jest.fn().mockResolvedValue(undefined),
-          },
-        },
-        {
-          provide: FcmService,
-          useValue: {
-            sendWinningNotification: jest.fn().mockResolvedValue(undefined),
+            handleWinnerActions: jest.fn(),
           },
         },
       ],
@@ -68,8 +59,9 @@ describe('WinningCheckService', () => {
 
     service = module.get<WinningCheckService>(WinningCheckService);
     prisma = module.get<PrismaService>(PrismaService);
-    badgeService = module.get<BadgeService>(BadgeService);
-    fcmService = module.get<FcmService>(FcmService);
+    winnerNotification = module.get<WinnerNotificationService>(
+      WinnerNotificationService,
+    );
   });
 
   describe('LottoRankCalculator', () => {
@@ -108,6 +100,14 @@ describe('WinningCheckService', () => {
   });
 
   describe('checkWinning', () => {
+    it('당첨 정보가 없으면 조기 리턴해야 한다', async () => {
+      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await service.checkWinning(999);
+
+      expect(prisma.lottoTicket.findMany).not.toHaveBeenCalled();
+    });
+
     it('티켓의 당첨 여부에 따라 상태를 업데이트하고 알림을 보내야 한다', async () => {
       (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue(
         mockWinning,
@@ -132,16 +132,47 @@ describe('WinningCheckService', () => {
           ],
         },
       ]);
-      (prisma.user.findUnique as jest.Mock).mockResolvedValue({
-        fcmToken: 'token123',
-      });
 
       await service.checkWinning(1000);
 
       expect(prisma.lottoGame.update).toHaveBeenCalled();
       expect(prisma.lottoTicket.update).toHaveBeenCalled();
-      expect(badgeService.updateUserBadges).toHaveBeenCalled();
-      expect(fcmService.sendWinningNotification).toHaveBeenCalled();
+      expect(winnerNotification.handleWinnerActions).toHaveBeenCalled();
+    });
+
+    it('낙첨 티켓은 LOSING 상태로 업데이트해야 한다', async () => {
+      (prisma.winningInfo.findUnique as jest.Mock).mockResolvedValue(
+        mockWinning,
+      );
+      (prisma.lottoTicket.findMany as jest.Mock).mockResolvedValue([
+        {
+          id: 2,
+          userId: 20,
+          status: 'STASHED',
+          games: [
+            {
+              id: 201,
+              number1: 40,
+              number2: 41,
+              number3: 42,
+              number4: 43,
+              number5: 44,
+              number6: 45,
+              status: 'STASHED',
+              prizeAmount: BigInt(0),
+            },
+          ],
+        },
+      ]);
+
+      await service.checkWinning(1000);
+
+      expect(prisma.lottoTicket.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: { status: 'LOSING' },
+        }),
+      );
+      expect(winnerNotification.handleWinnerActions).not.toHaveBeenCalled();
     });
   });
 });
