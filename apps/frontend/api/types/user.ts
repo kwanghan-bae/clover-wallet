@@ -1,13 +1,7 @@
-export interface UserSummary {
-  id: number;
-  nickname: string;
-  badges?: string[];
+import type { UserSummary as SharedUserSummary, UserDetail } from '@clover/shared';
+
+export interface UserSummary extends SharedUserSummary {
   profileImageUrl?: string;
 }
 
-export interface UserDetail extends UserSummary {
-  email: string;
-  age: number;
-  locale: string;
-  createdAt: string;
-}
+export type { UserDetail };

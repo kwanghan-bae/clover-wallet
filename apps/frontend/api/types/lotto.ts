@@ -1,25 +1,18 @@
-export enum LottoGameStatus {
-  NOT_CHECKED = 'NOT_CHECKED',
-  WINNING_1 = 'WINNING_1',
-  WINNING_2 = 'WINNING_2',
-  WINNING_3 = 'WINNING_3',
-  WINNING_4 = 'WINNING_4',
-  WINNING_5 = 'WINNING_5',
-  LOSING = 'LOSING'
-}
+import type { LottoGameStatus } from '@clover/shared';
 
+export type { LottoGameStatus };
+
+/** Frontend-normalized format: backend number1~6 → numbers array */
 export interface LottoRecord {
   id: number;
   status: LottoGameStatus;
-  numbers: number[]; // 백엔드 number1~6 필드를 변환하여 사용
+  numbers: number[];
   createdAt: string;
-  round?: number;    // 티켓 정보에서 가져올 값
+  round?: number;
   prizeAmount?: number;
 }
 
-/**
- * 백엔드 DTO 규격
- */
+/** Raw backend DTO before normalization */
 export interface LottoGameResponse {
   id: number;
   status: LottoGameStatus;

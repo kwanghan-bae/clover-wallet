@@ -1,22 +1,12 @@
-export interface LottoSpot {
-  id: number;
-  name: string;
-  address: string;
-  latitude: number;
-  longitude: number;
-  firstPlaceWins: number;
-  secondPlaceWins: number;
+import type { LottoSpot as SharedLottoSpot } from '@clover/shared';
+
+export interface LottoSpot extends SharedLottoSpot {
   isFavorite?: boolean;
 }
 
-export interface WinningHistory {
-  round: number;
-  rank: number;
-  storeName: string;
-  address: string;
-  method: string | null;
-}
+export type { WinningStoreHistory as WinningHistory } from '@clover/shared';
 
+/** Frontend-only: map viewport region */
 export interface Region {
   latitude: number;
   longitude: number;
