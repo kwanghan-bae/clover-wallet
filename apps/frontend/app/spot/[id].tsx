@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import { ChevronLeft, MapPin, Trophy } from 'lucide-react-native';
 import { WinningHistory } from '../../api/types/spots';
 import { TravelPlan } from '../../api/travel';
-import GlassCard from '../../components/ui/GlassCard';
+import { GlassCard } from '../../components/ui/GlassCard';
 import { WinningHistoryItem } from '../../components/ui/WinningHistoryItem';
 import { useSpotDetail } from '../../hooks/useSpotDetail';
 

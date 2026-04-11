@@ -4,7 +4,7 @@ import { HistoryItem } from '../../../components/ui/HistoryItem';
 
 const mockRecord = {
   id: 1,
-  status: 'CHECKED' as const,
+  status: 'NOT_CHECKED' as const,
   round: 1055,
   numbers: [3, 11, 22, 33, 40, 45],
   createdAt: '2024-03-15T09:00:00Z',

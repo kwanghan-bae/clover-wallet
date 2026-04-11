@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import LuckyHeroIllustration from '../ui/LuckyHeroIllustration';
+import { LuckyHeroIllustration } from '../ui/LuckyHeroIllustration';
 
 export interface DrawInfo {
   currentRound: number;
