@@ -1,0 +1,25 @@
+appId: com.clover.wallet
+name: Scan Screen Navigation
+---
+- launchApp
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+- tapOn:
+    id: "tab-scan"
+- assertVisible:
+    text: "QR 스캔"
+    timeout: 5000
+- assertVisible: "번호 촬영"
+# Mode toggle
+- tapOn: "번호 촬영"
+- assertVisible: "로또 티켓의 번호 부분을 가이드에 맞춰주세요"
+- tapOn: "QR 스캔"
+- assertVisible: "로또 티켓의 QR 코드를 가이드에 맞춰주세요"
+# Close scan screen
+- tapOn:
+    text: "스캔 화면 닫기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 5000

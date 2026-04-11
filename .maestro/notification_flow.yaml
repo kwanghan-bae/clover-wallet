@@ -1,0 +1,25 @@
+appId: com.clover.wallet
+name: Notification Screen
+---
+- launchApp
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+# Navigate to MyPage tab then tap notifications
+- tapOn:
+    id: "tab-mypage"
+- assertVisible:
+    text: "마이페이지"
+    timeout: 5000
+- tapOn: "알림"
+- assertVisible:
+    text: "알림"
+    timeout: 5000
+# Verify either empty state or notification list
+- assertVisible:
+    text: "알림이 없습니다|알림"
+    optional: true
+# Go back
+- back
+- assertVisible: "마이페이지"
