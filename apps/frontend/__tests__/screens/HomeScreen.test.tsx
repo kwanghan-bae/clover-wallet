@@ -13,7 +13,7 @@ jest.mock('expo-router', () => ({
 jest.mock('lucide-react-native', () => {
   const React = require('react');
   return new Proxy({}, {
-    get: (_target, name) => (props) => React.createElement('View', { ...props, testID: String(name) }),
+    get: (_target, name) => (props: Record<string, unknown>) => React.createElement('View', { ...props, testID: String(name) }),
   });
 });
 
