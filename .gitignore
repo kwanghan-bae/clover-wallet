@@ -22,6 +22,11 @@ frontend/dist/
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
+apps/frontend/.expo/
+apps/frontend/dist/
+
+# Shared package build output
+packages/shared/dist/
 
 # AI Logs
 logs/

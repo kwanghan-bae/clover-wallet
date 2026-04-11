@@ -47,15 +47,15 @@ fi
 
 # 3. Dedicated Verification
 # 3.1 React Native (Build & Test)
-if echo "$STAGED_ALL" | grep -q "frontend/"; then
+if echo "$STAGED_ALL" | grep -qE "^apps/frontend/"; then
     echo "🧪 Verifying Frontend (RN + Absolute Build Guard)..."
-    cd frontend
-    
+    cd apps/frontend
+
     # 1. 린트
     if npm run | grep -q "lint"; then
         npm run lint || { echo -e "${RED}❌ ESLint failed!${NC}"; exit 1; }
     fi
-    
+
     # 2. 테스트 및 숨은 에러 스캔
     TEST_LOG=$(npm test -- --watchAll=false 2>&1)
     if [ ${PIPESTATUS[0]} -ne 0 ] || echo "$TEST_LOG" | grep -Ei "ERROR:|Failed to collect coverage|SyntaxError" > /dev/null; then
@@ -72,14 +72,7 @@ if echo "$STAGED_ALL" | grep -q "frontend/"; then
         exit 1
     fi
     echo -e "${GREEN}✅ Build verification passed.${NC}"
-    cd ..
-fi
-
-# 3.2 Kotlin
-if echo "$STAGED_ALL" | grep -E "(\.kt|\.java)$" | grep -q "backend/"; then
-    echo "🧪 Verifying JVM Backend (Full Build & Test)..."
-    # bootJar를 포함한 전체 빌드 수행 (테스트는 별도 수행으로 병렬성 확보 가능하나 여기선 안전하게 통합)
-    (cd backend && ./gradlew ktlintCheck :app:api:bootJar test --quiet) || { echo -e "${RED}❌ Backend build failed!${NC}"; exit 1; }
+    cd ../..
 fi
 
 echo -e "${GREEN}✅ [Guard] Audit successful. Total Integrity Guaranteed.${NC}"

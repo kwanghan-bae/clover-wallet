@@ -1,28 +1,29 @@
 services:
-  # 1. Backend API (Node.js/NestJS) - Root Directory를 backend-node로 명시함
+  # 1. Backend API (Node.js/NestJS)
   - type: web
     name: clover-wallet-api
     runtime: node
     region: singapore
     plan: free
-    rootDir: backend-node
+    rootDir: apps/backend
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: npm run start:prod
     buildFilter:
       paths:
-        - backend-node/**
+        - apps/backend/**
+        - packages/shared/**
         - render.yaml
     envVars:
       - key: NODE_ENV
         value: production
       - key: DATABASE_URL
-        sync: false # Render 대시보드에서 직접 설정 필요
+        sync: false
       - key: JWT_SECRET
-        sync: false # Render 대시보드에서 직접 설정 필요
+        sync: false
       - key: SUPABASE_JWT_SECRET
-        sync: false # Render 대시보드에서 직접 설정 필요
+        sync: false
       - key: FIREBASE_KEY_PATH
-        value: ./firebase-key.json # 필요 시 설정
+        value: ./firebase-key.json
     healthCheckPath: /api/v1
     autoDeploy: true
 
@@ -32,10 +33,11 @@ services:
     env: static
     region: singapore
     plan: free
-    rootDir: frontend
+    rootDir: apps/frontend
     buildFilter:
       paths:
-        - frontend/**
+        - apps/frontend/**
+        - packages/shared/**
         - render.yaml
     buildCommand: npm install --legacy-peer-deps && npx expo export --platform web
     publishPath: dist
