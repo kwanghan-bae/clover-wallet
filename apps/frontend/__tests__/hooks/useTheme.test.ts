@@ -1,3 +1,4 @@
+jest.unmock('../../hooks/useTheme');
 jest.mock('react-native', () => ({
   ...jest.requireActual('react-native'),
   useColorScheme: jest.fn().mockReturnValue('light'),

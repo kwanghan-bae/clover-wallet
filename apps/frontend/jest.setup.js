@@ -2,7 +2,15 @@
 jest.mock('react-native-reanimated', () => {
   const React = require('react');
   const { View, Text, ScrollView } = require('react-native');
+  const mockDefault = {
+    createAnimatedComponent: (c) => c,
+    View: (props) => React.createElement(View, props),
+    Text: (props) => React.createElement(Text, props),
+    ScrollView: (props) => React.createElement(ScrollView, props),
+  };
   return {
+    __esModule: true,
+    default: mockDefault,
     useSharedValue: (v) => ({ value: v }),
     useAnimatedStyle: (cb) => cb(),
     useAnimatedProps: (cb) => cb(),
@@ -10,13 +18,13 @@ jest.mock('react-native-reanimated', () => {
     withSpring: (v) => v,
     runOnJS: (fn) => fn,
     makeMutable: (v) => ({ value: v }),
+    createAnimatedComponent: (c) => c,
     Animated: {
       View: (props) => React.createElement(View, props),
       Text: (props) => React.createElement(Text, props),
       ScrollView: (props) => React.createElement(ScrollView, props),
       createAnimatedComponent: (c) => c,
     },
-    default: { call: () => {} },
     FadeIn: { duration: () => ({ delay: () => {} }) },
     FadeOut: { duration: () => ({ delay: () => {} }) },
     SlideInRight: { duration: () => ({ delay: () => {} }) },
@@ -160,6 +168,8 @@ jest.mock('./hooks/useNotifications', () => ({
   useNotifications: jest.fn().mockReturnValue({
     unreadCount: 0,
     expoPushToken: null,
+    registerToken: jest.fn(),
+    markAsRead: jest.fn(),
   }),
 }));
 

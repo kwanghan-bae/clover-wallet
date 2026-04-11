@@ -1,3 +1,4 @@
+jest.unmock('@tanstack/react-query');
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn().mockReturnValue({ id: '1' }),
   useRouter: jest.fn().mockReturnValue({ push: jest.fn() }),
@@ -8,6 +9,12 @@ jest.mock('../../api/spots', () => ({
     getSpotHistory: jest.fn().mockResolvedValue([
       { round: 1100, rank: 1, storeName: '행운 복권방', address: '서울시' },
     ]),
+  },
+}));
+
+jest.mock('../../api/travel', () => ({
+  travelApi: {
+    getBySpot: jest.fn().mockResolvedValue([]),
   },
 }));
 

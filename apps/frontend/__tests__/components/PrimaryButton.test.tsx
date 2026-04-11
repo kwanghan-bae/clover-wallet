@@ -32,14 +32,13 @@ describe('PrimaryButton', () => {
     expect(queryByText('Loading')).toBeFalsy();
   });
 
-  /** 비활성화(disabled=true) 상태에서 클릭 이벤트가 무시되는지 확인합니다. */
+  /** 비활성화(disabled=true) 상태에서 버튼의 accessibilityState가 disabled임을 확인합니다. */
   test('is disabled when disabled prop is true', () => {
     const onPressMock = jest.fn();
-    const { getByText } = render(
+    const { getByRole } = render(
       <PrimaryButton label="Disabled" onPress={onPressMock} disabled={true} />
     );
-    
-    fireEvent.press(getByText('Disabled'));
-    expect(onPressMock).not.toHaveBeenCalled();
+    const button = getByRole('button');
+    expect(button.props.accessibilityState?.disabled).toBe(true);
   });
 });

@@ -46,10 +46,12 @@ export const PrimaryButton = ({
       disabled={isLoading || disabled}
       className={cn("rounded-xl overflow-hidden shadow-md", className)}
       style={animatedStyle}
+      accessible={true}
       accessibilityLabel={label}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!(isLoading || disabled) }}
       {...props}
+      onPress={isLoading || disabled ? undefined : props.onPress}
     >
       <LinearGradient
         colors={disabled ? ['#E0E0E0', '#BDBDBD'] : ['#4CAF50', '#388E3C']}
@@ -57,10 +59,13 @@ export const PrimaryButton = ({
         end={{ x: 1, y: 1 }}
         className="py-4 px-6 items-center justify-center flex-row"
       >
-        {isLoading && <ActivityIndicator color="white" size="small" style={{ marginRight: 8 }} />}
-        <Text className={cn("text-white font-black text-base tracking-wide", textClassName)}>
-          {label}
-        </Text>
+        {isLoading ? (
+          <ActivityIndicator color="white" size="small" />
+        ) : (
+          <Text className={cn("text-white font-black text-base tracking-wide", textClassName)}>
+            {label}
+          </Text>
+        )}
       </LinearGradient>
     </AnimatedPressable>
   );

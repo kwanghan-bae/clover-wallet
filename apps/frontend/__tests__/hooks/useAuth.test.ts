@@ -1,3 +1,4 @@
+jest.unmock('../../hooks/useAuth');
 jest.mock('../../utils/supabase', () => ({
   supabase: {
     auth: {

@@ -10,16 +10,12 @@ jest.mock('expo-router', () => ({
 }));
 
 // lucide-react-native 아이콘 모킹
-jest.mock('lucide-react-native', () => ({
-  Dices: 'Dices',
-  QrCode: 'QrCode',
-  BarChart3: 'BarChart3',
-  MapPin: 'MapPin',
-  Navigation: 'Navigation',
-  Bell: 'Bell',
-  ChevronRight: 'ChevronRight',
-  Filter: 'Filter',
-}));
+jest.mock('lucide-react-native', () => {
+  const React = require('react');
+  return new Proxy({}, {
+    get: (_target, name) => (props) => React.createElement('View', { ...props, testID: String(name) }),
+  });
+});
 
 /**
  * HomeScreen 컴포넌트에 대한 단위 테스트입니다.

@@ -1,16 +1,17 @@
 // Minimal react-native mock for monorepo Jest tests
-// (react-native-web hoisting breaks resolution in npm workspaces)
+// Uses RNTL-compatible host element type names so getByText/getByRole etc. work correctly
 const React = require('react');
 
-const View = (props) => React.createElement('div', props);
-const Text = (props) => React.createElement('span', props);
-const ScrollView = (props) => React.createElement('div', props);
-const TextInput = (props) => React.createElement('input', props);
-const TouchableOpacity = (props) => React.createElement('div', props);
-const Pressable = (props) => React.createElement('div', props);
-const FlatList = (props) => React.createElement('div', props);
-const ActivityIndicator = (props) => React.createElement('div', props);
-const Image = (props) => React.createElement('img', props);
+const View = (props) => React.createElement('View', props);
+const Text = (props) => React.createElement('Text', props);
+const ScrollView = (props) => React.createElement('RCTScrollView', props);
+const TextInput = (props) => React.createElement('TextInput', props);
+const TouchableOpacity = (props) => React.createElement('View', props);
+const Pressable = (props) => React.createElement('View', props);
+const FlatList = (props) => React.createElement('View', props);
+const ActivityIndicator = (props) => React.createElement('View', props);
+const Image = (props) => React.createElement('Image', props);
+const SafeAreaView = (props) => React.createElement('View', props);
 
 const StyleSheet = {
   create: (styles) => styles,
@@ -63,6 +64,7 @@ module.exports = {
   FlatList,
   ActivityIndicator,
   Image,
+  SafeAreaView,
   StyleSheet,
   Platform,
   Dimensions,

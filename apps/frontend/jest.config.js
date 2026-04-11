@@ -16,8 +16,9 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules/(?!(ky)/)',
   ],
+  modulePaths: ['<rootDir>/node_modules'],
   moduleNameMapper: {
-    '^react-native$': '<rootDir>/node_modules/react-native-web',
+    '^react-native$': '<rootDir>/__tests__/mocks/react-native.js',
     '^expo-router$': '<rootDir>/__tests__/mocks/expo-router.js',
     '^react-native-mmkv$': '<rootDir>/__tests__/mocks/react-native-mmkv.js',
     '^expo-notifications$': '<rootDir>/__tests__/mocks/expo-notifications.js',
