@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Sparkles } from 'lucide-react-native';
 
@@ -14,14 +14,17 @@ interface GenerationMethodCardProps {
   onPress: () => void;
 }
 
-/** 
- * @description 번호 생성 화면에서 각 추첨 방식(방법론)을 표시하는 카드 컴포넌트입니다. 
+/**
+ * @description 번호 생성 화면에서 각 추첨 방식(방법론)을 표시하는 카드 컴포넌트입니다.
  */
-export function GenerationMethodCard({ method, isSelected, onPress }: GenerationMethodCardProps) {
+const GenerationMethodCardComponent = ({ method, isSelected, onPress }: GenerationMethodCardProps) => {
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       onPress={onPress}
       className={`bg-white rounded-2xl p-4 flex-row items-center border ${isSelected ? 'border-primary shadow-md' : 'border-gray-50 shadow-sm'}`}
+      accessibilityLabel={`${method.title}: ${method.subtitle}`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: isSelected }}
     >
       <View style={{ backgroundColor: method.color }} className="p-3 rounded-xl mr-4 shadow-sm">
         {method.icon}
@@ -39,4 +42,7 @@ export function GenerationMethodCard({ method, isSelected, onPress }: Generation
       )}
     </TouchableOpacity>
   );
-}
+};
+
+export const GenerationMethodCard = memo(GenerationMethodCardComponent);
+GenerationMethodCard.displayName = 'GenerationMethodCard';

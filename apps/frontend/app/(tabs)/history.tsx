@@ -75,7 +75,7 @@ const HistoryScreen = () => {
       {/* Header */}
       <View className="flex-row justify-between items-center px-5 py-4 bg-transparent dark:bg-dark-bg">
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">내 로또 내역</Text>
-        <TouchableOpacity onPress={() => router.push('/scan')}>
+        <TouchableOpacity onPress={() => router.push('/scan')} accessibilityLabel="QR 스캔" accessibilityRole="button">
           <QrCode size={24} color="#1A1A1A" />
         </TouchableOpacity>
       </View>
@@ -118,6 +118,8 @@ const HistoryScreen = () => {
                 onPress={() => router.push('/number-generation')}
                 activeOpacity={0.8}
                 className="mt-10"
+                accessibilityLabel="번호 생성하기"
+                accessibilityRole="button"
               >
                 <LinearGradient
                   colors={['#4CAF50', '#388E3C']}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { ChevronRight } from 'lucide-react-native';
 
@@ -10,16 +10,16 @@ interface MenuItemProps {
   badge?: number;
 }
 
-/** 
- * @description 마이페이지의 설정 메뉴 리스트에서 개별 메뉴 항목을 렌더링하는 컴포넌트입니다. 
+/**
+ * @description 마이페이지의 설정 메뉴 리스트에서 개별 메뉴 항목을 렌더링하는 컴포넌트입니다.
  */
-export function MyPageMenuItem({
+const MyPageMenuItemComponent = ({
   icon,
   label,
   onPress,
   isDestructive = false,
   badge,
-}: MenuItemProps) {
+}: MenuItemProps) => {
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -43,7 +43,10 @@ export function MyPageMenuItem({
       <ChevronRight size={18} color="#E0E0E0" />
     </TouchableOpacity>
   );
-}
+};
+
+export const MyPageMenuItem = memo(MyPageMenuItemComponent);
+MyPageMenuItem.displayName = 'MyPageMenuItem';
 
 /** 
  * @description 메뉴 항목 사이의 구분선 컴포넌트입니다. 

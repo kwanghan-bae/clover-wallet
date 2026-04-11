@@ -1,0 +1,32 @@
+appId: com.clover.wallet
+name: MyPage Navigation
+---
+- launchApp
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+# Navigate to MyPage tab
+- tapOn:
+    id: "tab-mypage"
+- assertVisible:
+    text: "마이페이지"
+    timeout: 5000
+# Verify profile section visible
+- assertVisible: "총 당첨금"
+- assertVisible: "수익률"
+# Verify theme settings visible
+- assertVisible: "테마 설정"
+- assertVisible: "시스템"
+- assertVisible: "라이트"
+- assertVisible: "다크"
+# Toggle theme to dark
+- tapOn: "다크"
+# Toggle theme back to system
+- tapOn: "시스템"
+# Verify menu items visible
+- assertVisible: "알림"
+- assertVisible: "계정 설정"
+- assertVisible: "개인정보 처리방침"
+- assertVisible: "앱 정보"
+- assertVisible: "로그아웃"

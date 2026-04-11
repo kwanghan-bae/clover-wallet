@@ -1,0 +1,23 @@
+appId: com.clover.wallet
+name: Map Screen Navigation
+---
+- launchApp
+- tapOn: "Google 계정으로 계속하기"
+- assertVisible:
+    text: "다음 추첨까지"
+    timeout: 10000
+# Navigate to Map tab
+- tapOn:
+    id: "tab-map"
+- assertVisible:
+    text: "명당 찾기"
+    timeout: 5000
+# Verify region filter is visible
+- assertVisible: "전국"
+- assertVisible: "서울"
+# Tap a region filter
+- tapOn: "서울"
+# Verify the view toggle exists (map/list switch)
+- scrollUntilVisible:
+    element: "명당 찾기"
+    direction: UP

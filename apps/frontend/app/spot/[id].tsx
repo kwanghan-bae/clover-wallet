@@ -30,7 +30,7 @@ const SpotDetailScreen = () => {
     <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
       {/* Custom Header */}
       <View className="px-5 py-4 flex-row items-center bg-white dark:bg-dark-surface border-b border-gray-100 dark:border-dark-card">
-        <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2">
+        <TouchableOpacity onPress={() => router.back()} className="p-2 -ml-2" accessibilityLabel="뒤로 가기" accessibilityRole="button">
           <ChevronLeft size={24} color="#1A1A1A" />
         </TouchableOpacity>
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text ml-2">판매점 상세</Text>

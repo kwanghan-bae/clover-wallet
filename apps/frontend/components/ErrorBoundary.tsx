@@ -48,9 +48,11 @@ export class GlobalErrorBoundary extends Component<Props, State> {
             지속될 경우 관리자에게 문의해주세요.
           </Text>
           
-          <TouchableOpacity 
+          <TouchableOpacity
             onPress={this.handleReset}
             className="bg-primary px-8 py-4 rounded-full flex-row items-center shadow-lg"
+            accessibilityLabel="다시 시도하기"
+            accessibilityRole="button"
           >
             <RefreshCcw size={20} color="white" />
             <Text className="text-white font-bold ml-2">다시 시도하기</Text>

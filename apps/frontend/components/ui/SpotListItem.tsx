@@ -45,3 +45,4 @@ function SpotListItemComponent({ spot }: SpotListItemProps) {
 }
 
 export const SpotListItem = memo(SpotListItemComponent);
+SpotListItem.displayName = 'SpotListItem';

@@ -45,15 +45,19 @@ export function GenerationInputModal({
           />
 
           <View className="flex-row gap-3">
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={onCancel}
               className="flex-1 py-4 bg-gray-100 rounded-xl items-center"
+              accessibilityLabel="취소"
+              accessibilityRole="button"
             >
               <Text className="text-gray-500 font-bold">취소</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               onPress={onConfirm}
               className="flex-2 py-4 bg-primary rounded-xl items-center"
+              accessibilityLabel="분석 및 생성"
+              accessibilityRole="button"
             >
               <Text className="text-white font-bold">분석 및 생성</Text>
             </TouchableOpacity>

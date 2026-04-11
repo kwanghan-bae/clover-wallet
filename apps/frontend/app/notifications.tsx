@@ -35,6 +35,9 @@ function NotificationItem({
     <TouchableOpacity
       onPress={() => onPress(item.id)}
       className={`flex-row items-start p-4 mx-4 mb-2 rounded-2xl ${item.isRead ? 'bg-white dark:bg-dark-surface' : 'bg-green-50 dark:bg-green-900/20'}`}
+      accessibilityLabel={`${item.title}: ${item.message}`}
+      accessibilityRole="button"
+      accessibilityState={{ selected: !item.isRead }}
       style={{
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
