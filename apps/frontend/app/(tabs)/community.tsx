@@ -3,6 +3,7 @@ import { View, Text, SafeAreaView, TouchableOpacity, Share, Alert } from 'react-
 import { LinearGradient } from 'expo-linear-gradient';
 import { Edit3, Search } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useTheme } from '../../hooks/useTheme';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { communityApi, Post } from '../../api/community';
 import { FeedTabSelector, FeedType } from '../../components/community/FeedTabSelector';
@@ -14,6 +15,7 @@ import { FeedList } from '../../components/community/FeedList';
 const CommunityScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { isDark } = useTheme();
   const [feedType, setFeedType] = useState<FeedType>('all');
 
   const { data, isLoading, refetch } = useQuery({
@@ -48,7 +50,7 @@ const CommunityScreen = () => {
         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
       >
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">커뮤니티</Text>
-        <TouchableOpacity><Search size={24} color="#1A1A1A" /></TouchableOpacity>
+        <TouchableOpacity><Search size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} /></TouchableOpacity>
       </View>
 
       <FeedTabSelector feedType={feedType} onSelect={setFeedType} />

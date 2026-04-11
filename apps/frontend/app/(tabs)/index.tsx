@@ -4,6 +4,7 @@ import { Clover, Bell, ChevronRight, Receipt } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { HeroSection } from '../../components/home/HeroSection';
 import { QuickActions } from '../../components/home/QuickActions';
+import { useTheme } from '../../hooks/useTheme';
 
 /**
  * @description 애플리케이션의 홈 화면 컴포넌트입니다.
@@ -11,6 +12,7 @@ import { QuickActions } from '../../components/home/QuickActions';
  */
 const HomeScreen = () => {
   const router = useRouter();
+  const { isDark } = useTheme();
   const [refreshing, setRefreshing] = useState(false);
 
   const [drawInfo] = useState({
@@ -43,7 +45,7 @@ const HomeScreen = () => {
           accessibilityLabel="알림"
           accessibilityRole="button"
         >
-          <Bell size={24} color="#1A1A1A" />
+          <Bell size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
         </TouchableOpacity>
       </View>
 

@@ -8,6 +8,7 @@ import { ticketsApi, LottoTicket } from '../../api/tickets';
 import { loadItem, StorageKeys, removeFromItemArray } from '../../utils/storage';
 import { QrCode, Plus } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../hooks/useTheme';
 
 const getStatusBadge = (status: string) => {
   switch (status) {
@@ -22,6 +23,7 @@ const getStatusBadge = (status: string) => {
  */
 const HistoryScreen = () => {
   const router = useRouter();
+  const { isDark } = useTheme();
   const [history, setHistory] = useState<LottoRecord[]>([]);
 
   const { data: ticketData } = useQuery({
@@ -76,7 +78,7 @@ const HistoryScreen = () => {
       <View className="flex-row justify-between items-center px-5 py-4 bg-transparent dark:bg-dark-bg">
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">내 로또 내역</Text>
         <TouchableOpacity onPress={() => router.push('/scan')} accessibilityLabel="QR 스캔" accessibilityRole="button">
-          <QrCode size={24} color="#1A1A1A" />
+          <QrCode size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
         </TouchableOpacity>
       </View>
 

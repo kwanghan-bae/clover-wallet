@@ -2,6 +2,7 @@ import React from 'react';
 import { Tabs, useRouter } from 'expo-router';
 import { View, TouchableOpacity } from 'react-native';
 import { Home, ReceiptText, MapPin, Users, User, QrCode } from 'lucide-react-native';
+import { useTheme } from '../../hooks/useTheme';
 
 /**
  * @description 하단 탭 바를 포함한 메인 레이아웃 컴포넌트입니다.
@@ -9,22 +10,23 @@ import { Home, ReceiptText, MapPin, Users, User, QrCode } from 'lucide-react-nat
  */
 const TabLayout = () => {
   const router = useRouter();
+  const { isDark } = useTheme();
 
   return (
     <>
       <Tabs screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: '#757575',
+        tabBarInactiveTintColor: isDark ? '#888888' : '#999999',
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: 'NotoSansKR_700Bold',
           marginBottom: 5,
         },
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
+          backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
           borderTopWidth: 1,
-          borderTopColor: '#F0F0F0',
+          borderTopColor: isDark ? '#333333' : '#F0F0F0',
           height: 65,
           paddingTop: 5,
         }
