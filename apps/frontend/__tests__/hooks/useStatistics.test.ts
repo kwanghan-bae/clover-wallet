@@ -1,3 +1,4 @@
+/* eslint-disable import/first, react/display-name */
 jest.mock('../../api/users', () => ({
   usersApi: {
     getMyStats: jest.fn().mockResolvedValue({

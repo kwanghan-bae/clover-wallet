@@ -1,3 +1,4 @@
+/* eslint-disable import/first, react/display-name */
 jest.unmock('@tanstack/react-query');
 jest.mock('expo-router', () => ({
   useLocalSearchParams: jest.fn().mockReturnValue({ id: '1' }),

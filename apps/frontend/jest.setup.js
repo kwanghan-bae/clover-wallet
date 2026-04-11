@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
   const React = require('react');

@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 jest.mock('../../api/client', () => ({
   apiClient: {
     get: jest.fn().mockReturnValue({

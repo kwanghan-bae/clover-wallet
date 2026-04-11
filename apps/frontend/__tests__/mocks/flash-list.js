@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 const React = require('react');
 const { FlatList } = require('react-native-web');
 

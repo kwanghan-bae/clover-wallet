@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 jest.mock('@react-native-community/netinfo', () => ({
   useNetInfo: jest.fn().mockReturnValue({ isConnected: true, isInternetReachable: true }),
 }));

@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 jest.mock('../../utils/storage', () => ({
   loadItem: jest.fn(),
   saveItem: jest.fn(),

@@ -1,3 +1,4 @@
+/* eslint-disable import/first, react/display-name */
 jest.unmock('../../hooks/useNotifications');
 
 jest.mock('../../api/notifications', () => ({

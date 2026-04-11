@@ -58,12 +58,14 @@ function AppContent() {
     } else if (isAuthenticated && inAuthGroup) {
       router.replace('/(tabs)');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, authLoading, segments]);
 
   useEffect(() => {
     if (isAuthenticated) {
       registerToken();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   return (

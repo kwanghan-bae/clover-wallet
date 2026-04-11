@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 jest.mock('expo-blur', () => {
   const React = require('react');
   const { View } = require('react-native');

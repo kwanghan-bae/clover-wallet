@@ -24,6 +24,7 @@ const LoginScreen = () => {
     if (isAuthenticated) {
       router.replace('/(tabs)');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const handleGoogleSignIn = async () => {

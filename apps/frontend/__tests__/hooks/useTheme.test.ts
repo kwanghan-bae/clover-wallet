@@ -1,3 +1,4 @@
+/* eslint-disable import/first */
 jest.unmock('../../hooks/useTheme');
 jest.mock('react-native', () => ({
   ...jest.requireActual('react-native'),
