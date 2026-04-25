@@ -1,26 +1,7 @@
 import { apiClient } from './client';
-import type { PageResponse } from '@clover/shared';
+import type { PageResponse, LottoTicket, LottoGame } from '@clover/shared';
 
-export interface LottoTicket {
-  id: number;
-  ordinal: number;
-  status: 'STASHED' | 'WINNING' | 'LOSING';
-  url?: string;
-  games?: LottoGame[];
-  createdAt: string;
-}
-
-export interface LottoGame {
-  id: number;
-  number1: number;
-  number2: number;
-  number3: number;
-  number4: number;
-  number5: number;
-  number6: number;
-  status: string;
-  prizeAmount: number;
-}
+export type { LottoTicket, LottoGame };
 
 export const ticketsApi = {
   getMyTickets: (page = 0, size = 20) =>

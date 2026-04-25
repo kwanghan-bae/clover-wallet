@@ -27,9 +27,10 @@ export interface LottoTicket {
   id: number;
   userId: number;
   ordinal: number;
-  status: string;
-  games: LottoGame[];
-  createdAt?: string;
+  status: 'STASHED' | 'WINNING' | 'LOSING';
+  url?: string;
+  games?: LottoGame[];
+  createdAt: string;
 }
 
 export interface WinningInfo {
