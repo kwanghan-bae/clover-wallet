@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LottoService } from '../lotto.service';
 import { PrismaService } from '../../prisma/prisma.service';
 import { BadgeService } from '../../users/badge.service';
+import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
 /**
  * LottoService에 대한 단위 테스트입니다.
@@ -48,8 +49,9 @@ describe('LottoService', () => {
       const userId = '1';
       const userIdBig = BigInt(1);
       const dto = {
+        userId: 999,
         numbers: [1, 10, 20, 30, 40, 45],
-        extractionMethod: 'RANDOM',
+        extractionMethod: ExtractionMethod.RANDOM,
       };
       const mockGame = { id: BigInt(1), ...dto };
       (prisma.lottoGame.create as jest.Mock).mockResolvedValue(mockGame);

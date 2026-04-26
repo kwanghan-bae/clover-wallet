@@ -38,7 +38,7 @@ export class LottoController {
     @Query('page') page = 0,
     @Query('size') size = 20,
   ) {
-    return this.lottoService.getGamesByUserId(req.user.id, +page, +size);
+    return this.lottoService.getHistory(req.user.id, +page + 1, +size);
   }
 
   /**
@@ -49,7 +49,7 @@ export class LottoController {
   async saveGame(@Request() req: any, @Body() dto: SaveGameDto) {
     // 요청의 userId보다 토큰의 id 우선 사용
     dto.userId = req.user.id.toString();
-    return this.lottoService.saveGeneratedGame(dto);
+    return this.lottoService.saveGame(req.user.id, dto);
   }
 
   /**

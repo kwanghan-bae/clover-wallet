@@ -48,14 +48,6 @@ export class LottoService {
   }
 
   /**
-   * 컨트롤러용 별칭: 생성된 게임을 저장합니다.
-   * @deprecated Pass 3에서 제거 예정
-   */
-  async saveGeneratedGame(dto: SaveGameDto) {
-    return this.saveGame(String(dto.userId), dto);
-  }
-
-  /**
    * 사용자의 로또 게임 내역을 페이징하여 조회합니다.
    * @param userId 사용자 ID
    * @param page 페이지 번호
@@ -85,18 +77,6 @@ export class LottoService {
       totalElements,
       totalPages: Math.ceil(totalElements / limit),
     };
-  }
-
-  /**
-   * 컨트롤러용 별칭: 사용자 ID로 게임 목록을 페이징 조회합니다.
-   * @deprecated Pass 3에서 제거 예정
-   */
-  async getGamesByUserId(
-    userId: string | bigint,
-    page: number = 0,
-    size: number = 20,
-  ): Promise<PageResponse<LottoGame>> {
-    return this.getHistory(String(userId), page + 1, size);
   }
 
   /**

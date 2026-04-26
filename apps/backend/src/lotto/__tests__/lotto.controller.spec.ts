@@ -5,6 +5,7 @@ import { ExtractionService } from '../extraction.service';
 import { LottoInfoService } from '../lotto-info.service';
 import { SaveGameDto } from '../dto/save-game.dto';
 import { ExtractNumbersDto } from '../dto/extract-numbers.dto';
+import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
 /**
  * LottoController에 대한 단위 테스트입니다.
@@ -16,8 +17,8 @@ describe('LottoController', () => {
   let extractionService: ExtractionService;
 
   const mockLottoService = {
-    getGamesByUserId: jest.fn(),
-    saveGeneratedGame: jest.fn(),
+    getHistory: jest.fn(),
+    saveGame: jest.fn(),
   };
 
   const mockExtractionService = {
@@ -58,36 +59,39 @@ describe('LottoController', () => {
   });
 
   describe('getMyGames', () => {
-    it('should call lottoService.getGamesByUserId', async () => {
+    it('should call lottoService.getHistory with page+1 (0-indexed to 1-indexed)', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getMyGames(req, 0, 20);
-      expect(lottoService.getGamesByUserId).toHaveBeenCalledWith(
+      expect(lottoService.getHistory).toHaveBeenCalledWith(
         'user-id',
-        0,
+        1,
         20,
       );
     });
   });
 
   describe('saveGame', () => {
-    it('should call lottoService.saveGeneratedGame with userId from token', async () => {
+    it('should call lottoService.saveGame with userId and dto', async () => {
       const req = { user: { id: 'user-id' } };
       const dto: SaveGameDto = {
-        userId: 'other',
+        userId: 999,
         numbers: [1, 2, 3, 4, 5, 6],
-        round: 1000,
+        extractionMethod: ExtractionMethod.RANDOM,
       };
       await controller.saveGame(req, dto);
-      expect(lottoService.saveGeneratedGame).toHaveBeenCalledWith({
-        ...dto,
-        userId: 'user-id',
-      });
+      expect(lottoService.saveGame).toHaveBeenCalledWith(
+        'user-id',
+        {
+          ...dto,
+          userId: 'user-id',
+        },
+      );
     });
   });
 
   describe('extractNumbers', () => {
     it('should call extractionService.extractLottoNumbers and return sorted unique numbers', async () => {
-      const dto: ExtractNumbersDto = { type: 'dream', input: 'lucky dream' };
+      const dto: ExtractNumbersDto = { method: ExtractionMethod.DREAM, dreamKeyword: 'lucky dream' };
       mockExtractionService.extractLottoNumbers.mockResolvedValue([
         10, 5, 5, 20, 1, 30,
       ]);
