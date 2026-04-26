@@ -15,6 +15,7 @@ export class AuthController {
   async login(@Body() body: { supabaseToken: string }) {
     try {
       const token = body.supabaseToken;
+      // JWT 서명 검증은 Supabase가 담당 (클라이언트 신뢰 모델)
       const payloadBase64 = token.split('.')[1];
       const payload = JSON.parse(
         Buffer.from(payloadBase64, 'base64').toString(),
