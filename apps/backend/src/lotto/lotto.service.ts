@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, LottoGame } from '@prisma/client';
 import { SaveGameDto } from './dto/save-game.dto';
 import { PageResponse } from '../common/types/page-response';
 import { BadgeService } from '../users/badge.service';
@@ -25,21 +26,20 @@ export class LottoService {
    * @param userId 사용자 ID
    * @param dto 저장할 게임 정보
    */
-  async saveGame(userId: string, dto: SaveGameDto) {
+  async saveGame(userId: string, dto: SaveGameDto): Promise<LottoGame> {
     const userIdBig = BigInt(userId);
-    const game = await this.prisma.lottoGame.create({
-      data: {
-        userId: userIdBig,
-        status: 'STASHED',
-        number1: dto.numbers[0],
-        number2: dto.numbers[1],
-        number3: dto.numbers[2],
-        number4: dto.numbers[3],
-        number5: dto.numbers[4],
-        number6: dto.numbers[5],
-        extractionMethod: dto.extractionMethod,
-      } as any,
-    });
+    const data: Prisma.LottoGameUncheckedCreateInput = {
+      userId: userIdBig,
+      status: 'STASHED',
+      number1: dto.numbers[0],
+      number2: dto.numbers[1],
+      number3: dto.numbers[2],
+      number4: dto.numbers[3],
+      number5: dto.numbers[4],
+      number6: dto.numbers[5],
+      extractionMethod: dto.extractionMethod,
+    };
+    const game = await this.prisma.lottoGame.create({ data });
 
     // 번호 생성 뱃지 체크
     await this.badgeService.updateUserBadges(userIdBig);
@@ -49,6 +49,7 @@ export class LottoService {
 
   /**
    * 컨트롤러용 별칭: 생성된 게임을 저장합니다.
+   * @deprecated Pass 3에서 제거 예정
    */
   async saveGeneratedGame(dto: SaveGameDto) {
     return this.saveGame(String(dto.userId), dto);
@@ -64,7 +65,7 @@ export class LottoService {
     userId: string,
     page: number = 1,
     limit: number = 10,
-  ): Promise<PageResponse<any>> {
+  ): Promise<PageResponse<LottoGame>> {
     const userIdBig = BigInt(userId);
     const skip = (page - 1) * limit;
     const [content, totalElements] = await Promise.all([
@@ -88,12 +89,13 @@ export class LottoService {
 
   /**
    * 컨트롤러용 별칭: 사용자 ID로 게임 목록을 페이징 조회합니다.
+   * @deprecated Pass 3에서 제거 예정
    */
   async getGamesByUserId(
     userId: string | bigint,
     page: number = 0,
     size: number = 20,
-  ): Promise<PageResponse<any>> {
+  ): Promise<PageResponse<LottoGame>> {
     return this.getHistory(String(userId), page + 1, size);
   }
 
