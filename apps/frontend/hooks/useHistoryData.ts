@@ -56,7 +56,7 @@ export function useHistoryData() {
         createdAt: ticket.createdAt,
         round: ticket.ordinal,
         prizeAmount: game.prizeAmount,
-        _ticketStatus: ticket.status,
+        _ticketStatus: game.status,
       })),
     );
   }, [ticketData]);
