@@ -3,12 +3,12 @@ jest.mock('../../api/client', () => ({
   apiClient: {
     get: jest.fn().mockReturnValue({
       json: jest.fn().mockResolvedValue({
-        content: [{ id: 1, ordinal: 1100, status: 'STASHED' }],
+        content: [{ id: 1, userId: 42, ordinal: 1100, status: 'STASHED', createdAt: '2024-01-01T00:00:00Z' }],
         totalElements: 1,
       }),
     }),
     post: jest.fn().mockReturnValue({
-      json: jest.fn().mockResolvedValue({ id: 1, ordinal: 1100, status: 'STASHED' }),
+      json: jest.fn().mockResolvedValue({ id: 1, userId: 42, ordinal: 1100, status: 'STASHED', createdAt: '2024-01-01T00:00:00Z' }),
     }),
   },
 }));
