@@ -191,15 +191,42 @@ describe('useHistoryData', () => {
   });
 
   it('should include ticket status from backend records', async () => {
+    const round = 1100;
+    const numbers = [1, 2, 3, 4, 5, 6];
+
+    const mockBackendData = {
+      content: [
+        {
+          id: 1,
+          status: 'WINNING',
+          ordinal: round,
+          userId: 42,
+          createdAt: '2024-01-01T00:00:00Z',
+          games: [
+            {
+              id: 10,
+              status: 'WINNING',
+              number1: numbers[0],
+              number2: numbers[1],
+              number3: numbers[2],
+              number4: numbers[3],
+              number5: numbers[4],
+              number6: numbers[5],
+              prizeAmount: 1000,
+            },
+          ],
+        },
+      ],
+    };
+
     (storageUtils.loadItem as jest.Mock).mockReturnValue([]);
-    (ticketsApi.getMyTickets as jest.Mock).mockResolvedValue({
-      content: [],
-    });
+    (ticketsApi.getMyTickets as jest.Mock).mockResolvedValue(mockBackendData);
 
     const { result } = renderHook(() => useHistoryData(), {
       wrapper: createWrapper(),
     });
 
+    // 호출 직후 hook이 반환하는 속성 확인
     expect(result.current).toHaveProperty('records');
     expect(result.current).toHaveProperty('handleDelete');
     expect(typeof result.current.handleDelete).toBe('function');
