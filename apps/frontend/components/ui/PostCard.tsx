@@ -31,16 +31,18 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
       onPress={() => onPress?.(post.id)}
       className="bg-white rounded-[24px] p-5 mb-5"
       style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.04, shadowRadius: 16, elevation: 2 }}
+      accessibilityRole="button"
+      accessibilityLabel={`${post.title ? post.title + ' ' : ''}${post.content.substring(0, 20)} 게시글 보기`}
     >
       {/* Header */}
       <View className="flex-row items-start mb-4">
-        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3">
+        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3" accessibilityRole="button" accessibilityLabel={`${nickname} 프로필 보기`}>
           <View className="w-10 h-10 rounded-full bg-[#4CAF50]/10 items-center justify-center">
             <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-base">{initial}</Text>
           </View>
         </TouchableOpacity>
         <View className="flex-1">
-          <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress}>
+          <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} accessibilityRole="button" accessibilityLabel={`${nickname} 프로필 보기`}>
             <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#1A1A1A] text-[15px]">{nickname}</Text>
           </TouchableOpacity>
           <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[12px] mt-0.5">{dateStr}</Text>
@@ -58,16 +60,16 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
 
       {/* Footer / Actions */}
       <View className="flex-row items-center px-1">
-        <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6}>
+        <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6} accessibilityRole="button" accessibilityLabel={post.isLiked ? '좋아요 취소' : '좋아요'}>
           <Heart size={18} color={post.isLiked ? "#EF5350" : "#9E9E9E"} fill={post.isLiked ? "#EF5350" : "transparent"} />
           <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className={`ml-1.5 text-[13px] ${post.isLiked ? 'text-[#EF5350]' : 'text-[#757575]'}`}>{post.likes}</Text>
         </TouchableOpacity>
-        <View className="flex-row items-center mr-5">
+        <View className="flex-row items-center mr-5" accessible={true} accessibilityLabel={`댓글 ${commentCount}개`}>
           <MessageCircle size={18} color="#9E9E9E" />
           <Text style={{ fontFamily: 'NotoSansKR_500Medium' }} className="ml-1.5 text-[13px] text-[#757575]">{commentCount}</Text>
         </View>
         <View className="flex-1" />
-        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1">
+        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" accessibilityRole="button" accessibilityLabel="공유하기">
           <Share2 size={18} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
