@@ -40,7 +40,11 @@ describe('PostService — 읽기/조회', () => {
       const mockPosts = [
         {
           id: BigInt(1),
-          user: { id: BigInt(10), ssoQualifier: 'user@test.com', badges: 'A,B' },
+          user: {
+            id: BigInt(10),
+            ssoQualifier: 'user@test.com',
+            badges: 'A,B',
+          },
         },
       ];
       (prisma.post.findMany as jest.Mock).mockResolvedValue(mockPosts);

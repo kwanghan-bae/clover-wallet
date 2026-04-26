@@ -92,11 +92,7 @@ export class CommunityController {
     @Query('page') page = 0,
     @Query('size') size = 20,
   ) {
-    return this.commentService.getCommentsByPostId(
-      BigInt(id),
-      +page,
-      +size,
-    );
+    return this.commentService.getCommentsByPostId(BigInt(id), +page, +size);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -112,11 +108,7 @@ export class CommunityController {
     @Param('id') id: string,
     @Body() dto: UpdateCommentDto,
   ) {
-    return this.commentService.updateComment(
-      BigInt(id),
-      req.user.id,
-      dto,
-    );
+    return this.commentService.updateComment(BigInt(id), req.user.id, dto);
   }
 
   @Delete('posts/:id')
@@ -132,10 +124,6 @@ export class CommunityController {
     @Query('page', new ParseIntPipe({ optional: true })) page?: number,
     @Query('size', new ParseIntPipe({ optional: true })) size?: number,
   ) {
-    return this.postService.getUserPosts(
-      BigInt(userId),
-      page ?? 0,
-      size ?? 10,
-    );
+    return this.postService.getUserPosts(BigInt(userId), page ?? 0, size ?? 10);
   }
 }

@@ -96,23 +96,23 @@ export class LottoWinningStoreService {
   ): WinningStoreInput[] {
     const minCols = rank === 1 ? 4 : 3;
     const stores: WinningStoreInput[] = [];
-    table
-      .find('tbody tr')
-      .each((_, element) => {
-        const tds = $(element).find('td');
-        if (
-          tds.length >= minCols &&
-          !$(tds[0]).text().includes('조회 결과가 없습니다')
-        ) {
-          stores.push({
-            round,
-            rank,
-            storeName: $(tds[1]).text().trim(),
-            method: rank === 1 ? $(tds[2]).text().trim() : null,
-            address: $(tds[rank === 1 ? 3 : 2]).text().trim(),
-          });
-        }
-      });
+    table.find('tbody tr').each((_, element) => {
+      const tds = $(element).find('td');
+      if (
+        tds.length >= minCols &&
+        !$(tds[0]).text().includes('조회 결과가 없습니다')
+      ) {
+        stores.push({
+          round,
+          rank,
+          storeName: $(tds[1]).text().trim(),
+          method: rank === 1 ? $(tds[2]).text().trim() : null,
+          address: $(tds[rank === 1 ? 3 : 2])
+            .text()
+            .trim(),
+        });
+      }
+    });
     return stores;
   }
 
