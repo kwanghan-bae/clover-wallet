@@ -47,8 +47,6 @@ export class LottoController {
   @UseGuards(AuthGuard('jwt'))
   @Post('games')
   async saveGame(@Request() req: any, @Body() dto: SaveGameDto) {
-    // 요청의 userId보다 토큰의 id 우선 사용
-    dto.userId = req.user.id.toString();
     return this.lottoService.saveGame(req.user.id, dto);
   }
 

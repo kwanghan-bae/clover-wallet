@@ -62,11 +62,7 @@ describe('LottoController', () => {
     it('should call lottoService.getHistory with page+1 (0-indexed to 1-indexed)', async () => {
       const req = { user: { id: 'user-id' } };
       await controller.getMyGames(req, 0, 20);
-      expect(lottoService.getHistory).toHaveBeenCalledWith(
-        'user-id',
-        1,
-        20,
-      );
+      expect(lottoService.getHistory).toHaveBeenCalledWith('user-id', 1, 20);
     });
   });
 
@@ -79,19 +75,16 @@ describe('LottoController', () => {
         extractionMethod: ExtractionMethod.RANDOM,
       };
       await controller.saveGame(req, dto);
-      expect(lottoService.saveGame).toHaveBeenCalledWith(
-        'user-id',
-        {
-          ...dto,
-          userId: 'user-id',
-        },
-      );
+      expect(lottoService.saveGame).toHaveBeenCalledWith('user-id', dto);
     });
   });
 
   describe('extractNumbers', () => {
     it('should call extractionService.extractLottoNumbers and return sorted unique numbers', async () => {
-      const dto: ExtractNumbersDto = { method: ExtractionMethod.DREAM, dreamKeyword: 'lucky dream' };
+      const dto: ExtractNumbersDto = {
+        method: ExtractionMethod.DREAM,
+        dreamKeyword: 'lucky dream',
+      };
       mockExtractionService.extractLottoNumbers.mockResolvedValue([
         10, 5, 5, 20, 1, 30,
       ]);
