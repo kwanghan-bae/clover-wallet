@@ -1,0 +1,3 @@
+## 2024-03-21 - Added Accessibility Labels to Icon-Only Buttons
+**Learning:** React Native `TouchableOpacity` components wrapping icon-only elements (e.g., using `lucide-react-native`) do not inherently have accessibility labels or roles. This causes screen readers to either ignore them entirely or announce them as unhelpful interactive elements. This pattern is prevalent in this app's UI components, like the PostCard.
+**Action:** When adding or reviewing interactive icons in React Native/Expo, always explicitly add `accessibilityRole="button"` and a descriptive `accessibilityLabel` to the wrapper `TouchableOpacity` or `Pressable`.
