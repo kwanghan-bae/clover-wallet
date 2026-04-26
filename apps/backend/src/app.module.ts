@@ -20,6 +20,7 @@ import { AdminModule } from './admin/admin.module';
     // 전역 환경변수 설정
     ConfigModule.forRoot({
       isGlobal: true,
+      ignoreEnvFile: process.env.NODE_ENV === 'test',
     }),
     // 크론잡 스케줄링
     ScheduleModule.forRoot(),

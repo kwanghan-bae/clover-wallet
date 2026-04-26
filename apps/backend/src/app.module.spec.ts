@@ -8,6 +8,8 @@ describe('AppModule', () => {
   let module: TestingModule;
 
   beforeEach(async () => {
+    process.env.DATABASE_URL = 'mock-database-url';
+    process.env.SUPABASE_JWT_SECRET = 'mock-secret';
     module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
