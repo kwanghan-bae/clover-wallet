@@ -15,17 +15,7 @@ import {
   useHistoryData,
   HistoryRecord,
 } from '../../hooks/useHistoryData';
-
-const getStatusBadge = (status: string) => {
-  switch (status) {
-    case 'WINNING':
-      return { label: '당첨', color: '#4CAF50', bg: '#E8F5E9' };
-    case 'LOSING':
-      return { label: '미당첨', color: '#757575', bg: '#F5F5F5' };
-    default:
-      return { label: '확인중', color: '#FFC107', bg: '#FFF8E1' };
-  }
-};
+import { getStatusBadge } from '../../constants/lotto-status';
 
 const HistoryScreen = () => {
   const router = useRouter();
