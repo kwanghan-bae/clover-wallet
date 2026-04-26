@@ -2,22 +2,12 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-/**
- * 사용자 정보 관리 및 비즈니스 로직을 처리하는 서비스입니다.
- */
 @Injectable()
 export class UsersService {
-  /**
-   * Prisma 서비스를 주입받습니다.
-   * @param prisma 데이터베이스 접근 서비스
-   */
+
   constructor(private prisma: PrismaService) {}
 
-  /**
-   * 특정 ID를 가진 사용자를 조회합니다.
-   * @param id 사용자 ID
-   * @throws NotFoundException 사용자를 찾을 수 없는 경우
-   */
+
   async findUser(id: bigint | number | string) {
     const user = await this.prisma.user.findUnique({
       where: { id: BigInt(id) },
@@ -28,11 +18,7 @@ export class UsersService {
     return user;
   }
 
-  /**
-   * SSO 식별자(ssoQualifier)로 사용자를 조회합니다.
-   * @param ssoQualifier SSO 고유 식별자
-   * @param throwError 사용자를 찾지 못했을 때 예외 발생 여부
-   */
+  
   async findUserBySsoQualifier(ssoQualifier: string, throwError = true) {
     const user = await this.prisma.user.findUnique({
       where: { ssoQualifier },
@@ -75,11 +61,6 @@ export class UsersService {
     });
   }
 
-  /**
-   * 사용자의 프로필 정보를 업데이트합니다.
-   * @param id 사용자 ID
-   * @param dto 업데이트할 정보
-   */
   async updateUser(id: bigint | number | string, dto: UpdateUserDto) {
     await this.findUser(id); // 존재 여부 확인
 
@@ -91,10 +72,7 @@ export class UsersService {
     });
   }
 
-  /**
-   * 사용자의 계정을 삭제(회원 탈퇴)합니다. 연관된 데이터는 Cascade 옵션으로 삭제됩니다.
-   * @param id 사용자 ID
-   */
+  
   async deleteUserAccount(id: bigint | number | string) {
     try {
       // Prisma schema에 onDelete: Cascade가 설정되어 있으므로 user 삭제 시 연관 데이터가 함께 삭제됨
@@ -109,10 +87,7 @@ export class UsersService {
     }
   }
 
-  /**
-   * 사용자의 게임 통계 정보(총 게임 수, 당첨금 합계, 수익률 등)를 계산하여 반환합니다.
-   * @param userId 사용자 ID
-   */
+  
   async getUserStats(userId: bigint | number | string) {
     const id = BigInt(userId);
 

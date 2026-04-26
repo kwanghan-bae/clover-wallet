@@ -3,9 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as admin from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
-/**
- * FCM(Firebase Cloud Messaging)을 통한 푸시 알림 발송을 담당하는 서비스입니다.
- */
+
 @Injectable()
 export class FcmService implements OnModuleInit {
   private readonly logger = new Logger(FcmService.name);
@@ -16,16 +14,12 @@ export class FcmService implements OnModuleInit {
     private readonly configService: ConfigService,
   ) {}
 
-  /**
-   * 모듈 초기화 시 Firebase Admin SDK를 초기화합니다.
-   */
+
   onModuleInit() {
     this.initializeFirebase();
   }
 
-  /**
-   * Firebase Admin SDK를 설정 파일의 키 경로를 사용하여 초기화합니다.
-   */
+
   private initializeFirebase() {
     try {
       const serviceAccountPath =
@@ -47,9 +41,6 @@ export class FcmService implements OnModuleInit {
     }
   }
 
-  /**
-   * 사용자의 FCM 토큰을 ID 기반으로 등록하거나 업데이트합니다.
-   */
   async registerTokenById(userId: bigint, token: string) {
     await this.prisma.user.update({
       where: { id: userId },
@@ -58,9 +49,6 @@ export class FcmService implements OnModuleInit {
     this.logger.log(`사용자 ${userId}의 FCM 토큰 등록 완료 (ID 기반)`);
   }
 
-  /**
-   * 사용자의 FCM 토큰을 SSO 식별자 기반으로 등록하거나 업데이트합니다.
-   */
   async registerToken(ssoQualifier: string, token: string) {
     const user = await this.prisma.user.findUnique({ where: { ssoQualifier } });
     if (user) {
@@ -72,9 +60,7 @@ export class FcmService implements OnModuleInit {
     }
   }
 
-  /**
-   * 특정 사용자에게 당첨 알림을 전송합니다.
-   */
+
   async sendWinningNotification(
     token: string,
     rank: string,
@@ -91,9 +77,7 @@ export class FcmService implements OnModuleInit {
     });
   }
 
-  /**
-   * 다수 사용자에게 알림을 일괄 전송(브로드캐스트)합니다.
-   */
+  
   async sendBroadcastNotification(
     tokens: string[],
     title: string,
@@ -117,9 +101,6 @@ export class FcmService implements OnModuleInit {
     }
   }
 
-  /**
-   * Firebase Admin SDK를 통해 단일 메시지를 전송하는 내부 메서드입니다.
-   */
   private async sendMessage(
     token: string,
     title: string,

@@ -6,9 +6,9 @@ import {
 import { ExtractionContext } from '../lotto-number.extractor';
 import { ExtractionStrategy } from './extraction-strategy.interface';
 
-/**
- * @description 별자리 운세 기반 로또 번호 추출 전략입니다.
- */
+
+
+
 export class HoroscopeExtractionStrategy implements ExtractionStrategy {
   supports(method: ExtractionMethod): boolean {
     return method === ExtractionMethod.HOROSCOPE;
@@ -49,9 +49,9 @@ export class HoroscopeExtractionStrategy implements ExtractionStrategy {
   }
 }
 
-/**
- * @description 개인적인 의미 있는 숫자 기반 로또 번호 추출 전략입니다.
- */
+
+
+
 export class PersonalSignificanceExtractionStrategy implements ExtractionStrategy {
   private readonly LOTTO_MIN = 1;
   private readonly LOTTO_MAX = 45;

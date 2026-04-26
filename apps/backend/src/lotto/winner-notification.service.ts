@@ -4,9 +4,9 @@ import { BadgeService } from '../users/badge.service';
 import { FcmService } from '../notification/fcm.service';
 import { LottoRankCalculator } from './utils/lotto-rank.calculator';
 
-/**
- * 당첨자에 대한 뱃지 업데이트 및 FCM 알림 발송을 처리하는 서비스입니다.
- */
+
+
+
 @Injectable()
 export class WinnerNotificationService {
   private readonly logger = new Logger(WinnerNotificationService.name);

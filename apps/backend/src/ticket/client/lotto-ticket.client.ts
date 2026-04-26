@@ -2,19 +2,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as iconv from 'iconv-lite';
 
-/**
- * 동행복권 사이트에서 티켓 HTML 및 JSON 데이터를 가져오는 클라이언트입니다.
- * Kotlin LottoTicketClient 로직을 이식함.
- */
+
 @Injectable()
 export class LottoTicketClient {
   private readonly logger = new Logger(LottoTicketClient.name);
   private readonly TIMEOUT_MS = 5000;
 
-  /**
-   * 주어진 URL에서 HTML 문서를 가져옵니다. (EUC-KR 인코딩 처리)
-   * @param url 티켓 URL
-   */
+  
   async getHtmlByUrl(url: string): Promise<string> {
     this.logger.log(`URL에서 문서 가져오기: ${url}`);
     try {
@@ -33,10 +27,7 @@ export class LottoTicketClient {
     }
   }
 
-  /**
-   * 주어진 URL에서 JSON 데이터를 가져옵니다.
-   * @param url API URL
-   */
+
   async getJsonByUrl(url: string): Promise<any> {
     this.logger.log(`JSON API 호출: ${url}`);
     try {

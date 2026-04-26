@@ -4,9 +4,9 @@ import { FollowService } from '../users/follow.service';
 import { PostService } from './post.service';
 import type { PageResponse } from '../common/types/page-response';
 
-/**
- * 팔로잉 피드 조회 로직을 처리하는 서비스입니다.
- */
+
+
+
 @Injectable()
 export class FeedService {
   constructor(

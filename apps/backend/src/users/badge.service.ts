@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * 사용자의 활동 및 당첨 이력을 분석하여 뱃지를 자동으로 부여하는 서비스입니다.
- */
 @Injectable()
 export class BadgeService {
   private readonly logger = new Logger(BadgeService.name);
@@ -19,9 +16,7 @@ export class BadgeService {
   static readonly BADGE_HOROSCOPE_BELIEVER = 'HOROSCOPE_BELIEVER';
   static readonly BADGE_NATURE_LOVER = 'NATURE_LOVER';
 
-  /**
-   * 서비스 생성자입니다. PrismaService를 주입받습니다.
-   */
+  
   constructor(private readonly prisma: PrismaService) {}
 
   /**
@@ -49,9 +44,7 @@ export class BadgeService {
     }
   }
 
-  /**
-   * 게임 참여 횟수 및 당첨 등수와 같은 기본 활동 기반 뱃지를 검사합니다.
-   */
+
   private async checkActivityAndWinBadges(userId: bigint, badges: Set<string>) {
     const [totalGames, winningGamesCount, hasFirstPlace] = await Promise.all([
       this.prisma.lottoGame.count({ where: { userId } }),
@@ -69,9 +62,7 @@ export class BadgeService {
     if (totalGames >= 50) badges.add(BadgeService.BADGE_VETERAN);
   }
 
-  /**
-   * 특정 추출 방법론을 사용하여 당첨된 경우 부여되는 전문 뱃지들을 검사합니다.
-   */
+
   private async checkMethodSpecialistBadges(
     userId: bigint,
     badges: Set<string>,
@@ -101,9 +92,7 @@ export class BadgeService {
     if (hasStatsWin) badges.add(BadgeService.BADGE_STATS_GENIUS);
   }
 
-  /**
-   * 특정 번호 추출 방식을 사용하여 당첨된 경우 해당 분야의 뱃지를 부여합니다.
-   */
+
   private async checkAndAddExtractionBadge(
     userId: bigint,
     method: string,
@@ -123,9 +112,7 @@ export class BadgeService {
     if (winWithMethod) currentBadges.add(badgeName);
   }
 
-  /**
-   * 최종 확정된 뱃지 목록을 DB에 저장합니다.
-   */
+
   private async saveUserBadges(userId: bigint, badges: Set<string>) {
     await this.prisma.user.update({
       where: { id: userId },

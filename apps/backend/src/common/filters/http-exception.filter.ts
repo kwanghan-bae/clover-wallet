@@ -8,18 +8,12 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 
-/**
- * 모든 HTTP 예외를 처리하여 Kotlin의 CommonResponse.fail 규격으로 변환하는 전역 예외 필터입니다.
- */
+
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
-  /**
-   * 예외 발생 시 호출되어 에러 응답을 생성합니다.
-   * @param exception 발생한 예외 객체
-   * @param host 아규먼트 호스트 (HTTP 컨텍스트 추출용)
-   */
+
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();

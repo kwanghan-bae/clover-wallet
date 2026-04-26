@@ -5,9 +5,9 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { LottoTicketClient } from './client/lotto-ticket.client';
 import { JsoupTicketParser } from './client/jsoup-ticket.parser';
 
-/**
- * 로또 티켓 관련 기능을 제공하는 모듈입니다.
- */
+
+
+
 @Module({
   imports: [PrismaModule],
   controllers: [TicketController],

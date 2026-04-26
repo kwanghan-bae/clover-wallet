@@ -3,10 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LottoTicketClient } from './client/lotto-ticket.client';
 import { JsoupTicketParser } from './client/jsoup-ticket.parser';
 
-/**
- * 로또 티켓 관리 및 스캔 로직을 처리하는 서비스 클래스입니다.
- * Kotlin TicketService 로직을 이식함.
- */
+
 @Injectable()
 export class TicketService {
   private readonly logger = new Logger(TicketService.name);
@@ -17,12 +14,7 @@ export class TicketService {
     private readonly ticketParser: JsoupTicketParser,
   ) {}
 
-  /**
-   * 사용자의 티켓 목록을 페이징하여 조회합니다.
-   * @param userId 사용자 ID
-   * @param page 페이지 번호
-   * @param size 페이지당 항목 수
-   */
+
   async getMyTickets(userId: bigint, page = 0, size = 20) {
     const skip = page * size;
     const [content, total] = await Promise.all([
@@ -44,10 +36,7 @@ export class TicketService {
     };
   }
 
-  /**
-   * 특정 티켓의 상세 정보와 포함된 게임들을 조회합니다.
-   * @param ticketId 티켓 ID
-   */
+
   async getTicketById(ticketId: bigint) {
     const ticket = await this.prisma.lottoTicket.findUnique({
       where: { id: ticketId },
@@ -61,13 +50,7 @@ export class TicketService {
     return ticket;
   }
 
-  /**
-   * 스캔된 QR URL로부터 티켓 정보를 가져와 저장합니다.
-   * Kotlin saveScannedTicket 로직 이식.
-   * @param userId 사용자 ID
-   * @param url QR 코드 URL
-   * @param extractionMethod 추출 방식 (선택)
-   */
+
   async saveScannedTicket(
     userId: bigint,
     url: string,

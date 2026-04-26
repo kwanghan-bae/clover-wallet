@@ -4,10 +4,10 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { LottoRankCalculator } from './utils/lotto-rank.calculator';
 import { WinnerNotificationService } from './winner-notification.service';
 
-/**
- * 사용자의 로또 게임 결과와 당첨 번호를 대조하여 등수를 계산하고
- * 상태를 업데이트하는 서비스입니다.
- */
+
+
+
+
 @Injectable()
 export class WinningCheckService {
   private readonly logger = new Logger(WinningCheckService.name);

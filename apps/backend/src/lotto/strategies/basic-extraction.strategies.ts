@@ -44,10 +44,7 @@ export class SajuExtractionStrategy implements ExtractionStrategy {
     return [(sum % this.LOTTO_MAX) + 1];
   }
 
-  /**
-   * 숫자의 각 자릿수를 합산하여 결과값을 반환합니다.
-   * 사주팔자 기반 번호 추출 시 생년월일 각 항목의 합계를 구하는 데 사용됩니다.
-   */
+
   private sumDigits(num: number): number {
     return num
       .toString()

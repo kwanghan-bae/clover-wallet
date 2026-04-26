@@ -1,34 +1,19 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { AppService } from './app.service';
 
-/**
- * 애플리케이션의 기본 엔드포인트를 처리하는 컨트롤러입니다.
- */
 @Controller()
 export class AppController {
   private static readonly CURRENT_VERSION = '1.0.0';
   private static readonly MIN_SUPPORTED_VERSION = '1.0.0';
 
-  /**
-   * AppController 생성자
-   * @param appService AppService 주입
-   */
+
   constructor(private readonly appService: AppService) {}
 
-  /**
-   * 애플리케이션의 헬스체크 또는 인사말을 반환합니다.
-   * @returns "Hello World!" 문자열
-   */
   @Get()
   getHello(): string {
     return this.appService.getHello();
   }
 
-  /**
-   * 클라이언트 앱 버전을 확인하고 업데이트 필요 여부를 반환합니다.
-   * @param clientVersion 클라이언트가 전달한 현재 버전 문자열
-   * @returns 버전 정보 및 업데이트 필요 여부
-   */
   @Get('app/version')
   checkVersion(@Query('currentVersion') clientVersion?: string) {
     if (!clientVersion) {

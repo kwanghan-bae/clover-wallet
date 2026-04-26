@@ -5,27 +5,16 @@ import { SaveGameDto } from './dto/save-game.dto';
 import { PageResponse } from '../common/types/page-response';
 import { BadgeService } from '../users/badge.service';
 
-/**
- * 로또 관련 비즈니스 로직을 처리하는 서비스입니다.
- * 게임 저장, 내역 조회, 통계 계산 등을 담당합니다.
- */
+
 @Injectable()
 export class LottoService {
-  /**
-   * LottoService 생성자
-   * @param prisma 데이터베이스 접근을 위한 PrismaService
-   * @param badgeService 뱃지 부여를 위한 BadgeService
-   */
+  
   constructor(
     private prisma: PrismaService,
     private badgeService: BadgeService,
   ) {}
 
-  /**
-   * 사용자의 로또 게임 번호를 저장합니다.
-   * @param userId 사용자 ID
-   * @param dto 저장할 게임 정보
-   */
+
   async saveGame(userId: string, dto: SaveGameDto): Promise<LottoGame> {
     const userIdBig = BigInt(userId);
     const data: Prisma.LottoGameUncheckedCreateInput = {
@@ -47,12 +36,7 @@ export class LottoService {
     return game;
   }
 
-  /**
-   * 사용자의 로또 게임 내역을 페이징하여 조회합니다.
-   * @param userId 사용자 ID
-   * @param page 페이지 번호
-   * @param limit 페이지당 항목 수
-   */
+
   async getHistory(
     userId: string,
     page: number = 1,
@@ -79,10 +63,7 @@ export class LottoService {
     };
   }
 
-  /**
-   * 사용자의 로또 당첨 통계를 계산합니다.
-   * @param userId 사용자 ID
-   */
+
   async getStatistics(userId: string) {
     const userIdBig = BigInt(userId);
     const games = await this.prisma.lottoGame.findMany({

@@ -39,9 +39,7 @@ export class JsoupTicketParser {
     gameNumbersSelector: 'td span.clr',
   };
 
-  /**
-   * HTML 문자열을 파싱하여 티켓 정보를 추출합니다.
-   */
+
   parse(html: string): ParsedTicket {
     const $ = cheerio.load(html);
 
@@ -52,17 +50,13 @@ export class JsoupTicketParser {
     return { ordinal, status, games };
   }
 
-  /**
-   * HTML 데이터에서 로또 회차 정보를 추출합니다.
-   */
+
   private getOrdinal($: cheerio.CheerioAPI): number {
     const text = $(this.selectors.ordinalSelector).first().text() || '0';
     return parseInt(text.replace(/[^0-9]/g, ''), 10) || 0;
   }
 
-  /**
-   * HTML 데이터에서 티켓의 전체 당첨 상태를 추출합니다.
-   */
+
   private getTicketStatus($: cheerio.CheerioAPI): string {
     const text = $(this.selectors.ticketStatusSelector).first().text() || '';
 
@@ -74,9 +68,7 @@ export class JsoupTicketParser {
     throw new BadRequestException(`식별할 수 없는 티켓 상태입니다: ${text}`);
   }
 
-  /**
-   * HTML 데이터에서 각 게임별 번호와 당첨 여부 목록을 추출합니다.
-   */
+
   private getGames($: cheerio.CheerioAPI): ParsedGame[] {
     const games: ParsedGame[] = [];
     const rows = $(this.selectors.gameRowsSelector);
@@ -89,9 +81,7 @@ export class JsoupTicketParser {
     return games;
   }
 
-  /**
-   * 개별 게임 행(row)을 파싱하여 게임 정보를 반환합니다.
-   */
+  
   private parseGameRow($: cheerio.CheerioAPI, element: any): ParsedGame | null {
     const row = $(element);
     const resultText = row
@@ -116,9 +106,7 @@ export class JsoupTicketParser {
     };
   }
 
-  /**
-   * 게임 결과 텍스트를 분석하여 내부 상태 코드로 변환합니다.
-   */
+
   private parseGameStatus(text: string): string {
     const statusMap: { [key: string]: string } = {
       '1등당첨': 'WINNING_1',

@@ -5,9 +5,9 @@ import { BigIntInterceptor } from './common/interceptors/bigint.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
 
-/**
- * NestJS 애플리케이션을 초기화하고 구동하는 엔트리포인트 함수입니다.
- */
+
+
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PostService } from './post.service';
 
-/**
- * 게시글 좋아요 토글 로직을 처리하는 서비스입니다.
- */
+
+
+
 @Injectable()
 export class LikeService {
   constructor(

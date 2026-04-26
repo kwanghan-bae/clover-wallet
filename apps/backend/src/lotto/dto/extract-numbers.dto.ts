@@ -1,9 +1,7 @@
 import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator';
 import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
-/**
- * 다양한 추출 방식에 따른 로또 번호 생성을 요청하는 데이터 전송 객체(DTO)입니다.
- */
+
 export class ExtractNumbersDto {
   /** 추출 방식 (자동, 꿈 해몽, 생년월일 등) */
   @IsEnum(ExtractionMethod)

@@ -27,9 +27,7 @@ export enum ZodiacSign {
   PISCES = 'PISCES',
 }
 
-/**
- * 로또 번호 추출에 사용되는 정적 데이터(꿈 해몽 맵, 별자리 맵 등)를 담고 있는 상수 객체입니다.
- */
+
 export const LottoExtractionData = {
   dreamNumberMap: {
     돼지: [8, 18, 28],

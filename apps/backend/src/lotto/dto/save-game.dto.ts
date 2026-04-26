@@ -8,9 +8,7 @@ import {
 } from 'class-validator';
 import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
-/**
- * 생성된 로또 게임 번호를 저장하기 위한 데이터 전송 객체(DTO)입니다.
- */
+
 export class SaveGameDto {
   /** 사용자 ID */
   @IsNotEmpty()

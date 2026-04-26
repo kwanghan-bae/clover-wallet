@@ -15,10 +15,7 @@ import { NotificationModule } from './notification/notification.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AdminModule } from './admin/admin.module';
 
-/**
- * 애플리케이션의 루트 모듈입니다.
- * 모든 하위 도메인 모듈들을 통합합니다.
- */
+
 @Module({
   imports: [
     // 전역 환경변수 설정
@@ -43,7 +40,5 @@ import { AdminModule } from './admin/admin.module';
   controllers: [AppController],
   providers: [AppService],
 })
-/**
- * @description 애플리케이션의 루트 모듈로, 공통 서비스와 컨트롤러를 통합합니다.
- */
+
 export class AppModule {}

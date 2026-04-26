@@ -9,9 +9,6 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import type { PageResponse } from '../common/types/page-response';
 
-/**
- * 댓글 CRUD 로직을 처리하는 서비스입니다.
- */
 @Injectable()
 export class CommentService {
   constructor(

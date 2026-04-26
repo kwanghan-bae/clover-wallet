@@ -22,9 +22,6 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-/**
- * 커뮤니티 게시글 및 댓글 관리를 담당하는 컨트롤러입니다.
- */
 @Controller('community')
 export class CommunityController {
   constructor(

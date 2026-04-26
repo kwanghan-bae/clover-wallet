@@ -14,7 +14,6 @@ const POST_INCLUDE = {
   _count: { select: { comments: true } },
 };
 
-/** 게시글 CRUD 및 페이지네이션 로직을 처리하는 서비스입니다. */
 @Injectable()
 export class PostService {
   constructor(private readonly prisma: PrismaService) {}

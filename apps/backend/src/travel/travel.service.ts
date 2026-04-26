@@ -1,17 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-/**
- * 로또 명당 주변 여행 계획 정보를 관리하는 서비스입니다.
- * Kotlin TravelPlanService 로직을 이식함.
- */
+
 @Injectable()
 export class TravelService {
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * 모든 여행 플랜을 조회합니다.
-   */
+
   async getAllTravelPlans() {
     return this.prisma.travelPlan.findMany({
       include: { spot: true },
@@ -19,11 +14,7 @@ export class TravelService {
     });
   }
 
-  /**
-   * 위치 기반 10km 반경 내 명당과 연결된 여행 플랜을 추천합니다.
-   * @param latitude 위도
-   * @param longitude 경도
-   */
+
   async getRecommendedTravelPlans(latitude?: number, longitude?: number) {
     if (!latitude || !longitude) return [];
 
@@ -48,10 +39,7 @@ export class TravelService {
     });
   }
 
-  /**
-   * 특정 판매점 주변의 여행 플랜을 조회합니다.
-   * @param spotId 판매점 ID
-   */
+
   async getTravelPlansBySpot(spotId: bigint) {
     return this.prisma.travelPlan.findMany({
       where: { spotId },
@@ -59,10 +47,7 @@ export class TravelService {
     });
   }
 
-  /**
-   * 특정 테마의 여행 플랜을 조회합니다.
-   * @param theme 테마 이름
-   */
+
   async getTravelPlansByTheme(theme: string) {
     return this.prisma.travelPlan.findMany({
       where: { theme },
@@ -70,10 +55,7 @@ export class TravelService {
     });
   }
 
-  /**
-   * ID로 여행 플랜 상세 정보를 조회합니다.
-   * @param id 플랜 ID
-   */
+
   async getTravelPlanById(id: bigint) {
     const plan = await this.prisma.travelPlan.findUnique({
       where: { id },

@@ -55,12 +55,7 @@ export class LottoNumberExtractor {
     ];
   }
 
-  /**
-   * @description 지정된 방법과 컨텍스트를 사용하여 로또 번호를 추출합니다.
-   * @param method 번호 추출 방법 (ExtractionMethod)
-   * @param context 추출에 필요한 데이터 (ExtractionContext)
-   * @returns 추출된 6개의 로또 번호 배열
-   */
+
   async extract(
     method: ExtractionMethod,
     context: ExtractionContext = {},
@@ -71,11 +66,7 @@ export class LottoNumberExtractor {
     return this.generateNumbers(seedNumbers);
   }
 
-  /**
-   * @description 시드 번호들을 바탕으로 중복되지 않는 6개의 최종 번호를 생성합니다.
-   * @param seedNumbers 기반이 되는 번호들
-   * @returns 정렬된 6개의 로또 번호 배열
-   */
+
   private generateNumbers(seedNumbers: number[]): number[] {
     const validSeeds = new Set(
       seedNumbers.filter((n) => n >= this.LOTTO_MIN && n <= this.LOTTO_MAX),

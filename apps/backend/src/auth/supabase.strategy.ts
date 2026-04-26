@@ -3,15 +3,9 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 
-/**
- * Supabase JWT를 검증하고 사용자 정보를 추출하는 인증 전략 클래스입니다.
- */
 @Injectable()
 export class SupabaseStrategy extends PassportStrategy(Strategy, 'supabase') {
-  /**
-   * Supabase JWT 비밀키를 환경 변수에서 가져와 초기화합니다.
-   * @param configService NestJS 설정 서비스
-   */
+
   constructor(private readonly configService: ConfigService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

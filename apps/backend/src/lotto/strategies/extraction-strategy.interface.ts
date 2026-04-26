@@ -10,8 +10,6 @@ export interface ExtractionStrategy {
    */
   supports(method: ExtractionMethod): boolean;
 
-  /**
-   * @description 전략에 따라 시드 번호 배열을 추출합니다.
-   */
+
   extract(context: ExtractionContext): number[];
 }

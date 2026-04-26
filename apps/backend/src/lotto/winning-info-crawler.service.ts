@@ -6,10 +6,7 @@ import { Cron } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FcmService } from '../notification/fcm.service';
 
-/**
- * 당첨 정보 수집 및 정기 작업을 담당하는 서비스입니다.
- * Kotlin LottoScheduler 및 WinningInfoCrawler 로직을 이식함.
- */
+
 @Injectable()
 export class WinningInfoCrawlerService {
   private readonly logger = new Logger(WinningInfoCrawlerService.name);
@@ -22,9 +19,7 @@ export class WinningInfoCrawlerService {
     private readonly fcmService: FcmService,
   ) {}
 
-  /**
-   * 매주 토요일 오후 9시 30분에 실행 (추첨 방송 종료 후)
-   */
+  
   @Cron('0 30 21 * * 6') // 매주 토요일 21:30
   async handleWeeklyLottoTasks() {
     const round = this.calculateCurrentRound();
@@ -43,9 +38,7 @@ export class WinningInfoCrawlerService {
     }
   }
 
-  /**
-   * 매주 토요일 오전 10시에 실행 — 추첨일 알림을 FCM 토큰이 등록된 사용자에게 발송합니다.
-   */
+
   @Cron('0 10 * * 6') // 매주 토요일 10:00 AM
   async handleDrawDayReminder() {
     this.logger.log('추첨일 알림 발송 시작');
@@ -77,10 +70,7 @@ export class WinningInfoCrawlerService {
     }
   }
 
-  /**
-   * 특정 회차의 당첨 정보를 외부 API로부터 가져와 저장합니다.
-   * @param round 로또 회차
-   */
+
   async crawlWinningInfo(round: number): Promise<void> {
     const existing = await this.prisma.winningInfo.findUnique({
       where: { round },
@@ -128,16 +118,12 @@ export class WinningInfoCrawlerService {
     }
   }
 
-  /**
-   * 특정 회차의 당첨 정보를 조회합니다.
-   */
+
   async getWinningInfo(round: number) {
     return this.prisma.winningInfo.findUnique({ where: { round } });
   }
 
-  /**
-   * 현재 날짜를 기준으로 현재 로또 회차를 계산합니다.
-   */
+
   calculateCurrentRound(): number {
     return calculateCurrentRound();
   }
