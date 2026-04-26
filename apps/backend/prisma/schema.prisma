@@ -142,7 +142,7 @@ model LottoGame {
   /// 고유 식별자 (PK)
   id               BigInt    @id @default(autoincrement())
   /// 소속된 티켓 ID (FK)
-  ticketId         BigInt    @map("ticket_id")
+  ticketId         BigInt?   @map("ticket_id")
   /// 사용자 ID (FK)
   userId           BigInt    @map("user_id")
   /// 게임 상태 (WINNING, LOSING, WAITING 등)
@@ -169,7 +169,7 @@ model LottoGame {
   updatedAt        DateTime? @updatedAt @map("updated_at") @db.Timestamp(6)
 
   /// 연결된 티켓 정보
-  ticket           LottoTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticket           LottoTicket? @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   /// 연결된 사용자 정보
   user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
