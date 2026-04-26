@@ -5,15 +5,12 @@ import { SaveGameDto } from './dto/save-game.dto';
 import { PageResponse } from '../common/types/page-response';
 import { BadgeService } from '../users/badge.service';
 
-
 @Injectable()
 export class LottoService {
-  
   constructor(
     private prisma: PrismaService,
     private badgeService: BadgeService,
   ) {}
-
 
   async saveGame(userId: string, dto: SaveGameDto): Promise<LottoGame> {
     const userIdBig = BigInt(userId);
@@ -35,7 +32,6 @@ export class LottoService {
 
     return game;
   }
-
 
   async getHistory(
     userId: string,
@@ -62,7 +58,6 @@ export class LottoService {
       totalPages: Math.ceil(totalElements / limit),
     };
   }
-
 
   async getStatistics(userId: string) {
     const userIdBig = BigInt(userId);

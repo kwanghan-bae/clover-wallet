@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { LottoTicketClient } from './client/lotto-ticket.client';
 import { JsoupTicketParser } from './client/jsoup-ticket.parser';
 
-
 @Injectable()
 export class TicketService {
   private readonly logger = new Logger(TicketService.name);
@@ -13,7 +12,6 @@ export class TicketService {
     private readonly lottoTicketClient: LottoTicketClient,
     private readonly ticketParser: JsoupTicketParser,
   ) {}
-
 
   async getMyTickets(userId: bigint, page = 0, size = 20) {
     const skip = page * size;
@@ -36,7 +34,6 @@ export class TicketService {
     };
   }
 
-
   async getTicketById(ticketId: bigint) {
     const ticket = await this.prisma.lottoTicket.findUnique({
       where: { id: ticketId },
@@ -49,7 +46,6 @@ export class TicketService {
 
     return ticket;
   }
-
 
   async saveScannedTicket(
     userId: bigint,

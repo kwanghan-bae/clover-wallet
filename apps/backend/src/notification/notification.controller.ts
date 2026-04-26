@@ -14,7 +14,6 @@ import { NotificationService } from './notification.service';
 import { FcmService } from './fcm.service';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @Controller('notifications')
 export class NotificationController {
   constructor(
@@ -22,7 +21,6 @@ export class NotificationController {
     private readonly fcmService: FcmService,
   ) {}
 
-  
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getMyNotifications(
@@ -65,7 +63,6 @@ export class NotificationController {
     );
   }
 
-  
   @UseGuards(AuthGuard('jwt'))
   @Post('fcm-token')
   async registerFcmToken(@Request() req: any, @Body() body: { token: string }) {

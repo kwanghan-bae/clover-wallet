@@ -7,15 +7,12 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
-
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
   async login(@Body() body: { supabaseToken: string }) {
-    // Kotlin에서는 decode만 함 (클라이언트 신뢰)
-    // 여기서는 간단하게 payload 추출 로직 구현 (또는 Supabase SDK 사용 가능)
     try {
       const token = body.supabaseToken;
       const payloadBase64 = token.split('.')[1];

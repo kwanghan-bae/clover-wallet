@@ -6,7 +6,6 @@ export class AppController {
   private static readonly CURRENT_VERSION = '1.0.0';
   private static readonly MIN_SUPPORTED_VERSION = '1.0.0';
 
-
   constructor(private readonly appService: AppService) {}
 
   @Get()

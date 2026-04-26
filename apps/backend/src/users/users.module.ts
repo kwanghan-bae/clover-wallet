@@ -5,9 +5,6 @@ import { BadgeService } from './badge.service';
 import { FollowService } from './follow.service';
 import { PrismaModule } from '../prisma/prisma.module';
 
-
-
-
 @Module({
   imports: [PrismaModule],
   controllers: [UsersController],

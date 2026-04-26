@@ -10,6 +10,5 @@ export interface ExtractionStrategy {
    */
   supports(method: ExtractionMethod): boolean;
 
-
   extract(context: ExtractionContext): number[];
 }

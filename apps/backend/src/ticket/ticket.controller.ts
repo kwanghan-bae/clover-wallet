@@ -11,12 +11,10 @@ import {
 import { TicketService } from './ticket.service';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @Controller('tickets')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
 
-  
   @UseGuards(AuthGuard('jwt'))
   @Get()
   async getMyTickets(
@@ -31,7 +29,6 @@ export class TicketController {
   async getTicketDetail(@Param('id') id: string) {
     return this.ticketService.getTicketById(BigInt(id));
   }
-
 
   @UseGuards(AuthGuard('jwt'))
   @Post('scan')

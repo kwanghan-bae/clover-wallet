@@ -3,7 +3,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import * as admin from 'firebase-admin';
 import { ConfigService } from '@nestjs/config';
 
-
 @Injectable()
 export class FcmService implements OnModuleInit {
   private readonly logger = new Logger(FcmService.name);
@@ -14,11 +13,9 @@ export class FcmService implements OnModuleInit {
     private readonly configService: ConfigService,
   ) {}
 
-
   onModuleInit() {
     this.initializeFirebase();
   }
-
 
   private initializeFirebase() {
     try {
@@ -60,7 +57,6 @@ export class FcmService implements OnModuleInit {
     }
   }
 
-
   async sendWinningNotification(
     token: string,
     rank: string,
@@ -77,7 +73,6 @@ export class FcmService implements OnModuleInit {
     });
   }
 
-  
   async sendBroadcastNotification(
     tokens: string[],
     title: string,

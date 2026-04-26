@@ -9,7 +9,6 @@ import { JwtStrategy } from './jwt.strategy';
 import { UsersModule } from '../users/users.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
-
 @Module({
   imports: [
     PassportModule,

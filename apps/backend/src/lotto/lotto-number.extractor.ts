@@ -55,7 +55,6 @@ export class LottoNumberExtractor {
     ];
   }
 
-
   async extract(
     method: ExtractionMethod,
     context: ExtractionContext = {},
@@ -65,7 +64,6 @@ export class LottoNumberExtractor {
 
     return this.generateNumbers(seedNumbers);
   }
-
 
   private generateNumbers(seedNumbers: number[]): number[] {
     const validSeeds = new Set(

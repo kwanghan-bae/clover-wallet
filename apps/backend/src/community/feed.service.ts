@@ -4,9 +4,6 @@ import { FollowService } from '../users/follow.service';
 import { PostService } from './post.service';
 import type { PageResponse } from '../common/types/page-response';
 
-
-
-
 @Injectable()
 export class FeedService {
   constructor(

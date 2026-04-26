@@ -2,9 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PostService } from './post.service';
 
-
-
-
 @Injectable()
 export class LikeService {
   constructor(

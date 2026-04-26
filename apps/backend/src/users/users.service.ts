@@ -4,9 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-
   constructor(private prisma: PrismaService) {}
-
 
   async findUser(id: bigint | number | string) {
     const user = await this.prisma.user.findUnique({
@@ -18,7 +16,6 @@ export class UsersService {
     return user;
   }
 
-  
   async findUserBySsoQualifier(ssoQualifier: string, throwError = true) {
     const user = await this.prisma.user.findUnique({
       where: { ssoQualifier },
@@ -31,11 +28,7 @@ export class UsersService {
     return user;
   }
 
-  /**
-   * SSO 식별자로 사용자를 찾거나, 없으면 새로 생성합니다.
-   * @param ssoQualifier SSO 고유 식별자
-   * @param email 사용자 이메일 (선택 사항)
-   */
+  /** SSO 식별자로 사용자를 찾거나, 없으면 새로 생성합니다. */
   async findOrCreateBySsoQualifier(ssoQualifier: string, email?: string) {
     const existingUser = await this.findUserBySsoQualifier(ssoQualifier, false);
 
@@ -72,7 +65,6 @@ export class UsersService {
     });
   }
 
-  
   async deleteUserAccount(id: bigint | number | string) {
     try {
       // Prisma schema에 onDelete: Cascade가 설정되어 있으므로 user 삭제 시 연관 데이터가 함께 삭제됨
@@ -87,7 +79,6 @@ export class UsersService {
     }
   }
 
-  
   async getUserStats(userId: bigint | number | string) {
     const id = BigInt(userId);
 

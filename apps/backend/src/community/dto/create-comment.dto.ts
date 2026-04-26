@@ -6,7 +6,6 @@ import {
   IsNumber,
 } from 'class-validator';
 
-
 export class CreateCommentDto {
   /** 게시글 ID */
   @IsInt() // Assumes client sends integer ID

@@ -8,7 +8,6 @@ import {
 } from 'class-validator';
 import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
-
 export class SaveGameDto {
   /** 사용자 ID */
   @IsNotEmpty()

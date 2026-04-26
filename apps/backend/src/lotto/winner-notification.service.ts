@@ -4,9 +4,6 @@ import { BadgeService } from '../users/badge.service';
 import { FcmService } from '../notification/fcm.service';
 import { LottoRankCalculator } from './utils/lotto-rank.calculator';
 
-
-
-
 @Injectable()
 export class WinnerNotificationService {
   private readonly logger = new Logger(WinnerNotificationService.name);

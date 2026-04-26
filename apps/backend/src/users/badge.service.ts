@@ -16,13 +16,9 @@ export class BadgeService {
   static readonly BADGE_HOROSCOPE_BELIEVER = 'HOROSCOPE_BELIEVER';
   static readonly BADGE_NATURE_LOVER = 'NATURE_LOVER';
 
-  
   constructor(private readonly prisma: PrismaService) {}
 
-  /**
-   * 사용자의 당첨 이력 및 게임 횟수를 분석하여 뱃지를 업데이트합니다.
-   * @param userId 사용자 ID
-   */
+  /** 사용자의 당첨 이력 및 게임 횟수를 분석하여 뱃지를 업데이트합니다. */
   async updateUserBadges(userId: bigint) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) return;
@@ -44,7 +40,6 @@ export class BadgeService {
     }
   }
 
-
   private async checkActivityAndWinBadges(userId: bigint, badges: Set<string>) {
     const [totalGames, winningGamesCount, hasFirstPlace] = await Promise.all([
       this.prisma.lottoGame.count({ where: { userId } }),
@@ -61,7 +56,6 @@ export class BadgeService {
     if (totalGames >= 10) badges.add(BadgeService.BADGE_FREQUENT_PLAYER);
     if (totalGames >= 50) badges.add(BadgeService.BADGE_VETERAN);
   }
-
 
   private async checkMethodSpecialistBadges(
     userId: bigint,
@@ -92,7 +86,6 @@ export class BadgeService {
     if (hasStatsWin) badges.add(BadgeService.BADGE_STATS_GENIUS);
   }
 
-
   private async checkAndAddExtractionBadge(
     userId: bigint,
     method: string,
@@ -111,7 +104,6 @@ export class BadgeService {
 
     if (winWithMethod) currentBadges.add(badgeName);
   }
-
 
   private async saveUserBadges(userId: bigint, badges: Set<string>) {
     await this.prisma.user.update({

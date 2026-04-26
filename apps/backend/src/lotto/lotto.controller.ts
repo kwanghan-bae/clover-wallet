@@ -16,7 +16,6 @@ import { SaveGameDto } from './dto/save-game.dto';
 import { ExtractNumbersDto } from './dto/extract-numbers.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @Controller('lotto')
 export class LottoController {
   constructor(
@@ -25,7 +24,6 @@ export class LottoController {
     private readonly lottoInfoService: LottoInfoService,
   ) {}
 
-  
   @UseGuards(AuthGuard('jwt'))
   @Get('games')
   async getMyGames(
@@ -36,26 +34,22 @@ export class LottoController {
     return this.lottoService.getHistory(req.user.id, +page + 1, +size);
   }
 
-
   @UseGuards(AuthGuard('jwt'))
   @Post('games')
   async saveGame(@Request() req: any, @Body() dto: SaveGameDto) {
     return this.lottoService.saveGame(req.user.id, dto);
   }
 
-  
   @Post('extraction')
   async extractNumbers(@Body() dto: ExtractNumbersDto) {
     const numbers = await this.extractionService.extractLottoNumbers(dto);
     return Array.from(new Set(numbers)).sort((a, b) => a - b);
   }
 
-  
   @Get('next-draw')
   async getNextDraw() {
     return this.lottoInfoService.getNextDrawInfo();
   }
-
 
   @Get('draw-result/:round')
   async getDrawResult(@Param('round', ParseIntPipe) round: number) {

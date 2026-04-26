@@ -8,11 +8,9 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 
-
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
-
 
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -43,7 +41,6 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       );
     }
 
-    // Kotlin 규격에 맞춰 응답 반환
     response.status(status).json({
       success: false,
       data: null,

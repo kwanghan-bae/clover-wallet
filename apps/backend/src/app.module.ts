@@ -15,7 +15,6 @@ import { NotificationModule } from './notification/notification.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { AdminModule } from './admin/admin.module';
 
-
 @Module({
   imports: [
     // 전역 환경변수 설정
@@ -40,5 +39,4 @@ import { AdminModule } from './admin/admin.module';
   controllers: [AppController],
   providers: [AppService],
 })
-
 export class AppModule {}

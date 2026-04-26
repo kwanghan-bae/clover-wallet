@@ -4,9 +4,7 @@ import { PageResponse } from '../common/types/page-response';
 
 @Injectable()
 export class LottoSpotService {
-
   constructor(private prisma: PrismaService) {}
-
 
   async getAllLottoSpots(
     page: number,
@@ -31,7 +29,6 @@ export class LottoSpotService {
     };
   }
 
-
   async searchByName(name: string): Promise<any[]> {
     return this.prisma.lottoSpot.findMany({
       where: {
@@ -39,7 +36,6 @@ export class LottoSpotService {
       },
     });
   }
-
 
   async getSpotById(spotId: bigint | number) {
     return this.prisma.lottoSpot.findUnique({

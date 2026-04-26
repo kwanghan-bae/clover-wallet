@@ -1,6 +1,5 @@
 import { IsString, IsNotEmpty, Length } from 'class-validator';
 
-
 export class CreatePostDto {
   /** 게시글 제목 */
   @IsString()

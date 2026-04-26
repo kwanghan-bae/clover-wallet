@@ -10,9 +10,6 @@ import { WinnerNotificationService } from './winner-notification.service';
 import { UsersModule } from '../users/users.module';
 import { NotificationModule } from '../notification/notification.module';
 
-
-
-
 @Module({
   imports: [UsersModule, NotificationModule],
   controllers: [LottoController],
@@ -27,7 +24,4 @@ import { NotificationModule } from '../notification/notification.module';
   ],
   exports: [LottoService, WinningInfoCrawlerService, WinningCheckService],
 })
-
-
-
 export class LottoModule {}

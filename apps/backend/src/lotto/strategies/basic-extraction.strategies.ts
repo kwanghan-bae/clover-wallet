@@ -44,7 +44,6 @@ export class SajuExtractionStrategy implements ExtractionStrategy {
     return [(sum % this.LOTTO_MAX) + 1];
   }
 
-
   private sumDigits(num: number): number {
     return num
       .toString()

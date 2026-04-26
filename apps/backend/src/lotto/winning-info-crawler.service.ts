@@ -6,7 +6,6 @@ import { Cron } from '@nestjs/schedule';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { FcmService } from '../notification/fcm.service';
 
-
 @Injectable()
 export class WinningInfoCrawlerService {
   private readonly logger = new Logger(WinningInfoCrawlerService.name);
@@ -19,7 +18,6 @@ export class WinningInfoCrawlerService {
     private readonly fcmService: FcmService,
   ) {}
 
-  
   @Cron('0 30 21 * * 6') // 매주 토요일 21:30
   async handleWeeklyLottoTasks() {
     const round = this.calculateCurrentRound();
@@ -37,7 +35,6 @@ export class WinningInfoCrawlerService {
       this.logger.error(`${round} 회차 정기 작업 실패`, error.stack);
     }
   }
-
 
   @Cron('0 10 * * 6') // 매주 토요일 10:00 AM
   async handleDrawDayReminder() {
@@ -69,7 +66,6 @@ export class WinningInfoCrawlerService {
       this.logger.error('추첨일 알림 발송 실패', error.stack);
     }
   }
-
 
   async crawlWinningInfo(round: number): Promise<void> {
     const existing = await this.prisma.winningInfo.findUnique({
@@ -118,11 +114,9 @@ export class WinningInfoCrawlerService {
     }
   }
 
-
   async getWinningInfo(round: number) {
     return this.prisma.winningInfo.findUnique({ where: { round } });
   }
-
 
   calculateCurrentRound(): number {
     return calculateCurrentRound();

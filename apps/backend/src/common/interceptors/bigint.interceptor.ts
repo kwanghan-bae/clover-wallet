@@ -7,10 +7,8 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-
 @Injectable()
 export class BigIntInterceptor implements NestInterceptor {
-
   intercept(_context: ExecutionContext, next: CallHandler): Observable<any> {
     // ExecutionContext를 사용하여 요청 타입을 확인하는 로직을 추가하여 파라미터 미사용 경고를 해결합니다.
     const _type = _context.getType();
@@ -20,7 +18,6 @@ export class BigIntInterceptor implements NestInterceptor {
       }),
     );
   }
-
 
   private transformBigInt(data: any): any {
     if (data === null || data === undefined) {

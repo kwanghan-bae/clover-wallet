@@ -39,7 +39,6 @@ export class JsoupTicketParser {
     gameNumbersSelector: 'td span.clr',
   };
 
-
   parse(html: string): ParsedTicket {
     const $ = cheerio.load(html);
 
@@ -50,12 +49,10 @@ export class JsoupTicketParser {
     return { ordinal, status, games };
   }
 
-
   private getOrdinal($: cheerio.CheerioAPI): number {
     const text = $(this.selectors.ordinalSelector).first().text() || '0';
     return parseInt(text.replace(/[^0-9]/g, ''), 10) || 0;
   }
-
 
   private getTicketStatus($: cheerio.CheerioAPI): string {
     const text = $(this.selectors.ticketStatusSelector).first().text() || '';
@@ -67,7 +64,6 @@ export class JsoupTicketParser {
     this.logger.error(`식별할 수 없는 티켓 상태: ${text}`);
     throw new BadRequestException(`식별할 수 없는 티켓 상태입니다: ${text}`);
   }
-
 
   private getGames($: cheerio.CheerioAPI): ParsedGame[] {
     const games: ParsedGame[] = [];
@@ -81,7 +77,6 @@ export class JsoupTicketParser {
     return games;
   }
 
-  
   private parseGameRow($: cheerio.CheerioAPI, element: any): ParsedGame | null {
     const row = $(element);
     const resultText = row
@@ -105,7 +100,6 @@ export class JsoupTicketParser {
       number6: numbers[5],
     };
   }
-
 
   private parseGameStatus(text: string): string {
     const statusMap: { [key: string]: string } = {

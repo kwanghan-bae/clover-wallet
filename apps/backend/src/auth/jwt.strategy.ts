@@ -16,7 +16,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-
   validate(payload: any) {
     // sub 클레임에 저장된 DB 사용자 ID 반환
     return { id: BigInt(payload.sub) };

@@ -27,7 +27,6 @@ export enum ZodiacSign {
   PISCES = 'PISCES',
 }
 
-
 export const LottoExtractionData = {
   dreamNumberMap: {
     돼지: [8, 18, 28],

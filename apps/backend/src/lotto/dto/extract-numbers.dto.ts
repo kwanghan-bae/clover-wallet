@@ -1,7 +1,6 @@
 import { IsEnum, IsOptional, IsString, IsArray } from 'class-validator';
 import { ExtractionMethod } from '../constants/lotto-extraction-data';
 
-
 export class ExtractNumbersDto {
   /** 추출 방식 (자동, 꿈 해몽, 생년월일 등) */
   @IsEnum(ExtractionMethod)

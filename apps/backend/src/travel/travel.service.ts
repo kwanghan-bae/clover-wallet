@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
-
 @Injectable()
 export class TravelService {
   constructor(private readonly prisma: PrismaService) {}
-
 
   async getAllTravelPlans() {
     return this.prisma.travelPlan.findMany({
@@ -13,7 +11,6 @@ export class TravelService {
       orderBy: { createdAt: 'desc' },
     });
   }
-
 
   async getRecommendedTravelPlans(latitude?: number, longitude?: number) {
     if (!latitude || !longitude) return [];
@@ -39,7 +36,6 @@ export class TravelService {
     });
   }
 
-
   async getTravelPlansBySpot(spotId: bigint) {
     return this.prisma.travelPlan.findMany({
       where: { spotId },
@@ -47,14 +43,12 @@ export class TravelService {
     });
   }
 
-
   async getTravelPlansByTheme(theme: string) {
     return this.prisma.travelPlan.findMany({
       where: { theme },
       include: { spot: true },
     });
   }
-
 
   async getTravelPlanById(id: bigint) {
     const plan = await this.prisma.travelPlan.findUnique({

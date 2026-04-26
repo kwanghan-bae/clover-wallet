@@ -5,7 +5,6 @@ import {
 import { ExtractionContext } from '../lotto-number.extractor';
 import { ExtractionStrategy } from './extraction-strategy.interface';
 
-
 export class StatisticsExtractionStrategy implements ExtractionStrategy {
   supports(method: ExtractionMethod): boolean {
     return [
@@ -33,7 +32,6 @@ export class KeywordMappingExtractionStrategy implements ExtractionStrategy {
       ExtractionMethod.ANIMAL_OMENS,
     ].includes(method);
   }
-
 
   extract(context: ExtractionContext): number[] {
     // 키워드별 매핑 데이터를 반환합니다.

@@ -7,7 +7,6 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-
 export interface CommonResponse<T> {
   /// 성공 여부 (항상 true)
   success: boolean;
@@ -24,7 +23,6 @@ export class TransformInterceptor<T> implements NestInterceptor<
   T,
   CommonResponse<T>
 > {
-
   intercept(
     _context: ExecutionContext,
     next: CallHandler,

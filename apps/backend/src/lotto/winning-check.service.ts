@@ -4,10 +4,6 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { LottoRankCalculator } from './utils/lotto-rank.calculator';
 import { WinnerNotificationService } from './winner-notification.service';
 
-
-
-
-
 @Injectable()
 export class WinningCheckService {
   private readonly logger = new Logger(WinningCheckService.name);

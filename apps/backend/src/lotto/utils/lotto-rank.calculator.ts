@@ -13,7 +13,6 @@ export type LottoRankStatus =
  * @description 로또 당첨 등수와 당첨금을 계산하는 유틸리티 클래스입니다.
  */
 export class LottoRankCalculator {
-
   static calculateRank(
     gameNumbers: number[],
     winningNumbers: number[],
@@ -50,7 +49,6 @@ export class LottoRankCalculator {
       prize: prizeAmounts[status] || BigInt(0),
     };
   }
-
 
   static getRankName(status: string): string {
     const names: { [key: string]: string } = {

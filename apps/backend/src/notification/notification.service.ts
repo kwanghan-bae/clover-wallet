@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { PageResponse } from '../common/types/page-response';
 
-
 @Injectable()
 export class NotificationService {
   constructor(private readonly prisma: PrismaService) {}
-
 
   async createNotification(
     userId: bigint,
@@ -24,7 +22,6 @@ export class NotificationService {
       },
     });
   }
-
 
   async getMyNotifications(
     userId: bigint,
@@ -51,7 +48,6 @@ export class NotificationService {
     };
   }
 
-
   async markAsRead(notificationId: bigint, userId: bigint) {
     const notification = await this.prisma.notification.findUnique({
       where: { id: notificationId },
@@ -64,7 +60,6 @@ export class NotificationService {
       });
     }
   }
-
 
   async getUnreadCount(userId: bigint): Promise<number> {
     return this.prisma.notification.count({

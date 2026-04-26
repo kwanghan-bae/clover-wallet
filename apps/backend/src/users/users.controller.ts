@@ -17,7 +17,6 @@ import { FollowService } from './follow.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 
-
 @Controller('users')
 export class UsersController {
   constructor(
@@ -25,26 +24,22 @@ export class UsersController {
     private readonly followService: FollowService,
   ) {}
 
-  
   @UseGuards(AuthGuard('jwt'))
   @Get('me')
   async getProfile(@Request() req: any) {
     return this.usersService.findUser(req.user.id);
   }
 
-
   @Get(':id')
   async getUser(@Param('id') id: string) {
     return this.usersService.findUser(id);
   }
-
 
   @Put(':id')
   async updateUser(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.updateUser(id, dto);
   }
 
-  
   @UseGuards(AuthGuard('jwt'))
   @Delete('me')
   async deleteAccount(@Request() request: any) {
@@ -56,19 +51,16 @@ export class UsersController {
     return { message: '회원 탈퇴가 완료되었습니다' };
   }
 
-
   @Get(':id/stats')
   async getUserStats(@Param('id') id: string) {
     return this.usersService.getUserStats(id);
   }
 
-  
   @Post(':id/follow')
   @UseGuards(AuthGuard('jwt'))
   async toggleFollow(@Param('id', ParseIntPipe) id: number, @Req() req: any) {
     return this.followService.toggleFollow(req.user.id, BigInt(id));
   }
-
 
   @Get(':id/followers')
   async getFollowers(
@@ -79,7 +71,6 @@ export class UsersController {
     return this.followService.getFollowers(BigInt(id), page ?? 0, size ?? 20);
   }
 
-
   @Get(':id/following')
   async getFollowing(
     @Param('id', ParseIntPipe) id: number,
@@ -88,7 +79,6 @@ export class UsersController {
   ) {
     return this.followService.getFollowing(BigInt(id), page ?? 0, size ?? 20);
   }
-
 
   @Get(':id/follow-counts')
   async getFollowCounts(@Param('id', ParseIntPipe) id: number) {

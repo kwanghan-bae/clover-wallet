@@ -5,9 +5,6 @@ import { PrismaModule } from '../prisma/prisma.module';
 import { LottoTicketClient } from './client/lotto-ticket.client';
 import { JsoupTicketParser } from './client/jsoup-ticket.parser';
 
-
-
-
 @Module({
   imports: [PrismaModule],
   controllers: [TicketController],

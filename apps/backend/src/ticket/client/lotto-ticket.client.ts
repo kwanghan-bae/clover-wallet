@@ -2,13 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import * as iconv from 'iconv-lite';
 
-
 @Injectable()
 export class LottoTicketClient {
   private readonly logger = new Logger(LottoTicketClient.name);
   private readonly TIMEOUT_MS = 5000;
 
-  
   async getHtmlByUrl(url: string): Promise<string> {
     this.logger.log(`URL에서 문서 가져오기: ${url}`);
     try {
@@ -26,7 +24,6 @@ export class LottoTicketClient {
       throw error;
     }
   }
-
 
   async getJsonByUrl(url: string): Promise<any> {
     this.logger.log(`JSON API 호출: ${url}`);

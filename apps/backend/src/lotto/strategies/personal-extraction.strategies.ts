@@ -6,9 +6,6 @@ import {
 import { ExtractionContext } from '../lotto-number.extractor';
 import { ExtractionStrategy } from './extraction-strategy.interface';
 
-
-
-
 export class HoroscopeExtractionStrategy implements ExtractionStrategy {
   supports(method: ExtractionMethod): boolean {
     return method === ExtractionMethod.HOROSCOPE;
@@ -48,9 +45,6 @@ export class HoroscopeExtractionStrategy implements ExtractionStrategy {
     return ZodiacSign.ARIES;
   }
 }
-
-
-
 
 export class PersonalSignificanceExtractionStrategy implements ExtractionStrategy {
   private readonly LOTTO_MIN = 1;

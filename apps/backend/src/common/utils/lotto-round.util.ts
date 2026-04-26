@@ -1,4 +1,3 @@
-
 export function calculateCurrentRound(): number {
   const baseDate = new Date('2002-12-07');
   const now = new Date();
