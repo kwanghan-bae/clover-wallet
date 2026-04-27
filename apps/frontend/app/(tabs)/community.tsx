@@ -51,7 +51,14 @@ const CommunityScreen = () => {
         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
       >
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">커뮤니티</Text>
-        <TouchableOpacity><Search size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} /></TouchableOpacity>
+        <TouchableOpacity
+          accessibilityLabel="검색"
+          accessibilityRole="button"
+          activeOpacity={0.8}
+          className="p-2 -mr-2"
+        >
+          <Search size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
+        </TouchableOpacity>
       </View>
 
       <FeedTabSelector feedType={feedType} onSelect={setFeedType} />
