@@ -79,7 +79,7 @@ const HomeScreen = () => {
         <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
           최근 당첨 결과
         </Text>
-        <TouchableOpacity onPress={() => router.push('/history')} activeOpacity={0.8}>
+        <TouchableOpacity onPress={() => router.push('/history')} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="최근 당첨 결과 보기">
           <View
             className="flex-row items-center p-6 bg-white dark:bg-dark-surface rounded-[24px]"
             style={{
