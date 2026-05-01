@@ -71,7 +71,11 @@ export default function NumberGenerationScreen() {
       <Stack.Screen options={{
         title: '행운의 번호 추첨',
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            accessibilityRole="button"
+            accessibilityLabel="뒤로 가기"
+          >
             <ChevronLeft size={24} color="#1A1A1A" />
           </TouchableOpacity>
         ),
