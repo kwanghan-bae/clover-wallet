@@ -55,6 +55,8 @@ const GenerationResultComponent = ({
           onPress={onSave}
           disabled={isSaving}
           className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+          accessibilityRole="button"
+          accessibilityLabel={isSaving ? "저장 중" : "번호 저장하기"}
         >
           <Save size={18} color="#4CAF50" />
           <Text className="text-primary font-bold ml-2">{isSaving ? "저장 중" : "번호 저장하기"}</Text>
@@ -62,6 +64,8 @@ const GenerationResultComponent = ({
         <TouchableOpacity
           onPress={onShare}
           className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+          accessibilityRole="button"
+          accessibilityLabel="커뮤니티에 공유"
         >
           <Share2 size={18} color="#4CAF50" />
           <Text className="text-primary font-bold ml-2">커뮤니티에 공유</Text>

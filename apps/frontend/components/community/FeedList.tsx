@@ -46,7 +46,13 @@ const FeedListComponent = ({
           <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] dark:text-dark-text-secondary mt-2 text-center">
             첫 번째 게시물의 주인공이 되어보세요!
           </Text>
-          <TouchableOpacity onPress={onCreatePost} activeOpacity={0.8} className="mt-10 items-center justify-center">
+          <TouchableOpacity
+            onPress={onCreatePost}
+            activeOpacity={0.8}
+            className="mt-10 items-center justify-center"
+            accessibilityRole="button"
+            accessibilityLabel="게시물 작성하기"
+          >
             <LinearGradient
               colors={['#4CAF50', '#388E3C']}
               className="px-8 py-3.5 rounded-full"

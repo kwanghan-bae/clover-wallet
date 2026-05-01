@@ -31,6 +31,8 @@ const ScanResultViewComponent = ({ result, onRetry, onConfirm }: ScanResultViewP
       <TouchableOpacity
         onPress={onRetry}
         className="flex-1 h-14 bg-gray-100 dark:bg-dark-card rounded-xl items-center justify-center flex-row"
+        accessibilityRole="button"
+        accessibilityLabel="다시 촬영"
       >
         <RotateCw size={18} color="#757575" />
         <Text className="text-text-light dark:text-dark-text-secondary font-bold ml-2">다시 촬영</Text>
@@ -38,6 +40,8 @@ const ScanResultViewComponent = ({ result, onRetry, onConfirm }: ScanResultViewP
       <TouchableOpacity
         onPress={onConfirm}
         className="flex-2 h-14 bg-primary rounded-xl items-center justify-center"
+        accessibilityRole="button"
+        accessibilityLabel="확인"
       >
         <Text className="text-white font-bold text-lg px-8">확인</Text>
       </TouchableOpacity>
