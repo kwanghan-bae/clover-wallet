@@ -7,3 +7,6 @@
 ## 2024-05-01 - Enhance TextInput with Visual Focus and Accessibility
 **Learning:** React Native TextInputs often lack proper explicit accessibility associations (like linking a label with `nativeID` and `accessibilityLabelledBy`) and visual feedback for focus state. This causes screen reader issues and makes keyboard/touch navigation unclear.
 **Action:** Always track focus state in custom Input components to apply visual indicators (e.g., changing border color). Also use `accessibilityLabelledBy`, `accessibilityHint`, and `accessibilityState={{ invalid: ... }}` to fully describe the input's purpose and state to assistive technologies.
+## 2024-06-18 - Loading State Accessibility and Touch Targets
+**Learning:** When text inside a button is replaced by an `ActivityIndicator` (spinner) during a loading state, screen readers lose the button's label and context if it's not explicitly declared. Additionally, standalone icon buttons require explicit padding (like `p-2`) to ensure a large enough minimum touch target size for mobile accessibility.
+**Action:** Always verify `PrimaryButton` and custom interactable components dynamically update their `accessibilityLabel` and `accessibilityState={{ busy: isLoading }}`. Ensure small icons are wrapped in padding classes to enlarge the tappable area.
