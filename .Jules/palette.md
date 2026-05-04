@@ -7,3 +7,7 @@
 ## 2024-05-01 - Enhance TextInput with Visual Focus and Accessibility
 **Learning:** React Native TextInputs often lack proper explicit accessibility associations (like linking a label with `nativeID` and `accessibilityLabelledBy`) and visual feedback for focus state. This causes screen reader issues and makes keyboard/touch navigation unclear.
 **Action:** Always track focus state in custom Input components to apply visual indicators (e.g., changing border color). Also use `accessibilityLabelledBy`, `accessibilityHint`, and `accessibilityState={{ invalid: ... }}` to fully describe the input's purpose and state to assistive technologies.
+
+## 2024-05-04 - Loading State Accessibility
+**Learning:** Screen readers won't announce a loading state on buttons just because an `ActivityIndicator` is shown or `disabled` is set.
+**Action:** Use `accessibilityState={{ busy: isLoading }}` and dynamically update `accessibilityLabel` (e.g., adding "처리 중") when implementing a loading spinner on standard Action Buttons.

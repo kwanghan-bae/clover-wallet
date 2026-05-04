@@ -83,8 +83,9 @@ const ScanScreen = () => {
               onPress={handleCapture}
               disabled={isProcessing}
               className="bg-primary px-10 py-4 rounded-full flex-row items-center shadow-2xl"
-              accessibilityLabel="사진 촬영"
+              accessibilityLabel={isProcessing ? "사진 촬영 처리 중" : "사진 촬영"}
               accessibilityRole="button"
+              accessibilityState={{ disabled: isProcessing, busy: isProcessing }}
             >
               {isProcessing ? (
                 <ActivityIndicator color="white" size="small" />
