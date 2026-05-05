@@ -51,6 +51,9 @@ const ProfileHeaderComponent = ({
           disabled={isFollowPending}
           className={`py-2.5 rounded-full items-center border ${isFollowing ? 'border-gray-300' : 'border-[#4CAF50]'}`}
           style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+          accessibilityRole="button"
+          accessibilityLabel={isFollowPending ? '팔로우 처리 중' : isFollowing ? '팔로우 취소' : '팔로우'}
+          accessibilityState={{ disabled: isFollowPending }}
         >
           <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className={`text-sm ${isFollowing ? 'text-gray-500' : 'text-[#4CAF50]'}`}>
             {isFollowPending ? '처리 중...' : isFollowing ? '팔로우 취소' : '팔로우'}
