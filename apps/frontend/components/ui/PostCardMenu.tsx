@@ -37,14 +37,14 @@ const PostCardMenuComponent = ({ postId, isOwner }: PostCardMenuProps) => {
 
   if (isOwner) {
     return (
-      <TouchableOpacity className="p-1" onPress={handleDeletePress} testID="btn-delete-post" accessibilityRole="button" accessibilityLabel="게시글 삭제">
+      <TouchableOpacity className="p-2" activeOpacity={0.6} onPress={handleDeletePress} testID="btn-delete-post" accessibilityRole="button" accessibilityLabel="게시글 삭제">
         <Trash2 size={20} color="#EF5350" />
       </TouchableOpacity>
     );
   }
 
   return (
-    <TouchableOpacity className="p-1" testID="btn-more-post" accessibilityRole="button" accessibilityLabel="게시글 더보기">
+    <TouchableOpacity className="p-2" activeOpacity={0.6} testID="btn-more-post" accessibilityRole="button" accessibilityLabel="게시글 더보기">
       <MoreHorizontal size={20} color="#E0E0E0" />
     </TouchableOpacity>
   );

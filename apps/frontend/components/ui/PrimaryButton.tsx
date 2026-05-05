@@ -47,9 +47,9 @@ export const PrimaryButton = ({
       className={cn("rounded-xl overflow-hidden shadow-md", className)}
       style={animatedStyle}
       accessible={true}
-      accessibilityLabel={label}
+      accessibilityLabel={isLoading ? `${label} 처리 중` : label}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!(isLoading || disabled) }}
+      accessibilityState={{ disabled: !!(isLoading || disabled), busy: isLoading }}
       {...props}
     >
       <LinearGradient
