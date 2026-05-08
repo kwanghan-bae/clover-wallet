@@ -62,6 +62,23 @@ if echo "$STAGED_ALL" | grep -qE "^apps/frontend/"; then
         exit 1
     fi
     echo -e "${GREEN}Frontend build verification passed.${NC}"
+
+    # 4. dev 산출물 누출 검사 (warn-only)
+    # 목적: 운영 번들에 dev-login 경로(EXPO_PUBLIC_DEV_AUTH_BYPASS 우회) 가
+    # 의도치 않게 남아 배포되는 사고를 사전 감지.
+    # 한계: 현재 pre-commit 빌드는 `--no-minify` 라 dead-code-elimination 이
+    # 일어나지 않아 dev 코드가 번들에 항상 남는다. 따라서 fail 대신 warn 으로 운영.
+    # 진짜 prod 배포 전에는 minified 빌드(`expo export --platform web`)로 별도 검증 필요.
+    # 또한 `EXPO_PUBLIC_DEV_AUTH_BYPASS=true` 가 set 된 로컬에서는 dev-login 문자열이
+    # 번들에 있는 것이 정상이므로 false-positive 회피를 위해 unset 일 때만 검사.
+    if [ "${EXPO_PUBLIC_DEV_AUTH_BYPASS:-}" != "true" ] && [ -d "dist" ]; then
+        if grep -rq "dev-login\|EXPO_PUBLIC_DEV_AUTH_BYPASS" dist 2>/dev/null; then
+            echo -e "${YELLOW}[DEV-LEAK ADVISORY] dev-login/DEV_AUTH_BYPASS string found in dist/. Expected with --no-minify; please verify with a minified prod build before deploy.${NC}"
+        else
+            echo -e "${GREEN}Dev-artifact leak check passed.${NC}"
+        fi
+    fi
+
     cd ../..
 fi
 
