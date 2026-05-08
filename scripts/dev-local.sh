@@ -68,4 +68,77 @@ cleanup_port 19000
 cleanup_port 19001
 cleanup_port 19002
 
-log_info "가비지 정리 완료. (Phase 3 Task 3.2에서 spawn 로직 추가 예정)"
+log_info "가비지 정리 완료."
+
+# ─────────────────────────────────────────────────────────
+# Pre-flight 검사
+# ─────────────────────────────────────────────────────────
+ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+if [ ! -f "$ROOT_DIR/apps/frontend/.env" ]; then
+  log_error "apps/frontend/.env 누락. .env.example 참고해서 만들어주세요."
+  exit 1
+fi
+if ! $REMOTE_BACKEND && [ ! -f "$ROOT_DIR/apps/backend/.env" ]; then
+  log_error "apps/backend/.env 누락. .env.example 참고해서 만들어주세요."
+  exit 1
+fi
+if [ ! -d "$ROOT_DIR/apps/frontend/node_modules" ] || [ ! -d "$ROOT_DIR/apps/backend/node_modules" ]; then
+  log_error "node_modules 누락. 루트에서 'npm install' 먼저 실행하세요."
+  exit 1
+fi
+
+# ─────────────────────────────────────────────────────────
+# DB 시드
+# ─────────────────────────────────────────────────────────
+if ! $SKIP_SEED && ! $REMOTE_BACKEND; then
+  log_info "Prisma seed 실행..."
+  ( cd "$ROOT_DIR/apps/backend" && DEV_AUTH_ENABLED=true npx prisma db seed )
+fi
+
+# ─────────────────────────────────────────────────────────
+# spawn helpers
+# ─────────────────────────────────────────────────────────
+set -m  # job control 활성화 (자식이 새 process group)
+CHILD_PIDS=()
+
+prefix_logs() {
+  local label=$1
+  local color=$2
+  sed -u "s/^/$(printf "${color}[${label}]${NC} ")/"
+}
+
+# ─────────────────────────────────────────────────────────
+# 백엔드 spawn (옵션에 따라)
+# ─────────────────────────────────────────────────────────
+if ! $REMOTE_BACKEND; then
+  log_info "백엔드 기동 (apps/backend)..."
+  (
+    cd "$ROOT_DIR/apps/backend" && \
+    NODE_ENV=development DEV_AUTH_ENABLED=true npm run start:dev 2>&1 \
+      | prefix_logs "backend" "$GREEN"
+  ) &
+  BACKEND_PID=$!
+  CHILD_PIDS+=("$BACKEND_PID")
+else
+  log_warn "--remote-backend: 로컬 백엔드 미기동. EXPO_PUBLIC_API_URL이 Render를 가리키는지 확인."
+fi
+
+# ─────────────────────────────────────────────────────────
+# 프론트 spawn
+# ─────────────────────────────────────────────────────────
+log_info "프론트엔드 기동 (apps/frontend)..."
+(
+  cd "$ROOT_DIR/apps/frontend" && \
+  npm start 2>&1 \
+    | prefix_logs "frontend" "$BLUE"
+) &
+FRONTEND_PID=$!
+CHILD_PIDS+=("$FRONTEND_PID")
+
+log_info "기동 완료. 종료하려면 Ctrl-C."
+log_info "  백엔드 PID: ${BACKEND_PID:-(skipped)}"
+log_info "  프론트 PID: $FRONTEND_PID"
+
+# (Task 3.3에서 트랩 + wait 추가)
+wait
