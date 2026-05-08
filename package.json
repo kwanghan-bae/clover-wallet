@@ -11,7 +11,8 @@
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "dev:backend": "turbo run dev --filter=@clover/backend",
-    "dev:frontend": "turbo run dev --filter=@clover/frontend"
+    "dev:frontend": "turbo run dev --filter=@clover/frontend",
+    "dev:local": "bash scripts/dev-local.sh"
   },
   "packageManager": "npm@11.10.1",
   "devDependencies": {
