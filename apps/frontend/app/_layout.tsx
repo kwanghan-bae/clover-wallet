@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { GlobalErrorBoundary } from '../components/ErrorBoundary';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -10,11 +10,11 @@ import {
   NotoSansKR_700Bold,
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
-import { Platform } from 'react-native';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useAuth, AuthProvider } from '../hooks/useAuth';
 import { isDevAuthBypass } from '../utils/dev-auth';
+import { Logger } from '../utils/logger';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
 import { useTheme } from '../hooks/useTheme';
@@ -58,7 +58,7 @@ const queryClient = new QueryClient({
 function AppContent() {
   useEffect(() => {
     if (isDevAuthBypass()) {
-      console.warn('[DEV] Auth bypass active. Auto-logging in as', process.env.EXPO_PUBLIC_DEV_USER_EMAIL ?? 'dev1@local.test');
+      Logger.warn('AppContent', `Dev auth bypass active. Auto-logging in as ${process.env.EXPO_PUBLIC_DEV_USER_EMAIL ?? 'dev1@local.test'}`);
     }
   }, []);
   const { isAuthenticated, isLoading: authLoading } = useAuth();
