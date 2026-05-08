@@ -14,6 +14,7 @@ import { Platform } from 'react-native';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useAuth, AuthProvider } from '../hooks/useAuth';
+import { isDevAuthBypass } from '../utils/dev-auth';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
 import { useTheme } from '../hooks/useTheme';
@@ -55,6 +56,11 @@ const queryClient = new QueryClient({
 });
 
 function AppContent() {
+  useEffect(() => {
+    if (isDevAuthBypass()) {
+      console.warn('[DEV] Auth bypass active. Auto-logging in as', process.env.EXPO_PUBLIC_DEV_USER_EMAIL ?? 'dev1@local.test');
+    }
+  }, []);
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { registerToken } = useNotifications();
   const { isOffline } = useOffline();
