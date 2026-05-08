@@ -77,5 +77,17 @@ describe('AuthModule', () => {
         module.get<typeof DevAuthController>(DevAuthController),
       ).toBeDefined();
     });
+
+    it('NODE_ENV=production이고 DEV_AUTH_ENABLED unset이면 DevAuthController 미등록 (prod 기본)', async () => {
+      process.env.NODE_ENV = 'production';
+      delete process.env.DEV_AUTH_ENABLED;
+      const module = await loadModule();
+
+      const { DevAuthController } =
+        require('./dev-auth.controller') as typeof import('./dev-auth.controller');
+      expect(() =>
+        module.get<typeof DevAuthController>(DevAuthController),
+      ).toThrow();
+    });
   });
 });
