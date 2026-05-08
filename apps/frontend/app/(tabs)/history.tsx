@@ -35,6 +35,8 @@ const HistoryScreen = () => {
           onPress={() => router.push('/scan')}
           accessibilityLabel="QR 스캔"
           accessibilityRole="button"
+          activeOpacity={0.7}
+          className="p-3 -mr-3"
         >
           <QrCode size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
         </TouchableOpacity>

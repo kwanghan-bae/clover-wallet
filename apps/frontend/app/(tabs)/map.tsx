@@ -30,7 +30,7 @@ const LuckySpotsScreen = () => {
       <View className="flex-row justify-between items-center px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-100 shadow-sm">
         <Text className="text-xl font-bold text-[#1A1A1A] dark:text-dark-text">명당 찾기</Text>
         <View className="flex-row gap-4">
-          <TouchableOpacity onPress={toggleViewMode} accessibilityLabel={isMapView ? '리스트 보기로 전환' : '지도 보기로 전환'} accessibilityRole="button">
+          <TouchableOpacity onPress={toggleViewMode} accessibilityLabel={isMapView ? '리스트 보기로 전환' : '지도 보기로 전환'} accessibilityRole="button" activeOpacity={0.7} className="p-3 -mr-3">
             {isMapView ? <ListIcon size={24} color="#1A1A1A" /> : <MapIcon size={24} color="#1A1A1A" />}
           </TouchableOpacity>
         </View>
