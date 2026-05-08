@@ -26,4 +26,9 @@ export const authApi = {
     apiClient.post('auth/logout', {
       headers: { Authorization: `Bearer ${accessToken}` },
     }),
+
+  devLogin: (email: string) =>
+    apiClient
+      .post('auth/dev-login', { json: { email } })
+      .json<LoginResponse>(),
 };
