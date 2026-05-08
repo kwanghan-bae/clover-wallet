@@ -54,6 +54,8 @@ const HomeScreen = () => {
           onPress={() => router.push('/notifications')}
           accessibilityLabel="알림"
           accessibilityRole="button"
+          activeOpacity={0.8}
+          className="p-2 -mr-2"
         >
           <Bell size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
         </TouchableOpacity>

@@ -75,6 +75,8 @@ export default function NumberGenerationScreen() {
             onPress={() => router.back()}
             accessibilityRole="button"
             accessibilityLabel="뒤로 가기"
+            activeOpacity={0.8}
+            className="p-2 -ml-2"
           >
             <ChevronLeft size={24} color="#1A1A1A" />
           </TouchableOpacity>

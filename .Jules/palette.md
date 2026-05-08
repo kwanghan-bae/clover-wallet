@@ -16,3 +16,6 @@
 ## 2026-05-09 - Dynamic Width during Loading States
 **Learning:** In React Native, replacing text with a smaller `ActivityIndicator` inside a `TouchableOpacity` can cause the button to shrink or shift layout unexpectedly, creating a jarring UX during loading transitions.
 **Action:** When swapping content for spinners, ensure the button container has a minimum width (e.g., `min-w-[140px]` in Tailwind/NativeWind) to preserve the layout structure and provide a smooth visual transition.
+## 2024-05-24 - Enhance Touch Targets for Header Icons
+**Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets, leading to frustrating user experiences on mobile.
+**Action:** Always wrap header icons with padding classes (e.g., `className="p-2 -mr-2"`) to expand the touchable area without altering the visual alignment, and add `activeOpacity={0.8}` to provide clear interaction feedback.
