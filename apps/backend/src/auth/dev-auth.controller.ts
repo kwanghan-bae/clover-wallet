@@ -1,21 +1,19 @@
 // apps/backend/src/auth/dev-auth.controller.ts
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { DevLoginDto } from './dto/dev-login.dto';
 
 /**
  * @description 로컬 개발 전용 로그인 컨트롤러.
- * NODE_ENV !== 'production' && DEV_AUTH_ENABLED='true'일 때만 AuthModule에 등록됨.
- * Supabase OAuth 우회 후 이메일로 user 찾기/생성 → 자체 JWT 발급.
+ * 등록 조건은 `auth.module.ts`의 `isDevAuthEnabled` 게이트가 source-of-truth.
+ * 컨트롤러 자체는 게이트를 모르므로, 등록되어 있다 = 활성 상태.
  */
 @Controller('auth')
 export class DevAuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('dev-login')
-  async devLogin(@Body() body: { email: string }) {
-    if (!body?.email) {
-      throw new BadRequestException('email이 필요합니다');
-    }
+  async devLogin(@Body() body: DevLoginDto) {
     return await this.authService.login(body.email, body.email);
   }
 }
