@@ -1,12 +1,8 @@
 #!/usr/bin/env bash
-# scripts/dev-local.sh
-# 로컬 개발 모드: 백엔드 + 프론트엔드 동시 기동, Ctrl-C 일괄 종료, 가비지 정리.
-
+# scripts/dev-local.sh — 로컬 개발 모드: 백엔드+프론트 동시 기동, Ctrl-C 일괄 종료.
 set -euo pipefail
 
-# ─────────────────────────────────────────────────────────
-# 색상 / 로깅
-# ─────────────────────────────────────────────────────────
+# --- 색상 / 로깅 ---
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -17,9 +13,7 @@ log_info()  { echo -e "${BLUE}[dev-local]${NC} $*"; }
 log_warn()  { echo -e "${YELLOW}[dev-local]${NC} $*"; }
 log_error() { echo -e "${RED}[dev-local]${NC} $*" >&2; }
 
-# ─────────────────────────────────────────────────────────
-# 옵션 파싱
-# ─────────────────────────────────────────────────────────
+# --- 옵션 파싱 ---
 SKIP_SEED=false
 REMOTE_BACKEND=false
 for arg in "$@"; do
@@ -41,9 +35,7 @@ EOF
   esac
 done
 
-# ─────────────────────────────────────────────────────────
-# 가비지 프로세스 정리
-# ─────────────────────────────────────────────────────────
+# --- 가비지 프로세스 정리 ---
 cleanup_port() {
   local port=$1
   local pids
@@ -67,14 +59,10 @@ cleanup_port 8081
 cleanup_port 19000
 cleanup_port 19001
 cleanup_port 19002
-
 log_info "가비지 정리 완료."
 
-# ─────────────────────────────────────────────────────────
-# Pre-flight 검사
-# ─────────────────────────────────────────────────────────
+# --- Pre-flight 검사 ---
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-
 if [ ! -f "$ROOT_DIR/apps/frontend/.env" ]; then
   log_error "apps/frontend/.env 누락. .env.example 참고해서 만들어주세요."
   exit 1
@@ -88,19 +76,38 @@ if [ ! -d "$ROOT_DIR/apps/frontend/node_modules" ] || [ ! -d "$ROOT_DIR/apps/bac
   exit 1
 fi
 
-# ─────────────────────────────────────────────────────────
-# DB 시드
-# ─────────────────────────────────────────────────────────
+# --- DB 시드 ---
 if ! $SKIP_SEED && ! $REMOTE_BACKEND; then
   log_info "Prisma seed 실행..."
   ( cd "$ROOT_DIR/apps/backend" && DEV_AUTH_ENABLED=true npx prisma db seed )
 fi
 
-# ─────────────────────────────────────────────────────────
-# spawn helpers
-# ─────────────────────────────────────────────────────────
+# --- spawn + trap ---
 set -m  # job control 활성화 (자식이 새 process group)
 CHILD_PIDS=()
+EXIT_CODE=0
+
+cleanup() {
+  local rc=$?
+  trap '' INT TERM EXIT
+  log_info "shutdown: 자식 프로세스 정리 중..."
+  for pid in "${CHILD_PIDS[@]:-}"; do
+    [ -z "$pid" ] && continue
+    kill -TERM "$pid" 2>/dev/null || true
+    pkill -P "$pid" 2>/dev/null || true
+  done
+  sleep 2
+  for pid in "${CHILD_PIDS[@]:-}"; do
+    [ -z "$pid" ] && continue
+    kill -KILL "$pid" 2>/dev/null || true
+    pkill -9 -P "$pid" 2>/dev/null || true
+  done
+  cleanup_port 3000 || true
+  cleanup_port 8081 || true
+  log_info "shutdown 완료. exit=${EXIT_CODE:-$rc}"
+  exit "${EXIT_CODE:-$rc}"
+}
+trap cleanup INT TERM EXIT
 
 prefix_logs() {
   local label=$1
@@ -108,9 +115,7 @@ prefix_logs() {
   sed -u "s/^/$(printf "${color}[${label}]${NC} ")/"
 }
 
-# ─────────────────────────────────────────────────────────
-# 백엔드 spawn (옵션에 따라)
-# ─────────────────────────────────────────────────────────
+# --- 백엔드 / 프론트엔드 spawn ---
 if ! $REMOTE_BACKEND; then
   log_info "백엔드 기동 (apps/backend)..."
   (
@@ -124,9 +129,6 @@ else
   log_warn "--remote-backend: 로컬 백엔드 미기동. EXPO_PUBLIC_API_URL이 Render를 가리키는지 확인."
 fi
 
-# ─────────────────────────────────────────────────────────
-# 프론트 spawn
-# ─────────────────────────────────────────────────────────
 log_info "프론트엔드 기동 (apps/frontend)..."
 (
   cd "$ROOT_DIR/apps/frontend" && \
@@ -140,5 +142,7 @@ log_info "기동 완료. 종료하려면 Ctrl-C."
 log_info "  백엔드 PID: ${BACKEND_PID:-(skipped)}"
 log_info "  프론트 PID: $FRONTEND_PID"
 
-# (Task 3.3에서 트랩 + wait 추가)
-wait
+# bash 3.2 호환: wait -n 미지원이라 단순 wait. Ctrl-C는 트랩이 처리.
+# (자식 한 명이 자연 크래시해도 자동 정리는 안 됨 — 차후 SIGCHLD 핸들링 예정)
+wait || EXIT_CODE=$?
+exit "$EXIT_CODE"
