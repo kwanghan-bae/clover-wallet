@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity, Animated } from 'react-native';
+import { View, Text, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { Sparkles, Save, Share2 } from 'lucide-react-native';
 import { getNumberColor } from '../../utils/lotto';
 
@@ -54,16 +54,25 @@ const GenerationResultComponent = ({
         <TouchableOpacity
           onPress={onSave}
           disabled={isSaving}
-          className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+          activeOpacity={0.7}
+          className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center justify-center min-w-[140px]"
           accessibilityRole="button"
           accessibilityLabel={isSaving ? "저장 중" : "번호 저장하기"}
+          accessibilityState={{ disabled: isSaving, busy: isSaving }}
         >
-          <Save size={18} color="#4CAF50" />
-          <Text className="text-primary font-bold ml-2">{isSaving ? "저장 중" : "번호 저장하기"}</Text>
+          {isSaving ? (
+            <ActivityIndicator size="small" color="#4CAF50" />
+          ) : (
+            <>
+              <Save size={18} color="#4CAF50" />
+              <Text className="text-primary font-bold ml-2">번호 저장하기</Text>
+            </>
+          )}
         </TouchableOpacity>
         <TouchableOpacity
           onPress={onShare}
-          className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center"
+          activeOpacity={0.7}
+          className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center justify-center min-w-[140px]"
           accessibilityRole="button"
           accessibilityLabel="커뮤니티에 공유"
         >

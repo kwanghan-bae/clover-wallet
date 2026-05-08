@@ -13,3 +13,6 @@
 ## 2024-05-18 - Accessibility State on Dynamic Action Buttons
 **Learning:** In React Native, action buttons that change state dynamically (e.g., Follow/Unfollow buttons that can also be disabled while "processing") do not automatically inform screen readers of their state change or disabled status if only the text changes. Screen readers need explicit state management via `accessibilityState` and `accessibilityLabel` based on those dynamic states.
 **Action:** When a `Pressable` or `TouchableOpacity` has multiple states (like loading, disabled, toggled), ensure you apply conditional logic to `accessibilityLabel` and utilize `accessibilityState={{ disabled: isPending }}` to announce these nuances clearly to assistive technology users.
+## 2026-05-09 - Dynamic Width during Loading States
+**Learning:** In React Native, replacing text with a smaller `ActivityIndicator` inside a `TouchableOpacity` can cause the button to shrink or shift layout unexpectedly, creating a jarring UX during loading transitions.
+**Action:** When swapping content for spinners, ensure the button container has a minimum width (e.g., `min-w-[140px]` in Tailwind/NativeWind) to preserve the layout structure and provide a smooth visual transition.
