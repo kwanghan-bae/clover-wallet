@@ -24,6 +24,10 @@ export class BigIntInterceptor implements NestInterceptor {
       return data;
     }
 
+    if (data instanceof Date) {
+      return data;
+    }
+
     if (typeof data === 'bigint') {
       return data.toString();
     }
