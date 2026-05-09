@@ -6,3 +6,6 @@
 export * from './lotto/rank';
 export * from './lotto/generator';
 export * from './lotto/ui';
+export * from './lotto/labels';
+export * from './lotto/history';
+export * from './lotto/history-migration';
