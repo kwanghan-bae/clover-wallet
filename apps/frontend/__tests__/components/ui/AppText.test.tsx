@@ -27,4 +27,18 @@ describe('AppText', () => {
     const { getByText } = render(<AppText variant="title" className="text-primary">제목</AppText>);
     expect(getByText('제목').props.className).toContain('text-primary');
   });
+
+  it('lets consumer style override variant defaults while preserving non-overridden fields', () => {
+    const { getByText } = render(
+      <AppText variant="display" style={{ color: 'red', fontSize: 12 }}>X</AppText>
+    );
+    expect(getByText('X').props.style).toEqual(
+      expect.objectContaining({
+        fontFamily: 'NotoSansKR_800ExtraBold',
+        letterSpacing: -1.2,
+        fontSize: 12,
+        color: 'red',
+      })
+    );
+  });
 });

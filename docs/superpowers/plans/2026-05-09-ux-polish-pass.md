@@ -342,7 +342,7 @@ Create `apps/frontend/components/ui/AppText.tsx`:
 
 ```tsx
 import React from 'react';
-import { Text, TextProps, StyleProp, TextStyle } from 'react-native';
+import { Text, TextProps, StyleProp, TextStyle, StyleSheet } from 'react-native';
 
 export type AppTextVariant =
   | 'display'
@@ -376,12 +376,14 @@ export const AppText: React.FC<AppTextProps> = ({
   ...rest
 }) => {
   const variantStyle = VARIANTS[variant];
-  const merged: StyleProp<TextStyle> = [variantStyle, style];
+  const merged: StyleProp<TextStyle> = StyleSheet.flatten([variantStyle, style]);
   return <Text {...rest} style={merged} />;
 };
 
 AppText.displayName = 'AppText';
 ```
+
+Note: `StyleSheet.flatten` is used (instead of `[variantStyle, style]`) so that `expect.objectContaining` in the tests matches against the merged single object. Behavior is identical at runtime because RN's Text accepts either form.
 
 - [ ] **Step 4: Run test to confirm it passes**
 
