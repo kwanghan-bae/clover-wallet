@@ -1,16 +1,11 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  SafeAreaView,
-  TouchableOpacity,
-} from 'react-native';
+import { View, FlatList, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { HistoryItem } from '../../components/ui/HistoryItem';
 import { QrCode, Plus } from 'lucide-react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../../hooks/useTheme';
+import { ScreenContainer } from '../../components/ui/ScreenContainer';
+import { AppText } from '../../components/ui/AppText';
+import { EmptyState } from '../../components/ui/EmptyState';
 import {
   useHistoryData,
   HistoryRecord,
@@ -19,26 +14,25 @@ import { getStatusBadge } from '../../constants/lotto-status';
 
 const HistoryScreen = () => {
   const router = useRouter();
-  const { isDark } = useTheme();
   const { records, handleDelete } = useHistoryData();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
-      <View className="flex-row justify-between items-center px-5 py-4 bg-transparent dark:bg-dark-bg">
-        <Text
-          style={{ fontFamily: 'NotoSansKR_700Bold' }}
-          className="text-xl text-[#1A1A1A] dark:text-dark-text"
+    <ScreenContainer>
+      <View className="flex-row justify-between items-center px-5 h-14">
+        <AppText
+          variant="title-lg"
+          className="text-text-primary dark:text-dark-text"
         >
           내 로또 내역
-        </Text>
+        </AppText>
         <TouchableOpacity
           onPress={() => router.push('/scan')}
           accessibilityLabel="QR 스캔"
           accessibilityRole="button"
           activeOpacity={0.7}
-          className="p-3 -mr-3"
+          className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
         >
-          <QrCode size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
+          <QrCode size={18} color="#0F1115" />
         </TouchableOpacity>
       </View>
 
@@ -58,15 +52,9 @@ const HistoryScreen = () => {
                     className="self-start mb-1 px-3 py-1 rounded-full"
                     style={{ backgroundColor: badge.bg }}
                   >
-                    <Text
-                      style={{
-                        fontFamily: 'NotoSansKR_700Bold',
-                        color: badge.color,
-                        fontSize: 12,
-                      }}
-                    >
+                    <AppText variant="label" style={{ color: badge.color }}>
                       {badge.label}
-                    </Text>
+                    </AppText>
                   </View>
                 )}
                 <HistoryItem record={item} onDelete={handleDelete} />
@@ -74,53 +62,22 @@ const HistoryScreen = () => {
             );
           }}
           ListEmptyComponent={
-            <View
-              className="items-center justify-center py-32"
-              style={{ alignItems: 'center', justifyContent: 'center' }}
-            >
-              <View className="w-24 h-24 bg-[#BDBDBD]/10 rounded-full items-center justify-center mb-8">
-                <Plus size={48} color="rgba(189, 189, 189, 0.4)" />
-              </View>
-              <Text
-                style={{ fontFamily: 'NotoSansKR_700Bold' }}
-                className="text-lg text-[#1A1A1A] dark:text-dark-text"
-              >
-                저장된 로또 내역이 없습니다
-              </Text>
-              <Text
-                style={{ fontFamily: 'NotoSansKR_400Regular' }}
-                className="text-[#BDBDBD] dark:text-dark-text-secondary mt-2 text-center"
-              >
-                번호를 생성하고 저장해보세요!
-              </Text>
-              <TouchableOpacity
-                onPress={() => router.push('/number-generation')}
-                activeOpacity={0.8}
-                className="mt-10"
-                accessibilityLabel="번호 생성하기"
-                accessibilityRole="button"
-              >
-                <LinearGradient
-                  colors={['#4CAF50', '#388E3C']}
-                  className="px-8 py-3.5 rounded-full shadow-lg"
-                >
-                  <View className="flex-row items-center">
-                    <Plus size={20} color="white" />
-                    <Text
-                      style={{ fontFamily: 'NotoSansKR_700Bold' }}
-                      className="text-white text-base ml-2"
-                    >
-                      번호 생성하기
-                    </Text>
-                  </View>
-                </LinearGradient>
-              </TouchableOpacity>
+            <View className="px-5">
+              <EmptyState
+                icon={<Plus size={24} color="#2E7D32" />}
+                title="저장된 로또 내역이 없습니다"
+                description="번호를 생성하고 저장해보세요"
+                cta={{
+                  label: '번호 생성하기',
+                  onPress: () => router.push('/number-generation'),
+                }}
+              />
             </View>
           }
           showsVerticalScrollIndicator={false}
         />
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };
 
