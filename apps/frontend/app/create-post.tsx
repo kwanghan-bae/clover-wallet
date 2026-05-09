@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { Input } from '../components/ui/Input';
@@ -20,6 +20,8 @@ const CreatePostScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
+    if (isLoading) return;
+
     if (!title.trim() || !content.trim()) {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해주세요.');
       return;
@@ -44,13 +46,25 @@ const CreatePostScreen = () => {
         headerShown: true,
         title: 'Create Post',
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()} accessibilityLabel="닫기" accessibilityRole="button">
+          <TouchableOpacity onPress={() => router.back()} accessibilityLabel="닫기" accessibilityRole="button" activeOpacity={0.7} className="p-3 -ml-3">
             <X size={24} color="#212121" />
           </TouchableOpacity>
         ),
         headerRight: () => (
-          <TouchableOpacity onPress={handleSubmit} accessibilityLabel="게시하기" accessibilityRole="button">
-            <Text className="text-primary font-bold text-lg">Post</Text>
+          <TouchableOpacity
+            onPress={handleSubmit}
+            disabled={isLoading}
+            accessibilityLabel={isLoading ? '게시 중' : '게시하기'}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isLoading, busy: isLoading }}
+            activeOpacity={0.7}
+            className="p-3 -mr-3 min-w-[60px] items-center justify-center"
+          >
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#4CAF50" />
+            ) : (
+              <Text className="text-primary font-bold text-lg">Post</Text>
+            )}
           </TouchableOpacity>
         )
       }} />

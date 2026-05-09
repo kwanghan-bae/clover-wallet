@@ -19,3 +19,6 @@
 ## 2026-05-09 - Enhance Touch Targets for Header Icons
 **Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets (Apple HIG: 44pt, Material: 48dp), leading to frustrating user experiences on mobile.
 **Action:** Wrap header icons with padding classes (e.g., `className="p-3 -mr-3"`) so a 24px icon reaches a ~48dp tappable area without altering visual alignment, and use `activeOpacity={0.7}` as the standard interaction feedback across the app.
+## 2024-05-18 - Header Button Touch Targets and Loading States
+**Learning:** Header buttons in Expo Router (like 'Close' and 'Post' in `create-post.tsx`) often have small touch targets by default, leading to poor UX. Furthermore, replacing header text with an `ActivityIndicator` during a loading state can cause layout shifts if the container doesn't have a fixed or minimum width.
+**Action:** Enhance header buttons by adding padding and negative margins (e.g., `className="p-3 -mr-3"`) to enlarge the tappable area without breaking alignment. Always add `min-w-[60px]` or a fixed width when swapping text for a spinner to prevent the button from resizing dynamically.
