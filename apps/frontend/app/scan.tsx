@@ -1,14 +1,15 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, SafeAreaView, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter, Stack } from 'expo-router';
-import { X, Camera as CameraIcon } from 'lucide-react-native';
+import { Camera as CameraIcon } from 'lucide-react-native';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { useScan } from '../hooks/useScan';
 import { ScanOverlay } from '../components/scan/ScanOverlay';
 import { ScanResultView } from '../components/scan/ScanResultView';
-
-const PRIMARY_COLOR = '#22C55E';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
+import { AppBar } from '../components/ui/AppBar';
+import { AppText } from '../components/ui/AppText';
 
 /**
  * @description 로또 티켓의 QR 코드를 스캔하거나 번호를 OCR로 인식하여 자동으로 등록하는 화면입니다.
@@ -25,14 +26,16 @@ const ScanScreen = () => {
   if (!permission.granted) {
     return (
       <View className="flex-1 bg-black items-center justify-center p-6">
-        <Text className="text-white text-center text-lg mb-6">카메라 접근 권한이 필요합니다</Text>
+        <AppText variant="body-lg" className="text-white text-center mb-6">
+          카메라 접근 권한이 필요합니다
+        </AppText>
         <PrimaryButton label="권한 허용" onPress={requestPermission} />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 bg-black">
+    <ScreenContainer className="bg-black">
       <Stack.Screen options={{ headerShown: false }} />
       <CameraView
         ref={cameraRef}
@@ -45,35 +48,28 @@ const ScanScreen = () => {
       </CameraView>
 
       {/* Top Header */}
-      <SafeAreaView className="absolute top-0 left-0 right-0">
-        <View className="flex-row justify-between p-4">
+      <AppBar variant="screen" title="QR 스캔" onBackPress={() => router.back()} />
+
+      {/* Mode Toggle Tabs */}
+      <View className="flex-row mx-4 mt-2 bg-black/50 rounded-md p-1">
+        {(['qr', 'ocr'] as const).map((mode) => (
           <TouchableOpacity
-            onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-black/40 items-center justify-center"
-            accessibilityLabel="스캔 화면 닫기"
-            accessibilityRole="button"
+            key={mode}
+            className={`flex-1 py-2 rounded-md items-center ${scanMode === mode ? 'bg-primary' : ''}`}
+            onPress={() => setScanMode(mode)}
+            accessibilityRole="tab"
+            accessibilityLabel={mode === 'qr' ? 'QR 스캔' : '번호 촬영'}
+            accessibilityState={{ selected: scanMode === mode }}
           >
-            <X size={24} color="white" />
-          </TouchableOpacity>
-        </View>
-        {/* Mode Toggle Tabs */}
-        <View style={styles.modeToggleContainer}>
-          {(['qr', 'ocr'] as const).map((mode) => (
-            <TouchableOpacity
-              key={mode}
-              style={[styles.modeTab, scanMode === mode && { backgroundColor: PRIMARY_COLOR }]}
-              onPress={() => setScanMode(mode)}
-              accessibilityRole="tab"
-              accessibilityLabel={mode === 'qr' ? 'QR 스캔' : '번호 촬영'}
-              accessibilityState={{ selected: scanMode === mode }}
+            <AppText
+              variant="body"
+              className={scanMode === mode ? 'text-white' : 'text-white/60'}
             >
-              <Text style={[styles.modeTabText, scanMode === mode && styles.modeTabTextActive]}>
-                {mode === 'qr' ? 'QR 스캔' : '번호 촬영'}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </SafeAreaView>
+              {mode === 'qr' ? 'QR 스캔' : '번호 촬영'}
+            </AppText>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       {/* Bottom Controls */}
       <View className="absolute bottom-16 left-0 right-0 items-center">
@@ -82,7 +78,7 @@ const ScanScreen = () => {
             <TouchableOpacity
               onPress={handleCapture}
               disabled={isProcessing}
-              className="bg-primary px-10 py-4 rounded-full flex-row items-center shadow-2xl"
+              className="bg-primary px-10 py-4 rounded-pill flex-row items-center shadow-button"
               accessibilityLabel={isProcessing ? "사진 촬영 처리 중" : "사진 촬영"}
               accessibilityRole="button"
               accessibilityState={{ disabled: isProcessing, busy: isProcessing }}
@@ -92,7 +88,7 @@ const ScanScreen = () => {
               ) : (
                 <>
                   <CameraIcon size={20} color="white" />
-                  <Text className="text-white font-black text-lg ml-3">촬영</Text>
+                  <AppText variant="title" className="text-white ml-3">촬영</AppText>
                 </>
               )}
             </TouchableOpacity>
@@ -104,18 +100,8 @@ const ScanScreen = () => {
           <ActivityIndicator color="white" size="large" />
         )}
       </View>
-    </View>
+    </ScreenContainer>
   );
 };
 
 export default ScanScreen;
-
-const styles = StyleSheet.create({
-  modeToggleContainer: {
-    flexDirection: 'row', marginHorizontal: 16, marginTop: 8,
-    backgroundColor: 'rgba(0,0,0,0.5)', borderRadius: 12, padding: 4,
-  },
-  modeTab: { flex: 1, paddingVertical: 8, borderRadius: 10, alignItems: 'center' },
-  modeTabText: { color: 'rgba(255,255,255,0.6)', fontWeight: '600', fontSize: 14 },
-  modeTabTextActive: { color: '#FFFFFF', fontWeight: '700' },
-});

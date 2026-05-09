@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import { AppText } from '../ui/AppText';
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,11 +23,11 @@ const ScanOverlayComponent = ({ scanMode }: ScanOverlayProps) => (
       <View style={styles.unfocusedContainer} />
     </View>
     <View style={styles.unfocusedContainer}>
-      <Text className="text-white text-center mt-8 px-10 text-sm leading-5">
+      <AppText variant="body" className="text-white text-center mt-8 px-10">
         {scanMode === 'qr'
           ? '로또 티켓의 QR 코드를 가이드에 맞춰주세요'
           : '로또 티켓의 번호 부분을 가이드에 맞춰주세요'}
-      </Text>
+      </AppText>
     </View>
   </View>
 );
