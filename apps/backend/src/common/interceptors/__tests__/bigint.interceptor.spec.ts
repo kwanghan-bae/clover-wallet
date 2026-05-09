@@ -93,4 +93,30 @@ describe('BigIntInterceptor', () => {
       },
     });
   });
+
+  it('toJSON 메서드를 가진 임의 객체도 그대로 통과 (Date, Decimal 등 미래 타입 호환)', (done) => {
+    // Decimal-like custom value object
+    class FakeDecimal {
+      constructor(public value: string) {}
+      toJSON() {
+        return this.value;
+      }
+    }
+    const dec = new FakeDecimal('123.45');
+    const mockCallHandler: CallHandler = {
+      handle: () => of({ price: dec }),
+    };
+    const mockExecutionContext = {
+      getType: jest.fn().mockReturnValue('http'),
+    } as any;
+
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: (response: any) => {
+        expect(response.price).toBeInstanceOf(FakeDecimal);
+        expect(response.price.toJSON()).toBe('123.45');
+        expect(JSON.stringify(response)).toContain('"123.45"');
+        done();
+      },
+    });
+  });
 });

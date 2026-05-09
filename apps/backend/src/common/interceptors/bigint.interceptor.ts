@@ -24,12 +24,18 @@ export class BigIntInterceptor implements NestInterceptor {
       return data;
     }
 
-    if (data instanceof Date) {
-      return data;
-    }
-
     if (typeof data === 'bigint') {
       return data.toString();
+    }
+
+    // 어떤 객체든 toJSON()이 정의되어 있으면 JSON.stringify가 자동으로 호출하므로
+    // 우리가 재구성하지 않고 그대로 통과시킨다 (Date, Decimal, Big.js 등 커버).
+    if (
+      typeof data === 'object' &&
+      data !== null &&
+      typeof (data as { toJSON?: unknown }).toJSON === 'function'
+    ) {
+      return data;
     }
 
     if (Array.isArray(data)) {
