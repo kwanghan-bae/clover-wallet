@@ -24,3 +24,21 @@ export interface LottoGameResponse {
   number6: number;
   createdAt: string;
 }
+
+/**
+ * @description 한 번에 생성한 N세트 묶음 (1게임은 games.length===1).
+ * 로컬 저장(saved-numbers) 및 향후 백엔드 ticket 매핑에 사용.
+ */
+export interface LottoSetRecord {
+  id: number;
+  method: string;
+  param?: string;
+  createdAt: string;
+  games: GameSet[];
+  /** 백엔드 ticket 매핑 시 사용. 로컬 저장 시 undefined. */
+  round?: number;
+}
+
+export interface GameSet {
+  numbers: number[];
+}
