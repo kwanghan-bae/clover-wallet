@@ -1,21 +1,21 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, RefreshControl } from 'react-native';
-import { Clover, Bell, ChevronRight, Receipt } from 'lucide-react-native';
+import { ScrollView, View, RefreshControl } from 'react-native';
+import { Receipt } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { HeroSection } from '../../components/home/HeroSection';
 import { QuickActions } from '../../components/home/QuickActions';
-import { useTheme } from '../../hooks/useTheme';
+import { AppBar } from '../../components/ui/AppBar';
+import { ScreenContainer } from '../../components/ui/ScreenContainer';
+import { SectionHead } from '../../components/ui/SectionHead';
+import { EmptyState } from '../../components/ui/EmptyState';
+import { useNotifications } from '../../hooks/useNotifications';
 import { apiClient } from '../../api/client';
 
-/**
- * @description 애플리케이션의 홈 화면 컴포넌트입니다.
- * 다음 회차 당첨 정보, 빠른 실행 메뉴, 최근 당첨 결과 등을 표시합니다.
- */
 const HomeScreen = () => {
   const router = useRouter();
-  const { isDark } = useTheme();
   const queryClient = useQueryClient();
+  const { unreadCount } = useNotifications();
   const [refreshing, setRefreshing] = useState(false);
 
   const { data: drawInfo } = useQuery({
@@ -38,31 +38,10 @@ const HomeScreen = () => {
   }, [queryClient]);
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
-      {/* AppBar Style Header */}
-      <View className="flex-row justify-between items-center px-5 h-14 bg-transparent" style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <View className="flex-row items-center" style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Clover size={24} color="#4CAF50" fill="#4CAF50" />
-          <Text
-            style={{ fontFamily: 'NotoSansKR_900Black' }}
-            className="ml-2 text-xl text-[#1A1A1A] dark:text-dark-text tracking-tight"
-          >
-            Clover Wallet
-          </Text>
-        </View>
-        <TouchableOpacity
-          onPress={() => router.push('/notifications')}
-          accessibilityLabel="알림"
-          accessibilityRole="button"
-          activeOpacity={0.7}
-          className="p-3 -mr-3"
-        >
-          <Bell size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
-        </TouchableOpacity>
-      </View>
-
+    <ScreenContainer>
+      <AppBar variant="home" hasUnread={unreadCount > 0} onBellPress={() => router.push('/notifications')} />
       <ScrollView
-        contentContainerStyle={{ padding: 20 }}
+        contentContainerStyle={{ padding: 20, paddingBottom: 96 }}
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#4CAF50']} />}
       >
@@ -74,40 +53,20 @@ const HomeScreen = () => {
             minutesLeft: drawInfo?.minutesLeft ?? 0,
           }}
           onGenerate={() => router.push('/number-generation')}
+          onScan={() => router.push('/scan')}
         />
         <QuickActions onNavigate={(path) => router.push(path as any)} />
-
-        {/* Recent History Preview */}
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
-          최근 당첨 결과
-        </Text>
-        <TouchableOpacity onPress={() => router.push('/history')} activeOpacity={0.8} accessibilityRole="button" accessibilityLabel="최근 당첨 결과 보기">
-          <View
-            className="flex-row items-center p-6 bg-white dark:bg-dark-surface rounded-[24px]"
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              shadowColor: '#000',
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.05,
-              shadowRadius: 10,
-              elevation: 2,
-            }}
-          >
-            <View className="bg-gray-100 p-3 rounded-2xl mr-5">
-              <Receipt size={24} color="#9E9E9E" />
-            </View>
-            <View className="flex-1">
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-base text-[#1A1A1A] dark:text-dark-text">최근 구매 내역</Text>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-sm text-gray-500 dark:text-dark-text-secondary mt-1">아직 구매한 로또가 없습니다.</Text>
-            </View>
-            <ChevronRight size={24} color="#9E9E9E" />
-          </View>
-        </TouchableOpacity>
-
-        <View className="h-24" />
+        <SectionHead title="최근 구매" linkText="전체 보기" onLinkPress={() => router.push('/(tabs)/history')} />
+        <View className="bg-surface dark:bg-dark-card rounded-card-lg shadow-card border border-border-hairline px-5 py-6">
+          <EmptyState
+            icon={<Receipt size={24} color="#2E7D32" />}
+            title="아직 구매한 로또가 없어요"
+            description="번호를 생성하거나 영수증을 스캔하면 여기에 모아 볼 수 있어요"
+            cta={{ label: '번호 생성하기', onPress: () => router.push('/number-generation') }}
+          />
+        </View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };
 

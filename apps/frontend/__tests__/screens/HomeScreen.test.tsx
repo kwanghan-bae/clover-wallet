@@ -37,11 +37,11 @@ describe('HomeScreen', () => {
     expect(getByText('로또 명당')).toBeTruthy();
   });
 
-  /** 최근 당첨 결과 섹션의 초기 상태 렌더링을 확인합니다. */
+  /** 최근 구매 섹션의 초기 상태 렌더링을 확인합니다. */
   test('renders recent history section', () => {
     const { getByText } = render(<HomeScreen />);
-    expect(getByText('최근 당첨 결과')).toBeTruthy();
-    expect(getByText('아직 구매한 로또가 없습니다.')).toBeTruthy();
+    expect(getByText('최근 구매')).toBeTruthy();
+    expect(getByText('아직 구매한 로또가 없어요')).toBeTruthy();
   });
 
   /** 다음 회차 당첨 정보 카드가 표시되는지 확인합니다. */
