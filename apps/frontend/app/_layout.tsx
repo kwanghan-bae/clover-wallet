@@ -7,7 +7,9 @@ import {
   useFonts,
   NotoSansKR_400Regular,
   NotoSansKR_500Medium,
+  NotoSansKR_600SemiBold,
   NotoSansKR_700Bold,
+  NotoSansKR_800ExtraBold,
   NotoSansKR_900Black
 } from '@expo-google-fonts/noto-sans-kr';
 import { QueryClient } from '@tanstack/react-query';
@@ -124,7 +126,9 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({
     NotoSansKR_400Regular,
     NotoSansKR_500Medium,
+    NotoSansKR_600SemiBold,
     NotoSansKR_700Bold,
+    NotoSansKR_800ExtraBold,
     NotoSansKR_900Black,
   });
 
