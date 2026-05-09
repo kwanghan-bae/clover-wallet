@@ -2,16 +2,18 @@ import React, { memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Trash2, Calendar } from 'lucide-react-native';
 import { LottoBall } from './LottoBall';
-import { LottoRecord } from '../../api/types/lotto';
+import { LottoSetRecord } from '../../api/types/lotto';
+import { labelOf } from '../../utils/lotto';
 
 interface HistoryItemProps {
-  record: LottoRecord;
+  record: LottoSetRecord;
   onDelete: (id: number) => void;
 }
 
-/** @description 사용자의 과거 로또 구매 또는 번호 생성 내역을 표시하는 카드 컴포넌트입니다. */
+/** @description 사용자의 과거 로또 구매 또는 번호 생성 내역 카드. 단일/N게임 묶음 모두 처리. */
 const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
   const dateStr = formatDate(record.createdAt);
+  const isMulti = record.games.length > 1;
 
   return (
     <View
@@ -26,11 +28,20 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
     >
       <View className="flex-row justify-between items-center mb-4">
         <View className="flex-row items-center gap-2">
-          <View className="bg-[#4CAF50]/10 px-3 py-1.5 rounded-xl">
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-[12px]">
-              {record.round}회차
-            </Text>
-          </View>
+          {record.round ? (
+            <View className="bg-[#4CAF50]/10 px-3 py-1.5 rounded-xl">
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-[12px]">
+                {record.round}회차
+              </Text>
+            </View>
+          ) : null}
+          {isMulti ? (
+            <View className="bg-primary/10 px-3 py-1.5 rounded-xl">
+              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-primary text-[12px]">
+                {record.games.length}게임 묶음
+              </Text>
+            </View>
+          ) : null}
           <View className="flex-row items-center ml-1">
             <Calendar size={14} color="#BDBDBD" />
             <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[12px] ml-1.5">
@@ -49,11 +60,16 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
         </TouchableOpacity>
       </View>
 
-      <View className="flex-row justify-between items-center px-1">
-        {record.numbers.map((num, i) => (
-          <LottoBall key={i} number={num} size="sm" />
-        ))}
-      </View>
+      {record.games.map((game, i) => (
+        <View key={i} className={`flex-row justify-between items-center px-1 ${i > 0 ? 'mt-3' : ''}`}>
+          {isMulti ? (
+            <Text className="text-gray-400 font-bold text-[12px] w-5">{labelOf(i)}</Text>
+          ) : null}
+          {game.numbers.map((num, j) => (
+            <LottoBall key={j} number={num} size="sm" />
+          ))}
+        </View>
+      ))}
     </View>
   );
 };
@@ -61,7 +77,6 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
 export const HistoryItem = memo(HistoryItemComponent);
 HistoryItem.displayName = 'HistoryItem';
 
-// formatDate 함수는 내부 로직을 처리합니다.
 function formatDate(date: string | Date): string {
   try {
     const d = new Date(date);

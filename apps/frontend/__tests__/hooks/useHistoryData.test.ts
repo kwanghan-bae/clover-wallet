@@ -47,10 +47,9 @@ describe('useHistoryData', () => {
     const mockLocalData = [
       {
         id: 1,
-        status: 'LOSING' as const,
+        method: 'SAJU',
         numbers: [1, 2, 3, 4, 5, 6],
         createdAt: '2024-01-01',
-        round: 1,
       },
     ];
 
@@ -66,7 +65,11 @@ describe('useHistoryData', () => {
     await waitFor(() => {
       expect(result.current.records).toBeDefined();
     });
-    expect(result.current.records).toEqual(mockLocalData);
+    expect(result.current.records.length).toBe(1);
+    expect(result.current.records[0].id).toBe(1);
+    expect(result.current.records[0].games[0].numbers).toEqual([
+      1, 2, 3, 4, 5, 6,
+    ]);
   });
 
   it('should return records from storage', async () => {
