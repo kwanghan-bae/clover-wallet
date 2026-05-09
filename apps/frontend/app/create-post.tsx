@@ -11,12 +11,12 @@ import { communityApi } from '../api/community';
 import { Logger } from '../utils/logger';
 import * as Haptics from 'expo-haptics';
 
-interface PrefillNumbers {
+export interface PrefillNumbers {
   games: { numbers: number[] }[];
   method?: string;
 }
 
-const parsePrefill = (raw?: string): PrefillNumbers | null => {
+export const parsePrefill = (raw?: string): PrefillNumbers | null => {
   if (!raw) return null;
   // expected format: "추천 번호 (Ngame):\n<game lines>\n\n<method> 방식으로 생성했습니다!"
   const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
