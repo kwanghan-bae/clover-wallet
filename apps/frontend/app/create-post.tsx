@@ -9,6 +9,7 @@ import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { PostNumbersPreview } from '../components/ui/PostNumbersPreview';
 import { communityApi } from '../api/community';
 import { Logger } from '../utils/logger';
+import * as Haptics from 'expo-haptics';
 
 interface PrefillNumbers {
   games: { numbers: number[] }[];
@@ -50,6 +51,7 @@ const CreatePostScreen = () => {
       const finalContent = prefillNumbers
         ? `${prefillContent}${content.trim() ? `\n\n${content.trim()}` : ''}`
         : content.trim();
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       await communityApi.createPost(title.trim(), finalContent);
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
       router.back();

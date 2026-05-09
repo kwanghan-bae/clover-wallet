@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { View, ScrollView, Animated, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Sparkles } from 'lucide-react-native';
+import * as Haptics from 'expo-haptics';
 import { generateLottoGames, saveLottoSet, labelOf } from '../utils/lotto';
 import { METHODS } from '../constants/generation-methods';
 import { GenerationInputModal } from '../components/ui/GenerationInputModal';
@@ -24,6 +25,7 @@ export default function NumberGenerationScreen() {
   const scaleAnim = useRef(new Animated.Value(0)).current;
 
   const runGenerate = (methodId: string, count: GameCount, param?: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     const games = generateLottoGames(methodId, count, param);
     setGeneratedGames(games);
     setLastParam(param);
@@ -57,6 +59,7 @@ export default function NumberGenerationScreen() {
 
   const handleSave = () => {
     if (generatedGames.length === 0) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsSaving(true);
     try {
       saveLottoSet({
