@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, Animated, ActivityIndicator } from 'react-native';
 import { Sparkles, Save, Share2 } from 'lucide-react-native';
+import { AppText } from '../ui/AppText';
 import { GenerationResultCard } from './GenerationResultCard';
 import { labelOf } from '../../utils/lotto';
 
@@ -29,19 +30,19 @@ const GenerationResultCardsComponent = ({
   const isMulti = games.length > 1;
 
   return (
-    <View className="bg-primary rounded-[24px] p-6 shadow-lg overflow-hidden">
+    <View className="bg-primary rounded-card-lg p-6 shadow-hero overflow-hidden">
       {methodTitle ? (
         <View className="self-center bg-white/20 px-4 py-2 rounded-full border border-white/30 mb-5">
-          <Text className="text-white font-bold">{methodTitle}</Text>
+          <AppText variant="body-lg" className="text-white">{methodTitle}</AppText>
         </View>
       ) : null}
 
       {games.length === 0 ? (
         <View className="items-center py-4">
           <Sparkles size={56} color="white" />
-          <Text className="text-white/70 text-base mt-4 text-center">
+          <AppText variant="body" className="text-white/70 mt-4 text-center">
             아래에서 생성 방식을 선택하세요!
-          </Text>
+          </AppText>
         </View>
       ) : (
         <View>
@@ -73,7 +74,7 @@ const GenerationResultCardsComponent = ({
             ) : (
               <>
                 <Save size={18} color="#4CAF50" />
-                <Text className="text-primary font-bold ml-2">번호 저장하기</Text>
+                <AppText variant="body-lg" className="text-primary ml-2">번호 저장하기</AppText>
               </>
             )}
           </TouchableOpacity>
@@ -85,7 +86,7 @@ const GenerationResultCardsComponent = ({
             accessibilityLabel="커뮤니티에 공유"
           >
             <Share2 size={18} color="#4CAF50" />
-            <Text className="text-primary font-bold ml-2">커뮤니티에 공유</Text>
+            <AppText variant="body-lg" className="text-primary ml-2">커뮤니티에 공유</AppText>
           </TouchableOpacity>
         </View>
       ) : null}

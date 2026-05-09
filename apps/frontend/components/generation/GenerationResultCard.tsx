@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useRef } from 'react';
 import { View, Text, Animated } from 'react-native';
+import { AppText } from '../ui/AppText';
 import { getNumberColor } from '../../utils/lotto';
 
 interface GenerationResultCardProps {
@@ -37,11 +38,11 @@ const GenerationResultCardComponent = ({
   return (
     <Animated.View
       style={{ opacity: cardOpacity }}
-      className="bg-white/15 rounded-2xl p-4 mb-3 border border-white/20"
+      className="bg-white/15 rounded-card p-4 mb-3 border border-white/20"
     >
       {label ? (
         <View className="absolute -top-2 -left-1 bg-white px-2 py-0.5 rounded-full">
-          <Text className="text-primary font-black text-[12px]">{label}</Text>
+          <AppText variant="caption" className="text-primary">{label}</AppText>
         </View>
       ) : null}
       <View className="flex-row flex-wrap justify-center gap-2">
