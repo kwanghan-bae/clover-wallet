@@ -61,13 +61,15 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
       </View>
 
       {record.games.map((game, i) => (
-        <View key={i} className={`flex-row justify-between items-center px-1 ${i > 0 ? 'mt-3' : ''}`}>
+        <View key={i} className={i > 0 ? 'mt-3' : ''}>
           {isMulti ? (
-            <Text className="text-gray-400 font-bold text-[12px] w-5">{labelOf(i)}</Text>
+            <Text className="text-gray-400 font-bold text-[12px] mb-1.5 ml-1">{labelOf(i)}</Text>
           ) : null}
-          {game.numbers.map((num, j) => (
-            <LottoBall key={j} number={num} size="sm" />
-          ))}
+          <View className="flex-row justify-between items-center px-1">
+            {game.numbers.map((num, j) => (
+              <LottoBall key={j} number={num} size="sm" />
+            ))}
+          </View>
         </View>
       ))}
     </View>
