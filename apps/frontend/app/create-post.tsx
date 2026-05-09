@@ -1,33 +1,56 @@
-import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { ScrollView, Alert, View } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
-import { X } from 'lucide-react-native';
+import { useQueryClient } from '@tanstack/react-query';
+import { AppBar } from '../components/ui/AppBar';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
 import { Input } from '../components/ui/Input';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
-import { useQueryClient } from '@tanstack/react-query';
+import { PostNumbersPreview } from '../components/ui/PostNumbersPreview';
 import { communityApi } from '../api/community';
 import { Logger } from '../utils/logger';
 
-/**
- * @description 커뮤니티에 새로운 게시물을 작성하고 등록하는 화면입니다.
- */
+interface PrefillNumbers {
+  games: { numbers: number[] }[];
+  method?: string;
+}
+
+const parsePrefill = (raw?: string): PrefillNumbers | null => {
+  if (!raw) return null;
+  // expected format: "추천 번호 (Ngame):\n<game lines>\n\n<method> 방식으로 생성했습니다!"
+  const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+  const gameLines = lines.filter(l => /^[A-Z]?:?\s*\d/.test(l) || /^\d/.test(l));
+  const methodLine = lines.find(l => l.includes('방식으로'));
+  const games = gameLines.map(line => {
+    const numStr = line.replace(/^[A-Z]:\s*/, '');
+    const numbers = numStr.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+    return { numbers };
+  }).filter(g => g.numbers.length === 6);
+  if (games.length === 0) return null;
+  const method = methodLine?.replace('방식으로 생성했습니다!', '').trim();
+  return { games, method };
+};
+
 const CreatePostScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const { prefillTitle, prefillContent } = useLocalSearchParams<{ prefillTitle?: string; prefillContent?: string }>();
   const [title, setTitle] = useState(prefillTitle ?? '');
-  const [content, setContent] = useState(prefillContent ?? '');
+  const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const prefillNumbers = useMemo(() => parsePrefill(prefillContent), [prefillContent]);
 
   const handleSubmit = async () => {
-    if (!title.trim() || !content.trim()) {
+    if (!title.trim() || (!content.trim() && !prefillNumbers)) {
       Alert.alert('입력 오류', '제목과 내용을 모두 입력해주세요.');
       return;
     }
-
     setIsLoading(true);
     try {
-      await communityApi.createPost(title.trim(), content.trim());
+      const finalContent = prefillNumbers
+        ? `${prefillContent}${content.trim() ? `\n\n${content.trim()}` : ''}`
+        : content.trim();
+      await communityApi.createPost(title.trim(), finalContent);
       queryClient.invalidateQueries({ queryKey: ['communityPosts'] });
       router.back();
     } catch (error) {
@@ -39,48 +62,35 @@ const CreatePostScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-dark-bg">
-      <Stack.Screen options={{
-        headerShown: true,
-        title: 'Create Post',
-        headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()} accessibilityLabel="닫기" accessibilityRole="button">
-            <X size={24} color="#212121" />
-          </TouchableOpacity>
-        ),
-        headerRight: () => (
-          <TouchableOpacity onPress={handleSubmit} accessibilityLabel="게시하기" accessibilityRole="button">
-            <Text className="text-primary font-bold text-lg">Post</Text>
-          </TouchableOpacity>
-        )
-      }} />
-
-      <ScrollView className="flex-1 p-4 gap-4">
+    <ScreenContainer>
+      <Stack.Screen options={{ headerShown: false }} />
+      <AppBar variant="modal" title="글 작성" onClosePress={() => router.back()} />
+      <ScrollView className="flex-1 px-5 pt-3" keyboardShouldPersistTaps="handled">
         <Input
-          placeholder="Title"
+          testID="input-title"
+          placeholder="제목"
           value={title}
           onChangeText={setTitle}
-          className="border-0 border-b border-gray-100 dark:border-dark-card px-0 text-xl font-bold"
+          className="border-0 border-b border-border-hairline px-0 text-title-lg font-extrabold mb-4"
         />
+        {prefillNumbers ? (
+          <PostNumbersPreview games={prefillNumbers.games} method={prefillNumbers.method} />
+        ) : null}
         <Input
-          placeholder="What's on your mind?"
+          testID="input-content"
+          placeholder="내 이야기를 써보세요"
           value={content}
           onChangeText={setContent}
           multiline
-          numberOfLines={10}
+          numberOfLines={6}
           textAlignVertical="top"
-          className="border-0 px-0 h-60"
+          className="border-0 px-0 h-40"
         />
       </ScrollView>
-
-      <View className="p-4 border-t border-gray-50 dark:border-dark-card">
-        <PrimaryButton
-          label="Post Story"
-          onPress={handleSubmit}
-          isLoading={isLoading}
-        />
+      <View className="px-5 pb-5 pt-3 border-t border-border-hairline">
+        <PrimaryButton label="게시하기" onPress={handleSubmit} isLoading={isLoading} />
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };
 

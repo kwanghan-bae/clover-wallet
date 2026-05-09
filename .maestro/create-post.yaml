@@ -11,7 +11,7 @@ name: Create Community Post
 - assertVisible: "커뮤니티"
 - tapOn:
     id: "fab-create-post"
-- assertVisible: "게시글 작성"
+- assertVisible: "글 작성"
 - tapOn:
     id: "input-title"
 - inputText: "E2E 테스트 게시글"
