@@ -1,7 +1,8 @@
 import React from 'react';
-import { Text, Pressable, PressableProps, ActivityIndicator } from 'react-native';
+import { Pressable, PressableProps, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import { AppText } from './AppText';
 import { cn } from '../../utils/cn';
 
 interface PrimaryButtonProps extends PressableProps {
@@ -13,40 +14,25 @@ interface PrimaryButtonProps extends PressableProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-/**
- * @description 애플리케이션 전반에서 사용되는 주요 액션 버튼 컴포넌트입니다.
- * 애니메이션 피드백(Scale 효과)과 그라데이션 스타일을 제공합니다.
- */
-export const PrimaryButton = ({ 
-  label, 
-  isLoading = false, 
-  className, 
+export const PrimaryButton = ({
+  label,
+  isLoading = false,
+  className,
   textClassName,
   disabled,
-  ...props 
+  ...props
 }: PrimaryButtonProps) => {
   const scale = useSharedValue(1);
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-
-  const handlePressIn = () => {
-    scale.value = withSpring(0.96);
-  };
-
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
+  const animatedStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
   return (
     <AnimatedPressable
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
+      onPressIn={() => { scale.value = withSpring(0.96); }}
+      onPressOut={() => { scale.value = withSpring(1); }}
       disabled={isLoading || disabled}
-      className={cn("rounded-xl overflow-hidden shadow-md", className)}
+      className={cn('rounded-lg overflow-hidden shadow-button', className)}
       style={animatedStyle}
-      accessible={true}
+      accessible
       accessibilityLabel={isLoading ? `${label} 처리 중` : label}
       accessibilityRole="button"
       accessibilityState={{ disabled: !!(isLoading || disabled), busy: isLoading }}
@@ -61,9 +47,9 @@ export const PrimaryButton = ({
         {isLoading ? (
           <ActivityIndicator color="white" size="small" />
         ) : (
-          <Text className={cn("text-white font-black text-base tracking-wide", textClassName)}>
+          <AppText variant="body-lg" className={cn('text-white', textClassName)}>
             {label}
-          </Text>
+          </AppText>
         )}
       </LinearGradient>
     </AnimatedPressable>
