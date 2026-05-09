@@ -1,13 +1,16 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, Animated, Alert } from 'react-native';
+import { View, ScrollView, Animated, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
-import { Sparkles, ChevronLeft } from 'lucide-react-native';
+import { Sparkles } from 'lucide-react-native';
 import { generateLottoGames, saveLottoSet, labelOf } from '../utils/lotto';
 import { METHODS } from '../constants/generation-methods';
 import { GenerationInputModal } from '../components/ui/GenerationInputModal';
 import { GenerationResultCards } from '../components/generation/GenerationResultCards';
 import { GameCountToggle, GameCount } from '../components/generation/GameCountToggle';
 import { MethodSelector } from '../components/generation/MethodSelector';
+import { ScreenContainer } from '../components/ui/ScreenContainer';
+import { AppBar } from '../components/ui/AppBar';
+import { AppText } from '../components/ui/AppText';
 
 export default function NumberGenerationScreen() {
   const router = useRouter();
@@ -82,21 +85,9 @@ export default function NumberGenerationScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
-      <Stack.Screen options={{
-        title: '행운의 번호 추첨',
-        headerLeft: () => (
-          <TouchableOpacity
-            onPress={() => router.back()}
-            accessibilityRole="button"
-            accessibilityLabel="뒤로 가기"
-            activeOpacity={0.7}
-            className="p-3 -ml-3"
-          >
-            <ChevronLeft size={24} color="#1A1A1A" />
-          </TouchableOpacity>
-        ),
-      }} />
+    <ScreenContainer>
+      <Stack.Screen options={{ headerShown: false }} />
+      <AppBar variant="screen" title="행운의 번호 추첨" onBackPress={() => router.back()} />
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <GameCountToggle value={gameCount} onChange={handleCountChange} />
         <GenerationResultCards
@@ -118,15 +109,15 @@ export default function NumberGenerationScreen() {
           onConfirm={handleConfirmModal}
         />
         {/* Tip Section */}
-        <View className="bg-amber-50 dark:bg-dark-card rounded-2xl p-4 border border-amber-100 dark:border-dark-card mt-8 mb-10 flex-row">
-          <Sparkles size={24} color="#D84315" />
+        <View className="bg-surface dark:bg-dark-card rounded-card p-4 border border-border-hairline mt-8 mb-10 flex-row">
+          <Sparkles size={24} color="#E65100" />
           <View className="flex-1 ml-3">
-            <Text className="text-[#5D4037] dark:text-dark-text-secondary text-[13px] leading-5">
+            <AppText variant="body" className="text-text-secondary dark:text-dark-text-secondary leading-5">
               각 방식마다 고유한 알고리즘으로 번호를 생성합니다. 마음에 드는 방법을 선택해보세요!
-            </Text>
+            </AppText>
           </View>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 }
