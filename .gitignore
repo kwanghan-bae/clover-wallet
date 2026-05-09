@@ -52,4 +52,6 @@ lcov.info
 .windsurfrules
 
 .opencode/AGENTS.md
-.claude/worktrees/
+
+# Claude Code session artifacts (local-only)
+.claude/
