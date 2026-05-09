@@ -4,14 +4,17 @@ import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import Constants from 'expo-constants';
 import { notificationsApi } from '../api/notifications';
+import { useAuth } from './useAuth';
 
 export function useNotifications() {
   const queryClient = useQueryClient();
+  const { isAuthenticated } = useAuth();
 
   const { data: unreadData } = useQuery({
     queryKey: ['unreadCount'],
     queryFn: () => notificationsApi.getUnreadCount(),
     refetchInterval: 60000,
+    enabled: isAuthenticated,
   });
 
   const unreadCount = unreadData?.count ?? 0;

@@ -10,7 +10,7 @@ import { z } from 'zod';
 export const CommonResponseSchema = z.object({
   success: z.boolean().optional(),
   data: z.any(),
-  message: z.string().optional(),
+  message: z.string().nullable().optional(),
 });
 
 /**

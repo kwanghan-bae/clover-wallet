@@ -8,7 +8,12 @@ export const StorageKeys = {
 
 /** 웹 환경을 위한 MMKV 모킹(Mock) 객체입니다. localStorage를 사용하여 데이터를 관리합니다. */
 const storage = {
-  set: (key: string, value: string | boolean | number | Uint8Array) => {
+  set: (key: string, value: string | boolean | number | Uint8Array | undefined | null) => {
+    if (value === undefined || value === null) {
+      // null/undefined는 저장 대신 키 삭제로 처리 (MMKV native 동작에 맞춤)
+      localStorage.removeItem(key);
+      return;
+    }
     localStorage.setItem(key, value.toString());
   },
   getString: (key: string) => {
