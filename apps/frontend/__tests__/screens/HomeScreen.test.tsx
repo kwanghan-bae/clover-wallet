@@ -34,7 +34,6 @@ describe('HomeScreen', () => {
     expect(getByText('번호 추첨')).toBeTruthy();
     expect(getByText('QR 스캔')).toBeTruthy();
     expect(getByText('번호 분석')).toBeTruthy();
-    expect(getByText('명당 지도')).toBeTruthy();
     expect(getByText('로또 명당')).toBeTruthy();
   });
 

@@ -13,8 +13,8 @@ describe('QuickActions', () => {
     mockOnNavigate.mockClear();
   });
 
-  /** 5개 퀵 액션 라벨을 모두 표시합니다 */
-  test('5개 액션 라벨을 모두 렌더링한다', () => {
+  /** 4개 퀵 액션 라벨을 모두 표시합니다 */
+  test('4개 액션 라벨을 모두 렌더링한다', () => {
     const { toJSON } = render(
       React.createElement(QuickActions, { onNavigate: mockOnNavigate })
     );
@@ -22,7 +22,6 @@ describe('QuickActions', () => {
     expect(hasText(tree, '번호 추첨')).toBe(true);
     expect(hasText(tree, 'QR 스캔')).toBe(true);
     expect(hasText(tree, '번호 분석')).toBe(true);
-    expect(hasText(tree, '명당 지도')).toBe(true);
     expect(hasText(tree, '로또 명당')).toBe(true);
   });
 

@@ -1,48 +1,40 @@
 import React, { memo } from 'react';
-import { View, Text } from 'react-native';
-import { Dices, QrCode, BarChart3, Navigation, MapPin } from 'lucide-react-native';
-import { QuickActionItem } from '../ui/QuickActionItem';
+import { View } from 'react-native';
+import { Dices, QrCode, BarChart3, MapPin } from 'lucide-react-native';
+import { QuickActionCard } from '../ui/QuickActionCard';
+import { SectionHead } from '../ui/SectionHead';
 
 export interface QuickActionsProps {
   onNavigate: (path: string) => void;
 }
 
-/** @description 홈 화면의 5개 빠른 실행 액션 그리드 컴포넌트입니다. */
 const QuickActionsComponent = ({ onNavigate }: QuickActionsProps) => (
   <>
-    <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mt-8 mb-4">
-      빠른 실행
-    </Text>
-    <View className="flex-row justify-between w-full" style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-      <QuickActionItem
-        icon={<Dices size={32} color="#9C27B0" />}
+    <SectionHead title="빠른 실행" />
+    <View className="flex-row gap-2">
+      <QuickActionCard
+        icon={<Dices size={20} color="#6A1B9A" />}
         label="번호 추첨"
-        bgColor="bg-[#9C27B0]/10"
+        tone="purple"
         onPress={() => onNavigate('/number-generation')}
       />
-      <QuickActionItem
-        icon={<QrCode size={32} color="#2196F3" />}
+      <QuickActionCard
+        icon={<QrCode size={20} color="#1565C0" />}
         label="QR 스캔"
-        bgColor="bg-[#2196F3]/10"
+        tone="blue"
         onPress={() => onNavigate('/scan')}
       />
-      <QuickActionItem
-        icon={<BarChart3 size={32} color="#FF9800" />}
+      <QuickActionCard
+        icon={<BarChart3 size={20} color="#E65100" />}
         label="번호 분석"
-        bgColor="bg-[#FF9800]/10"
+        tone="orange"
         onPress={() => onNavigate('/statistics')}
       />
-      <QuickActionItem
-        icon={<Navigation size={32} color="#00BCD4" />}
-        label="명당 지도"
-        bgColor="bg-[#00BCD4]/10"
-        onPress={() => onNavigate('/(tabs)/map')}
-      />
-      <QuickActionItem
-        icon={<MapPin size={32} color="#4CAF50" />}
+      <QuickActionCard
+        icon={<MapPin size={20} color="#2E7D32" />}
         label="로또 명당"
-        bgColor="bg-[#4CAF50]/10"
-        onPress={() => onNavigate('/map')}
+        tone="green"
+        onPress={() => onNavigate('/(tabs)/map')}
       />
     </View>
   </>
