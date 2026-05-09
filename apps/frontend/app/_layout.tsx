@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
-import { View, Text, Platform } from 'react-native';
+import { View, Text } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GlobalErrorBoundary } from '../components/ErrorBoundary';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -20,36 +21,10 @@ import { Logger } from '../utils/logger';
 import { useNotifications } from '../hooks/useNotifications';
 import { useOffline } from '../hooks/useOffline';
 import { useTheme } from '../hooks/useTheme';
+import { persister } from '../utils/query-storage';
 import '../global.css';
 
 SplashScreen.preventAutoHideAsync();
-
-function createStorage() {
-  if (Platform.OS === 'web') {
-    return {
-      set: (key: string, value: string) => localStorage.setItem(key, value),
-      getString: (key: string) => localStorage.getItem(key) ?? undefined,
-      remove: (key: string) => localStorage.removeItem(key),
-    };
-  }
-  const { MMKV } = require('react-native-mmkv');
-  return new MMKV({ id: 'query-cache' });
-}
-
-const queryStorage = createStorage();
-
-const persister = {
-  persistClient: (client: unknown) => {
-    queryStorage.set('react-query-cache', JSON.stringify(client));
-  },
-  restoreClient: () => {
-    const cache = queryStorage.getString('react-query-cache');
-    return cache ? JSON.parse(cache) : undefined;
-  },
-  removeClient: () => {
-    queryStorage.remove('react-query-cache');
-  },
-};
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -144,11 +119,13 @@ export default function RootLayout() {
 
   return (
     <GlobalErrorBoundary>
-      <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </PersistQueryClientProvider>
+      <SafeAreaProvider>
+        <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </PersistQueryClientProvider>
+      </SafeAreaProvider>
     </GlobalErrorBoundary>
   );
 }
