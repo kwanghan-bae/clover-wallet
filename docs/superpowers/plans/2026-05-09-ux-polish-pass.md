@@ -395,17 +395,66 @@ git add apps/frontend/components/ui/AppText.tsx apps/frontend/__tests__/componen
 git commit -m "feat(ui): add AppText component with typography variants"
 ```
 
-### Task B2: ScreenContainer (with safe-area-context migration)
+### Task B2: ScreenContainer (with safe-area-context migration + persister extraction)
 
 **Files:**
 - Create: `apps/frontend/components/ui/ScreenContainer.tsx`
 - Create: `apps/frontend/__tests__/components/ui/ScreenContainer.test.tsx`
-- Modify: `apps/frontend/app/_layout.tsx` (wrap with `SafeAreaProvider`)
+- Create: `apps/frontend/utils/query-storage.ts`
+- Modify: `apps/frontend/app/_layout.tsx` (wrap with `SafeAreaProvider`, extract persister)
+
+> **Note:** This task folds in a small refactor — extracting `createStorage()` + `persister` from `_layout.tsx` into a new `utils/query-storage.ts` file. Reason: Task A2 added 4 lines to `_layout.tsx` pushing it from 150 → 154 (over the CLAUDE.md 150-line limit). B2's `SafeAreaProvider` import + wrap will push it further. Extracting the storage shim (~26 lines) brings the file back well under the limit and is also the right architectural home for that code.
 
 - [ ] **Step 1: Verify safe-area-context is installed**
 
 Run: `cd apps/frontend && node -e "require('react-native-safe-area-context')"`
-Expected: no error. If error, run `npm install react-native-safe-area-context`.
+Expected: no error. If error, run `cd apps/frontend && npx expo install react-native-safe-area-context`.
+
+- [ ] **Step 1b: Extract query persister**
+
+Create `apps/frontend/utils/query-storage.ts`:
+
+```ts
+import { Platform } from 'react-native';
+
+interface QueryStorage {
+  set: (key: string, value: string) => void;
+  getString: (key: string) => string | undefined;
+  remove: (key: string) => void;
+}
+
+function createStorage(): QueryStorage {
+  if (Platform.OS === 'web') {
+    return {
+      set: (key, value) => localStorage.setItem(key, value),
+      getString: (key) => localStorage.getItem(key) ?? undefined,
+      remove: (key) => localStorage.removeItem(key),
+    };
+  }
+  const { MMKV } = require('react-native-mmkv');
+  return new MMKV({ id: 'query-cache' });
+}
+
+const queryStorage = createStorage();
+
+export const persister = {
+  persistClient: (client: unknown) => {
+    queryStorage.set('react-query-cache', JSON.stringify(client));
+  },
+  restoreClient: () => {
+    const cache = queryStorage.getString('react-query-cache');
+    return cache ? JSON.parse(cache) : undefined;
+  },
+  removeClient: () => {
+    queryStorage.remove('react-query-cache');
+  },
+};
+```
+
+Then in `apps/frontend/app/_layout.tsx`:
+- Remove the local `createStorage` function, the `queryStorage` const, and the `persister` const (currently around lines 27–52)
+- Add an import at the top: `import { persister } from '../utils/query-storage';`
+- The `Platform` import from `react-native` is now unused at the `_layout.tsx` level — leave it ONLY if another usage in the file still needs it; otherwise remove it.
 
 - [ ] **Step 2: Write failing test**
 
