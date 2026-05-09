@@ -73,4 +73,50 @@ describe('BigIntInterceptor', () => {
       },
     });
   });
+
+  it('Date 인스턴스는 그대로 통과시킴 (toJSON으로 ISO 문자열 직렬화 보장)', (done) => {
+    const date = new Date('2025-01-15T10:30:00.000Z');
+    const mockCallHandler: CallHandler = {
+      handle: () => of({ createdAt: date, items: [{ updatedAt: date }] }),
+    };
+    const mockExecutionContext = {
+      getType: jest.fn().mockReturnValue('http'),
+    } as any;
+
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: (response: any) => {
+        expect(response.createdAt).toBeInstanceOf(Date);
+        expect(response.createdAt.getTime()).toBe(date.getTime());
+        expect(response.items[0].updatedAt).toBeInstanceOf(Date);
+        expect(JSON.stringify(response)).toContain('2025-01-15T10:30:00.000Z');
+        done();
+      },
+    });
+  });
+
+  it('toJSON 메서드를 가진 임의 객체도 그대로 통과 (Date, Decimal 등 미래 타입 호환)', (done) => {
+    // Decimal-like custom value object
+    class FakeDecimal {
+      constructor(public value: string) {}
+      toJSON() {
+        return this.value;
+      }
+    }
+    const dec = new FakeDecimal('123.45');
+    const mockCallHandler: CallHandler = {
+      handle: () => of({ price: dec }),
+    };
+    const mockExecutionContext = {
+      getType: jest.fn().mockReturnValue('http'),
+    } as any;
+
+    interceptor.intercept(mockExecutionContext, mockCallHandler).subscribe({
+      next: (response: any) => {
+        expect(response.price).toBeInstanceOf(FakeDecimal);
+        expect(response.price.toJSON()).toBe('123.45');
+        expect(JSON.stringify(response)).toContain('"123.45"');
+        done();
+      },
+    });
+  });
 });

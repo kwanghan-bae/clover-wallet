@@ -10,6 +10,7 @@ import { supabase } from '../utils/supabase';
 import { authApi } from '../api/auth';
 import { saveItem, loadItem, removeItem } from '../utils/storage';
 import { Logger } from '../utils/logger';
+import { isDevAuthBypass, getDevUserEmail } from '../utils/dev-auth';
 
 export interface AuthUser {
   id: number;
@@ -31,12 +32,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  const persistAndSetUser = useCallback((response: {
+    accessToken: string;
+    refreshToken?: string;
+    user: AuthUser;
+  }) => {
+    saveItem('auth.access_token', response.accessToken);
+    if (response.refreshToken) {
+      saveItem('auth.refresh_token', response.refreshToken);
+    }
+    saveItem('user.profile', response.user);
+    setUser(response.user);
+  }, []);
+
   useEffect(() => {
     const stored = loadItem<AuthUser>('user.profile');
     const token = loadItem<string>('auth.access_token');
     if (stored && token) {
       setUser(stored);
+      setIsLoading(false);
+      return;
     }
+
+    if (isDevAuthBypass()) {
+      authApi
+        .devLogin(getDevUserEmail())
+        .then((response) => {
+          persistAndSetUser({
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            user: response.user,
+          });
+        })
+        .catch((error) => {
+          Logger.error('AuthProvider', 'Dev login failed:', error);
+        })
+        .finally(() => setIsLoading(false));
+      return;
+    }
+
     setIsLoading(false);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -44,12 +78,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (event === 'SIGNED_IN' && session) {
           try {
             const response = await authApi.login(session.access_token);
-            saveItem('auth.access_token', response.accessToken);
-            if (response.refreshToken) {
-              saveItem('auth.refresh_token', response.refreshToken);
-            }
-            saveItem('user.profile', response.user);
-            setUser(response.user);
+            persistAndSetUser({
+              accessToken: response.accessToken,
+              refreshToken: response.refreshToken,
+              user: response.user,
+            });
           } catch (error) {
             Logger.error('AuthProvider', 'Backend login failed:', error);
           }
@@ -64,6 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signInWithGoogle = useCallback(async () => {

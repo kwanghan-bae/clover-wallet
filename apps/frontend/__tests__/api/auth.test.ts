@@ -70,4 +70,23 @@ describe('authApi', () => {
       });
     });
   });
+
+  describe('devLogin', () => {
+    it('posts to auth/dev-login with email', async () => {
+      const mockResponse = {
+        accessToken: 'dev-at',
+        refreshToken: 'dev-rt',
+        user: { id: 1, email: 'dev1@local.test', nickname: null },
+      };
+      const mockJson = jest.fn().mockResolvedValue(mockResponse);
+      (apiClient.post as jest.Mock).mockReturnValue({ json: mockJson });
+
+      const result = await authApi.devLogin('dev1@local.test');
+
+      expect(apiClient.post).toHaveBeenCalledWith('auth/dev-login', {
+        json: { email: 'dev1@local.test' },
+      });
+      expect(result).toEqual(mockResponse);
+    });
+  });
 });
