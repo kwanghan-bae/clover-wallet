@@ -36,7 +36,7 @@ apps/frontend/components/ui/
 
 ```
 apps/frontend/tailwind.config.js                # +tokens
-apps/frontend/app/_layout.tsx                   # +font weights, web body bg
+apps/frontend/app/_layout.tsx                   # +font weights, +SafeAreaProvider
 apps/frontend/global.css                        # +web body bg
 apps/frontend/components/home/HeroSection.tsx   # refresh
 apps/frontend/components/home/QuickActions.tsx  # use QuickActionCard, 5→4
