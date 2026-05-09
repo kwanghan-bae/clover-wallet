@@ -189,8 +189,22 @@ git commit -m "feat(ui): extend tailwind tokens (color/type/spacing/radius/shado
 
 **Files:**
 - Modify: `apps/frontend/app/_layout.tsx`
+- Possibly modify: `apps/frontend/package.json` / `package-lock.json`
 
-- [ ] **Step 1: Update font imports**
+- [ ] **Step 1: Verify the package exports the new weights**
+
+Run: `cd apps/frontend && node -e "const f = require('@expo-google-fonts/noto-sans-kr'); console.log('SemiBold:', !!f.NotoSansKR_600SemiBold, 'ExtraBold:', !!f.NotoSansKR_800ExtraBold)"`
+Expected: `SemiBold: true ExtraBold: true`
+
+If either is `false`, run Expo's compatibility-aware installer (do **not** plain `npm install @latest` — that can pull an SDK-incompat version):
+
+```bash
+cd apps/frontend && npx expo install @expo-google-fonts/noto-sans-kr
+```
+
+Then re-run the verify command. If it still reports `false`, stop and escalate — the package needs investigation rather than a blind upgrade.
+
+- [ ] **Step 2: Update font imports in `_layout.tsx`**
 
 In `apps/frontend/app/_layout.tsx`, find the existing `useFonts` import block:
 
@@ -219,13 +233,6 @@ import {
 ```
 
 Then find the `useFonts({...})` call and add `NotoSansKR_600SemiBold` and `NotoSansKR_800ExtraBold` to its argument object alongside the existing entries.
-
-- [ ] **Step 2: Verify the package exports the new weights**
-
-Run: `node -e "const f = require('@expo-google-fonts/noto-sans-kr'); console.log('SemiBold:', !!f.NotoSansKR_600SemiBold, 'ExtraBold:', !!f.NotoSansKR_800ExtraBold)"`
-Expected: `SemiBold: true ExtraBold: true`
-
-If either is `false`, stop — the package version (`^0.4.2` per package.json) is missing the weight. Update the package: `cd apps/frontend && npm install @expo-google-fonts/noto-sans-kr@latest` and re-run.
 
 - [ ] **Step 3: Run tests**
 
@@ -1122,14 +1129,17 @@ export type AppBarProps =
 
 export const AppBar: React.FC<AppBarProps> = (props) => {
   if (props.variant === 'home') {
-    const { variant: _v, ...rest } = props;
+    const { variant, ...rest } = props;
+    void variant;
     return <AppBarHome {...rest} />;
   }
   if (props.variant === 'screen') {
-    const { variant: _v, ...rest } = props;
+    const { variant, ...rest } = props;
+    void variant;
     return <AppBarScreen {...rest} />;
   }
-  const { variant: _v, ...rest } = props;
+  const { variant, ...rest } = props;
+  void variant;
   return <AppBarModal {...rest} />;
 };
 
@@ -1467,6 +1477,56 @@ git commit -m "feat(home): apply AppBar/ScreenContainer/EmptyState (reference sc
 
 ## Phase D — Refresh existing shared components
 
+### Phase D Transformation Playbook (referenced by D2.1–D2.6, D3)
+
+For each component file targeted by Phase D, apply these three find-and-replace passes:
+
+**A. Replace inline `fontFamily: 'NotoSansKR_…'` Text usages with `<AppText variant="…">`**
+
+Add import at top of the file:
+```ts
+import { AppText } from './AppText';   // adjust relative path if needed
+```
+
+For each `<Text style={{ fontFamily: 'NotoSansKR_<weight> }} ...>` → `<AppText variant="<v>" ...>`. Weight → variant mapping:
+
+| fontFamily weight | AppText variant |
+|---|---|
+| `NotoSansKR_400Regular` / `NotoSansKR_500Medium` | `body` |
+| `NotoSansKR_600SemiBold` | `caption` (default) or `body-lg` if size ≥ 14 |
+| `NotoSansKR_700Bold` | `title` (default) or `title-lg` if size ≥ 18 |
+| `NotoSansKR_800ExtraBold` / `NotoSansKR_900Black` | `display` if size ≥ 24, else `title-lg` |
+
+Drop the inline `fontFamily` portion. Keep other style props on the element.
+
+**B. Replace inline shadow style block with `shadow-card` className**
+
+Find any block like:
+```tsx
+shadowColor: '#000',
+shadowOffset: { width: 0, height: 4 },
+shadowOpacity: 0.05,
+shadowRadius: 10,
+elevation: 2,
+```
+Remove it. Add `shadow-card` to the wrapping `className`. (Use `shadow-elev` if `elevation: 5`+ in the original; `shadow-button` for primary action buttons.)
+
+**C. Replace inline hex colors in className/style with token classes**
+
+| Inline | Token class |
+|---|---|
+| `bg-white` | `bg-surface` |
+| `bg-[#F5F7FA]` | `bg-surface-muted` |
+| `text-[#1A1A1A]` | `text-text-primary` |
+| `text-[#757575]` / `text-[#9E9E9E]` / `text-[#BDBDBD]` | `text-text-muted` |
+| `text-[#4CAF50]` | `text-primary-text` |
+| `border-gray-100` / `border-gray-50` | `border-border-hairline` |
+| `rounded-[24px]` / `rounded-3xl` | `rounded-card-lg` |
+| `rounded-[20px]` / `rounded-2xl` | `rounded-card` |
+| `rounded-[16px]` / `rounded-xl` | `rounded-lg` |
+
+After applying A/B/C, the file's existing test should still pass. If a test asserts the `style.fontFamily` value, update it to `getByText` only — the text content is unchanged.
+
 ### Task D1: PrimaryButton (token application)
 
 **Files:**
@@ -1548,66 +1608,124 @@ git add apps/frontend/components/ui/PrimaryButton.tsx
 git commit -m "refactor(ui): apply tokens to PrimaryButton (radius/shadow/typo)"
 ```
 
-### Task D2: Refresh card-style components (HistoryItem, WinningHistoryItem, PostCard, CommentItem, SpotListItem, MyPageMenuItem)
+### Task D2.1: Refresh HistoryItem
 
 **Files:**
-- Modify (one at a time, separate commits): `apps/frontend/components/ui/HistoryItem.tsx`, `WinningHistoryItem.tsx`, `PostCard.tsx`, `CommentItem.tsx`, `SpotListItem.tsx`, `MyPageMenuItem.tsx`
+- Modify: `apps/frontend/components/ui/HistoryItem.tsx`
 
-- [ ] **Step 1: For each file in the list above, perform this transformation**
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to `HistoryItem.tsx`**
 
-Open the file and apply these find-and-replace operations:
+- [ ] **Step 2: Run the test**
 
-**A. Replace inline `fontFamily: 'NotoSansKR_…'` Text usages with `<AppText variant="…">`**
+Run: `cd apps/frontend && npm test -- --testPathPattern=HistoryItem`
+Expected: PASS
 
-Add import at top:
-```ts
-import { AppText } from './AppText';
-```
-
-For each `<Text style={{ fontFamily: 'NotoSansKR_700Bold' }} ...>` → `<AppText variant="title" ...>` (drop the inline style fontFamily; map weights: 400→body, 500→body, 700→title, 900→display).
-
-Drop the inline `fontFamily` portion and keep other style props.
-
-**B. Replace inline shadow style block with `shadow-card` className**
-
-Find any block like:
-```tsx
-shadowColor: '#000',
-shadowOffset: { width: 0, height: 4 },
-shadowOpacity: 0.05,
-shadowRadius: 10,
-elevation: 2,
-```
-Remove it. Add `shadow-card` to the wrapping `className`.
-
-**C. Replace inline hex colors in className/style with token classes**
-
-| Inline | Token class |
-|---|---|
-| `bg-white` | `bg-surface` |
-| `bg-[#F5F7FA]` | `bg-surface-muted` |
-| `text-[#1A1A1A]` | `text-text-primary` |
-| `text-[#757575]` / `text-[#9E9E9E]` / `text-[#BDBDBD]` | `text-text-muted` |
-| `text-[#4CAF50]` | `text-primary` |
-| `border-gray-100` | `border-border-hairline` |
-| `rounded-[24px]` / `rounded-3xl` | `rounded-card-lg` |
-| `rounded-[20px]` / `rounded-2xl` | `rounded-card` |
-| `rounded-[16px]` / `rounded-xl` | `rounded-lg` |
-
-**D. Run the file's existing test**
-
-For each file `<Name>.tsx`, run: `cd apps/frontend && npm test -- --testPathPattern=<Name>`. Expected: PASS. If a test breaks because text was assertion-checked via style match, update the assertion to use `getByText` only (the variant style is fine because the text content is unchanged).
-
-**E. Commit per file**
-
-After each file passes:
+- [ ] **Step 3: Commit**
 
 ```bash
-git add apps/frontend/components/ui/<Name>.tsx apps/frontend/__tests__/components/ui/<Name>.test.tsx
-git commit -m "refactor(ui): apply tokens to <Name>"
+git add apps/frontend/components/ui/HistoryItem.tsx apps/frontend/__tests__/components/ui/HistoryItem.test.tsx
+git commit -m "refactor(ui): apply tokens to HistoryItem"
 ```
 
-- [ ] **Step 2: Verify suite**
+### Task D2.2: Refresh WinningHistoryItem
+
+**Files:**
+- Modify: `apps/frontend/components/ui/WinningHistoryItem.tsx`
+
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to `WinningHistoryItem.tsx`**
+
+- [ ] **Step 2: Run the test**
+
+Run: `cd apps/frontend && npm test -- --testPathPattern=WinningHistoryItem`
+Expected: PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add apps/frontend/components/ui/WinningHistoryItem.tsx apps/frontend/__tests__/components/ui/WinningHistoryItem.test.tsx
+git commit -m "refactor(ui): apply tokens to WinningHistoryItem"
+```
+
+### Task D2.3: Refresh PostCard
+
+**Files:**
+- Modify: `apps/frontend/components/ui/PostCard.tsx`
+
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to `PostCard.tsx`**
+
+- [ ] **Step 2: Run the test**
+
+Run: `cd apps/frontend && npm test -- --testPathPattern=PostCard`
+Expected: PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add apps/frontend/components/ui/PostCard.tsx apps/frontend/__tests__/components/ui/PostCard.test.tsx
+git commit -m "refactor(ui): apply tokens to PostCard"
+```
+
+### Task D2.4: Refresh CommentItem
+
+**Files:**
+- Modify: `apps/frontend/components/ui/CommentItem.tsx`
+
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to `CommentItem.tsx`**
+
+- [ ] **Step 2: Run the test**
+
+Run: `cd apps/frontend && npm test -- --testPathPattern=CommentItem`
+Expected: PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add apps/frontend/components/ui/CommentItem.tsx apps/frontend/__tests__/components/ui/CommentItem.test.tsx
+git commit -m "refactor(ui): apply tokens to CommentItem"
+```
+
+### Task D2.5: Refresh SpotListItem
+
+**Files:**
+- Modify: `apps/frontend/components/ui/SpotListItem.tsx`
+
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to `SpotListItem.tsx`**
+
+- [ ] **Step 2: Run the test**
+
+Run: `cd apps/frontend && npm test -- --testPathPattern=SpotListItem`
+Expected: PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add apps/frontend/components/ui/SpotListItem.tsx apps/frontend/__tests__/components/ui/SpotListItem.test.tsx
+git commit -m "refactor(ui): apply tokens to SpotListItem"
+```
+
+### Task D2.6: Refresh MyPageMenuItem
+
+**Files:**
+- Modify: `apps/frontend/components/ui/MyPageMenuItem.tsx`
+
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to `MyPageMenuItem.tsx`**
+
+- [ ] **Step 2: Run the relevant test**
+
+Run: `cd apps/frontend && npm test -- --testPathPattern=SmallComponents`
+(MyPageMenuItem is covered by `SmallComponents.test.tsx`. Adjust if a dedicated test file exists.)
+Expected: PASS
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add apps/frontend/components/ui/MyPageMenuItem.tsx apps/frontend/__tests__/components/ui/SmallComponents.test.tsx
+git commit -m "refactor(ui): apply tokens to MyPageMenuItem"
+```
+
+### Task D2.7: Verify D2 suite
+
+- [ ] **Step 1: Run the full frontend suite**
 
 Run: `cd apps/frontend && npm test`
 Expected: all pass
@@ -1618,7 +1736,9 @@ Expected: all pass
 - Modify: `apps/frontend/components/generation/GenerationResultCard.tsx`
 - Modify: `apps/frontend/components/generation/GenerationResultCards.tsx`
 
-- [ ] **Step 1: Apply the same A/B/C transformation from Task D2** to both files (`fontFamily` → AppText, inline shadow → `shadow-card`, inline hex → token classes).
+- [ ] **Step 1: Apply Phase D Transformation Playbook (A/B/C) to both files**
+
+Note the AppText import path: `import { AppText } from '../ui/AppText';` (relative path from `components/generation/` is one level up to `components/ui/`).
 
 - [ ] **Step 2: Run tests**
 
@@ -1819,11 +1939,15 @@ git commit -m "feat(mypage): apply UX polish tokens"
 **Files:**
 - Modify: `apps/frontend/app/(tabs)/community.tsx`
 
-- [ ] **Step 1: Apply all 8 steps from the Phase E header**
+- [ ] **Step 1: Read current community.tsx to identify header + feed list structure**
 
-Read the current file first to identify the header area + feed list. Replace SafeAreaView with ScreenContainer. Add an EmptyState for empty feed (if applicable — check existing logic).
+Run: `Read apps/frontend/app/(tabs)/community.tsx` (full file).
 
-- [ ] **Step 2: Run + commit**
+- [ ] **Step 2: Apply all 8 steps from the Phase E header**
+
+Replace SafeAreaView with ScreenContainer. Replace the header row with `<AppBar variant="home" hasUnread={false} onBellPress={...} />` if there's a bell icon, or use a custom title row with `<AppText variant="title-lg">커뮤니티</AppText>`. Add an EmptyState for empty feed (only if the existing feed logic shows a loading or empty state — otherwise leave the feed list as-is, just polished).
+
+- [ ] **Step 3: Run + commit**
 
 ```
 cd apps/frontend && npm test -- --testPathPattern=community
@@ -1959,13 +2083,15 @@ git commit -m "feat(create-post): KO header, single submit, BallRow preview, pol
 - Modify: `apps/frontend/components/ui/MapCalloutContent.tsx`
 - Modify: `apps/frontend/components/ui/CustomMapView.tsx` / `.web.tsx` (only callout-related styling)
 
-- [ ] **Step 1: Read current file and identify the header + FAB + callout structure**
+- [ ] **Step 1: Read map.tsx and MapCalloutContent.tsx to identify header + FAB + callout structure**
+
+Run: `Read apps/frontend/app/(tabs)/map.tsx` and `Read apps/frontend/components/ui/MapCalloutContent.tsx` (full files).
 
 - [ ] **Step 2: Apply Phase E header steps to the map screen wrapper**
 
-Replace SafeAreaView with ScreenContainer. Replace inline header (if any) with AppBar variant. Apply token mappings.
+Replace SafeAreaView with ScreenContainer. Replace inline header (if any) with `<AppBar variant="home">` (tab root, no back). Apply token mappings.
 
-- [ ] **Step 3: Apply Task D2's A/B/C transformation to MapCalloutContent**
+- [ ] **Step 3: Apply Phase D Transformation Playbook (A/B/C) to MapCalloutContent**
 
 - [ ] **Step 4: Run + commit**
 
@@ -2243,7 +2369,7 @@ This plan covers every spec section:
 - **Tokens** → A1, A2, A3
 - **6 new components** → B1–B7
 - **Home reference** → C1–C3
-- **7 component refreshes** → D1–D4 (D2 batches 6 similar components per CLAUDE.md A/B/C transform)
+- **Component refreshes** → D1 (PrimaryButton), D2.1–D2.6 (6 card-style components), D2.7 (suite verify), D3 (GenerationResult), D4 (PostNumbersPreview)
 - **Carry-forward 9 screens** → E1–E10
 - **Empty/loading/error patterns** → embedded in E2 (history), E9 (notifications), C3 (home)
 - **Motion + haptics** → F1
