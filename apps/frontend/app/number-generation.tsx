@@ -2,21 +2,31 @@ import React, { useState, useRef } from 'react';
 import { View, Text, ScrollView, SafeAreaView, TouchableOpacity, Animated, Alert } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Sparkles, ChevronLeft } from 'lucide-react-native';
-import { generateLottoNumbersWithSeed } from '../utils/lotto';
+import { generateLottoGames, saveLottoSet, labelOf } from '../utils/lotto';
 import { METHODS } from '../constants/generation-methods';
 import { GenerationInputModal } from '../components/ui/GenerationInputModal';
-import { GenerationResult } from '../components/generation/GenerationResult';
+import { GenerationResultCards } from '../components/generation/GenerationResultCards';
+import { GameCountToggle, GameCount } from '../components/generation/GameCountToggle';
 import { MethodSelector } from '../components/generation/MethodSelector';
-import { appendToItemArray } from '../utils/storage';
 
 export default function NumberGenerationScreen() {
   const router = useRouter();
-  const [generatedNumbers, setGeneratedNumbers] = useState<number[]>([]);
+  const [gameCount, setGameCount] = useState<GameCount>(1);
+  const [generatedGames, setGeneratedGames] = useState<number[][]>([]);
   const [selectedMethod, setSelectedMethod] = useState('');
+  const [lastParam, setLastParam] = useState<string | undefined>();
   const [isSaving, setIsSaving] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [paramInput, setParamInput] = useState('');
   const scaleAnim = useRef(new Animated.Value(0)).current;
+
+  const runGenerate = (methodId: string, count: GameCount, param?: string) => {
+    const games = generateLottoGames(methodId, count, param);
+    setGeneratedGames(games);
+    setLastParam(param);
+    scaleAnim.setValue(0);
+    Animated.spring(scaleAnim, { toValue: 1, tension: 50, friction: 7, useNativeDriver: true }).start();
+  };
 
   const handleMethodSelect = (methodId: string) => {
     setSelectedMethod(methodId);
@@ -24,47 +34,52 @@ export default function NumberGenerationScreen() {
       setParamInput('');
       setIsModalVisible(true);
     } else {
-      generateNumbers(methodId);
+      runGenerate(methodId, gameCount);
     }
   };
 
-  const generateNumbers = (methodId: string, param?: string) => {
-    const sorted = generateLottoNumbersWithSeed(methodId, param);
-    setGeneratedNumbers(sorted);
+  const handleConfirmModal = () => {
     setIsModalVisible(false);
-    scaleAnim.setValue(0);
-    Animated.spring(scaleAnim, { toValue: 1, tension: 50, friction: 7, useNativeDriver: true }).start();
+    runGenerate(selectedMethod, gameCount, paramInput);
   };
 
-  const handleShare = () => {
-    const numbersStr = generatedNumbers.join(', ');
-    router.push({
-      pathname: '/create-post',
-      params: {
-        prefillTitle: '🍀 오늘의 로또 번호',
-        prefillContent: `추천 번호: ${numbersStr}\n\n${METHODS.find(m => m.id === selectedMethod)?.title ?? ''} 방식으로 생성했습니다!`,
-      },
-    });
+  const handleCountChange = (newCount: GameCount) => {
+    setGameCount(newCount);
+    if (selectedMethod && generatedGames.length > 0) {
+      runGenerate(selectedMethod, newCount, lastParam);
+    }
   };
 
-  const handleSave = async () => {
-    if (generatedNumbers.length === 0) return;
+  const methodTitle = METHODS.find((m) => m.id === selectedMethod)?.title;
+
+  const handleSave = () => {
+    if (generatedGames.length === 0) return;
     setIsSaving(true);
     try {
-      const record = {
-        id: Date.now(),
-        numbers: generatedNumbers,
+      saveLottoSet({
         method: selectedMethod,
-        createdAt: new Date().toISOString(),
-      };
-      appendToItemArray('saved-numbers', record);
-      Alert.alert('성공', '번호가 저장되었습니다! 내역 탭에서 확인하세요.');
+        param: lastParam,
+        games: generatedGames.map((numbers) => ({ numbers })),
+      });
+      Alert.alert('성공', `${gameCount}게임이 저장되었습니다! 내역 탭에서 확인하세요.`);
     } finally {
       setIsSaving(false);
     }
   };
 
-  const methodTitle = METHODS.find(m => m.id === selectedMethod)?.title;
+  const handleShare = () => {
+    const isMulti = generatedGames.length > 1;
+    const sets = generatedGames
+      .map((nums, i) => (isMulti ? `${labelOf(i)}: ${nums.join(', ')}` : nums.join(', ')))
+      .join('\n');
+    router.push({
+      pathname: '/create-post',
+      params: {
+        prefillTitle: '🍀 오늘의 로또 번호',
+        prefillContent: `추천 번호 (${gameCount}게임):\n${sets}\n\n${methodTitle ?? ''} 방식으로 생성했습니다!`,
+      },
+    });
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
@@ -83,8 +98,9 @@ export default function NumberGenerationScreen() {
         ),
       }} />
       <ScrollView contentContainerStyle={{ padding: 20 }}>
-        <GenerationResult
-          numbers={generatedNumbers}
+        <GameCountToggle value={gameCount} onChange={handleCountChange} />
+        <GenerationResultCards
+          games={generatedGames}
           methodTitle={methodTitle}
           scaleAnim={scaleAnim}
           isSaving={isSaving}
@@ -99,7 +115,7 @@ export default function NumberGenerationScreen() {
           paramInput={paramInput}
           setParamInput={setParamInput}
           onCancel={() => setIsModalVisible(false)}
-          onConfirm={() => generateNumbers(selectedMethod, paramInput)}
+          onConfirm={handleConfirmModal}
         />
         {/* Tip Section */}
         <View className="bg-amber-50 dark:bg-dark-card rounded-2xl p-4 border border-amber-100 dark:border-dark-card mt-8 mb-10 flex-row">

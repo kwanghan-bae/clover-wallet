@@ -4,9 +4,9 @@ import { HistoryItem } from '../../../components/ui/HistoryItem';
 
 const mockRecord = {
   id: 1,
-  status: 'NOT_CHECKED' as const,
+  method: 'TICKET',
   round: 1055,
-  numbers: [3, 11, 22, 33, 40, 45],
+  games: [{ numbers: [3, 11, 22, 33, 40, 45] }],
   createdAt: '2024-03-15T09:00:00Z',
 };
 
@@ -52,5 +52,41 @@ describe('HistoryItem', () => {
       <HistoryItem record={recordWithDate} onDelete={jest.fn()} />
     );
     expect(getByText(/2024/)).toBeTruthy();
+  });
+
+  test('5게임 묶음 → "5게임 묶음" 배지 + 라벨 A~E', () => {
+    const record = {
+      id: 2,
+      method: 'SAJU',
+      createdAt: '2026-05-09T00:00:00.000Z',
+      games: [
+        { numbers: [1, 2, 3, 4, 5, 6] },
+        { numbers: [7, 8, 9, 10, 11, 12] },
+        { numbers: [13, 14, 15, 16, 17, 18] },
+        { numbers: [19, 20, 21, 22, 23, 24] },
+        { numbers: [25, 26, 27, 28, 29, 30] },
+      ],
+    };
+    const { getByText } = render(
+      <HistoryItem record={record} onDelete={jest.fn()} />,
+    );
+    expect(getByText('5게임 묶음')).toBeTruthy();
+    ['A', 'B', 'C', 'D', 'E'].forEach((label) => {
+      expect(getByText(label)).toBeTruthy();
+    });
+  });
+
+  test('1게임 (games.length===1) → 묶음 배지 없음, 라벨 없음', () => {
+    const record = {
+      id: 3,
+      method: 'SAJU',
+      createdAt: '2026-05-09T00:00:00.000Z',
+      games: [{ numbers: [1, 2, 3, 4, 5, 6] }],
+    };
+    const { queryByText } = render(
+      <HistoryItem record={record} onDelete={jest.fn()} />,
+    );
+    expect(queryByText(/게임 묶음/)).toBeNull();
+    expect(queryByText('A')).toBeNull();
   });
 });
