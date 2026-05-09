@@ -30,7 +30,7 @@ export const generateLottoNumbers = (): number[] => {
 export const generateLottoNumbersWithSeed = (methodId: string, param?: string): number[] => {
   const numbers: Set<number> = new Set();
   const seed = param ? param.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) : Math.random();
-  
+
   // 프리미엄 느낌을 위한 결정론적 난수 생성 (Simple LCG)
   let currentSeed = seed;
   while (numbers.size < 6) {
@@ -38,6 +38,26 @@ export const generateLottoNumbersWithSeed = (methodId: string, param?: string): 
     const num = Math.floor((currentSeed / 233280) * 45) + 1;
     if (num > 0) numbers.add(num);
   }
-  
+
   return sortLottoNumbers(Array.from(numbers));
+};
+
+/**
+ * @description N개 게임 한 번에 생성. 같은 메서드+같은 입력에서도 N개 모두 다른 번호 보장.
+ *  - 결정론 메서드 (param 있음): index를 param에 섞어 시드 다양화
+ *  - 랜덤 메서드 (param 없음): Math.random()이 매 호출마다 달라 자연 다양화
+ *  - count===1 인 경우 generateLottoNumbersWithSeed와 동일 결과 → 1게임 모드 호환
+ */
+export const generateLottoGames = (
+  methodId: string,
+  count: number,
+  param?: string,
+): number[][] => {
+  if (count === 1) {
+    return [generateLottoNumbersWithSeed(methodId, param)];
+  }
+  return Array.from({ length: count }, (_, i) => {
+    const variantParam = param !== undefined ? `${param}-${i}` : undefined;
+    return generateLottoNumbersWithSeed(methodId, variantParam);
+  });
 };
