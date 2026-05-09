@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Trash2, Calendar } from 'lucide-react-native';
 import { LottoBall } from './LottoBall';
+import { AppText } from './AppText';
 import { LottoSetRecord } from '../../api/types/lotto';
 import { labelOf } from '../../utils/lotto';
 
@@ -16,37 +17,28 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
   const isMulti = record.games.length > 1;
 
   return (
-    <View
-      className="bg-white rounded-[24px] p-5 mb-5"
-      style={{
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.04,
-        shadowRadius: 16,
-        elevation: 2,
-      }}
-    >
+    <View className="bg-surface rounded-card-lg p-5 mb-5 shadow-card">
       <View className="flex-row justify-between items-center mb-4">
         <View className="flex-row items-center gap-2">
           {record.round ? (
-            <View className="bg-[#4CAF50]/10 px-3 py-1.5 rounded-xl">
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#4CAF50] text-[12px]">
+            <View className="bg-primary/10 px-3 py-1.5 rounded-lg">
+              <AppText variant="title" className="text-primary-text text-[12px]">
                 {record.round}회차
-              </Text>
+              </AppText>
             </View>
           ) : null}
           {isMulti ? (
-            <View className="bg-primary/10 px-3 py-1.5 rounded-xl">
-              <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-primary text-[12px]">
+            <View className="bg-primary/10 px-3 py-1.5 rounded-lg">
+              <AppText variant="title" className="text-primary text-[12px]">
                 {record.games.length}게임 묶음
-              </Text>
+              </AppText>
             </View>
           ) : null}
           <View className="flex-row items-center ml-1">
             <Calendar size={14} color="#BDBDBD" />
-            <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[12px] ml-1.5">
+            <AppText variant="body" className="text-text-muted text-[12px] ml-1.5">
               {dateStr}
-            </Text>
+            </AppText>
           </View>
         </View>
         <TouchableOpacity
@@ -63,7 +55,9 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
       {record.games.map((game, i) => (
         <View key={i} className={i > 0 ? 'mt-3' : ''}>
           {isMulti ? (
-            <Text className="text-gray-400 font-bold text-[12px] mb-1.5 ml-1">{labelOf(i)}</Text>
+            <AppText variant="label" className="text-text-muted mb-1.5 ml-1">
+              {labelOf(i)}
+            </AppText>
           ) : null}
           <View className="flex-row justify-between items-center px-1">
             {game.numbers.map((num, j) => (
