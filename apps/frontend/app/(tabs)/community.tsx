@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity, Share, Alert } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
-import { Edit3, Search } from 'lucide-react-native';
+import { View, TouchableOpacity, Share, Alert } from 'react-native';
+import { Edit3 } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { useTheme } from '../../hooks/useTheme';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { communityApi, Post } from '../../api/community';
 import { FeedTabSelector, FeedType } from '../../components/community/FeedTabSelector';
 import { FeedList } from '../../components/community/FeedList';
+import { ScreenContainer } from '../../components/ui/ScreenContainer';
+import { AppText } from '../../components/ui/AppText';
 import { Logger } from '../../utils/logger';
 
 /**
@@ -16,7 +16,6 @@ import { Logger } from '../../utils/logger';
 const CommunityScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { isDark } = useTheme();
   const [feedType, setFeedType] = useState<FeedType>('all');
 
   const { data, isLoading, refetch } = useQuery({
@@ -44,20 +43,23 @@ const CommunityScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
-      {/* Header */}
-      <View
-        className="flex-row justify-between items-center px-5 py-4 bg-white/80 dark:bg-dark-surface"
-        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}
-      >
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-xl text-[#1A1A1A] dark:text-dark-text">커뮤니티</Text>
-        <TouchableOpacity
-          accessibilityLabel="검색"
-          accessibilityRole="button"
-          activeOpacity={0.8}
-          className="p-2 -mr-2"
+    <ScreenContainer>
+      <View className="flex-row justify-between items-center px-5 h-14">
+        <AppText
+          variant="title-lg"
+          className="text-text-primary dark:text-dark-text"
         >
-          <Search size={24} color={isDark ? '#FFFFFF' : '#1A1A1A'} />
+          커뮤니티
+        </AppText>
+        <TouchableOpacity
+          onPress={() => router.push('/create-post')}
+          accessibilityLabel="새 게시글 작성"
+          accessibilityRole="button"
+          activeOpacity={0.7}
+          testID="fab-create-post"
+          className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
+        >
+          <Edit3 size={18} color="#0F1115" />
         </TouchableOpacity>
       </View>
 
@@ -70,31 +72,7 @@ const CommunityScreen = () => {
         onShare={handleShare}
         onCreatePost={() => router.push('/create-post')}
       />
-
-      {/* Floating Action Button */}
-      <View style={{
-        position: 'absolute', bottom: 24, right: 24,
-        shadowColor: '#4CAF50', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 10, elevation: 8,
-      }}>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={() => router.push('/create-post')}
-          style={{ borderRadius: 28, overflow: 'hidden' }}
-          accessibilityLabel="새 게시글 작성"
-          accessibilityRole="button"
-          testID="fab-create-post"
-        >
-          <LinearGradient
-            colors={['#4CAF50', '#388E3C']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={{ width: 56, height: 56, alignItems: 'center', justifyContent: 'center' }}
-          >
-            <Edit3 size={24} color="white" />
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };
 

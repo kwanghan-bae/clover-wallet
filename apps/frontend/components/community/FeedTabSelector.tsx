@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { AppText } from '../ui/AppText';
 
 export type FeedType = 'all' | 'following';
 
@@ -10,7 +11,7 @@ export interface FeedTabSelectorProps {
 
 /** @description 전체/팔로잉 피드 전환 탭 셀렉터 컴포넌트입니다. */
 const FeedTabSelectorComponent = ({ feedType, onSelect }: FeedTabSelectorProps) => (
-  <View className="flex-row mx-5 mt-3 mb-1 bg-[#F0F0F0] dark:bg-dark-surface rounded-full p-1">
+  <View className="flex-row mx-5 mt-3 mb-1 bg-text-primary/[0.04] dark:bg-dark-surface rounded-full p-1">
     {(['all', 'following'] as const).map((type) => {
       const isActive = feedType === type;
       const label = type === 'all' ? '전체' : '팔로잉';
@@ -22,15 +23,14 @@ const FeedTabSelectorComponent = ({ feedType, onSelect }: FeedTabSelectorProps) 
           accessibilityRole="tab"
           accessibilityLabel={label}
           accessibilityState={{ selected: isActive }}
-          className={`flex-1 py-2 rounded-full items-center ${isActive ? 'bg-white dark:bg-dark-card' : ''}`}
-          style={isActive ? { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.08, shadowRadius: 4, elevation: 2 } : undefined}
+          className={`flex-1 py-2 rounded-full items-center ${isActive ? 'bg-surface dark:bg-dark-card shadow-card' : ''}`}
         >
-          <Text
-            style={{ fontFamily: 'NotoSansKR_700Bold' }}
-            className={`text-sm ${isActive ? 'text-[#1A1A1A] dark:text-dark-text' : 'text-[#9E9E9E] dark:text-dark-text-secondary'}`}
+          <AppText
+            variant="body"
+            className={isActive ? 'text-text-primary dark:text-dark-text' : 'text-text-muted dark:text-dark-text-secondary'}
           >
             {label}
-          </Text>
+          </AppText>
         </TouchableOpacity>
       );
     })}
