@@ -1,9 +1,8 @@
 /** @type {import('tailwindcss').Config} */
-/** @description Tailwind CSS의 테마와 플러그인 설정을 정의하는 모듈입니다. */
 module.exports = {
   content: [
-    "./App.{js,jsx,ts,tsx}", 
-    "./app/**/*.{js,jsx,ts,tsx}", 
+    "./App.{js,jsx,ts,tsx}",
+    "./app/**/*.{js,jsx,ts,tsx}",
     "./components/**/*.{js,jsx,ts,tsx}",
     "./screens/**/*.{js,jsx,ts,tsx}"
   ],
@@ -14,26 +13,63 @@ module.exports = {
       fontFamily: {
         sans: ["NotoSansKR_400Regular"],
         medium: ["NotoSansKR_500Medium"],
+        semibold: ["NotoSansKR_600SemiBold"],
         bold: ["NotoSansKR_700Bold"],
+        extrabold: ["NotoSansKR_800ExtraBold"],
         black: ["NotoSansKR_900Black"],
       },
+      fontSize: {
+        eyebrow: ['10px', { letterSpacing: '1.4px' }],
+        label: ['11px', { letterSpacing: '0px' }],
+        caption: ['12px', { letterSpacing: '0px' }],
+        body: ['13px', { letterSpacing: '0px' }],
+        'body-lg': ['15px', { letterSpacing: '-0.1px' }],
+        title: ['16px', { letterSpacing: '-0.2px' }],
+        'title-lg': ['20px', { letterSpacing: '-0.4px' }],
+        display: ['30px', { letterSpacing: '-1.2px' }],
+      },
+      borderRadius: {
+        sm: '8px',
+        md: '12px',
+        lg: '16px',
+        card: '18px',
+        'card-lg': '22px',
+        hero: '28px',
+        pill: '999px',
+      },
       colors: {
-        primary: "#4CAF50", // Clover Green
+        primary: "#4CAF50",
         "primary-dark": "#388E3C",
         "primary-light": "#C8E6C9",
-        "primary-text": "#2E7D32", // 5.3:1 contrast on white — WCAG AA pass
-        secondary: "#FFC107", // Gold
-        accent: "#2196F3", // Blue
-        background: "#F5F7FA", // Light Grey-Blue
+        "primary-text": "#2E7D32",
+        secondary: "#FFC107",
+        accent: "#2196F3",
+        background: "#F5F7FA",
+        surface: "#FFFFFF",
+        "surface-muted": "#FBFCFD",
+        "border-hairline": "rgba(15,17,21,0.04)",
+        "text-primary": "#0F1115",
+        "text-secondary": "#2A2E36",
+        "text-muted": "#6E7480",
+        "text-disabled": "#A8AEB8",
         "text-dark": "#1A1A1A",
         "text-grey": "#757575",
         error: "#E53935",
-        // Dark mode palette
+        "qa-purple": "#6A1B9A",
+        "qa-blue": "#1565C0",
+        "qa-orange": "#E65100",
+        "qa-green": "#2E7D32",
         "dark-bg": "#121212",
         "dark-surface": "#1E1E1E",
         "dark-card": "#2C2C2C",
         "dark-text": "#E0E0E0",
         "dark-text-secondary": "#A0A0A0",
+      },
+      boxShadow: {
+        card: '0 1px 2px rgba(15,17,21,0.04), 0 4px 12px -8px rgba(15,17,21,0.08)',
+        elev: '0 4px 16px -8px rgba(15,17,21,0.12)',
+        hero: '0 12px 28px -8px rgba(46,125,50,0.45), 0 2px 6px rgba(15,17,21,0.06)',
+        button: '0 4px 12px -4px rgba(15,17,21,0.2)',
       },
     },
   },
