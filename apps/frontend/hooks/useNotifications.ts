@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { Platform } from 'react-native';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
@@ -20,6 +21,8 @@ export function useNotifications() {
   const unreadCount = unreadData?.count ?? 0;
 
   const registerToken = useCallback(async () => {
+    // 웹은 vapidPublicKey 설정 필요해서 별도 셋업 전엔 스킵
+    if (Platform.OS === 'web') return;
     if (!Device.isDevice) return;
     const { status } = await Notifications.getPermissionsAsync();
     let finalStatus = status;
