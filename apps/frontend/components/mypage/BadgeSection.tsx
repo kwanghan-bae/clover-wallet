@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import {
   Trophy,
   Flame,
   CheckCircle2,
   Star,
 } from 'lucide-react-native';
+import { AppText } from '../ui/AppText';
 
 /** @description badge key -> icon/color mapping */
 const BADGE_CONFIG: Record<string, { label: string; icon: React.ReactElement; color: string }> = {
@@ -30,21 +31,21 @@ const BadgeSectionComponent = ({ badgeKeys }: BadgeSectionProps) => {
 
   return (
     <View className="px-5 mb-8" testID="badge-section">
-      <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] mb-4">
+      <AppText variant="title" className="text-text-primary mb-4">
         내 뱃지
-      </Text>
+      </AppText>
       <View className="flex-row flex-wrap gap-4">
         {badges.map(key => {
           const config = BADGE_CONFIG[key];
           if (!config) return null;
           return (
             <View key={key} className="items-center" testID={`badge-${key}`}>
-              <View className={`${config.color} w-14 h-14 rounded-2xl items-center justify-center mb-2 shadow-sm`}>
+              <View className={`${config.color} w-14 h-14 rounded-2xl items-center justify-center mb-2 shadow-card`}>
                 {config.icon}
               </View>
-              <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-xs text-[#757575]">
+              <AppText variant="caption" className="text-text-muted">
                 {config.label}
-              </Text>
+              </AppText>
             </View>
           );
         })}

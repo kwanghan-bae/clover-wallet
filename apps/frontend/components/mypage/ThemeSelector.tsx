@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { Sun, Moon, Smartphone } from 'lucide-react-native';
 import { ThemePreference } from '../../hooks/useTheme';
+import { AppText } from '../ui/AppText';
 
 export interface ThemeSelectorProps {
   themePreference: ThemePreference;
@@ -26,19 +27,10 @@ function getIcon(key: ThemePreference, isSelected: boolean) {
 /** @description 시스템/라이트/다크 테마를 전환하는 토글 셀렉터 컴포넌트입니다. */
 const ThemeSelectorComponent = ({ themePreference, onSelect }: ThemeSelectorProps) => (
   <View className="px-5 mb-6" testID="theme-selector">
-    <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-lg text-[#1A1A1A] dark:text-dark-text mb-4">
+    <AppText variant="title" className="text-text-primary dark:text-dark-text mb-4">
       테마 설정
-    </Text>
-    <View
-      className="bg-white dark:bg-dark-card rounded-[24px] p-4"
-      style={{
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.04,
-        shadowRadius: 16,
-        elevation: 2,
-      }}
-    >
+    </AppText>
+    <View className="bg-white dark:bg-dark-card rounded-[24px] p-4 shadow-card">
       <View className="flex-row justify-between">
         {THEME_OPTIONS.map(({ key, label }) => (
           <TouchableOpacity
@@ -51,12 +43,12 @@ const ThemeSelectorComponent = ({ themePreference, onSelect }: ThemeSelectorProp
             accessibilityState={{ selected: themePreference === key }}
           >
             {getIcon(key, themePreference === key)}
-            <Text
-              style={{ fontFamily: 'NotoSansKR_500Medium' }}
-              className={`text-sm ${themePreference === key ? 'text-white' : 'text-[#757575] dark:text-dark-text-secondary'}`}
+            <AppText
+              variant="body"
+              className={themePreference === key ? 'text-white' : 'text-text-grey dark:text-dark-text-secondary'}
             >
               {label}
-            </Text>
+            </AppText>
           </TouchableOpacity>
         ))}
       </View>
