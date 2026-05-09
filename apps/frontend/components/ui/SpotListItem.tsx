@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { MapPin, ChevronRight } from 'lucide-react-native';
 import { LottoSpot } from '../../api/types/spots';
+import { AppText } from './AppText';
 
 interface SpotListItemProps {
   spot: LottoSpot;
@@ -12,30 +13,21 @@ interface SpotListItemProps {
  */
 function SpotListItemComponent({ spot }: SpotListItemProps) {
   return (
-    <View
-      className="bg-white rounded-[24px] p-5 mb-1 flex-row items-center"
-      style={{
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.04,
-        shadowRadius: 16,
-        elevation: 2,
-      }}
-    >
-      <View className="bg-[#4CAF50]/10 p-4 rounded-[18px] mr-4">
+    <View className="bg-surface rounded-card-lg p-5 mb-1 flex-row items-center shadow-card">
+      <View className="bg-[#4CAF50]/10 p-4 rounded-card mr-4">
         <MapPin size={24} color="#4CAF50" />
       </View>
       <View className="flex-1">
-        <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[17px] text-[#1A1A1A]">{spot.name}</Text>
-        <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-[13px] mt-1" numberOfLines={1}>
+        <AppText variant="title" className="text-text-primary">{spot.name}</AppText>
+        <AppText variant="body" className="text-text-muted mt-1" numberOfLines={1}>
           {spot.address}
-        </Text>
+        </AppText>
         <View className="flex-row gap-2 mt-3">
           <View className="bg-[#FFC107]/10 px-2.5 py-1.5 rounded-lg border border-[#FFC107]/30">
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#FFC107] text-[11px]">1등 {spot.firstPlaceWins}회</Text>
+            <AppText variant="label" className="text-[#FFC107]">1등 {spot.firstPlaceWins}회</AppText>
           </View>
           <View className="bg-[#BDBDBD]/10 px-2.5 py-1.5 rounded-lg border border-[#BDBDBD]/30">
-            <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-[#757575] text-[11px]">2등 {spot.secondPlaceWins}회</Text>
+            <AppText variant="label" className="text-text-muted">2등 {spot.secondPlaceWins}회</AppText>
           </View>
         </View>
       </View>
