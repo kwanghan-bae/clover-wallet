@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  SafeAreaView,
   TouchableOpacity,
   Image,
   ActivityIndicator
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { GlassCard } from '../components/ui/GlassCard';
 import { AppText } from '../components/ui/AppText';
