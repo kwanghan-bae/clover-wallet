@@ -51,6 +51,7 @@ const GenerationResultCardsComponent = ({
               numbers={numbers}
               scaleAnim={scaleAnim}
               label={isMulti ? labelOf(i) : undefined}
+              delay={i * 80}
             />
           ))}
         </View>
