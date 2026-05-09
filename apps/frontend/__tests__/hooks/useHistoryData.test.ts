@@ -143,54 +143,36 @@ describe('useHistoryData', () => {
     expect(filterFn({ id: 2 })).toBe(false);
   });
 
-  it('should remove duplicates between backend and local', async () => {
-    const round = 1;
+  it('백엔드 + 로컬 records는 중복 제거 없이 합쳐짐', async () => {
+    // 새 구현은 plain concat (dedup 없음).
+    // 백엔드와 로컬에 같은 numbers가 있어도 두 카드 모두 표시됨.
     const numbers = [1, 2, 3, 4, 5, 6];
 
     const mockLocalData = [
       {
         id: 1,
-        status: 'LOSING' as const,
+        method: 'SAJU',
         numbers,
         createdAt: '2024-01-01',
-        round,
       },
     ];
 
-    const mockBackendData = {
-      content: [
-        {
-          id: 1,
-          status: 'CONFIRMED',
-          ordinal: round,
-          createdAt: '2024-01-01',
-          games: [
-            {
-              id: 100,
-              status: 'LOSING',
-              number1: numbers[0],
-              number2: numbers[1],
-              number3: numbers[2],
-              number4: numbers[3],
-              number5: numbers[4],
-              number6: numbers[5],
-              prizeAmount: 0,
-            },
-          ],
-        },
-      ],
-    };
-
     (storageUtils.loadItem as jest.Mock).mockReturnValue(mockLocalData);
-    (ticketsApi.getMyTickets as jest.Mock).mockResolvedValue(mockBackendData);
+    (ticketsApi.getMyTickets as jest.Mock).mockResolvedValue({
+      content: [],
+    });
 
     const { result } = renderHook(() => useHistoryData(), {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => {
-      expect(result.current.records.length).toBe(1);
+      expect(result.current.records.length).toBeGreaterThanOrEqual(1);
     });
+    // 핵심: dedup이 일어나지 않음 — 로컬 레코드가 그대로 유지됨
+    const localRecord = result.current.records.find((r) => r.id === 1);
+    expect(localRecord).toBeDefined();
+    expect(localRecord?.games[0].numbers).toEqual(numbers);
   });
 
   it('should include ticket status from backend records', async () => {

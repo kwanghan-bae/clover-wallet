@@ -44,21 +44,20 @@ export function useHistoryData() {
 
   const backendRecords = useMemo<HistoryRecord[]>(() => {
     /* istanbul ignore next */
-    return (ticketData?.content ?? []).flatMap((ticket: LottoTicket) =>
-      (ticket.games ?? []).map((game) => ({
-        id: game.id,
-        method: 'TICKET',
-        createdAt: ticket.createdAt,
-        round: ticket.ordinal,
-        games: [{
-          numbers: [
-            game.number1, game.number2, game.number3,
-            game.number4, game.number5, game.number6,
-          ],
-        }],
-        _ticketStatus: game.status,
+    return (ticketData?.content ?? []).map((ticket: LottoTicket) => ({
+      id: ticket.id,
+      method: 'TICKET',
+      createdAt: ticket.createdAt,
+      round: ticket.ordinal,
+      games: (ticket.games ?? []).map((game) => ({
+        numbers: [
+          game.number1, game.number2, game.number3,
+          game.number4, game.number5, game.number6,
+        ],
       })),
-    );
+      // 첫 게임의 status를 묶음 대표 status로 사용 (YAGNI — 종합 status는 별도 task)
+      _ticketStatus: ticket.games?.[0]?.status,
+    }));
   }, [ticketData]);
 
   const records = useMemo<HistoryRecord[]>(

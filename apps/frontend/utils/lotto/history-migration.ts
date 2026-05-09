@@ -12,6 +12,9 @@ export const toSetRecord = (raw: unknown): LottoSetRecord => {
     return r as unknown as LottoSetRecord;
   }
 
+  // 의도적으로 status/round를 누락:
+  // - status: HistoryRecord._ticketStatus가 백엔드 ticket 매핑 시 채움
+  // - round: 로컬 저장은 회차 정보를 받지 않음 (백엔드 ticket만 보유)
   return {
     id: r.id as number,
     method: r.method as string,
