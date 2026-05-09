@@ -15,7 +15,12 @@ function createStorage(): QueryStorage {
     };
   }
   const { MMKV } = require('react-native-mmkv');
-  return new MMKV({ id: 'query-cache' });
+  const mmkv = new MMKV({ id: 'query-cache' });
+  return {
+    set: (key, value) => mmkv.set(key, value),
+    getString: (key) => mmkv.getString(key),
+    remove: (key) => mmkv.delete(key),
+  };
 }
 
 const queryStorage = createStorage();
