@@ -1,7 +1,8 @@
 // frontend/components/ui/CommentItem.tsx
 import React, { memo } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { Reply } from 'lucide-react-native';
+import { AppText } from './AppText';
 
 interface CommentData {
   id: number;
@@ -28,19 +29,19 @@ const CommentItemComponent = ({ comment, isReply = false, onReply, onUserPress }
       <View className="flex-row items-center gap-2 mb-1">
         <Pressable onPress={() => comment.user && onUserPress(comment.user.id)} accessibilityLabel={`${nickname} 프로필 보기`} accessibilityRole="button">
           <View className="w-6 h-6 rounded-full bg-primary items-center justify-center">
-            <Text className="text-white text-xs font-bold">{nickname[0]}</Text>
+            <AppText variant="title" className="text-white text-xs">{nickname[0]}</AppText>
           </View>
         </Pressable>
         <Pressable onPress={() => comment.user && onUserPress(comment.user.id)} accessibilityLabel={`${nickname} 프로필 보기`} accessibilityRole="link">
-          <Text className="text-sm font-bold text-text-dark dark:text-dark-text">{nickname}</Text>
+          <AppText variant="title" className="text-sm text-text-dark dark:text-dark-text">{nickname}</AppText>
         </Pressable>
-        <Text className="text-xs text-text-grey dark:text-dark-text-secondary">{date}</Text>
+        <AppText variant="body" className="text-xs text-text-grey dark:text-dark-text-secondary">{date}</AppText>
       </View>
-      <Text className="text-sm text-text-dark dark:text-dark-text ml-8">{comment.content}</Text>
+      <AppText variant="body" className="text-sm text-text-dark dark:text-dark-text ml-8">{comment.content}</AppText>
       {!isReply && (
         <Pressable onPress={() => onReply(comment.id)} className="flex-row items-center gap-1 ml-8 mt-1" accessibilityLabel="답글 달기" accessibilityRole="button">
           <Reply size={14} color="#757575" />
-          <Text className="text-xs text-text-grey dark:text-dark-text-secondary">답글</Text>
+          <AppText variant="body" className="text-xs text-text-grey dark:text-dark-text-secondary">답글</AppText>
         </Pressable>
       )}
       {comment.replies?.map((reply) => (
