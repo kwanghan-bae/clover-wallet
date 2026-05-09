@@ -55,3 +55,4 @@ lcov.info
 
 # Claude Code session artifacts (local-only)
 .claude/
+.superpowers/
