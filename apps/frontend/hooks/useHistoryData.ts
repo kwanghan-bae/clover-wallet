@@ -3,15 +3,16 @@ import { useFocusEffect } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { ticketsApi } from '../api/tickets';
 import type { LottoTicket } from '../api/tickets';
-import type { LottoRecord } from '../api/types/lotto';
+import type { LottoSetRecord } from '../api/types/lotto';
 import { loadItem, StorageKeys, removeFromItemArray } from '../utils/storage';
+import { toSetRecord } from '../utils/lotto';
 
-export interface HistoryRecord extends LottoRecord {
+export interface HistoryRecord extends LottoSetRecord {
   _ticketStatus?: string;
 }
 
 export function useHistoryData() {
-  const [localHistory, setLocalHistory] = useState<LottoRecord[]>([]);
+  const [localHistory, setLocalHistory] = useState<LottoSetRecord[]>([]);
 
   const { data: ticketData } = useQuery({
     queryKey: ['myTickets'],
@@ -20,8 +21,8 @@ export function useHistoryData() {
   });
 
   const loadLocalHistory = useCallback(() => {
-    const data = loadItem<LottoRecord[]>(StorageKeys.SAVED_NUMBERS) || [];
-    setLocalHistory(data);
+    const raw = loadItem<unknown[]>(StorageKeys.SAVED_NUMBERS) || [];
+    setLocalHistory(raw.map(toSetRecord));
   }, []);
 
   useFocusEffect(
@@ -32,7 +33,7 @@ export function useHistoryData() {
 
   const handleDelete = useCallback(
     (id: number) => {
-      removeFromItemArray<LottoRecord>(
+      removeFromItemArray<LottoSetRecord>(
         StorageKeys.SAVED_NUMBERS,
         (item) => item.id === id,
       );
@@ -46,39 +47,24 @@ export function useHistoryData() {
     return (ticketData?.content ?? []).flatMap((ticket: LottoTicket) =>
       (ticket.games ?? []).map((game) => ({
         id: game.id,
-        status: game.status as LottoRecord['status'],
-        numbers: [
-          game.number1,
-          game.number2,
-          game.number3,
-          game.number4,
-          game.number5,
-          game.number6,
-        ],
+        method: 'TICKET',
         createdAt: ticket.createdAt,
         round: ticket.ordinal,
-        prizeAmount: game.prizeAmount,
+        games: [{
+          numbers: [
+            game.number1, game.number2, game.number3,
+            game.number4, game.number5, game.number6,
+          ],
+        }],
         _ticketStatus: game.status,
       })),
     );
   }, [ticketData]);
 
-  const records = useMemo<HistoryRecord[]>(() => {
-    const backendSet = new Set(
-      backendRecords.map(
-        /* istanbul ignore next */
-        (r) =>
-          `${r.round}-${[...r.numbers].sort((a, b) => a - b).join(',')}`,
-      ),
-    );
-    const uniqueLocal = localHistory.filter(
-      (r) =>
-        !backendSet.has(
-          `${r.round}-${[...r.numbers].sort((a, b) => a - b).join(',')}`,
-        ),
-    );
-    return [...backendRecords, ...uniqueLocal];
-  }, [backendRecords, localHistory]);
+  const records = useMemo<HistoryRecord[]>(
+    () => [...backendRecords, ...localHistory],
+    [backendRecords, localHistory],
+  );
 
   return { records, handleDelete };
 }
