@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Trophy, Calendar } from 'lucide-react-native';
+import { AppText } from './AppText';
 import { WinningHistory } from '../../api/types/spots';
 
 interface WinningHistoryItemProps {
@@ -12,26 +13,26 @@ interface WinningHistoryItemProps {
  */
 const WinningHistoryItemComponent = ({ item }: WinningHistoryItemProps) => {
   const is1st = item.rank === 1;
-  
+
   return (
-    <View className="bg-white rounded-2xl p-5 mb-4 flex-row items-center border border-gray-50 shadow-sm">
+    <View className="bg-surface rounded-card p-5 mb-4 flex-row items-center border border-border-hairline shadow-sm">
       <View className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${is1st ? 'bg-[#FFC107]/10' : 'bg-[#4CAF50]/10'}`}>
         <Trophy size={20} color={is1st ? '#FFC107' : '#4CAF50'} />
       </View>
       <View className="flex-1">
         <View className="flex-row items-center justify-between mb-1">
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className="text-base text-[#1A1A1A]">
+          <AppText variant="title" className="text-text-primary">
             {item.round}회 당첨
-          </Text>
-          <Text style={{ fontFamily: 'NotoSansKR_700Bold' }} className={`text-sm ${is1st ? 'text-[#FFC107]' : 'text-[#4CAF50]'}`}>
+          </AppText>
+          <AppText variant="title" className={`text-[14px] ${is1st ? 'text-[#FFC107]' : 'text-primary-text'}`}>
             {item.rank}등
-          </Text>
+          </AppText>
         </View>
         <View className="flex-row items-center">
           <Calendar size={12} color="#BDBDBD" />
-          <Text style={{ fontFamily: 'NotoSansKR_400Regular' }} className="text-[#BDBDBD] text-xs ml-1">
+          <AppText variant="body" className="text-text-muted text-[12px] ml-1">
             {item.method || "자동"}
-          </Text>
+          </AppText>
         </View>
       </View>
     </View>
