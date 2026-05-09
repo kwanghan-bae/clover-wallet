@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, ScrollView, FlatList, ActivityIndicator } from 'react-native';
 import CustomMapView from '../../components/ui/CustomMapView';
 import { Map as MapIcon, List as ListIcon, MapPin, LocateFixed } from 'lucide-react-native';
 import { SpotListItem } from '../../components/ui/SpotListItem';
 import { MapCalloutContent } from '../../components/ui/MapCalloutContent';
+import { ScreenContainer } from '../../components/ui/ScreenContainer';
+import { AppText } from '../../components/ui/AppText';
 import { REGIONS } from '../../constants/regions';
 import { useLuckySpots } from '../../hooks/useLuckySpots';
 
@@ -25,19 +27,23 @@ const LuckySpotsScreen = () => {
   } = useLuckySpots();
 
   return (
-    <SafeAreaView className="flex-1 bg-[#F5F7FA] dark:bg-dark-bg">
-      {/* Header */}
-      <View className="flex-row justify-between items-center px-5 py-4 bg-white dark:bg-dark-surface border-b border-gray-100 shadow-sm">
-        <Text className="text-xl font-bold text-[#1A1A1A] dark:text-dark-text">명당 찾기</Text>
-        <View className="flex-row gap-4">
-          <TouchableOpacity onPress={toggleViewMode} accessibilityLabel={isMapView ? '리스트 보기로 전환' : '지도 보기로 전환'} accessibilityRole="button" activeOpacity={0.7} className="p-3 -mr-3">
-            {isMapView ? <ListIcon size={24} color="#1A1A1A" /> : <MapIcon size={24} color="#1A1A1A" />}
-          </TouchableOpacity>
-        </View>
+    <ScreenContainer>
+      {/* Header - tab root, no back */}
+      <View className="flex-row justify-between items-center px-5 h-14">
+        <AppText variant="title-lg" className="text-text-primary dark:text-dark-text">명당 찾기</AppText>
+        <TouchableOpacity
+          onPress={toggleViewMode}
+          accessibilityLabel={isMapView ? '리스트 보기로 전환' : '지도 보기로 전환'}
+          accessibilityRole="button"
+          activeOpacity={0.7}
+          className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
+        >
+          {isMapView ? <ListIcon size={18} color="#0F1115" /> : <MapIcon size={18} color="#0F1115" />}
+        </TouchableOpacity>
       </View>
 
       {/* Region Filter - Horizontal Scroll */}
-      <View className="bg-white dark:bg-dark-surface py-3">
+      <View className="bg-surface dark:bg-dark-surface py-3">
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -47,12 +53,12 @@ const LuckySpotsScreen = () => {
             <TouchableOpacity
               key={r}
               onPress={() => setSelectedRegion(r)}
-              className={`px-4 py-2 rounded-full ${selectedRegion === r ? 'bg-primary' : 'bg-gray-100 border border-gray-200'}`}
+              className={`px-4 py-2 rounded-pill ${selectedRegion === r ? 'bg-primary' : 'bg-surface-muted border border-border-hairline'}`}
               accessibilityLabel={`${r} 지역 필터`}
               accessibilityRole="button"
               accessibilityState={{ selected: selectedRegion === r }}
             >
-              <Text className={`text-[13px] font-semibold ${selectedRegion === r ? 'text-white' : 'text-gray-600'}`}>{r}</Text>
+              <AppText variant="caption" className={selectedRegion === r ? 'text-white' : 'text-text-muted'}>{r}</AppText>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -75,7 +81,7 @@ const LuckySpotsScreen = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={moveToCurrentLocation}
-              className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-white items-center justify-center shadow-lg border border-gray-100"
+              className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-surface items-center justify-center shadow-elev border border-border-hairline"
               accessibilityLabel="현재 위치로 이동"
               accessibilityRole="button"
             >
@@ -93,15 +99,15 @@ const LuckySpotsScreen = () => {
               </TouchableOpacity>
             )}
             ListEmptyComponent={
-              <View className="items-center justify-center py-20" style={{ alignItems: 'center', justifyContent: 'center' }}>
+              <View className="items-center justify-center py-20">
                 <MapPin size={64} color="#BDBDBD" />
-                <Text className="text-gray-400 dark:text-dark-text-secondary mt-4 font-semibold">{selectedRegion} 지역의 명당이 없습니다.</Text>
+                <AppText variant="body-lg" className="text-text-muted dark:text-dark-text-secondary mt-4">{selectedRegion} 지역의 명당이 없습니다.</AppText>
               </View>
             }
           />
         )}
       </View>
-    </SafeAreaView>
+    </ScreenContainer>
   );
 };
 
