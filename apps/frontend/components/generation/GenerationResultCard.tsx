@@ -21,6 +21,7 @@ const GenerationResultCardComponent = ({
   delay = 0,
 }: GenerationResultCardProps) => {
   const cardOpacity = useRef(new Animated.Value(0)).current;
+  const numbersKey = numbers.join(',');
 
   useEffect(() => {
     cardOpacity.setValue(0);
@@ -31,7 +32,7 @@ const GenerationResultCardComponent = ({
       useNativeDriver: true,
     }).start();
     // 부모가 새 게임 생성 시 numbers 변경 → 카드별 delay로 cascade 재실행
-  }, [delay, numbers.join(','), cardOpacity]);
+  }, [delay, numbersKey, cardOpacity]);
 
   return (
     <Animated.View
