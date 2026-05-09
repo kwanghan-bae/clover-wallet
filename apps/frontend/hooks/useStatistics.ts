@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { usersApi } from '../api/users';
-import { loadItem } from '../utils/storage';
+import type { LottoSetRecord } from '../api/types/lotto';
+import { loadItem, StorageKeys } from '../utils/storage';
+import { toSetRecord } from '../utils/lotto';
 import { calculateNumberFrequency } from '../utils/statistics';
-
-interface LottoRecord { numbers: number[] }
 
 export function useStatistics() {
   const { data: stats, isLoading } = useQuery({
@@ -13,8 +13,13 @@ export function useStatistics() {
   });
 
   const numberFrequency = useMemo(() => {
-    const records = loadItem<LottoRecord[]>('lotto.saved_numbers') ?? [];
-    return calculateNumberFrequency(records.map((r) => ({ numbers: r.numbers, prize: 0, cost: 1000 })));
+    const raw = loadItem<unknown[]>(StorageKeys.SAVED_NUMBERS) ?? [];
+    const records: LottoSetRecord[] = raw.map(toSetRecord);
+    // 1 LottoSetRecord(N games) → N flattened game records for frequency calc
+    const games = records.flatMap((r) =>
+      r.games.map((g) => ({ numbers: g.numbers, prize: 0, cost: 1000 })),
+    );
+    return calculateNumberFrequency(games);
   }, []);
 
   return { stats: stats ?? null, numberFrequency, isLoading };
