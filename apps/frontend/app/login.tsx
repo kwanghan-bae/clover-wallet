@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import {
   View,
-  Text,
   SafeAreaView,
   TouchableOpacity,
   Image,
@@ -9,6 +8,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { GlassCard } from '../components/ui/GlassCard';
+import { AppText } from '../components/ui/AppText';
 import { Clover } from 'lucide-react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuth } from '../hooks/useAuth';
@@ -54,12 +54,12 @@ const LoginScreen = () => {
             <Clover size={48} color="#4CAF50" fill="#4CAF50" />
           </View>
 
-          <Text className="text-white text-3xl font-black tracking-widest">
+          <AppText variant="display" className="text-white">
             Clover Wallet
-          </Text>
-          <Text className="text-white/90 text-sm mt-2 mb-12">
+          </AppText>
+          <AppText variant="caption" className="text-white/90 mt-2 mb-12">
             행운을 관리하는 스마트한 습관
-          </Text>
+          </AppText>
 
           {isLoading ? (
             <ActivityIndicator color="white" size="large" />
@@ -67,7 +67,7 @@ const LoginScreen = () => {
             <TouchableOpacity
               onPress={handleGoogleSignIn}
               activeOpacity={0.8}
-              className="bg-white w-full py-4 rounded-full flex-row justify-center items-center shadow-md"
+              className="bg-white w-full py-4 rounded-full flex-row justify-center items-center shadow-md shadow-button"
               accessibilityLabel="Google 계정으로 계속하기"
               accessibilityRole="button"
             >
@@ -76,9 +76,9 @@ const LoginScreen = () => {
                 className="w-6 h-6 mr-3"
                 accessible={false}
               />
-              <Text className="text-[#1A1A1A] dark:text-dark-text text-base font-bold">
+              <AppText variant="body-lg" className="text-text-primary dark:text-dark-text">
                 Google 계정으로 계속하기
-              </Text>
+              </AppText>
             </TouchableOpacity>
           )}
         </GlassCard>
