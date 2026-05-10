@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
+import { AppText } from '../ui/AppText';
 
 export type GameCount = 1 | 5 | 10;
 
@@ -18,7 +19,7 @@ const OPTIONS: { count: GameCount; label: string; sub?: string }[] = [
  * @description 한 번에 생성할 게임 수 선택 (1/5/10). 화면 상단 sticky로 배치.
  */
 export const GameCountToggle = ({ value, onChange }: GameCountToggleProps) => (
-  <View className="flex-row bg-white dark:bg-dark-card rounded-2xl p-1 mb-4 shadow-sm">
+  <View className="flex-row bg-surface dark:bg-dark-card rounded-card p-1 mb-4 shadow-card">
     {OPTIONS.map(({ count, label, sub }) => {
       const selected = value === count;
       return (
@@ -29,25 +30,23 @@ export const GameCountToggle = ({ value, onChange }: GameCountToggleProps) => (
           accessibilityLabel={label}
           accessibilityState={{ selected }}
           activeOpacity={0.7}
-          className={`flex-1 py-3 rounded-xl items-center ${
+          className={`flex-1 py-3 rounded-lg items-center ${
             selected ? 'bg-primary' : ''
           }`}
         >
-          <Text
-            className={`font-bold text-[14px] ${
-              selected ? 'text-white' : 'text-[#1A1A1A] dark:text-dark-text'
-            }`}
+          <AppText
+            variant="body-lg"
+            className={selected ? 'text-white' : 'text-text-primary dark:text-dark-text'}
           >
             {label}
-          </Text>
+          </AppText>
           {sub ? (
-            <Text
-              className={`text-[11px] mt-0.5 ${
-                selected ? 'text-white/80' : 'text-gray-400'
-              }`}
+            <AppText
+              variant="label"
+              className={`mt-0.5 ${selected ? 'text-white/80' : 'text-text-muted'}`}
             >
               {sub}
-            </Text>
+            </AppText>
           ) : null}
         </TouchableOpacity>
       );

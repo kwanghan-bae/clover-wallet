@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { METHODS } from '../../constants/generation-methods';
 import { GenerationMethodCard } from '../ui/GenerationMethodCard';
+import { AppText } from '../ui/AppText';
 
 export interface MethodSelectorProps {
   selectedMethod: string;
@@ -11,12 +12,12 @@ export interface MethodSelectorProps {
 /** @description 번호 생성 방식을 선택하는 카드 목록 컴포넌트입니다. */
 const MethodSelectorComponent = ({ selectedMethod, onSelect }: MethodSelectorProps) => (
   <>
-    <Text className="text-xl font-bold text-[#1A1A1A] dark:text-dark-text mt-10 mb-2">
+    <AppText variant="title-lg" className="text-text-primary dark:text-dark-text mt-10 mb-2">
       추첨 방식 선택
-    </Text>
-    <Text className="text-gray-500 dark:text-dark-text-secondary text-[13px] mb-6">
+    </AppText>
+    <AppText variant="body" className="text-text-muted dark:text-dark-text-secondary mb-6">
       다양한 방법으로 행운의 번호를 찾아보세요!
-    </Text>
+    </AppText>
     <View className="gap-3">
       {METHODS.map((method) => (
         <GenerationMethodCard

@@ -64,7 +64,7 @@ const GenerationResultCardsComponent = ({
             onPress={onSave}
             disabled={isSaving}
             activeOpacity={0.7}
-            className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center justify-center min-w-[140px]"
+            className="bg-surface px-6 py-3 rounded-full shadow-button flex-row items-center justify-center min-w-[140px]"
             accessibilityRole="button"
             accessibilityLabel="번호 저장하기"
             accessibilityState={{ disabled: isSaving, busy: isSaving }}
@@ -81,7 +81,7 @@ const GenerationResultCardsComponent = ({
           <TouchableOpacity
             onPress={onShare}
             activeOpacity={0.7}
-            className="bg-white px-6 py-3 rounded-full shadow-sm flex-row items-center justify-center min-w-[140px]"
+            className="bg-surface px-6 py-3 rounded-full shadow-button flex-row items-center justify-center min-w-[140px]"
             accessibilityRole="button"
             accessibilityLabel="커뮤니티에 공유"
           >
