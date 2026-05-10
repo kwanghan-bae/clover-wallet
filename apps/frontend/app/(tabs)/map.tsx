@@ -8,6 +8,7 @@ import { ScreenContainer } from '../../components/ui/ScreenContainer';
 import { AppText } from '../../components/ui/AppText';
 import { REGIONS } from '../../constants/regions';
 import { useLuckySpots } from '../../hooks/useLuckySpots';
+import { useTheme } from '../../hooks/useTheme';
 
 /**
  * @description 전국의 로또 명당(1, 2등 다수 배출 판매점)을 지도와 리스트로 확인할 수 있는 화면입니다.
@@ -25,6 +26,7 @@ const LuckySpotsScreen = () => {
     moveToCurrentLocation,
     handleSpotPress,
   } = useLuckySpots();
+  const { isDark } = useTheme();
 
   return (
     <ScreenContainer>
@@ -38,7 +40,11 @@ const LuckySpotsScreen = () => {
           activeOpacity={0.7}
           className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
         >
-          {isMapView ? <ListIcon size={18} color="#0F1115" /> : <MapIcon size={18} color="#0F1115" />}
+          {isMapView ? (
+            <ListIcon size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />
+          ) : (
+            <MapIcon size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />
+          )}
         </TouchableOpacity>
       </View>
 

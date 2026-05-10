@@ -9,6 +9,7 @@ import { FeedList } from '../../components/community/FeedList';
 import { ScreenContainer } from '../../components/ui/ScreenContainer';
 import { AppText } from '../../components/ui/AppText';
 import { Logger } from '../../utils/logger';
+import { useTheme } from '../../hooks/useTheme';
 
 /**
  * @description 사용자들 간의 로또 관련 정보 공유 및 소통을 위한 커뮤니티 화면입니다.
@@ -17,6 +18,7 @@ const CommunityScreen = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [feedType, setFeedType] = useState<FeedType>('all');
+  const { isDark } = useTheme();
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: ['communityPosts', feedType],
@@ -59,7 +61,7 @@ const CommunityScreen = () => {
           testID="fab-create-post"
           className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
         >
-          <Edit3 size={18} color="#0F1115" />
+          <Edit3 size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />
         </TouchableOpacity>
       </View>
 

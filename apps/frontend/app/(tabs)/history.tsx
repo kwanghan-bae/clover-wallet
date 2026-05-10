@@ -11,10 +11,12 @@ import {
   HistoryRecord,
 } from '../../hooks/useHistoryData';
 import { getStatusBadge } from '../../constants/lotto-status';
+import { useTheme } from '../../hooks/useTheme';
 
 const HistoryScreen = () => {
   const router = useRouter();
   const { records, handleDelete } = useHistoryData();
+  const { isDark } = useTheme();
 
   return (
     <ScreenContainer>
@@ -32,7 +34,7 @@ const HistoryScreen = () => {
           activeOpacity={0.7}
           className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
         >
-          <QrCode size={18} color="#0F1115" />
+          <QrCode size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />
         </TouchableOpacity>
       </View>
 
