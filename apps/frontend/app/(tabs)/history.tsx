@@ -42,7 +42,7 @@ const HistoryScreen = () => {
         <FlatList
           data={records}
           keyExtractor={(item, index) => `${item.id}-${index}`}
-          contentContainerStyle={{ padding: 20 }}
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 96 }}
           renderItem={({ item }: { item: HistoryRecord }) => {
             const badge = item._ticketStatus
               ? getStatusBadge(item._ticketStatus)

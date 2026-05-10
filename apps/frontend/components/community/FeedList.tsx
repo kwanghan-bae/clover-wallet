@@ -34,7 +34,7 @@ const FeedListComponent = ({
       showsVerticalScrollIndicator={false}
       onRefresh={onRefresh}
       refreshing={isLoading}
-      contentContainerStyle={{ padding: 20 }}
+      contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 96 }}
       ListEmptyComponent={
         <View className="px-5">
           <EmptyState

@@ -98,7 +98,7 @@ const LuckySpotsScreen = () => {
           <FlatList
             data={spots}
             keyExtractor={item => item.id.toString()}
-            contentContainerStyle={{ padding: 20, gap: 12 }}
+            contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 96, gap: 12 }}
             renderItem={({ item }) => (
               <TouchableOpacity onPress={() => handleSpotPress(item.id)} accessibilityLabel={`${item.name} 판매점 상세 보기`} accessibilityRole="button">
                 <SpotListItem spot={item} />
