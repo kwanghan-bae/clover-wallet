@@ -46,10 +46,14 @@ const MyPageScreen = () => {
 
   return (
     <ScreenContainer>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 40 }}>
+      <View className="flex-row items-center px-5 h-14">
+        <AppText variant="title-lg" className="text-text-primary dark:text-dark-text">
+          마이페이지
+        </AppText>
+      </View>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 96 }}>
         {/* Profile Header */}
-        <View className="px-5 pt-8 pb-6">
-          <AppText variant="title-lg" className="text-text-primary mb-6">마이페이지</AppText>
+        <View className="px-5 pt-4 pb-6">
           <View className="bg-white rounded-[24px] p-6 shadow-card">
             <View className="flex-row items-center mb-6">
               <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mr-4">
