@@ -2,13 +2,12 @@ import React from 'react';
 import { View, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { CameraView } from 'expo-camera';
 import { useRouter, Stack } from 'expo-router';
-import { Camera as CameraIcon } from 'lucide-react-native';
+import { Camera as CameraIcon, ChevronLeft } from 'lucide-react-native';
 import { PrimaryButton } from '../components/ui/PrimaryButton';
 import { useScan } from '../hooks/useScan';
 import { ScanOverlay } from '../components/scan/ScanOverlay';
 import { ScanResultView } from '../components/scan/ScanResultView';
 import { ScreenContainer } from '../components/ui/ScreenContainer';
-import { AppBar } from '../components/ui/AppBar';
 import { AppText } from '../components/ui/AppText';
 
 /**
@@ -47,8 +46,22 @@ const ScanScreen = () => {
         <ScanOverlay scanMode={scanMode} />
       </CameraView>
 
-      {/* Top Header */}
-      <AppBar variant="screen" title="QR 스캔" onBackPress={() => router.back()} />
+      {/* Top Header — always white-on-black over camera */}
+      <View className="flex-row items-center px-2 h-14">
+        <TouchableOpacity
+          onPress={() => router.back()}
+          accessibilityLabel="뒤로 가기"
+          accessibilityRole="button"
+          activeOpacity={0.7}
+          className="w-10 h-10 items-center justify-center"
+        >
+          <ChevronLeft size={24} color="#FFFFFF" />
+        </TouchableOpacity>
+        <View className="flex-1 items-center">
+          <AppText variant="title" className="text-white">QR 스캔</AppText>
+        </View>
+        <View className="w-10 h-10" />
+      </View>
 
       {/* Mode Toggle Tabs */}
       <View className="flex-row mx-4 mt-2 bg-black/50 rounded-md p-1">
