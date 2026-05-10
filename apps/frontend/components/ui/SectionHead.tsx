@@ -25,6 +25,7 @@ export const SectionHead: React.FC<SectionHeadProps> = ({
         accessibilityRole="button"
         accessibilityLabel={linkText}
         activeOpacity={0.7}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
       >
         <AppText variant="caption" className="text-primary-text">
           {linkText} ›

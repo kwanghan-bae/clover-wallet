@@ -19,6 +19,7 @@ export const AppBarModal: React.FC<AppBarModalProps> = ({ title, onClosePress, t
         accessibilityLabel="닫기"
         accessibilityRole="button"
         activeOpacity={0.7}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         className="w-10 h-10 items-center justify-center"
       >
         <X size={22} color={isDark ? '#E0E0E0' : '#0F1115'} />
