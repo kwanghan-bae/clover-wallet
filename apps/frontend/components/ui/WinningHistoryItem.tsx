@@ -15,7 +15,7 @@ const WinningHistoryItemComponent = ({ item }: WinningHistoryItemProps) => {
   const is1st = item.rank === 1;
 
   return (
-    <View className="bg-surface rounded-card p-5 mb-4 flex-row items-center border border-border-hairline shadow-sm">
+    <View className="bg-surface rounded-card p-5 mb-4 flex-row items-center border border-border-hairline shadow-card">
       <View className={`w-12 h-12 rounded-full items-center justify-center mr-4 ${is1st ? 'bg-[#FFC107]/10' : 'bg-[#4CAF50]/10'}`}>
         <Trophy size={20} color={is1st ? '#FFC107' : '#4CAF50'} />
       </View>

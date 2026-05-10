@@ -23,7 +23,7 @@ const MenuSectionComponent = ({
   onLogout,
 }: MenuSectionProps) => (
   <View className="px-5" testID="menu-section">
-    <View className="bg-white rounded-[24px] overflow-hidden shadow-sm border border-gray-50">
+    <View className="bg-white rounded-[24px] overflow-hidden shadow-card border border-border-hairline">
       <MyPageMenuItem
         icon={<Bell size={20} color="#1A1A1A" />}
         label="알림"
