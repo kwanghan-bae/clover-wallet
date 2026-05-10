@@ -31,7 +31,7 @@ const MyPageMenuItemComponent = ({
       <View className="mr-4">
         {icon}
       </View>
-      <AppText variant="body" className={`flex-1 ${isDestructive ? 'text-red-400' : 'text-text-primary'}`}>
+      <AppText variant="body" className={`flex-1 ${isDestructive ? 'text-red-400' : 'text-text-primary dark:text-dark-text'}`}>
         {label}
       </AppText>
       {badge !== undefined && (
