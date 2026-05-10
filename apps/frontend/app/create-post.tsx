@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { ScrollView, Alert, View } from 'react-native';
+import { ScrollView, Alert, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { useRouter, Stack, useLocalSearchParams } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { AppBar } from '../components/ui/AppBar';
@@ -64,34 +64,40 @@ const CreatePostScreen = () => {
   };
 
   return (
-    <ScreenContainer>
+    <ScreenContainer edges={['top', 'bottom', 'left', 'right']}>
       <Stack.Screen options={{ headerShown: false }} />
       <AppBar variant="modal" title="글 작성" onClosePress={() => router.back()} />
-      <ScrollView className="flex-1 px-5 pt-3" keyboardShouldPersistTaps="handled">
-        <Input
-          testID="input-title"
-          placeholder="제목"
-          value={title}
-          onChangeText={setTitle}
-          className="border-0 border-b border-border-hairline px-0 text-title-lg font-extrabold mb-4"
-        />
-        {prefillNumbers ? (
-          <PostNumbersPreview games={prefillNumbers.games} method={prefillNumbers.method} />
-        ) : null}
-        <Input
-          testID="input-content"
-          placeholder="내 이야기를 써보세요"
-          value={content}
-          onChangeText={setContent}
-          multiline
-          numberOfLines={6}
-          textAlignVertical="top"
-          className="border-0 px-0 h-40"
-        />
-      </ScrollView>
-      <View className="px-5 pb-5 pt-3 border-t border-border-hairline">
-        <PrimaryButton label="게시하기" onPress={handleSubmit} isLoading={isLoading} />
-      </View>
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={56}
+      >
+        <ScrollView className="flex-1 px-5 pt-3" keyboardShouldPersistTaps="handled">
+          <Input
+            testID="input-title"
+            placeholder="제목"
+            value={title}
+            onChangeText={setTitle}
+            className="border-0 border-b border-border-hairline px-0 text-title-lg font-extrabold mb-4"
+          />
+          {prefillNumbers ? (
+            <PostNumbersPreview games={prefillNumbers.games} method={prefillNumbers.method} />
+          ) : null}
+          <Input
+            testID="input-content"
+            placeholder="내 이야기를 써보세요"
+            value={content}
+            onChangeText={setContent}
+            multiline
+            numberOfLines={6}
+            textAlignVertical="top"
+            className="border-0 px-0 h-40"
+          />
+        </ScrollView>
+        <View className="px-5 pb-5 pt-3 border-t border-border-hairline">
+          <PrimaryButton label="게시하기" onPress={handleSubmit} isLoading={isLoading} />
+        </View>
+      </KeyboardAvoidingView>
     </ScreenContainer>
   );
 };
