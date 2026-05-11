@@ -19,3 +19,6 @@
 ## 2026-05-09 - Enhance Touch Targets for Header Icons
 **Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets (Apple HIG: 44pt, Material: 48dp), leading to frustrating user experiences on mobile.
 **Action:** Wrap header icons with padding classes (e.g., `className="p-3 -mr-3"`) so a 24px icon reaches a ~48dp tappable area without altering visual alignment, and use `activeOpacity={0.7}` as the standard interaction feedback across the app.
+## 2026-05-11 - Touch Target Enhancement
+**Learning:** Some touchable components (like small share icons or text links in comments) have very small hit areas in React Native which can cause misclicks and frustration. Additionally, `Pressable` requires manual style adjustments for active states, unlike `TouchableOpacity`.
+**Action:** Always use `hitSlop` for small interactive elements without altering layout, and implement function-based styling for `Pressable` to provide visual feedback (e.g. `opacity: pressed ? 0.7 : 1`).
