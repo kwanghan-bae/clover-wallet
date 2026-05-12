@@ -39,6 +39,8 @@ export function GenerationInputModal({
           <TextInput
             className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-base mb-6"
             placeholder={selectedMethod === 'DREAM' ? '꿈의 키워드를 적어주세요 (예: 뱀, 금)' : '날짜나 숫자를 적어주세요'}
+            accessibilityLabel={selectedMethod === 'DREAM' ? '꿈의 키워드 입력' : '날짜나 숫자 입력'}
+            accessibilityHint="분석을 위해 필요한 정보를 입력해주세요"
             value={paramInput}
             onChangeText={setParamInput}
             autoFocus

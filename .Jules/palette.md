@@ -19,3 +19,6 @@
 ## 2026-05-09 - Enhance Touch Targets for Header Icons
 **Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets (Apple HIG: 44pt, Material: 48dp), leading to frustrating user experiences on mobile.
 **Action:** Wrap header icons with padding classes (e.g., `className="p-3 -mr-3"`) so a 24px icon reaches a ~48dp tappable area without altering visual alignment, and use `activeOpacity={0.7}` as the standard interaction feedback across the app.
+## 2024-05-18 - TextInput Accessibility in Modals
+**Learning:** React Native `TextInput` components inside Modals are often missed when it comes to adding `accessibilityLabel` and `accessibilityHint`. Relying solely on `placeholder` is not sufficient for robust screen reader support, especially when the placeholder text is long or dynamic.
+**Action:** When creating or reviewing `TextInput` components, especially within Modals like `GenerationInputModal`, explicitly provide `accessibilityLabel` and `accessibilityHint` to give clear, concise instructions to screen reader users, separate from the potentially lengthy visual placeholder.
