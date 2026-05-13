@@ -19,3 +19,6 @@
 ## 2026-05-09 - Enhance Touch Targets for Header Icons
 **Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets (Apple HIG: 44pt, Material: 48dp), leading to frustrating user experiences on mobile.
 **Action:** Wrap header icons with padding classes (e.g., `className="p-3 -mr-3"`) so a 24px icon reaches a ~48dp tappable area without altering visual alignment, and use `activeOpacity={0.7}` as the standard interaction feedback across the app.
+## 2026-05-13 - [HitSlop for Icon-only Buttons]
+**Learning:** Expanding the touch target area for small icon-only buttons using the `hitSlop` property is an essential accessibility feature in React Native applications that goes unnoticed visually but drastically improves UX on mobile devices.
+**Action:** Add `hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}` to `TouchableOpacity` or `Pressable` components that only contain an icon, particularly when padding (like `p-1` or `p-2`) is minimal.

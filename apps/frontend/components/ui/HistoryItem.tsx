@@ -47,6 +47,7 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
           activeOpacity={0.6}
           accessibilityLabel="내역 삭제"
           accessibilityRole="button"
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Trash2 size={18} color="#FFCDCD" />
         </TouchableOpacity>

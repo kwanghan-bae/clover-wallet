@@ -69,7 +69,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
           <AppText variant="body" className="ml-1.5 text-text-muted">{commentCount}</AppText>
         </View>
         <View className="flex-1" />
-        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" accessibilityRole="button" accessibilityLabel="공유하기">
+        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" accessibilityRole="button" accessibilityLabel="공유하기" hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
           <Share2 size={18} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
