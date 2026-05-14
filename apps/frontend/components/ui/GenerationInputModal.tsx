@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Modal, TextInput, TouchableOpacity } from 'react-native';
 
 interface GenerationInputModalProps {
@@ -23,6 +23,8 @@ export function GenerationInputModal({
   onCancel,
   onConfirm,
 } : GenerationInputModalProps) {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
     <Modal
       visible={isVisible}
@@ -37,11 +39,14 @@ export function GenerationInputModal({
           <Text className="text-gray-500 text-center text-xs mb-6">분석을 위해 필요한 정보를 입력해주세요.</Text>
           
           <TextInput
-            className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-base mb-6"
+            className={`bg-gray-50 border rounded-xl p-4 text-base mb-6 ${isFocused ? 'border-primary' : 'border-gray-100'}`}
             placeholder={selectedMethod === 'DREAM' ? '꿈의 키워드를 적어주세요 (예: 뱀, 금)' : '날짜나 숫자를 적어주세요'}
             value={paramInput}
             onChangeText={setParamInput}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             autoFocus
+            accessibilityLabel={methodTitle ? `${methodTitle} 정보 입력` : "정보 입력"}
           />
 
           <View className="flex-row gap-3">
