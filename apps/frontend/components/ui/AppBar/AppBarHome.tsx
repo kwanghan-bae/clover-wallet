@@ -32,6 +32,7 @@ export const AppBarHome: React.FC<AppBarHomeProps> = ({ hasUnread = false, onBel
         accessibilityLabel="알림"
         accessibilityRole="button"
         activeOpacity={0.7}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
       >
         <Bell size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />

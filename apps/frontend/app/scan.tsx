@@ -53,6 +53,7 @@ const ScanScreen = () => {
           accessibilityLabel="뒤로 가기"
           accessibilityRole="button"
           activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           className="w-10 h-10 items-center justify-center"
         >
           <ChevronLeft size={24} color="#FFFFFF" />

@@ -58,6 +58,7 @@ const CommunityScreen = () => {
           accessibilityLabel="새 게시글 작성"
           accessibilityRole="button"
           activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           testID="fab-create-post"
           className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
         >

@@ -45,6 +45,7 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
           onPress={() => onDelete(record.id)}
           className="p-1"
           activeOpacity={0.6}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           accessibilityLabel="내역 삭제"
           accessibilityRole="button"
         >

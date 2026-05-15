@@ -38,6 +38,7 @@ const LuckySpotsScreen = () => {
           accessibilityLabel={isMapView ? '리스트 보기로 전환' : '지도 보기로 전환'}
           accessibilityRole="button"
           activeOpacity={0.7}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
         >
           {isMapView ? (
@@ -87,6 +88,7 @@ const LuckySpotsScreen = () => {
             <TouchableOpacity
               activeOpacity={0.8}
               onPress={moveToCurrentLocation}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               className="absolute bottom-6 right-6 w-12 h-12 rounded-full bg-surface items-center justify-center shadow-elev border border-border-hairline"
               accessibilityLabel="현재 위치로 이동"
               accessibilityRole="button"

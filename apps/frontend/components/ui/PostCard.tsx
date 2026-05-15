@@ -36,7 +36,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
     >
       {/* Header */}
       <View className="flex-row items-start mb-4">
-        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3" accessibilityRole="button" accessibilityLabel={`${nickname} 프로필 보기`}>
+        <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3" hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={`${nickname} 프로필 보기`}>
           <View className="w-10 h-10 rounded-full bg-[#4CAF50]/10 items-center justify-center">
             <AppText variant="title" className="text-primary-text">{initial}</AppText>
           </View>
@@ -60,7 +60,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
 
       {/* Footer / Actions */}
       <View className="flex-row items-center px-1">
-        <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6} accessibilityRole="button" accessibilityLabel={post.isLiked ? '좋아요 취소' : '좋아요'}>
+        <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={post.isLiked ? '좋아요 취소' : '좋아요'}>
           <Heart size={18} color={post.isLiked ? "#EF5350" : "#9E9E9E"} fill={post.isLiked ? "#EF5350" : "transparent"} />
           <AppText variant="body" className={`ml-1.5 ${post.isLiked ? 'text-[#EF5350]' : 'text-text-muted'}`}>{post.likes}</AppText>
         </TouchableOpacity>
@@ -69,7 +69,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
           <AppText variant="body" className="ml-1.5 text-text-muted">{commentCount}</AppText>
         </View>
         <View className="flex-1" />
-        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" accessibilityRole="button" accessibilityLabel="공유하기">
+        <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="공유하기">
           <Share2 size={18} color="#BDBDBD" />
         </TouchableOpacity>
       </View>
