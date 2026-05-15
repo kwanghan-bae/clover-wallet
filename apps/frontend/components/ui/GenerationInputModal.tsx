@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Modal, TextInput, TouchableOpacity } from 'react-native';
 
 interface GenerationInputModalProps {
@@ -11,8 +11,8 @@ interface GenerationInputModalProps {
   onConfirm: () => void;
 }
 
-/** 
- * @description 번호 생성을 위해 추가 정보(꿈 키워드, 기념일 등)를 입력받는 모달 컴포넌트입니다. 
+/**
+ * @description 번호 생성을 위해 추가 정보(꿈 키워드, 기념일 등)를 입력받는 모달 컴포넌트입니다.
  */
 export function GenerationInputModal({
   isVisible,
@@ -23,6 +23,9 @@ export function GenerationInputModal({
   onCancel,
   onConfirm,
 } : GenerationInputModalProps) {
+  const [focused, setFocused] = useState(false);
+  const accessibilityLabel = methodTitle ? `${methodTitle} 입력` : '키워드 입력';
+
   return (
     <Modal
       visible={isVisible}
@@ -35,12 +38,16 @@ export function GenerationInputModal({
             {methodTitle}
           </Text>
           <Text className="text-gray-500 text-center text-xs mb-6">분석을 위해 필요한 정보를 입력해주세요.</Text>
-          
+
           <TextInput
-            className="bg-gray-50 border border-gray-100 rounded-xl p-4 text-base mb-6"
+            className={`bg-gray-50 border ${focused ? 'border-primary' : 'border-border-hairline'} rounded-xl p-4 text-base mb-6`}
             placeholder={selectedMethod === 'DREAM' ? '꿈의 키워드를 적어주세요 (예: 뱀, 금)' : '날짜나 숫자를 적어주세요'}
             value={paramInput}
             onChangeText={setParamInput}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            accessibilityLabel={accessibilityLabel}
+            accessibilityHint="분석을 위해 필요한 정보를 입력해주세요"
             autoFocus
           />
 
