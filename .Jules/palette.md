@@ -19,3 +19,7 @@
 ## 2026-05-09 - Enhance Touch Targets for Header Icons
 **Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets (Apple HIG: 44pt, Material: 48dp), leading to frustrating user experiences on mobile.
 **Action:** Wrap header icons with padding classes (e.g., `className="p-3 -mr-3"`) so a 24px icon reaches a ~48dp tappable area without altering visual alignment, and use `activeOpacity={0.7}` as the standard interaction feedback across the app.
+
+## 2024-05-16 - Text Input Clear Mechanism
+**Learning:** Adding an inline 'clear' button inside `TextInput` components significantly improves mobile text-entry UX, but it must be coupled with adequate padding on the `TextInput` itself (e.g., `pr-10`) to prevent the user's typed text from overlapping visually with the absolute-positioned clear icon.
+**Action:** When implementing inline icons within inputs, ensure the input padding accommodates the icon dimensions and use `hitSlop` to ensure the icon is easily tappable on touch screens.
