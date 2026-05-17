@@ -1,8 +1,8 @@
 // frontend/components/ui/CommentItem.tsx
-import React, { memo } from 'react';
-import { View, Pressable } from 'react-native';
-import { Reply } from 'lucide-react-native';
-import { AppText } from './AppText';
+import React, { memo } from "react";
+import { View, Pressable } from "react-native";
+import { Reply } from "lucide-react-native";
+import { AppText } from "./AppText";
 
 interface CommentData {
   id: number;
@@ -20,28 +20,75 @@ interface CommentItemProps {
   onUserPress: (userId: number) => void;
 }
 
-const CommentItemComponent = ({ comment, isReply = false, onReply, onUserPress }: CommentItemProps) => {
-  const nickname = comment.user?.ssoQualifier?.split('@')[0] ?? '익명';
-  const date = new Date(comment.createdAt).toLocaleDateString('ko-KR');
+const CommentItemComponent = ({
+  comment,
+  isReply = false,
+  onReply,
+  onUserPress,
+}: CommentItemProps) => {
+  const nickname = comment.user?.ssoQualifier?.split("@")[0] ?? "익명";
+  const date = new Date(comment.createdAt).toLocaleDateString("ko-KR");
 
   return (
-    <View className={`${isReply ? 'ml-8 border-l-2 border-gray-200 dark:border-dark-card pl-3' : ''} mb-3`}>
+    <View
+      className={`${isReply ? "ml-8 border-l-2 border-gray-200 dark:border-dark-card pl-3" : ""} mb-3`}
+    >
       <View className="flex-row items-center gap-2 mb-1">
-        <Pressable onPress={() => comment.user && onUserPress(comment.user.id)} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityLabel={`${nickname} 프로필 보기`} accessibilityRole="button">
+        <Pressable
+          onPress={() => comment.user && onUserPress(comment.user.id)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityLabel={`${nickname} 프로필 보기`}
+          accessibilityRole="button"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
           <View className="w-6 h-6 rounded-full bg-primary items-center justify-center">
-            <AppText variant="title" className="text-white text-xs">{nickname[0]}</AppText>
+            <AppText variant="title" className="text-white text-xs">
+              {nickname[0]}
+            </AppText>
           </View>
         </Pressable>
-        <Pressable onPress={() => comment.user && onUserPress(comment.user.id)} accessibilityLabel={`${nickname} 프로필 보기`} accessibilityRole="link">
-          <AppText variant="title" className="text-sm text-text-dark dark:text-dark-text">{nickname}</AppText>
+        <Pressable
+          onPress={() => comment.user && onUserPress(comment.user.id)}
+          accessibilityLabel={`${nickname} 프로필 보기`}
+          accessibilityRole="link"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
+          <AppText
+            variant="title"
+            className="text-sm text-text-dark dark:text-dark-text"
+          >
+            {nickname}
+          </AppText>
         </Pressable>
-        <AppText variant="body" className="text-xs text-text-grey dark:text-dark-text-secondary">{date}</AppText>
+        <AppText
+          variant="body"
+          className="text-xs text-text-grey dark:text-dark-text-secondary"
+        >
+          {date}
+        </AppText>
       </View>
-      <AppText variant="body" className="text-sm text-text-dark dark:text-dark-text ml-8">{comment.content}</AppText>
+      <AppText
+        variant="body"
+        className="text-sm text-text-dark dark:text-dark-text ml-8"
+      >
+        {comment.content}
+      </AppText>
       {!isReply && (
-        <Pressable onPress={() => onReply(comment.id)} className="flex-row items-center gap-1 ml-8 mt-1" hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityLabel="답글 달기" accessibilityRole="button">
+        <Pressable
+          onPress={() => onReply(comment.id)}
+          className="flex-row items-center gap-1 ml-8 mt-1"
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          accessibilityLabel="답글 달기"
+          accessibilityRole="button"
+          style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}
+        >
           <Reply size={14} color="#757575" />
-          <AppText variant="body" className="text-xs text-text-grey dark:text-dark-text-secondary">답글</AppText>
+          <AppText
+            variant="body"
+            className="text-xs text-text-grey dark:text-dark-text-secondary"
+          >
+            답글
+          </AppText>
         </Pressable>
       )}
       {comment.replies?.map((reply) => (
@@ -58,4 +105,4 @@ const CommentItemComponent = ({ comment, isReply = false, onReply, onUserPress }
 };
 
 export const CommentItem = memo(CommentItemComponent);
-CommentItem.displayName = 'CommentItem';
+CommentItem.displayName = "CommentItem";
