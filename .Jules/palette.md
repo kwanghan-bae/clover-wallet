@@ -19,3 +19,6 @@
 ## 2026-05-09 - Enhance Touch Targets for Header Icons
 **Learning:** Icon-only buttons located in headers (like `lucide-react-native` icons wrapped in `TouchableOpacity`) often have small touch targets (Apple HIG: 44pt, Material: 48dp), leading to frustrating user experiences on mobile.
 **Action:** Wrap header icons with padding classes (e.g., `className="p-3 -mr-3"`) so a 24px icon reaches a ~48dp tappable area without altering visual alignment, and use `activeOpacity={0.7}` as the standard interaction feedback across the app.
+## 2024-05-18 - Enhance Modal Accessibility and Keyboard Flow
+**Learning:** React Native `TextInput` components inside Modals benefit significantly from explicitly allowing keyboard submission via `onSubmitEditing` and `returnKeyType="done"`. Furthermore, confirm buttons for these inputs need explicitly managed `disabled` logic, accompanying visual styling, and `accessibilityState={{ disabled: ... }}` so screen readers accurately communicate the requirement.
+**Action:** Always map `onSubmitEditing` to form submission functions in single-input text modals. Pair this with proper visual/accessible disabled states for confirmation buttons to ensure smooth interaction flow and clarity for all users.

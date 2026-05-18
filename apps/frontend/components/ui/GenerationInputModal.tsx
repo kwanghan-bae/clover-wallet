@@ -49,11 +49,14 @@ export function GenerationInputModal({
             accessibilityLabel={accessibilityLabel}
             accessibilityHint="분석을 위해 필요한 정보를 입력해주세요"
             autoFocus
+            returnKeyType="done"
+            onSubmitEditing={() => { if (paramInput.trim()) onConfirm(); }}
           />
 
           <View className="flex-row gap-3">
             <TouchableOpacity
               onPress={onCancel}
+              activeOpacity={0.7}
               className="flex-1 py-4 bg-gray-100 rounded-xl items-center"
               accessibilityLabel="취소"
               accessibilityRole="button"
@@ -62,9 +65,12 @@ export function GenerationInputModal({
             </TouchableOpacity>
             <TouchableOpacity
               onPress={onConfirm}
-              className="flex-2 py-4 bg-primary rounded-xl items-center"
+              activeOpacity={0.7}
+              disabled={!paramInput.trim()}
+              className={`flex-2 py-4 bg-primary rounded-xl items-center ${!paramInput.trim() ? 'opacity-50' : ''}`}
               accessibilityLabel="분석 및 생성"
               accessibilityRole="button"
+              accessibilityState={{ disabled: !paramInput.trim() }}
             >
               <Text className="text-white font-bold">분석 및 생성</Text>
             </TouchableOpacity>
