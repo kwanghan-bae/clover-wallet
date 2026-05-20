@@ -23,3 +23,7 @@
 ## 2024-05-16 - Text Input Clear Mechanism
 **Learning:** Adding an inline 'clear' button inside `TextInput` components significantly improves mobile text-entry UX, but it must be coupled with adequate padding on the `TextInput` itself (e.g., `pr-10`) to prevent the user's typed text from overlapping visually with the absolute-positioned clear icon.
 **Action:** When implementing inline icons within inputs, ensure the input padding accommodates the icon dimensions and use `hitSlop` to ensure the icon is easily tappable on touch screens.
+
+## 2026-05-15 - Pressable Touch Feedback
+**Learning:** In React Native, `Pressable` components, unlike `TouchableOpacity`, do not have built-in visual feedback upon touch, leading to an unresponsive UX.
+**Action:** When using `Pressable` instead of `TouchableOpacity` (e.g., inside components like `CommentItem`), consistently provide visual touch feedback by applying an inline style function: `style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}`.
