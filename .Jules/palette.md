@@ -27,3 +27,7 @@
 ## 2026-05-15 - Pressable Touch Feedback
 **Learning:** In React Native, `Pressable` components, unlike `TouchableOpacity`, do not have built-in visual feedback upon touch, leading to an unresponsive UX.
 **Action:** When using `Pressable` instead of `TouchableOpacity` (e.g., inside components like `CommentItem`), consistently provide visual touch feedback by applying an inline style function: `style={({ pressed }) => ({ opacity: pressed ? 0.7 : 1 })}`.
+
+## 2024-05-19 - Keyboard Submission and Disabled States in Modals
+**Learning:** React Native modal components with forms often lack explicit disabled states on confirm buttons when required fields are empty, and TextInputs may not support submitting the form directly from the mobile keyboard (e.g., via the "Done" key). This creates a disjointed UX and poor accessibility because screen readers do not know the button is disabled, and users must manually dismiss the keyboard to click submit.
+**Action:** Always map `disabled` state and `accessibilityState={{ disabled: true }}` to submission buttons in modals based on form validation. Additionally, equip `<TextInput>` with `returnKeyType="done"` and `onSubmitEditing` to handle keyboard-based form submission gracefully.
