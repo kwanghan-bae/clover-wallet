@@ -55,7 +55,7 @@ const HomeScreen = () => {
           onGenerate={() => router.push('/number-generation')}
           onScan={() => router.push('/scan')}
         />
-        <QuickActions onNavigate={(path) => router.push(path as any)} />
+        <QuickActions onNavigate={(path) => router.push(path as Href<string>)} />
         <SectionHead title="최근 구매" linkText="전체 보기" onLinkPress={() => router.push('/(tabs)/history')} />
         <View 
           className="bg-white/70 dark:bg-[#1E293B]/70 rounded-3xl border border-white/40 dark:border-white/10 overflow-hidden px-5 py-4"

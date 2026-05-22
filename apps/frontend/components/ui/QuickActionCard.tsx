@@ -31,7 +31,7 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   
   // Clone the icon to enforce size and white color for a unified high-contrast premium widget style
   const clonedIcon = React.isValidElement(icon)
-    ? React.cloneElement(icon as React.ReactElement<any>, { color: 'white', size: 20 })
+    ? React.cloneElement(icon as React.ReactElement<{ color?: string; size?: number }>, { color: 'white', size: 20 })
     : icon;
 
   return (
