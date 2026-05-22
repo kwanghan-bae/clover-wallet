@@ -66,6 +66,14 @@ jest.mock('expo-notifications', () => ({
   AndroidImportance: { MAX: 5 },
 }));
 
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, props),
+  };
+});
+
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
   useFocusEffect: (cb) => cb(),

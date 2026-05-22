@@ -20,10 +20,10 @@ const HistoryScreen = () => {
 
   return (
     <ScreenContainer>
-      <View className="flex-row justify-between items-center px-5 h-14">
+      <View className="flex-row justify-between items-center px-6 h-16">
         <AppText
           variant="title-lg"
-          className="text-text-primary dark:text-dark-text"
+          className="text-text-primary dark:text-dark-text font-extrabold tracking-tight"
         >
           내 로또 내역
         </AppText>
@@ -31,11 +31,11 @@ const HistoryScreen = () => {
           onPress={() => router.push('/scan')}
           accessibilityLabel="QR 스캔"
           accessibilityRole="button"
-          activeOpacity={0.7}
+          activeOpacity={0.75}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
+          className="w-10 h-10 rounded-xl items-center justify-center bg-black/[0.04] dark:bg-white/[0.06] border border-black/[0.03] dark:border-white/[0.03]"
         >
-          <QrCode size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />
+          <QrCode size={19} color={isDark ? '#F3F4F6' : '#1F2937'} />
         </TouchableOpacity>
       </View>
 
@@ -43,7 +43,7 @@ const HistoryScreen = () => {
         <FlatList
           data={records}
           keyExtractor={(item, index) => `${item.id}-${index}`}
-          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 20, paddingBottom: 96 }}
+          contentContainerStyle={{ paddingHorizontal: 24, paddingTop: 16, paddingBottom: 96 }}
           renderItem={({ item }: { item: HistoryRecord }) => {
             const badge = item._ticketStatus
               ? getStatusBadge(item._ticketStatus)

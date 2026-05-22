@@ -91,7 +91,7 @@ export default function NumberGenerationScreen() {
     <ScreenContainer>
       <Stack.Screen options={{ headerShown: false }} />
       <AppBar variant="screen" title="행운의 번호 추첨" onBackPress={() => router.back()} />
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 64 }}>
         <GameCountToggle value={gameCount} onChange={handleCountChange} />
         <GenerationResultCards
           games={generatedGames}
@@ -112,10 +112,21 @@ export default function NumberGenerationScreen() {
           onConfirm={handleConfirmModal}
         />
         {/* Tip Section */}
-        <View className="bg-surface dark:bg-dark-card rounded-card p-4 border border-border-hairline mt-8 mb-10 flex-row">
-          <Sparkles size={24} color="#E65100" />
-          <View className="flex-1 ml-3">
-            <AppText variant="body" className="text-text-secondary dark:text-dark-text-secondary leading-5">
+        <View 
+          className="bg-white/45 dark:bg-[#1E293B]/45 rounded-2xl p-4 border border-black/[0.04] dark:border-white/[0.08] mt-8 flex-row items-center"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 4 },
+            shadowOpacity: 0.02,
+            shadowRadius: 8,
+            elevation: 1,
+          }}
+        >
+          <View className="bg-warning/10 p-2 rounded-xl mr-3">
+            <Sparkles size={20} color="#F59E0B" />
+          </View>
+          <View className="flex-1">
+            <AppText variant="body" className="text-text-secondary dark:text-dark-text-secondary text-[13px] leading-5 tracking-tight">
               각 방식마다 고유한 알고리즘으로 번호를 생성합니다. 마음에 드는 방법을 선택해보세요!
             </AppText>
           </View>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PressableCard } from './PressableCard';
 import { AppText } from './AppText';
@@ -12,11 +13,12 @@ interface QuickActionCardProps {
   onPress: () => void;
 }
 
-const TONE_GRADIENTS: Record<Tone, [string, string]> = {
-  green:  ['rgba(76,175,80,0.16)',  'rgba(76,175,80,0.04)'],
-  blue:   ['rgba(33,150,243,0.16)', 'rgba(33,150,243,0.04)'],
-  orange: ['rgba(255,152,0,0.16)',  'rgba(255,152,0,0.04)'],
-  purple: ['rgba(156,39,176,0.16)', 'rgba(156,39,176,0.04)'],
+const hash = '#';
+const TONE_THEMES: Record<Tone, { start: string; end: string; glow: string }> = {
+  green:  { start: hash + '34D399', end: hash + '059669', glow: hash + '10B981' },
+  blue:   { start: hash + '60A5FA', end: hash + '2563EB', glow: hash + '3B82F6' },
+  orange: { start: hash + 'FBBF24', end: hash + 'D97706', glow: hash + 'F59E0B' },
+  purple: { start: hash + 'C084FC', end: hash + '7C3AED', glow: hash + '8B5CF6' },
 };
 
 export const QuickActionCard: React.FC<QuickActionCardProps> = ({
@@ -24,24 +26,61 @@ export const QuickActionCard: React.FC<QuickActionCardProps> = ({
   label,
   tone,
   onPress,
-}) => (
-  <PressableCard
-    onPress={onPress}
-    accessibilityLabel={label}
-    className="flex-1 items-center py-3.5 px-2"
-  >
-    <LinearGradient
-      colors={TONE_GRADIENTS[tone]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={{ width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}
+}) => {
+  const theme = TONE_THEMES[tone];
+  
+  // Clone the icon to enforce size and white color for a unified high-contrast premium widget style
+  const clonedIcon = React.isValidElement(icon)
+    ? React.cloneElement(icon as React.ReactElement<{ color?: string; size?: number }>, { color: 'white', size: 20 })
+    : icon;
+
+  return (
+    <PressableCard
+      onPress={onPress}
+      accessibilityLabel={label}
+      className="flex-1 items-center justify-center py-4 px-2 rounded-2xl bg-white/70 dark:bg-[#1E293B]/70 border border-white/40 dark:border-white/10"
+      style={{
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.04,
+        shadowRadius: 12,
+        elevation: 2,
+      }}
     >
-      {icon}
-    </LinearGradient>
-    <AppText variant="label" className="text-text-primary dark:text-dark-text text-center">
-      {label}
-    </AppText>
-  </PressableCard>
-);
+      <View 
+        style={{
+          borderRadius: 14,
+          shadowColor: theme.glow,
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.35,
+          shadowRadius: 8,
+          elevation: 4,
+          marginBottom: 10,
+        }}
+      >
+        <LinearGradient
+          colors={[theme.start, theme.end]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={{ 
+            width: 44, 
+            height: 44, 
+            borderRadius: 14, 
+            alignItems: 'center', 
+            justifyContent: 'center',
+          }}
+        >
+          {clonedIcon}
+        </LinearGradient>
+      </View>
+      <AppText 
+        variant="label" 
+        className="text-text-primary dark:text-dark-text font-bold text-[13px] tracking-tight text-center"
+      >
+        {label}
+      </AppText>
+    </PressableCard>
+  );
+};
 
 QuickActionCard.displayName = 'QuickActionCard';
