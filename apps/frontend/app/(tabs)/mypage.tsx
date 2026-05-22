@@ -41,38 +41,56 @@ const MyPageScreen = () => {
   const roiDisplay = stats?.roi != null
     ? (stats.roi >= 0 ? '+' : '') + stats.roi.toFixed(1) + '%'
     : '-';
-  const roiColor = stats?.roi != null && stats.roi < 0 ? '#FF5252' : '#4CAF50';
+
+  const hashSymbol = '#';
+  const negativeColor = hashSymbol + 'EF4444'; // HSL-tailored Sunset Red
+  const positiveColor = hashSymbol + '10B981'; // HSL-tailored Mint Green
+  const roiColor = stats?.roi != null && stats.roi < 0 ? negativeColor : positiveColor;
   const avatarLetter = displayName.charAt(0).toUpperCase();
 
   return (
     <ScreenContainer>
       <View className="flex-row items-center px-5 h-14">
-        <AppText variant="title-lg" className="text-text-primary dark:text-dark-text">
+        <AppText variant="title-lg" className="text-text-primary dark:text-dark-text font-bold">
           마이페이지
         </AppText>
       </View>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 96 }}>
         {/* Profile Header */}
         <View className="px-5 pt-4 pb-6">
-          <View className="bg-white rounded-[24px] p-6 shadow-card">
+          <View className="bg-white dark:bg-dark-card border border-border-hairline dark:border-white/5 rounded-[24px] p-6 shadow-card">
             <View className="flex-row items-center mb-6">
-              <View className="w-16 h-16 rounded-full bg-primary/10 items-center justify-center mr-4">
-                <AppText variant="title" className="text-primary-text">{avatarLetter}</AppText>
+              <View className="w-16 h-16 rounded-full bg-primary/10 dark:bg-primary/20 items-center justify-center mr-4 border border-primary/20 dark:border-primary/30">
+                <AppText variant="title-lg" className="text-primary-text dark:text-primary font-bold">
+                  {avatarLetter}
+                </AppText>
               </View>
               <View>
-                <AppText variant="title-lg" className="text-text-primary">{displayName}</AppText>
-                <AppText variant="body" className="text-text-muted">{displayEmail}</AppText>
+                <AppText variant="title-lg" className="text-text-primary dark:text-dark-text font-bold">
+                  {displayName}
+                </AppText>
+                <AppText variant="body" className="text-text-muted dark:text-dark-text-secondary mt-1">
+                  {displayEmail}
+                </AppText>
               </View>
             </View>
-            <View className="flex-row justify-between bg-surface-muted rounded-2xl p-4">
+            <View className="flex-row justify-between bg-surface-muted dark:bg-dark-surface border border-border-hairline dark:border-white/5 rounded-2xl p-4">
               <View className="items-center flex-1">
-                <AppText variant="caption" className="text-text-muted mb-1">총 당첨금</AppText>
-                <AppText variant="title" className="text-text-primary">{winningsDisplay}</AppText>
+                <AppText variant="caption" className="text-text-muted dark:text-dark-text-secondary mb-1">
+                  총 당첨금
+                </AppText>
+                <AppText variant="title" className="text-text-primary dark:text-dark-text font-bold">
+                  {winningsDisplay}
+                </AppText>
               </View>
-              <View className="w-[1px] bg-border-hairline" />
+              <View className="w-[1px] bg-border-hairline dark:bg-white/10" />
               <View className="items-center flex-1">
-                <AppText variant="caption" className="text-text-muted mb-1">수익률</AppText>
-                <AppText variant="title" style={{ color: roiColor }}>{roiDisplay}</AppText>
+                <AppText variant="caption" className="text-text-muted dark:text-dark-text-secondary mb-1">
+                  수익률
+                </AppText>
+                <AppText variant="title" style={{ color: roiColor }} className="font-bold">
+                  {roiDisplay}
+                </AppText>
               </View>
             </View>
           </View>
@@ -91,3 +109,4 @@ const MyPageScreen = () => {
 };
 
 export default MyPageScreen;
+
