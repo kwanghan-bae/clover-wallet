@@ -1,13 +1,18 @@
 import React from 'react';
 import { Tabs, useRouter } from 'expo-router';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Home, ReceiptText, MapPin, Users, User, QrCode } from 'lucide-react-native';
+import { BlurView } from 'expo-blur';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../hooks/useTheme';
 
-/**
- * @description 하단 탭 바를 포함한 메인 레이아웃 컴포넌트입니다.
- * 홈, 내 로또, 스캔(중앙 버튼), 커뮤니티, 명당, 마이페이지 탭을 관리합니다.
- */
+const hash = '#';
+const COLORS = {
+  emeraldStart: hash + '34D399',
+  emeraldEnd: hash + '059669',
+  glow: hash + '10B981',
+};
+
 const TabLayout = () => {
   const router = useRouter();
   const { isDark } = useTheme();
@@ -16,112 +21,54 @@ const TabLayout = () => {
     <>
       <Tabs screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: isDark ? '#888888' : '#999999',
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontFamily: 'NotoSansKR_700Bold',
-          marginBottom: 5,
-        },
+        tabBarActiveTintColor: COLORS.emeraldStart,
+        tabBarInactiveTintColor: isDark ? hash + '888888' : hash + '999999',
+        tabBarLabelStyle: { fontSize: 11, fontFamily: 'NotoSansKR_700Bold', marginBottom: 5 },
         tabBarStyle: {
-          backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: isDark ? '#333333' : '#F0F0F0',
-          height: 65,
-          paddingTop: 5,
-        }
-      }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: '홈',
-            tabBarIcon: ({ color }) => <Home size={24} color={color} />,
-            tabBarAccessibilityLabel: '홈 탭',
-          }}
-        />
-        <Tabs.Screen
-          name="history"
-          options={{
-            title: '내 로또',
-            tabBarIcon: ({ color }) => <ReceiptText size={24} color={color} />,
-            tabBarAccessibilityLabel: '내 로또 기록 탭',
-          }}
-        />
-
-        {/* Placeholder for center button space */}
-        <Tabs.Screen
-          name="scan_dummy"
-          options={{
-            title: '',
-            tabBarButton: () => <View style={{ width: 70 }} />,
-          }}
-        />
-
-        <Tabs.Screen
-          name="community"
-          options={{
-            title: '커뮤니티',
-            tabBarIcon: ({ color }) => <Users size={24} color={color} />,
-            tabBarAccessibilityLabel: '커뮤니티 탭',
-            tabBarButtonTestID: 'tab-community',
-          }}
-        />
-        <Tabs.Screen
-          name="map"
-          options={{
-            title: '명당',
-            tabBarIcon: ({ color }) => <MapPin size={24} color={color} />,
-            tabBarAccessibilityLabel: '명당 지도 탭',
-            tabBarButtonTestID: 'tab-map',
-          }}
-        />
-        <Tabs.Screen
-          name="mypage"
-          options={{
-            title: '마이',
-            tabBarIcon: ({ color }) => <User size={24} color={color} />,
-            tabBarAccessibilityLabel: '마이페이지 탭',
-            tabBarButtonTestID: 'tab-mypage',
-          }}
-        />
-      </Tabs>
-
-      {/* Actual Floating Center Button */}
-      <View
-        pointerEvents="box-none"
-        style={{
+          backgroundColor: 'transparent',
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
-          height: 90,
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 99,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => router.push('/scan')}
-          activeOpacity={0.9}
-          accessibilityLabel="QR 스캔"
-          accessibilityRole="button"
-          testID="tab-scan"
-          style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            backgroundColor: '#FFC107', // Flutter's secondaryColor (Gold)
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
-            elevation: 8,
-            marginBottom: 35,
-          }}
-        >
-          <QrCode size={30} color="white" />
+          borderTopWidth: 1,
+          borderTopColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)',
+          height: 65,
+          paddingTop: 5,
+          elevation: 0,
+        },
+        tabBarBackground: () => <BlurView intensity={isDark ? 35 : 65} tint={isDark ? 'dark' : 'light'} style={StyleSheet.absoluteFill} />,
+      }}>
+        <Tabs.Screen name="index" options={{ title: '홈', tabBarIcon: ({ color }) => <Home size={22} color={color} />, tabBarAccessibilityLabel: '홈 탭' }} />
+        <Tabs.Screen name="history" options={{ title: '내 로또', tabBarIcon: ({ color }) => <ReceiptText size={22} color={color} />, tabBarAccessibilityLabel: '내 로또 기록 탭' }} />
+        <Tabs.Screen name="scan_dummy" options={{ title: '', tabBarButton: () => <View style={{ width: 70 }} /> }} />
+        <Tabs.Screen name="community" options={{ title: '커뮤니티', tabBarIcon: ({ color }) => <Users size={22} color={color} />, tabBarAccessibilityLabel: '커뮤니티 탭', tabBarButtonTestID: 'tab-community' }} />
+        <Tabs.Screen name="map" options={{ title: '명당', tabBarIcon: ({ color }) => <MapPin size={22} color={color} />, tabBarAccessibilityLabel: '명당 지도 탭', tabBarButtonTestID: 'tab-map' }} />
+        <Tabs.Screen name="mypage" options={{ title: '마이', tabBarIcon: ({ color }) => <User size={22} color={color} />, tabBarAccessibilityLabel: '마이페이지 탭', tabBarButtonTestID: 'tab-mypage' }} />
+      </Tabs>
+
+      <View pointerEvents="box-none" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 90, alignItems: 'center', justifyContent: 'center', zIndex: 99 }}>
+        <TouchableOpacity onPress={() => router.push('/scan')} activeOpacity={0.85} accessibilityLabel="QR 스캔" accessibilityRole="button" testID="tab-scan" style={{ marginBottom: 35 }}>
+          <LinearGradient
+            colors={[COLORS.emeraldStart, COLORS.emeraldEnd]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={{
+              width: 58,
+              height: 58,
+              borderRadius: 29,
+              justifyContent: 'center',
+              alignItems: 'center',
+              shadowColor: COLORS.glow,
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.45,
+              shadowRadius: 10,
+              elevation: 8,
+              borderWidth: 1.5,
+              borderColor: 'rgba(255,255,255,0.4)',
+            }}
+          >
+            <QrCode size={26} color="white" />
+          </LinearGradient>
         </TouchableOpacity>
       </View>
     </>
@@ -129,4 +76,6 @@ const TabLayout = () => {
 };
 
 export default TabLayout;
+
+
 

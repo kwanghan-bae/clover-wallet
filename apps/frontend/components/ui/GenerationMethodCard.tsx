@@ -21,7 +21,31 @@ const GenerationMethodCardComponent = ({ method, isSelected, onPress }: Generati
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`bg-white rounded-2xl p-4 flex-row items-center border ${isSelected ? 'border-primary shadow-md' : 'border-gray-50 shadow-sm'}`}
+      activeOpacity={0.8}
+      className={`flex-row items-center p-4 rounded-2xl border ${
+        isSelected
+          ? 'bg-white dark:bg-[#1E293B] border-transparent'
+          : 'bg-white/70 dark:bg-[#1E293B]/60 border-black/[0.04] dark:border-white/[0.06]'
+      }`}
+      style={
+        isSelected
+          ? {
+              borderColor: method.color,
+              borderWidth: 1.5,
+              shadowColor: method.color,
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.22,
+              shadowRadius: 10,
+              elevation: 6,
+            }
+          : {
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.02,
+              shadowRadius: 4,
+              elevation: 1,
+            }
+      }
       accessibilityLabel={`${method.title}: ${method.subtitle}`}
       accessibilityRole="button"
       accessibilityState={{ selected: isSelected }}
@@ -30,14 +54,21 @@ const GenerationMethodCardComponent = ({ method, isSelected, onPress }: Generati
         {method.icon}
       </View>
       <View className="flex-1">
-        <Text className={`text-base font-bold ${isSelected ? 'text-primary' : 'text-[#1A1A1A]'}`}>
+        <Text className={`text-[16px] font-bold tracking-tight ${
+          isSelected ? 'text-text-primary dark:text-white' : 'text-text-primary dark:text-dark-text'
+        }`}>
           {method.title}
         </Text>
-        <Text className="text-gray-400 text-xs mt-1">{method.subtitle}</Text>
+        <Text className="text-text-muted dark:text-dark-text-secondary text-[12px] mt-1 tracking-tight">
+          {method.subtitle}
+        </Text>
       </View>
       {isSelected && (
-        <View className="bg-primary/10 p-1 rounded-full">
-          <Sparkles size={16} color="#4CAF50" />
+        <View 
+          className="p-1.5 rounded-full"
+          style={{ backgroundColor: method.color + '20' }}
+        >
+          <Sparkles size={15} color={method.color} />
         </View>
       )}
     </TouchableOpacity>
@@ -46,3 +77,4 @@ const GenerationMethodCardComponent = ({ method, isSelected, onPress }: Generati
 
 export const GenerationMethodCard = memo(GenerationMethodCardComponent);
 GenerationMethodCard.displayName = 'GenerationMethodCard';
+
