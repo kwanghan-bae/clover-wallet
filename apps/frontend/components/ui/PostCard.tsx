@@ -24,53 +24,67 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
   const { user: currentUser } = useAuth();
   const isOwner = currentUser != null && currentUser.id === post.userSummary?.id;
 
+  const hash = '#';
+  const heartActiveColor = hash + 'EF4444'; // HSL Sunset Red
+  const heartInactiveColor = hash + '6E7480'; // Slate Muted
+  const footerIconColor = hash + '6E7480';
+  const shareIconColor = hash + '9E9E9E';
+
+  const heartTextColor = post.isLiked ? heartActiveColor : undefined;
+
   const handleUserProfilePress = () => router.push(`/user/${post.userSummary.id}`);
 
   return (
     <TouchableOpacity
       activeOpacity={0.8}
       onPress={() => onPress?.(post.id)}
-      className="bg-surface rounded-card-lg p-5 mb-5 shadow-card"
+      className="bg-surface dark:bg-dark-card border border-border-hairline dark:border-white/5 rounded-card-lg p-5 mb-5 shadow-card"
       accessibilityRole="button"
       accessibilityLabel={`${post.title ? post.title + ' ' : ''}${post.content.substring(0, 20)} 게시글 보기`}
     >
       {/* Header */}
       <View className="flex-row items-start mb-4">
         <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} className="mr-3" hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={`${nickname} 프로필 보기`}>
-          <View className="w-10 h-10 rounded-full bg-[#4CAF50]/10 items-center justify-center">
-            <AppText variant="title" className="text-primary-text">{initial}</AppText>
+          <View className="w-10 h-10 rounded-full bg-primary/10 dark:bg-primary/20 items-center justify-center border border-primary/10 dark:border-primary/20">
+            <AppText variant="title" className="text-primary-text dark:text-primary font-semibold">{initial}</AppText>
           </View>
         </TouchableOpacity>
         <View className="flex-1">
           <TouchableOpacity activeOpacity={0.7} onPress={handleUserProfilePress} accessibilityRole="button" accessibilityLabel={`${nickname} 프로필 보기`}>
-            <AppText variant="title" className="text-text-primary text-[15px]">{nickname}</AppText>
+            <AppText variant="title" className="text-text-primary dark:text-dark-text text-[15px] font-semibold">{nickname}</AppText>
           </TouchableOpacity>
-          <AppText variant="body" className="text-text-muted text-[12px] mt-0.5">{dateStr}</AppText>
+          <AppText variant="body" className="text-text-muted dark:text-dark-text-secondary text-[12px] mt-0.5">{dateStr}</AppText>
         </View>
         <PostCardMenu postId={post.id} isOwner={isOwner} />
       </View>
 
       {post.title ? (
-        <AppText variant="title" className="text-text-primary mb-1" numberOfLines={1}>{post.title}</AppText>
+        <AppText variant="title" className="text-text-primary dark:text-dark-text mb-1 font-semibold" numberOfLines={1}>{post.title}</AppText>
       ) : null}
 
-      <AppText variant="body" className="text-text-primary text-[15px] leading-[22.5px] mb-4" numberOfLines={4}>{post.content}</AppText>
+      <AppText variant="body" className="text-text-primary dark:text-dark-text text-[15px] leading-[22.5px] mb-4" numberOfLines={4}>{post.content}</AppText>
 
-      <View className="h-[1px] bg-[#F5F5F5] mb-3" />
+      <View className="h-[1px] bg-[#F5F5F5] dark:bg-white/10 mb-3" />
 
       {/* Footer / Actions */}
       <View className="flex-row items-center px-1">
         <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={post.isLiked ? '좋아요 취소' : '좋아요'}>
-          <Heart size={18} color={post.isLiked ? "#EF5350" : "#9E9E9E"} fill={post.isLiked ? "#EF5350" : "transparent"} />
-          <AppText variant="body" className={`ml-1.5 ${post.isLiked ? 'text-[#EF5350]' : 'text-text-muted'}`}>{post.likes}</AppText>
+          <Heart size={18} color={post.isLiked ? heartActiveColor : heartInactiveColor} fill={post.isLiked ? heartActiveColor : "transparent"} />
+          <AppText
+            variant="body"
+            className={`ml-1.5 ${post.isLiked ? '' : 'text-text-muted dark:text-dark-text-secondary'}`}
+            style={heartTextColor ? { color: heartTextColor } : undefined}
+          >
+            {post.likes}
+          </AppText>
         </TouchableOpacity>
         <View className="flex-row items-center mr-5" accessible={true} accessibilityLabel={`댓글 ${commentCount}개`}>
-          <MessageCircle size={18} color="#9E9E9E" />
-          <AppText variant="body" className="ml-1.5 text-text-muted">{commentCount}</AppText>
+          <MessageCircle size={18} color={footerIconColor} />
+          <AppText variant="body" className="ml-1.5 text-text-muted dark:text-dark-text-secondary">{commentCount}</AppText>
         </View>
         <View className="flex-1" />
         <TouchableOpacity onPress={() => onShare?.(post.id)} className="p-1" hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel="공유하기">
-          <Share2 size={18} color="#BDBDBD" />
+          <Share2 size={18} color={shareIconColor} />
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
@@ -91,3 +105,4 @@ function formatDate(dateString: string): string {
     return dateString;
   }
 }
+
