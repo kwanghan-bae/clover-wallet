@@ -57,9 +57,18 @@ const HomeScreen = () => {
         />
         <QuickActions onNavigate={(path) => router.push(path as any)} />
         <SectionHead title="최근 구매" linkText="전체 보기" onLinkPress={() => router.push('/(tabs)/history')} />
-        <View className="bg-surface dark:bg-dark-card rounded-card-lg shadow-card border border-border-hairline px-5 py-6">
+        <View 
+          className="bg-white/70 dark:bg-[#1E293B]/70 rounded-3xl border border-white/40 dark:border-white/10 overflow-hidden px-5 py-4"
+          style={{
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.04,
+            shadowRadius: 16,
+            elevation: 2,
+          }}
+        >
           <EmptyState
-            icon={<Receipt size={24} color="#2E7D32" />}
+            icon={<Receipt size={22} color="#10B981" />}
             title="아직 구매한 로또가 없어요"
             description="번호를 생성하거나 영수증을 스캔하면 여기에 모아 볼 수 있어요"
             cta={{ label: '번호 생성하기', onPress: () => router.push('/number-generation') }}
