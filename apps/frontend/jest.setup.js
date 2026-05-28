@@ -217,3 +217,14 @@ jest.mock('./hooks/useScan', () => ({
     resetScan: jest.fn(),
   }),
 }));
+jest.mock('expo-modules-core', () => ({
+  requireNativeModule: jest.fn(),
+  requireNativeViewManager: jest.fn(() => () => null),
+}));
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, props),
+  };
+});
