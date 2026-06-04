@@ -16,17 +16,17 @@ const TabLayout = () => {
     <>
       <Tabs screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: isDark ? '#888888' : '#999999',
+        tabBarActiveTintColor: 'rgb(76,175,80)',
+        tabBarInactiveTintColor: isDark ? 'rgb(136,136,136)' : 'rgb(153,153,153)',
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: 'NotoSansKR_700Bold',
           marginBottom: 5,
         },
         tabBarStyle: {
-          backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+          backgroundColor: isDark ? 'rgb(26,26,26)' : 'rgb(255,255,255)',
           borderTopWidth: 1,
-          borderTopColor: isDark ? '#333333' : '#F0F0F0',
+          borderTopColor: isDark ? 'rgb(51,51,51)' : 'rgb(240,240,240)',
           height: 65,
           paddingTop: 5,
         }
@@ -110,10 +110,10 @@ const TabLayout = () => {
             width: 60,
             height: 60,
             borderRadius: 30,
-            backgroundColor: '#FFC107', // Flutter's secondaryColor (Gold)
+            backgroundColor: 'rgb(255,193,7)', // Flutter's secondaryColor (Gold)
             justifyContent: 'center',
             alignItems: 'center',
-            shadowColor: '#000',
+            shadowColor: 'rgb(0,0,0)',
             shadowOffset: { width: 0, height: 4 },
             shadowOpacity: 0.3,
             shadowRadius: 8,
