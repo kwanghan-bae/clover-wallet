@@ -1,4 +1,15 @@
 /* eslint-disable react/display-name */
+
+global.__DEV__ = true;
+
+// Mock window for web environments like Expo BlurView
+if (typeof window === 'undefined') {
+  global.window = {
+    setTimeout: setTimeout,
+    clearTimeout: clearTimeout,
+  };
+}
+
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
   const React = require('react');

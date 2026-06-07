@@ -14,7 +14,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
-    'node_modules/(?!(ky)/)',
+    'node_modules/(?!(ky|expo-blur|expo-modules-core)/)',
   ],
   modulePaths: ['<rootDir>/node_modules'],
   moduleNameMapper: {
@@ -27,6 +27,7 @@ module.exports = {
     '^expo-linear-gradient$': '<rootDir>/__tests__/mocks/expo-linear-gradient.js',
     '^expo-camera$': '<rootDir>/__tests__/mocks/expo-camera.js',
     '^@shopify/flash-list$': '<rootDir>/__tests__/mocks/flash-list.js',
+    '^expo-blur$': '<rootDir>/__tests__/mocks/expo-blur.js',
   },
   collectCoverage: true,
   collectCoverageFrom: [
