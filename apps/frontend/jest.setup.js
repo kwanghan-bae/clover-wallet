@@ -123,6 +123,14 @@ jest.mock('react-native-safe-area-context', () => ({
 }));
 
 // Mock expo-linear-gradient
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' }),
+  };
+});
+
 jest.mock('expo-linear-gradient', () => {
   const React = require('react');
   const { View } = require('react-native');
