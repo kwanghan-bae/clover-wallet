@@ -115,6 +115,13 @@ jest.mock('react-native-svg', () => {
   };
 });
 
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return { BlurView: (props) => React.createElement(View, props) };
+});
+
 // Mock Safe Area
 jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: ({ children }) => children,
