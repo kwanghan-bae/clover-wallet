@@ -1,10 +1,10 @@
+import { saveLottoSet } from '../../../utils/lotto/history';
+import { appendToItemArray, StorageKeys } from '../../../utils/storage';
+
 jest.mock('../../../utils/storage', () => ({
   appendToItemArray: jest.fn(),
   StorageKeys: { SAVED_NUMBERS: 'lotto.saved_numbers' },
 }));
-
-import { saveLottoSet } from '../../../utils/lotto/history';
-import { appendToItemArray, StorageKeys } from '../../../utils/storage';
 
 describe('saveLottoSet', () => {
   beforeEach(() => {
