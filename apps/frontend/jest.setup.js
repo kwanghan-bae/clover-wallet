@@ -48,6 +48,21 @@ jest.mock('react-native-mmkv', () => ({
   })),
 }));
 
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' }),
+  };
+});
+
+// Mock expo-modules-core
+jest.mock('expo-modules-core', () => ({
+  NativeModulesProxy: {},
+  EventEmitter: jest.fn(),
+}));
+
 // Mock Expo Modules
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
