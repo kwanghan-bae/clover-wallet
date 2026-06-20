@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 import { Trash2, Calendar } from 'lucide-react-native';
 import { LottoBall } from './LottoBall';
 import { AppText } from './AppText';
@@ -22,7 +22,10 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
         <View className="flex-row items-center gap-2">
           {record.round ? (
             <View className="bg-primary/10 px-3 py-1.5 rounded-lg">
-              <AppText variant="title" className="text-primary-text text-[12px]">
+              <AppText
+                variant="title"
+                className="text-primary-text text-[12px]"
+              >
                 {record.round}회차
               </AppText>
             </View>
@@ -36,13 +39,25 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
           ) : null}
           <View className="flex-row items-center ml-1">
             <Calendar size={14} color="#BDBDBD" />
-            <AppText variant="body" className="text-text-muted text-[12px] ml-1.5">
+            <AppText
+              variant="body"
+              className="text-text-muted text-[12px] ml-1.5"
+            >
               {dateStr}
             </AppText>
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => onDelete(record.id)}
+          onPress={() => {
+            Alert.alert('내역 삭제', '이 내역을 삭제하시겠습니까?', [
+              { text: '취소', style: 'cancel' },
+              {
+                text: '삭제',
+                style: 'destructive',
+                onPress: () => onDelete(record.id),
+              },
+            ]);
+          }}
           className="p-1"
           activeOpacity={0.6}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
