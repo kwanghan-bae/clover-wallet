@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import { HistoryItem } from '../../../components/ui/HistoryItem';
 
 const mockRecord = {
@@ -13,14 +14,14 @@ const mockRecord = {
 describe('HistoryItem', () => {
   it('renders the round number', () => {
     const { getByText } = render(
-      <HistoryItem record={mockRecord} onDelete={jest.fn()} />
+      <HistoryItem record={mockRecord} onDelete={jest.fn()} />,
     );
     expect(getByText('1055회차')).toBeTruthy();
   });
 
   it('renders all lotto ball numbers', () => {
     const { getByText } = render(
-      <HistoryItem record={mockRecord} onDelete={jest.fn()} />
+      <HistoryItem record={mockRecord} onDelete={jest.fn()} />,
     );
     expect(getByText('3')).toBeTruthy();
     expect(getByText('11')).toBeTruthy();
@@ -32,24 +33,41 @@ describe('HistoryItem', () => {
 
   it('renders formatted date', () => {
     const { getByText } = render(
-      <HistoryItem record={mockRecord} onDelete={jest.fn()} />
+      <HistoryItem record={mockRecord} onDelete={jest.fn()} />,
     );
     expect(getByText('2024.03.15')).toBeTruthy();
   });
 
-  it('calls onDelete when delete button is pressed', () => {
+  it('calls onDelete when delete button is pressed and confirmed', () => {
     const onDelete = jest.fn();
+    const alertSpy = jest.spyOn(Alert, 'alert');
+
     const { getByLabelText } = render(
-      <HistoryItem record={mockRecord} onDelete={onDelete} />
+      <HistoryItem record={mockRecord} onDelete={onDelete} />,
     );
+
     fireEvent.press(getByLabelText('내역 삭제'));
-    expect(onDelete).toHaveBeenCalled();
+
+    expect(alertSpy).toHaveBeenCalledWith(
+      '내역 삭제',
+      '이 내역을 삭제하시겠습니까?',
+      expect.any(Array),
+    );
+
+    // Simulate pressing the "삭제" button
+    const buttons = alertSpy.mock.calls[0][2];
+    const deleteButton = buttons?.find((b) => b.text === '삭제');
+    deleteButton?.onPress?.();
+
+    expect(onDelete).toHaveBeenCalledWith(mockRecord.id);
+
+    alertSpy.mockRestore();
   });
 
   it('renders with a different date', () => {
     const recordWithDate = { ...mockRecord, createdAt: '2024-05-01T00:00:00Z' };
     const { getByText } = render(
-      <HistoryItem record={recordWithDate} onDelete={jest.fn()} />
+      <HistoryItem record={recordWithDate} onDelete={jest.fn()} />,
     );
     expect(getByText(/2024/)).toBeTruthy();
   });
