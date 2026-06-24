@@ -31,3 +31,7 @@
 ## 2024-05-19 - Keyboard Submission and Disabled States in Modals
 **Learning:** React Native modal components with forms often lack explicit disabled states on confirm buttons when required fields are empty, and TextInputs may not support submitting the form directly from the mobile keyboard (e.g., via the "Done" key). This creates a disjointed UX and poor accessibility because screen readers do not know the button is disabled, and users must manually dismiss the keyboard to click submit.
 **Action:** Always map `disabled` state and `accessibilityState={{ disabled: true }}` to submission buttons in modals based on form validation. Additionally, equip `<TextInput>` with `returnKeyType="done"` and `onSubmitEditing` to handle keyboard-based form submission gracefully.
+
+## 2024-05-18 - Alert dialog testing pattern
+**Learning:** When adding `Alert.alert` for destructive actions in React Native components, tests that previously relied on a simple mock function must be updated. Directly triggering `fireEvent.press` does not automatically fire the inner `Alert` button callbacks unless specifically mocked and triggered.
+**Action:** Always use `jest.spyOn(Alert, 'alert')` and manually invoke the `onPress` of the corresponding button from the arguments array when adding confirmation dialogs to ensure testing completeness.
