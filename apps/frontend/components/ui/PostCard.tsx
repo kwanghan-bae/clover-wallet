@@ -60,7 +60,7 @@ const PostCardComponent = ({ post, onPress, onLike, onShare }: PostCardProps) =>
 
       {/* Footer / Actions */}
       <View className="flex-row items-center px-1">
-        <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={post.isLiked ? '좋아요 취소' : '좋아요'}>
+        <TouchableOpacity onPress={() => onLike?.(post.id)} className="flex-row items-center mr-5" activeOpacity={0.6} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }} accessibilityRole="button" accessibilityLabel={post.isLiked ? `좋아요 취소, 좋아요 ${post.likes}개` : `좋아요, 좋아요 ${post.likes}개`}>
           <Heart size={18} color={post.isLiked ? "#EF5350" : "#9E9E9E"} fill={post.isLiked ? "#EF5350" : "transparent"} />
           <AppText variant="body" className={`ml-1.5 ${post.isLiked ? 'text-[#EF5350]' : 'text-text-muted'}`}>{post.likes}</AppText>
         </TouchableOpacity>
