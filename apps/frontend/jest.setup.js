@@ -131,6 +131,20 @@ jest.mock('expo-linear-gradient', () => {
   };
 });
 
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, props),
+  };
+});
+
+// Mock expo-modules-core
+jest.mock('expo-modules-core', () => ({
+  NativeModulesProxy: {},
+}));
+
 // Mock expo-camera
 jest.mock('expo-camera', () => {
   const React = require('react');
