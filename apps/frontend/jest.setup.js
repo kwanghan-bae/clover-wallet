@@ -48,7 +48,18 @@ jest.mock('react-native-mmkv', () => ({
   })),
 }));
 
+// Mock global variables for react native / expo tests
+global.__DEV__ = true;
+
 // Mock Expo Modules
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' }),
+  };
+});
+
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   notificationAsync: jest.fn(),

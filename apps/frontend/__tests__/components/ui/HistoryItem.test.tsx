@@ -50,7 +50,7 @@ describe('HistoryItem', () => {
     expect(alertSpy).toHaveBeenCalled();
 
     // Extract the buttons array passed to Alert.alert
-    const buttons = alertSpy.mock.calls[0][2] as Array<{text: string, onPress?: () => void}> | undefined;
+    const buttons = alertSpy.mock.calls[0][2] as {text: string, onPress?: () => void}[] | undefined;
     expect(buttons).toBeDefined();
 
     // Find and press the "삭제" (Delete) button
