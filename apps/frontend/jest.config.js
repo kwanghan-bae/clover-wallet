@@ -14,7 +14,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
-    'node_modules/(?!(ky)/)',
+    'node_modules/(?!(ky|expo-blur|@react-native|react-native|expo-modules-core|lucide-react-native|react-native-safe-area-context|@react-navigation|react-native-reanimated|react-native-gesture-handler|react-native-svg|expo-linear-gradient|expo-camera)/)',
   ],
   modulePaths: ['<rootDir>/node_modules'],
   moduleNameMapper: {
