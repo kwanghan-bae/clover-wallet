@@ -1,0 +1,12 @@
+--- apps/frontend/__tests__/utils/lotto/history.test.ts
++++ apps/frontend/__tests__/utils/lotto/history.test.ts
+@@ -3,8 +3,8 @@
+   HistoryMigrationError
+ } from '../../../utils/lotto/history';
+ import { StorageKeys, loadItem, saveItem, removeItem } from '../../../utils/storage';
++import { LottoSetRecord } from '../../../api/types/lotto';
+ import { migrateHistoryData } from '../../../utils/lotto/history-migration';
+-import { LottoSetRecord } from '../../../api/types/lotto';
+
+ jest.mock('../../../utils/storage', () => ({
+   StorageKeys: {
