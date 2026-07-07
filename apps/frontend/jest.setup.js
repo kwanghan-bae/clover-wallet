@@ -38,6 +38,17 @@ jest.mock('react-native-worklets-core', () => ({
   Worklets: { createRunOnJS: (fn) => fn, createContext: () => ({}) },
 }));
 
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    __esModule: true,
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' }),
+    default: (props) => React.createElement(View, { ...props, testID: 'blur-view' })
+  };
+});
+
 // Mock MMKV
 jest.mock('react-native-mmkv', () => ({
   MMKV: jest.fn().mockImplementation(() => ({
