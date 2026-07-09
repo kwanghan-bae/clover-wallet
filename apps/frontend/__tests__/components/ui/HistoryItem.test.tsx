@@ -56,7 +56,7 @@ describe('HistoryItem', () => {
     );
 
     // Alert의 삭제 버튼(인덱스 1)의 onPress 수동 실행
-    const buttons = alertSpy.mock.calls[0][2] as Array<{text: string, onPress?: () => void}> | undefined;
+    const buttons = alertSpy.mock.calls[0][2] as {text: string, onPress?: () => void}[] | undefined;
     expect(buttons).toBeDefined();
     if (buttons && buttons[1] && buttons[1].onPress) {
       buttons[1].onPress();
