@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import { HistoryItem } from '../../../components/ui/HistoryItem';
 
 const mockRecord = {
@@ -37,13 +38,34 @@ describe('HistoryItem', () => {
     expect(getByText('2024.03.15')).toBeTruthy();
   });
 
-  it('calls onDelete when delete button is pressed', () => {
+  it('calls onDelete after user confirms deletion in Alert', () => {
     const onDelete = jest.fn();
+    const alertSpy = jest.spyOn(Alert, 'alert');
     const { getByLabelText } = render(
       <HistoryItem record={mockRecord} onDelete={onDelete} />
     );
+
+    // Press delete button
     fireEvent.press(getByLabelText('내역 삭제'));
-    expect(onDelete).toHaveBeenCalled();
+
+    // Alert should be called, but onDelete should not be called yet
+    expect(alertSpy).toHaveBeenCalled();
+    expect(onDelete).not.toHaveBeenCalled();
+
+    // Extract the buttons array from the Alert call
+    const buttons = alertSpy.mock.calls[0][2] as Array<{text: string, onPress?: () => void}> | undefined;
+    expect(buttons).toBeDefined();
+
+    // Find the '삭제' (Delete) button and trigger its onPress
+    const deleteBtn = buttons?.find(b => b.text === '삭제');
+    expect(deleteBtn).toBeDefined();
+    expect(deleteBtn?.onPress).toBeDefined();
+    deleteBtn?.onPress?.();
+
+    // Now onDelete should be called
+    expect(onDelete).toHaveBeenCalledWith(mockRecord.id);
+
+    alertSpy.mockRestore();
   });
 
   it('renders with a different date', () => {
