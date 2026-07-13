@@ -174,6 +174,15 @@ jest.mock('@tanstack/react-query', () => ({
   QueryClientProvider: ({ children }) => children,
 }));
 
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, props)
+  };
+});
+
 // Mock hooks
 jest.mock('./hooks/useAuth', () => ({
   useAuth: jest.fn().mockReturnValue({
