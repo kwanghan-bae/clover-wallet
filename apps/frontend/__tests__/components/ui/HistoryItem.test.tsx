@@ -57,7 +57,7 @@ describe("HistoryItem", () => {
 
     // Find the '삭제' button in the alert and simulate its onPress
     const buttons = alertSpy.mock.calls[0][2] as
-      | Array<{ text: string; onPress?: () => void }>
+      | { text: string; onPress?: () => void }[]
       | undefined;
     const deleteButton = buttons?.find((b) => b.text === "삭제");
 
