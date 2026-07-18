@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { render, fireEvent } from '@testing-library/react-native';
 import { HistoryItem } from '../../../components/ui/HistoryItem';
 
@@ -39,11 +40,20 @@ describe('HistoryItem', () => {
 
   it('calls onDelete when delete button is pressed', () => {
     const onDelete = jest.fn();
+    const alertSpy = jest.spyOn(Alert, 'alert');
     const { getByLabelText } = render(
       <HistoryItem record={mockRecord} onDelete={onDelete} />
     );
     fireEvent.press(getByLabelText('내역 삭제'));
+
+    expect(alertSpy).toHaveBeenCalled();
+    const buttons = alertSpy.mock.calls[0][2] as Array<{text: string, onPress?: () => void}> | undefined;
+    const deleteBtn = buttons?.find(b => b.text === '삭제');
+    expect(deleteBtn).toBeDefined();
+    deleteBtn?.onPress?.();
+
     expect(onDelete).toHaveBeenCalled();
+    alertSpy.mockRestore();
   });
 
   it('renders with a different date', () => {
