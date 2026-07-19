@@ -31,3 +31,7 @@
 ## 2024-05-19 - Keyboard Submission and Disabled States in Modals
 **Learning:** React Native modal components with forms often lack explicit disabled states on confirm buttons when required fields are empty, and TextInputs may not support submitting the form directly from the mobile keyboard (e.g., via the "Done" key). This creates a disjointed UX and poor accessibility because screen readers do not know the button is disabled, and users must manually dismiss the keyboard to click submit.
 **Action:** Always map `disabled` state and `accessibilityState={{ disabled: true }}` to submission buttons in modals based on form validation. Additionally, equip `<TextInput>` with `returnKeyType="done"` and `onSubmitEditing` to handle keyboard-based form submission gracefully.
+
+## 2024-05-19 - Destructive Actions require Confirmation Dialogs
+**Learning:** In React Native, lists often use `hitSlop` to increase touch targets of icons (like a delete trash can). Because these touch targets are artificially larger, it is very easy for users to accidentally press them while scrolling or navigating. If destructive actions are executed immediately on press, it leads to accidental data loss and a frustrating user experience.
+**Action:** Always wrap destructive actions (like delete buttons inside list items) in an `Alert.alert` confirmation dialog before executing the action, especially if the button's tappable area has been expanded using `hitSlop` or similar techniques.
