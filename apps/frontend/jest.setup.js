@@ -1,3 +1,4 @@
+global.__DEV__ = true;
 /* eslint-disable react/display-name */
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
@@ -142,6 +143,20 @@ jest.mock('expo-camera', () => {
     useCameraPermissions: () => [{ granted: true }, jest.fn()],
   };
 });
+
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return { BlurView: View };
+});
+
+jest.mock('expo-modules-core', () => ({
+  NativeModulesProxy: {},
+  requireNativeViewManager: jest.fn(() => ({})),
+  EventEmitter: class EventEmitter {
+    addListener() {}
+  },
+}));
 
 // Mock @shopify/flash-list - renders items directly for testability
 jest.mock('@shopify/flash-list', () => {
