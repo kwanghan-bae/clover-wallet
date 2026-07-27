@@ -57,7 +57,7 @@ describe("HistoryItem", () => {
 
     // Extract the buttons array from the alert call
     const buttons = alertSpy.mock.calls[0][2] as
-      | Array<{ text: string; style?: string; onPress?: () => void }>
+      | { text: string; style?: string; onPress?: () => void }[]
       | undefined;
 
     // Find and execute the '삭제' button's onPress
