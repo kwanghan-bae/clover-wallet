@@ -37,13 +37,23 @@ describe('HistoryItem', () => {
     expect(getByText('2024.03.15')).toBeTruthy();
   });
 
-  it('calls onDelete when delete button is pressed', () => {
+  it('calls onDelete when delete button is pressed and confirmed', () => {
+    const { Alert } = require('react-native');
+    const mockAlert = jest.spyOn(Alert, 'alert').mockImplementation((title, message, buttons) => {
+      const deleteButton = buttons?.find((b: any) => b.text === '삭제');
+      deleteButton?.onPress?.();
+    });
+
     const onDelete = jest.fn();
     const { getByLabelText } = render(
       <HistoryItem record={mockRecord} onDelete={onDelete} />
     );
+
     fireEvent.press(getByLabelText('내역 삭제'));
-    expect(onDelete).toHaveBeenCalled();
+    expect(mockAlert).toHaveBeenCalled();
+    expect(onDelete).toHaveBeenCalledWith(mockRecord.id);
+
+    mockAlert.mockRestore();
   });
 
   it('renders with a different date', () => {
