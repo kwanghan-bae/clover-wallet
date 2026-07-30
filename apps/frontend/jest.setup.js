@@ -1,4 +1,6 @@
 /* eslint-disable react/display-name */
+global.__DEV__ = true;
+
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
   const React = require('react');
@@ -49,6 +51,14 @@ jest.mock('react-native-mmkv', () => ({
 }));
 
 // Mock Expo Modules
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, props)
+  };
+});
+
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
   notificationAsync: jest.fn(),
