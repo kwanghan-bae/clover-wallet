@@ -89,6 +89,14 @@ jest.mock('./components/ui/LuckyHeroIllustration', () => {
   return { __esModule: true, default: LuckyHeroIllustration, LuckyHeroIllustration };
 });
 
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, props),
+  };
+});
+
 // Mock react-native-svg
 jest.mock('react-native-svg', () => {
   const React = require('react');
