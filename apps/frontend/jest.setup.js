@@ -165,6 +165,15 @@ jest.mock('@shopify/flash-list', () => {
   return { FlashList };
 });
 
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' }),
+  };
+});
+
 // Mock @tanstack/react-query
 jest.mock('@tanstack/react-query', () => ({
   useQuery: jest.fn().mockReturnValue({ data: undefined, isLoading: false, refetch: jest.fn() }),
