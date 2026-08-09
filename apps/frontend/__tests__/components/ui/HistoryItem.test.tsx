@@ -1,55 +1,73 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
-import { HistoryItem } from '../../../components/ui/HistoryItem';
+import React from "react";
+import { render, fireEvent } from "@testing-library/react-native";
+import { Alert } from "react-native";
+import { HistoryItem } from "../../../components/ui/HistoryItem";
 
 const mockRecord = {
   id: 1,
-  method: 'TICKET',
+  method: "TICKET",
   round: 1055,
   games: [{ numbers: [3, 11, 22, 33, 40, 45] }],
-  createdAt: '2024-03-15T09:00:00Z',
+  createdAt: "2024-03-15T09:00:00Z",
 };
 
-describe('HistoryItem', () => {
-  it('renders the round number', () => {
+describe("HistoryItem", () => {
+  it("renders the round number", () => {
     const { getByText } = render(
-      <HistoryItem record={mockRecord} onDelete={jest.fn()} />
+      <HistoryItem record={mockRecord} onDelete={jest.fn()} />,
     );
-    expect(getByText('1055회차')).toBeTruthy();
+    expect(getByText("1055회차")).toBeTruthy();
   });
 
-  it('renders all lotto ball numbers', () => {
+  it("renders all lotto ball numbers", () => {
     const { getByText } = render(
-      <HistoryItem record={mockRecord} onDelete={jest.fn()} />
+      <HistoryItem record={mockRecord} onDelete={jest.fn()} />,
     );
-    expect(getByText('3')).toBeTruthy();
-    expect(getByText('11')).toBeTruthy();
-    expect(getByText('22')).toBeTruthy();
-    expect(getByText('33')).toBeTruthy();
-    expect(getByText('40')).toBeTruthy();
-    expect(getByText('45')).toBeTruthy();
+    expect(getByText("3")).toBeTruthy();
+    expect(getByText("11")).toBeTruthy();
+    expect(getByText("22")).toBeTruthy();
+    expect(getByText("33")).toBeTruthy();
+    expect(getByText("40")).toBeTruthy();
+    expect(getByText("45")).toBeTruthy();
   });
 
-  it('renders formatted date', () => {
+  it("renders formatted date", () => {
     const { getByText } = render(
-      <HistoryItem record={mockRecord} onDelete={jest.fn()} />
+      <HistoryItem record={mockRecord} onDelete={jest.fn()} />,
     );
-    expect(getByText('2024.03.15')).toBeTruthy();
+    expect(getByText("2024.03.15")).toBeTruthy();
   });
 
-  it('calls onDelete when delete button is pressed', () => {
+  it("calls onDelete when delete button is pressed and confirmed", () => {
+    const alertSpy = jest.spyOn(Alert, "alert");
     const onDelete = jest.fn();
     const { getByLabelText } = render(
-      <HistoryItem record={mockRecord} onDelete={onDelete} />
+      <HistoryItem record={mockRecord} onDelete={onDelete} />,
     );
-    fireEvent.press(getByLabelText('내역 삭제'));
-    expect(onDelete).toHaveBeenCalled();
+    fireEvent.press(getByLabelText("내역 삭제"));
+    expect(alertSpy).toHaveBeenCalledWith(
+      "내역 삭제",
+      "이 내역을 삭제하시겠습니까?",
+      expect.any(Array),
+    );
+
+    // Manually execute the onPress callback of the '삭제' button
+    const buttons = alertSpy.mock.calls[0][2] as
+      | { text: string; style?: string; onPress?: () => void }[]
+      | undefined;
+    const deleteButton = buttons?.find((b) => b.text === "삭제");
+    if (deleteButton?.onPress) {
+      deleteButton.onPress();
+    }
+
+    expect(onDelete).toHaveBeenCalledWith(mockRecord.id);
+    alertSpy.mockRestore();
   });
 
-  it('renders with a different date', () => {
-    const recordWithDate = { ...mockRecord, createdAt: '2024-05-01T00:00:00Z' };
+  it("renders with a different date", () => {
+    const recordWithDate = { ...mockRecord, createdAt: "2024-05-01T00:00:00Z" };
     const { getByText } = render(
-      <HistoryItem record={recordWithDate} onDelete={jest.fn()} />
+      <HistoryItem record={recordWithDate} onDelete={jest.fn()} />,
     );
     expect(getByText(/2024/)).toBeTruthy();
   });
@@ -57,8 +75,8 @@ describe('HistoryItem', () => {
   test('5게임 묶음 → "5게임 묶음" 배지 + 라벨 A~E', () => {
     const record = {
       id: 2,
-      method: 'SAJU',
-      createdAt: '2026-05-09T00:00:00.000Z',
+      method: "SAJU",
+      createdAt: "2026-05-09T00:00:00.000Z",
       games: [
         { numbers: [1, 2, 3, 4, 5, 6] },
         { numbers: [7, 8, 9, 10, 11, 12] },
@@ -70,23 +88,23 @@ describe('HistoryItem', () => {
     const { getByText } = render(
       <HistoryItem record={record} onDelete={jest.fn()} />,
     );
-    expect(getByText('5게임 묶음')).toBeTruthy();
-    ['A', 'B', 'C', 'D', 'E'].forEach((label) => {
+    expect(getByText("5게임 묶음")).toBeTruthy();
+    ["A", "B", "C", "D", "E"].forEach((label) => {
       expect(getByText(label)).toBeTruthy();
     });
   });
 
-  test('1게임 (games.length===1) → 묶음 배지 없음, 라벨 없음', () => {
+  test("1게임 (games.length===1) → 묶음 배지 없음, 라벨 없음", () => {
     const record = {
       id: 3,
-      method: 'SAJU',
-      createdAt: '2026-05-09T00:00:00.000Z',
+      method: "SAJU",
+      createdAt: "2026-05-09T00:00:00.000Z",
       games: [{ numbers: [1, 2, 3, 4, 5, 6] }],
     };
     const { queryByText } = render(
       <HistoryItem record={record} onDelete={jest.fn()} />,
     );
     expect(queryByText(/게임 묶음/)).toBeNull();
-    expect(queryByText('A')).toBeNull();
+    expect(queryByText("A")).toBeNull();
   });
 });

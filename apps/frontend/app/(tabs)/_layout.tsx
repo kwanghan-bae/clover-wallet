@@ -1,8 +1,15 @@
-import React from 'react';
-import { Tabs, useRouter } from 'expo-router';
-import { View, TouchableOpacity } from 'react-native';
-import { Home, ReceiptText, MapPin, Users, User, QrCode } from 'lucide-react-native';
-import { useTheme } from '../../hooks/useTheme';
+import React from "react";
+import { Tabs, useRouter } from "expo-router";
+import { View, TouchableOpacity } from "react-native";
+import {
+  Home,
+  ReceiptText,
+  MapPin,
+  Users,
+  User,
+  QrCode,
+} from "lucide-react-native";
+import { useTheme } from "../../hooks/useTheme";
 
 /**
  * @description 하단 탭 바를 포함한 메인 레이아웃 컴포넌트입니다.
@@ -14,37 +21,39 @@ const TabLayout = () => {
 
   return (
     <>
-      <Tabs screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: isDark ? '#888888' : '#999999',
-        tabBarLabelStyle: {
-          fontSize: 11,
-          fontFamily: 'NotoSansKR_700Bold',
-          marginBottom: 5,
-        },
-        tabBarStyle: {
-          backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
-          borderTopWidth: 1,
-          borderTopColor: isDark ? '#333333' : '#F0F0F0',
-          height: 65,
-          paddingTop: 5,
-        }
-      }}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: "#4CAF50",
+          tabBarInactiveTintColor: isDark ? "#888888" : "#9E9E9E",
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontFamily: "NotoSansKR_700Bold",
+            marginBottom: 5,
+          },
+          tabBarStyle: {
+            backgroundColor: isDark ? "#121212" : "#FFFFFF",
+            borderTopWidth: 1,
+            borderTopColor: isDark ? "#333333" : "#E0E0E0",
+            height: 65,
+            paddingTop: 5,
+          },
+        }}
+      >
         <Tabs.Screen
           name="index"
           options={{
-            title: '홈',
+            title: "홈",
             tabBarIcon: ({ color }) => <Home size={24} color={color} />,
-            tabBarAccessibilityLabel: '홈 탭',
+            tabBarAccessibilityLabel: "홈 탭",
           }}
         />
         <Tabs.Screen
           name="history"
           options={{
-            title: '내 로또',
+            title: "내 로또",
             tabBarIcon: ({ color }) => <ReceiptText size={24} color={color} />,
-            tabBarAccessibilityLabel: '내 로또 기록 탭',
+            tabBarAccessibilityLabel: "내 로또 기록 탭",
           }}
         />
 
@@ -52,7 +61,7 @@ const TabLayout = () => {
         <Tabs.Screen
           name="scan_dummy"
           options={{
-            title: '',
+            title: "",
             tabBarButton: () => <View style={{ width: 70 }} />,
           }}
         />
@@ -60,28 +69,28 @@ const TabLayout = () => {
         <Tabs.Screen
           name="community"
           options={{
-            title: '커뮤니티',
+            title: "커뮤니티",
             tabBarIcon: ({ color }) => <Users size={24} color={color} />,
-            tabBarAccessibilityLabel: '커뮤니티 탭',
-            tabBarButtonTestID: 'tab-community',
+            tabBarAccessibilityLabel: "커뮤니티 탭",
+            tabBarButtonTestID: "tab-community",
           }}
         />
         <Tabs.Screen
           name="map"
           options={{
-            title: '명당',
+            title: "명당",
             tabBarIcon: ({ color }) => <MapPin size={24} color={color} />,
-            tabBarAccessibilityLabel: '명당 지도 탭',
-            tabBarButtonTestID: 'tab-map',
+            tabBarAccessibilityLabel: "명당 지도 탭",
+            tabBarButtonTestID: "tab-map",
           }}
         />
         <Tabs.Screen
           name="mypage"
           options={{
-            title: '마이',
+            title: "마이",
             tabBarIcon: ({ color }) => <User size={24} color={color} />,
-            tabBarAccessibilityLabel: '마이페이지 탭',
-            tabBarButtonTestID: 'tab-mypage',
+            tabBarAccessibilityLabel: "마이페이지 탭",
+            tabBarButtonTestID: "tab-mypage",
           }}
         />
       </Tabs>
@@ -89,36 +98,18 @@ const TabLayout = () => {
       {/* Actual Floating Center Button */}
       <View
         pointerEvents="box-none"
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 90,
-          alignItems: 'center',
-          justifyContent: 'center',
-          zIndex: 99,
-        }}
+        className="absolute bottom-0 left-0 right-0 h-[90px] items-center justify-center z-[99]"
       >
         <TouchableOpacity
-          onPress={() => router.push('/scan')}
+          onPress={() => router.push("/scan")}
           activeOpacity={0.9}
           accessibilityLabel="QR 스캔"
           accessibilityRole="button"
           testID="tab-scan"
+          className="w-[60px] h-[60px] rounded-full justify-center items-center mb-[35px] shadow-lg shadow-black/30"
           style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            backgroundColor: '#FFC107', // Flutter's secondaryColor (Gold)
-            justifyContent: 'center',
-            alignItems: 'center',
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
+            backgroundColor: "#FFC107", // Flutter's secondaryColor (Gold) - keeping inline to avoid extending theme just for this specific brand color unless necessary
             elevation: 8,
-            marginBottom: 35,
           }}
         >
           <QrCode size={30} color="white" />
@@ -129,4 +120,3 @@ const TabLayout = () => {
 };
 
 export default TabLayout;
-

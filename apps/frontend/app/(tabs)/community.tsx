@@ -60,9 +60,9 @@ const CommunityScreen = () => {
           activeOpacity={0.7}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           testID="fab-create-post"
-          className="w-9 h-9 rounded-md items-center justify-center bg-text-primary/[0.04]"
+          className="w-9 h-9 rounded-md items-center justify-center bg-surface-muted"
         >
-          <Edit3 size={18} color={isDark ? '#E0E0E0' : '#0F1115'} />
+          <Edit3 size={18} color={isDark ? '#E0E0E0' : '#0F1115'} className="text-text-primary dark:text-dark-text" />
         </TouchableOpacity>
       </View>
 
