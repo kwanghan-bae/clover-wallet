@@ -98,16 +98,7 @@ const TabLayout = () => {
       {/* Actual Floating Center Button */}
       <View
         pointerEvents="box-none"
-        style={{
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          height: 90,
-          alignItems: "center",
-          justifyContent: "center",
-          zIndex: 99,
-        }}
+        className="absolute bottom-0 left-0 right-0 h-[90px] items-center justify-center z-[99]"
       >
         <TouchableOpacity
           onPress={() => router.push("/scan")}
@@ -115,19 +106,10 @@ const TabLayout = () => {
           accessibilityLabel="QR 스캔"
           accessibilityRole="button"
           testID="tab-scan"
+          className="w-[60px] h-[60px] rounded-full justify-center items-center mb-[35px] shadow-lg shadow-black/30"
           style={{
-            width: 60,
-            height: 60,
-            borderRadius: 30,
-            backgroundColor: "#FFC107", // Flutter's secondaryColor (Gold)
-            justifyContent: "center",
-            alignItems: "center",
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 4 },
-            shadowOpacity: 0.3,
-            shadowRadius: 8,
+            backgroundColor: "#FFC107", // Flutter's secondaryColor (Gold) - keeping inline to avoid extending theme just for this specific brand color unless necessary
             elevation: 8,
-            marginBottom: 35,
           }}
         >
           <QrCode size={30} color="white" />
