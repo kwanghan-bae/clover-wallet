@@ -53,7 +53,7 @@ describe("HistoryItem", () => {
 
     // Manually execute the onPress callback of the '삭제' button
     const buttons = alertSpy.mock.calls[0][2] as
-      | Array<{ text: string; style?: string; onPress?: () => void }>
+      | { text: string; style?: string; onPress?: () => void }[]
       | undefined;
     const deleteButton = buttons?.find((b) => b.text === "삭제");
     if (deleteButton?.onPress) {
