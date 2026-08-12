@@ -54,7 +54,7 @@ describe("HistoryItem", () => {
     );
 
     const buttons = alertSpy.mock.calls[0][2] as
-      | Array<{ text: string; onPress?: () => void }>
+      | { text: string; onPress?: () => void }[]
       | undefined;
     const deleteBtn = buttons?.find((b) => b.text === "삭제");
     deleteBtn?.onPress?.();
