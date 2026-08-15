@@ -17,16 +17,16 @@ const TabLayout = () => {
       <Tabs screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: isDark ? '#888888' : '#999999',
+        tabBarInactiveTintColor: isDark ? 'var(--color-dark-text-secondary)' : 'var(--color-text-grey)',
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: 'NotoSansKR_700Bold',
           marginBottom: 5,
         },
         tabBarStyle: {
-          backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF',
+          backgroundColor: isDark ? 'var(--color-dark-surface)' : 'var(--color-surface)',
           borderTopWidth: 1,
-          borderTopColor: isDark ? '#333333' : '#F0F0F0',
+          borderTopColor: isDark ? 'var(--color-dark-border)' : 'var(--color-border)',
           height: 65,
           paddingTop: 5,
         }
