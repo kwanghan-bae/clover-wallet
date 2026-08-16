@@ -1,3 +1,4 @@
+global.__DEV__ = true;
 /* eslint-disable react/display-name */
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
@@ -217,3 +218,4 @@ jest.mock('./hooks/useScan', () => ({
     resetScan: jest.fn(),
   }),
 }));
+jest.mock('expo-blur', () => ({ BlurView: 'BlurView' }));
