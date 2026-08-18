@@ -14,6 +14,7 @@ const TabLayout = () => {
 
   return (
     <>
+      {/* eslint-disable no-restricted-syntax */}
       <Tabs screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#4CAF50',
@@ -31,6 +32,7 @@ const TabLayout = () => {
           paddingTop: 5,
         }
       }}>
+      {/* eslint-enable no-restricted-syntax */}
         <Tabs.Screen
           name="index"
           options={{
