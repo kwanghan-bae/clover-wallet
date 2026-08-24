@@ -143,6 +143,14 @@ jest.mock('expo-camera', () => {
   };
 });
 
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: props.testID || 'blur-view' }),
+  };
+});
+
 // Mock @shopify/flash-list - renders items directly for testability
 jest.mock('@shopify/flash-list', () => {
   const React = require('react');

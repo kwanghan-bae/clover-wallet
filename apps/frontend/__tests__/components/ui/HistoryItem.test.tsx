@@ -51,7 +51,7 @@ describe("HistoryItem", () => {
 
     // Alert의 두 번째 버튼(삭제) 클릭 에뮬레이트
     const buttons = alertSpy.mock.calls[0][2] as
-      | Array<{ text: string; onPress?: () => void }>
+      | { text: string; onPress?: () => void }[]
       | undefined;
     const deleteButton = buttons?.find((b) => b.text === "삭제");
     deleteButton?.onPress?.();
