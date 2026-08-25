@@ -14,7 +14,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transformIgnorePatterns: [
-    'node_modules/(?!(ky)/)',
+    'node_modules/(?!(ky|expo-blur|expo-modules-core|@testing-library|react-native|@react-native)/)',
   ],
   modulePaths: ['<rootDir>/node_modules'],
   moduleNameMapper: {
