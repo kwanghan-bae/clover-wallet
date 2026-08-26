@@ -3,17 +3,17 @@ const isDev = typeof __DEV__ !== 'undefined' ? __DEV__ : process.env.NODE_ENV !=
 export const Logger = {
   error: (tag: string, message: string, error?: unknown) => {
     if (isDev) {
-      console.error(`[${tag}]`, message, error); // eslint-disable-line no-console
+      console.error(`[${tag}]`, message, error);
     }
   },
   warn: (tag: string, message: string) => {
     if (isDev) {
-      console.warn(`[${tag}]`, message); // eslint-disable-line no-console
+      console.warn(`[${tag}]`, message);
     }
   },
   info: (tag: string, message: string) => {
     if (isDev) {
-      console.log(`[${tag}]`, message); // eslint-disable-line no-console
+      console.log(`[${tag}]`, message);
     }
   },
 };
