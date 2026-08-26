@@ -47,7 +47,7 @@ describe('HistoryItem', () => {
     fireEvent.press(getByLabelText('내역 삭제'));
     expect(alertSpy).toHaveBeenCalled();
 
-    const buttons = alertSpy.mock.calls[0][2] as Array<{text: string, style?: string, onPress?: () => void}> | undefined;
+    const buttons = alertSpy.mock.calls[0][2] as {text: string, style?: string, onPress?: () => void}[] | undefined;
     const deleteButton = buttons?.find(b => b.text === '삭제');
     deleteButton?.onPress?.();
 
