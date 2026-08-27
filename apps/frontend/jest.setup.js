@@ -1,4 +1,6 @@
 /* eslint-disable react/display-name */
+global.__DEV__ = true;
+
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
   const React = require('react');
@@ -47,6 +49,20 @@ jest.mock('react-native-mmkv', () => ({
     clearAll: jest.fn(),
   })),
 }));
+
+// Mock expo-blur and expo-modules-core
+jest.mock('expo-modules-core', () => ({
+  NativeModulesProxy: {},
+  EventEmitter: jest.fn(),
+}));
+
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' })
+  };
+});
 
 // Mock Expo Modules
 jest.mock('expo-haptics', () => ({
