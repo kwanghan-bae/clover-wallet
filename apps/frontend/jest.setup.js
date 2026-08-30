@@ -73,6 +73,18 @@ jest.mock('expo-router', () => ({
   Tabs: { Screen: () => null }
 }));
 
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: ({ children }) => React.createElement(View, {}, children)
+  };
+});
+
+jest.mock('expo-modules-core', () => {
+  return {};
+});
+
 // Mock Icons
 jest.mock('lucide-react-native', () => {
   const React = require('react');

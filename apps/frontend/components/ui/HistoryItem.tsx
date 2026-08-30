@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 import { Trash2, Calendar } from 'lucide-react-native';
 import { LottoBall } from './LottoBall';
 import { AppText } from './AppText';
@@ -15,6 +15,17 @@ interface HistoryItemProps {
 const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
   const dateStr = formatDate(record.createdAt);
   const isMulti = record.games.length > 1;
+
+  const handleDelete = () => {
+    Alert.alert(
+      '내역 삭제',
+      '이 내역을 삭제하시겠습니까?',
+      [
+        { text: '취소', style: 'cancel' },
+        { text: '삭제', style: 'destructive', onPress: () => onDelete(record.id) }
+      ]
+    );
+  };
 
   return (
     <View className="bg-surface rounded-card-lg p-5 mb-5 shadow-card">
@@ -42,7 +53,7 @@ const HistoryItemComponent = ({ record, onDelete }: HistoryItemProps) => {
           </View>
         </View>
         <TouchableOpacity
-          onPress={() => onDelete(record.id)}
+          onPress={handleDelete}
           className="p-1"
           activeOpacity={0.6}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
