@@ -1,4 +1,13 @@
 /* eslint-disable react/display-name */
+// Mock expo-blur
+jest.mock('expo-blur', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    BlurView: (props) => React.createElement(View, { ...props, testID: 'blur-view' }),
+  };
+});
+
 // Mock Reanimated
 jest.mock('react-native-reanimated', () => {
   const React = require('react');
