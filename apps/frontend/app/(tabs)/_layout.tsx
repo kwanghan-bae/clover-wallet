@@ -17,7 +17,7 @@ const TabLayout = () => {
       <Tabs screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: '#4CAF50',
-        tabBarInactiveTintColor: isDark ? '#888888' : '#999999',
+        tabBarInactiveTintColor: isDark ? '#A0A0A0' : '#A8AEB8',
         tabBarLabelStyle: {
           fontSize: 11,
           fontFamily: 'NotoSansKR_700Bold',
