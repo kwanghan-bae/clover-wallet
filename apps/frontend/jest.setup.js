@@ -216,4 +216,5 @@ jest.mock('./hooks/useScan', () => ({
     handleBarCodeScanned: jest.fn(),
     resetScan: jest.fn(),
   }),
-}));
+}));global.__DEV__ = true;
+jest.mock('expo-blur', () => ({ BlurView: 'BlurView' }));
