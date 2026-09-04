@@ -217,3 +217,7 @@ jest.mock('./hooks/useScan', () => ({
     resetScan: jest.fn(),
   }),
 }));
+// Mock expo-blur
+jest.mock('expo-blur', () => ({
+  BlurView: 'BlurView',
+}));
